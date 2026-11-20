@@ -104,6 +104,13 @@ visible/announced messages are needed. Existing page explanations remain in all 
 language approval of recent page copy remains open; the existing manual AT waiver stays a waiver. Automated scans do not
 establish either human acceptance record.
 
+The runnable component examples match the previews structurally and behaviorally. Teaching code remains standalone
+English source; live labels and Clear actions use the selected demo language. Control IDs match the corresponding
+previews, but teaching labels/error prose are not claimed to be verbatim copies of all translated messages. The raw
+Angular FormControlStatus identifiers (VALID/INVALID) are developer diagnostics, not translated product copy.
+Independent fixed-date configurations are documented in the API reference, not presented as unrendered controls in a
+live component example. Native Angular date formatting and one-line minute truncation avoid duplicated private helpers.
+
 ## Validation, compatibility and delivery
 
 Additive API; no migration or version bump is performed by this increment. Publish in the next approved 21.x minor
@@ -135,6 +142,8 @@ recorded in PR #240 separately from this design record.
 - Both libraries and the demo passed lint/typecheck/build; translation, embedded-example and production bundle checks
   passed. The existing validation-documentation browser suite passed 12 tests across Chromium, Firefox and WebKit.
 - The [packed-consumer verifier](../../../tools/package/verify-packages.mjs) asserts the root export, strict public
-  types, runtime day addition and nonmutation. Its isolated peer-install result is recorded in PR #240 separately.
+  types, runtime day addition and nonmutation in both linked and fresh-isolated phases. The isolated phase also checks
+  negative/zero offsets and rejects fractional offsets. Its isolated peer-install result is recorded in PR #240
+  separately.
 - Spec review and implementation review found no blocking findings. These are engineering records; they do not claim
   remote CI completion, human language acceptance, merge or publication.

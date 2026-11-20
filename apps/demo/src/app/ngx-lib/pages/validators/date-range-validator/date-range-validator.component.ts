@@ -10,18 +10,6 @@ import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
 import {highlight} from '../../../../shared/utils/highlight.util';
 
-/** Local `YYYY-MM-DDTHH:mm` for a `datetime-local` input. */
-function toDateTimeInputValue(date: Date): string {
-  const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
-  return `${formatDate(date, 'yyyy-MM-dd', 'en-US')}T${time}`;
-}
-
-function startOfMinute(date: Date): Date {
-  const result = new Date(date);
-  result.setSeconds(0, 0);
-  return result;
-}
-
 @Component({
   selector: 'app-date-range-validator',
   imports: [
@@ -132,7 +120,7 @@ export class DateExampleComponent {
   });
   // Seconds are dropped so the `datetime-local` hints name exactly the instants the validator
   // compares; `date` inputs ignore the time part.
-  readonly today = startOfMinute(new Date());
+  readonly today = new Date(Math.floor(Date.now() / 60_000) * 60_000);
   readonly tomorrow = addCalendarDays(this.today, 1);
   readonly fiveDaysLater = addCalendarDays(this.today, 5);
 
@@ -143,8 +131,8 @@ export class DateExampleComponent {
   readonly tomorrowDate = formatDate(this.tomorrow, 'yyyy-MM-dd', 'en-US');
   readonly fiveDaysLaterDate = formatDate(this.fiveDaysLater, 'yyyy-MM-dd', 'en-US');
 
-  readonly minTimestamp = toDateTimeInputValue(this.today);
-  readonly maxTimestamp = toDateTimeInputValue(this.fiveDaysLater);
+  readonly minTimestamp = formatDate(this.today, "yyyy-MM-dd'T'HH:mm", 'en-US');
+  readonly maxTimestamp = formatDate(this.fiveDaysLater, "yyyy-MM-dd'T'HH:mm", 'en-US');
 
   readonly starterMin = this.tomorrowDate;
   readonly starterMax = this.fiveDaysLaterDate;
@@ -219,20 +207,14 @@ import {addCalendarDays, dateRangeValidator} from 'ngx-lift';
   template: \`
     <form clrForm [formGroup]="dateForm">
       <clr-input-container>
-        <label for="optional-expiration">Optional expiration date</label>
-        <input
-          id="optional-expiration"
-          clrInput
-          type="date"
-          [formControl]="dateForm.controls.expires"
-          [min]="todayDate"
-        />
+        <label for="date-expires">Optional expiration date</label>
+        <input id="date-expires" clrInput type="date" [formControl]="dateForm.controls.expires" [min]="todayDate" />
         <clr-control-error *clrIfError="'minDate'">Choose today or a later date.</clr-control-error>
       </clr-input-container>
       <clr-date-container>
-        <label for="future-date">Date within the next five days</label>
+        <label for="date-future-days">Date within the next five days</label>
         <input
-          id="future-date"
+          id="date-future-days"
           clrDate
           type="date"
           required
@@ -274,22 +256,6 @@ export class CalendarDatesComponent {
       ],
     }),
   });
-
-  // Independent alternatives with fixed dates; not rendered in the template above.
-  // Optional lower bound: empty input is valid.
-  readonly optionalFromJanuary = new FormControl('', [dateRangeValidator({minDate: '2026-01-15', minInclusive: true})]);
-  // Optional upper bound: equality is excluded by default.
-  readonly beforeFebruary = new FormControl('', [dateRangeValidator({maxDate: '2026-02-01'})]);
-  // Required interval: January 15 included; February 1 excluded.
-  readonly bookingDate = new FormControl('', [
-    Validators.required,
-    dateRangeValidator({
-      minDate: '2026-01-15',
-      maxDate: '2026-02-01',
-      minInclusive: true,
-      maxInclusive: false,
-    }),
-  ]);
 }`);
 
   readonly dateTimeCode = highlight(`import {formatDate} from '@angular/common';
@@ -305,9 +271,9 @@ import {addCalendarDays, dateRangeValidator} from 'ngx-lift';
   template: \`
     <form clrForm [formGroup]="dateTimeForm">
       <clr-input-container>
-        <label for="date-time-expiration">Expiration date and time</label>
+        <label for="datetime-expires">Expiration Date</label>
         <input
-          id="date-time-expiration"
+          id="datetime-expires"
           clrInput
           type="datetime-local"
           required
@@ -325,10 +291,10 @@ import {addCalendarDays, dateRangeValidator} from 'ngx-lift';
   \`,
 })
 export class DateTimeRangeComponent {
-  private readonly now = this.startOfMinute(new Date());
+  private readonly now = new Date(Math.floor(Date.now() / 60_000) * 60_000);
   private readonly fiveDaysLater = addCalendarDays(this.now, 5);
-  readonly minTimestamp = this.toDateTimeInputValue(this.now);
-  readonly maxTimestamp = this.toDateTimeInputValue(this.fiveDaysLater);
+  readonly minTimestamp = formatDate(this.now, "yyyy-MM-dd'T'HH:mm", 'en-US');
+  readonly maxTimestamp = formatDate(this.fiveDaysLater, "yyyy-MM-dd'T'HH:mm", 'en-US');
   readonly dateTimeForm = new FormGroup({
     expires: new FormControl('', {
       nonNullable: true,
@@ -344,41 +310,38 @@ export class DateTimeRangeComponent {
       ],
     }),
   });
-
-  private startOfMinute(date: Date): Date {
-    const result = new Date(date);
-    result.setSeconds(0, 0);
-    return result;
-  }
-
-  private toDateTimeInputValue(date: Date): string {
-    const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
-    return formatDate(date, 'yyyy-MM-dd', 'en-US') + 'T' + time;
-  }
-
-  // Independent alternatives with fixed dates; not rendered in the template above.
-  // Local wall-clock times: pair with datetime-local.
-  readonly appointment = new FormControl('', [
-    Validators.required,
-    dateRangeValidator({
-      minDate: '2026-01-15T09:00',
-      maxDate: '2026-01-15T17:00',
-      minInclusive: true,
-      maxInclusive: true,
-      compareTime: true,
-    }),
-  ]);
-  // Exact instants: an explicit offset (Z means UTC).
-  readonly instant = new FormControl('', [
-    dateRangeValidator({
-      minDate: '2026-01-15T09:00:00Z',
-      maxDate: '2026-01-15T17:00:00Z',
-      compareTime: true,
-    }),
-  ]);
-  // Date objects and numeric timestamp control values also represent instants.
-  // compareTime: false (default) compares their local calendar days instead.
 }`);
+
+  readonly boundaryOptionsCode = highlight(`import {dateRangeValidator} from 'ngx-lift';
+
+// API configurations, independent of the moving-boundary examples above.
+// Optional lower bound; compose with Validators.required to require input.
+dateRangeValidator({minDate: '2026-01-15', minInclusive: true});
+// Optional upper bound; equality is excluded by default.
+dateRangeValidator({maxDate: '2026-02-01'});
+// Include January 15; exclude February 1.
+dateRangeValidator({
+  minDate: '2026-01-15',
+  maxDate: '2026-02-01',
+  minInclusive: true,
+  maxInclusive: false,
+});
+// Compare local wall-clock times, including both endpoints.
+dateRangeValidator({
+  minDate: '2026-01-15T09:00',
+  maxDate: '2026-01-15T17:00',
+  minInclusive: true,
+  maxInclusive: true,
+  compareTime: true,
+});
+// Compare exact instants using explicit offsets (Z means UTC).
+dateRangeValidator({
+  minDate: '2026-01-15T09:00:00Z',
+  maxDate: '2026-01-15T17:00:00Z',
+  compareTime: true,
+});
+// Date objects and numeric timestamp control values also represent instants.
+// compareTime: false (default) compares their local calendar days instead.`);
 
   signatureCode = highlight(`interface DateRangeOptions {
   minDate?: Date | string | null;
