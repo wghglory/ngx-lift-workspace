@@ -90,6 +90,10 @@
           <clr-control-error *clrIfError="'max'">{{ 'dateRangeValidator.clarityMax' | translate }}</clr-control-error>
           <clr-control-error *clrIfError="'min'">{{ 'dateRangeValidator.clarityMin' | translate }}</clr-control-error>
         </clr-date-container>
+        <button type="button" class="btn btn-sm btn-outline" (click)="dateForm.reset()">
+          {{ 'common.clear' | translate }}
+        </button>
+        <output aria-live="polite">{{ dateForm.status }}</output>
       </form>
       <app-code-block [code]="dateCode" lang="typescript" />
     </article>
@@ -119,6 +123,10 @@
             {{ 'dateRangeValidator.dateTimeMaxError' | translate: {maxDate: maxTimestamp} }}
           </clr-control-error>
         </clr-input-container>
+        <button type="button" class="btn btn-sm btn-outline" (click)="dateTimeForm.reset()">
+          {{ 'common.clear' | translate }}
+        </button>
+        <output aria-live="polite">{{ dateTimeForm.status }}</output>
       </form>
       <app-code-block [code]="dateTimeCode" lang="typescript" />
     </article>

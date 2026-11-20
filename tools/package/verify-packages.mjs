@@ -48,7 +48,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {addCalendarDays, toLocalDateString, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';
@@ -57,12 +57,9 @@ const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
 import {FormControl, FormGroup} from '@angular/forms';
 const calendarDate: Date = addCalendarDays(new Date(), 1);
-const calendarInput: string = toLocalDateString(calendarDate);
 // @ts-expect-error Calendar helpers require Dates rather than ambiguous date strings.
 addCalendarDays('2026-01-15', 1);
-// @ts-expect-error Formatting accepts a Date, not a preformatted string.
-toLocalDateString('2026-01-15');
-void calendarInput;
+void calendarDate;
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
@@ -173,7 +170,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   ]);
   writeFileSync(
     join(consumer, 'consumer.mjs'),
-    `import '@angular/compiler'; import assert from 'node:assert/strict'; import {addCalendarDays, toLocalDateString, isURL, range, serializeQueryKey} from 'ngx-lift'; import {JSDOM} from 'jsdom'; const dom = new JSDOM('<html><body></body></html>'); for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key]; const {SpinnerComponent} = await import('clr-lift'); const calendarBase = new Date('2026-01-15T12:00:00'); const calendarNext = addCalendarDays(calendarBase, 1); assert.equal(toLocalDateString(calendarNext), '2026-01-16'); assert.equal(toLocalDateString(calendarBase), '2026-01-15'); assert.notEqual(calendarNext, calendarBase); assert.equal(isURL('https://example.technology'), true); assert.deepEqual(range(3), [0,1,2]); assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}])); assert.equal(typeof SpinnerComponent, 'function'); dom.window.close();`,
+    `import '@angular/compiler'; import assert from 'node:assert/strict'; import {addCalendarDays, isURL, range, serializeQueryKey} from 'ngx-lift'; import {JSDOM} from 'jsdom'; const dom = new JSDOM('<html><body></body></html>'); for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key]; const {SpinnerComponent} = await import('clr-lift'); const calendarBase = new Date('2026-01-15T12:00:00'); const calendarNext = addCalendarDays(calendarBase, 1); assert.equal(calendarNext.getTime(), new Date('2026-01-16T12:00:00').getTime()); assert.equal(calendarBase.getTime(), new Date('2026-01-15T12:00:00').getTime()); assert.notEqual(calendarNext, calendarBase); assert.equal(isURL('https://example.technology'), true); assert.deepEqual(range(3), [0,1,2]); assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}])); assert.equal(typeof SpinnerComponent, 'function'); dom.window.close();`,
   );
   run(process.execPath, ['consumer.mjs']);
 

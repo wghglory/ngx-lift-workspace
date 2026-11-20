@@ -18,7 +18,7 @@ delivery. Review the shared CVA contract and each feature API before implementat
 and remaining acceptance records remain independent.
 
 The current date/time correctness increment includes the additive ngx-lift
-[local calendar utilities](design/ngx-lift/local-calendar-utilities-design-spec.md), approved on 2026-11-20 for the
+[calendar-day arithmetic](design/ngx-lift/local-calendar-utilities-design-spec.md), approved on 2026-11-20 for the
 existing date-range demo and downstream calendar-boundary consumers. This does not advance picker/calendar scope.
 
 ## Current baseline

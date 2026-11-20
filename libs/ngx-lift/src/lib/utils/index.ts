@@ -9,5 +9,4 @@ export * from './is-promise.util';
 export * from './object-path.util';
 export * from './pick-by.util';
 export * from './range.util';
-export * from './to-local-date-string.util';
 export * from './url.util';
