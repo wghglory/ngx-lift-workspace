@@ -187,14 +187,24 @@ export class UploadQueueService {
     const uploadId = runtime.uploadId;
     runtime.controller.abort();
     this.clearTimer(runtime);
+    if (runtime.settlement) return;
+    runtime.settlement = {kind: 'cancelled'};
+    runtime.resume = undefined;
+    this.patch(id, {status: 'cancelled'});
+    const deferreds = runtime.deferreds;
+    runtime.deferreds = [];
+    const finish = (error?: UploadError) => {
+      if (error && this.runtimes.get(id) === runtime) this.patch(id, {error});
+      for (const deferred of deferreds) deferred.reject(abortError());
+    };
     if (uploadId) {
-      void Promise.resolve(runtime.adapter.cancel(uploadId)).catch((error) => {
-        if (this.runtimes.get(id) === runtime) {
-          this.patch(id, {error: toUploadError(error, 'cancel')});
-        }
-      });
+      void Promise.resolve(runtime.adapter.cancel(uploadId)).then(
+        () => finish(),
+        (error) => finish(toUploadError(error, 'cancel')),
+      );
+    } else {
+      finish();
     }
-    if (!runtime.settlement) this.settle(runtime, {kind: 'cancelled'});
   }
 
   remove(id: string): void {

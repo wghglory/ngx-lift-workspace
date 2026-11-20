@@ -197,7 +197,7 @@ export class UploadComponent implements ControlValueAccessor {
       this.tracked.delete(id);
       const item = this.queue.items().find((candidate) => candidate.id === id);
       if (!item) return;
-      if (error instanceof DOMException && error.name === 'AbortError') {
+      if (error instanceof DOMException && error.name === 'AbortError' && item.error?.phase !== 'cancel') {
         this.uploadCancelled.emit([item]);
       } else {
         this.uploadError.emit([item]);

@@ -1,3 +1,4 @@
+import {ApplicationRef} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
@@ -77,6 +78,46 @@ describe('UploadComponent', () => {
     component.writeValue([]);
     expect(component.value()).toEqual([]);
     expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+  });
+
+  it('reports size and count violations with the rejected file names', async () => {
+    const component = create({maxSize: 1, maxFiles: 1});
+    const errors: {code: string; fileName?: string}[][] = [];
+    component.validationErrors.subscribe((value) => errors.push([...value]));
+
+    await select(component, [file('large.zip', 2 * 1024 * 1024 + 1), file('first.zip'), file('extra.zip')]);
+    TestBed.inject(ApplicationRef).tick();
+
+    expect(errors[0].map((error) => error.code)).toEqual(['upload.validation.maxSize', 'upload.validation.maxFiles']);
+    expect(errors[0].map((error) => error.fileName)).toEqual(['large.zip', 'extra.zip']);
+    expect(document.querySelectorAll('.cll-upload__error-name')).toHaveLength(2);
+    expect(document.body.textContent).toContain('large.zip');
+  });
+
+  it('emits an error event when adapter cancellation fails', async () => {
+    const pending = new Promise<void>(() => undefined);
+    const component = create({
+      adapter: {
+        initiate: async () => ({uploadId: 'u1'}),
+        uploadChunk: async () => pending,
+        combine: async () => undefined,
+        cancel: async () => {
+          throw new Error('cancel failed');
+        },
+      },
+    });
+    const errors: unknown[] = [];
+    const cancellations: unknown[] = [];
+    component.uploadError.subscribe((value) => errors.push(value));
+    component.uploadCancelled.subscribe((value) => cancellations.push(value));
+
+    await select(component, [file('bundle.zip')]);
+    component.setDisabledState(true);
+    for (let index = 0; index < 20; index += 1) await Promise.resolve();
+
+    expect(errors).toHaveLength(1);
+    expect(cancellations).toHaveLength(0);
+    expect((errors[0] as {error?: {phase: string}}[])[0].error?.phase).toBe('cancel');
   });
 
   it('ships owned messages in the active locale', () => {

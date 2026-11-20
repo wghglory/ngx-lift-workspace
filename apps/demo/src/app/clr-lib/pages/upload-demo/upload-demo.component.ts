@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
-import {mutateResource, type UploadAdapter, type UploadItem} from 'ngx-lift';
+import {mutateResource, type UploadAdapter, type UploadItem, UPLOAD_CHUNK_5MB} from 'ngx-lift';
 import {PageContainerComponent, TranslatePipe, UploadComponent, UploadPanelComponent} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -25,6 +25,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
 })
 export class UploadDemoComponent {
   readonly registeredCount = signal(0);
+  readonly chunk5Mb = UPLOAD_CHUNK_5MB;
 
   readonly adapter: UploadAdapter = {
     initiate: async (file) => ({uploadId: `${file.name}-${Date.now()}`}),
@@ -67,6 +68,26 @@ export class UploadDemoComponent {
       defaultValue: '2',
       description: 'In-flight chunks for one file, from 1 to 4.',
     },
+    {name: 'multiple', type: 'boolean', defaultValue: 'false', description: 'Allow more than one file per selection.'},
+    {
+      name: 'autoRetry',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Retry retryable chunk errors automatically.',
+    },
+    {
+      name: 'maxRetries',
+      type: 'number',
+      defaultValue: '3',
+      description: 'Automatic retry limit for retryable chunk errors.',
+    },
+    {name: 'controlId', type: 'string', defaultValue: "''", description: 'Identifier of the native file input.'},
+    {
+      name: 'disabled',
+      type: 'boolean',
+      defaultValue: 'false',
+      description: 'Disable selection and cancel in-flight items.',
+    },
   ];
 
   readonly outputs: ApiProperty[] = [
@@ -79,6 +100,13 @@ export class UploadDemoComponent {
     },
     {name: 'uploadError', type: 'readonly UploadItem[]', description: 'Items that ended in an error state.'},
     {name: 'uploadCancelled', type: 'readonly UploadItem[]', description: 'Items that ended in a cancelled state.'},
+  ];
+
+  readonly methods: ApiProperty[] = [
+    {name: 'clear()', description: 'Remove selected files and their queue items.'},
+    {name: 'clearValidationErrors()', description: 'Dismiss the validation error list.'},
+    {name: 'writeValue(files)', description: 'ControlValueAccessor write; replaces the current selection.'},
+    {name: 'setDisabledState(disabled)', description: 'ControlValueAccessor disabled state; cancels in-flight items.'},
   ];
 
   readonly basicCode = highlight(

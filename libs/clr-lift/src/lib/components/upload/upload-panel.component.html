@@ -8,7 +8,7 @@
           class="btn btn-sm btn-outline cll-upload-panel__badge"
           (click)="restore()"
           [attr.aria-label]="
-            'upload.progress.aggregate' | translate: queue.aggregate().progress + ',' + queue.aggregate().active
+            'upload.progress.aggregate' | translate: queue.aggregate().progress : queue.aggregate().active
           "
         >
           {{ 'upload.restore' | translate }} · {{ queue.aggregate().active }} · {{ queue.aggregate().progress }}%
@@ -27,7 +27,7 @@
                 <div cds-layout="horizontal gap:sm align:center">
                   <span class="cll-upload-panel__name">{{ item.file.name }}</span>
                   <span class="cll-upload-panel__status">{{ 'upload.status.' + item.status | translate }}</span>
-                  @if (item.status === 'error') {
+                  @if (item.error?.phase === 'cancel' || item.status === 'error') {
                     <span class="clr-error">{{ 'upload.error.' + (item.error?.phase ?? 'unknown') | translate }}</span>
                   }
                 </div>

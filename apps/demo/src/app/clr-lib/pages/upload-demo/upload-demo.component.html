@@ -13,6 +13,8 @@
         [multiple]="true"
         accept=".zip,.tar"
         [maxSize]="512"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
         (uploadComplete)="onComplete($event)"
       />
       <p data-testid="upload-demo-registered">{{ 'uploadDemo.registered' | translate }}: {{ registeredCount() }}</p>
@@ -47,5 +49,7 @@
     <app-api-table [properties]="inputs" />
     <h4>{{ 'common.outputs' | translate }}</h4>
     <app-api-table [properties]="outputs" />
+    <h4>{{ 'common.methods' | translate }}</h4>
+    <app-api-table [properties]="methods" />
   </section>
 </cll-page-container>

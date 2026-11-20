@@ -758,7 +758,7 @@ The reviewed API scope was approved in PR #243; implementation is tracked in PR 
 ## Evidence
 
 Revision 2026-11-20, implementation scope in PR #250. Automated checks actually run on this revision: `test:ngx` 996
-passed (11 new queue tests), `test:clr` 501 passed (5 new component/panel tests), demo tests 345 passed, `typecheck` for
+passed (11 new queue tests), `test:clr` 503 passed (7 new component/panel tests), demo tests 345 passed, `typecheck` for
 ngx-lift, clr-lift and demo passed, `lint` for ngx-lift and clr-lift passed (14 non-null-assertion warnings in the
 queue, no errors), `i18n:check` reported no errors with all 11 locales complete, `build demo` succeeded, upload and
 accessibility E2E passed 12/12 in Chromium, Firefox and WebKit, and `bundle:check` and `verify:packages` passed on the
