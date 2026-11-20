@@ -81,9 +81,9 @@ describe('MutateResourceDemoComponent', () => {
   });
 
   it('renders idle, saving and settled batch states in order', async () => {
-    const statuses = () =>
-      Array.from(fixture.nativeElement.querySelectorAll('[data-testid="batch-status"]')).map(
-        (cell: Element) => cell.textContent?.trim() ?? '',
+    const statuses = (): string[] =>
+      Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('[data-testid="batch-status"]')).map(
+        (cell) => cell.textContent?.trim() ?? '',
       );
 
     fixture.detectChanges();
