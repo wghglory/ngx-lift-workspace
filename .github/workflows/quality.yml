@@ -173,7 +173,7 @@ jobs:
   e2e:
     needs: e2e-matrix
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.e2e-matrix.outputs.matrix) }}
@@ -202,17 +202,20 @@ jobs:
           restore-keys: |
             playwright-${{ runner.os }}-${{ matrix.browser }}-
       - name: Install Playwright browsers
-        timeout-minutes: 10
+        timeout-minutes: 30
         run: |
-          for attempt in 1 2 3; do
-            if pnpm exec playwright install --with-deps ${{ matrix.browser }}; then
+          # WebKit needs the apt-installed OS libraries, so --with-deps must run on
+          # every shard even when browser binaries come from cache. Cap each attempt
+          # so one stalled mirror cannot consume the whole step budget before retry.
+          for attempt in 1 2; do
+            if timeout 840 pnpm exec playwright install --with-deps ${{ matrix.browser }}; then
               exit 0
             fi
-            if [ "$attempt" -eq 3 ]; then
+            if [ "$attempt" -eq 2 ]; then
               exit 1
             fi
             # Give a transient apt mirror/DNS failure time to recover.
-            sleep $((attempt * 10))
+            sleep 10
           done
       - name: Compute nx command
         id: scope

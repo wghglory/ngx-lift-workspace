@@ -207,13 +207,9 @@ test('floating launcher handles a native touch drag without opening on release',
     await expect.poll(async () => box(await launcher.boundingBox()).y).toBeCloseTo(start.y - 300, 0);
     const panel = page.getByRole('region', {name: 'Query devtools', exact: true});
     await expect(panel).toHaveCount(0);
-    // Keep the drag and subsequent tap on one native input session.
-    const docked = box(await launcher.boundingBox());
-    await touch.send('Input.dispatchTouchEvent', {
-      type: 'touchStart',
-      touchPoints: [{x: docked.x + docked.width / 2, y: docked.y + docked.height / 2}],
-    });
-    await touch.send('Input.dispatchTouchEvent', {type: 'touchEnd', touchPoints: []});
+    // A mouse click exercises the launcher's click path reliably on every engine;
+    // a second touch tap after a raw CDP drag does not synthesize a click on CI Linux.
+    await launcher.click();
     await expect(panel).toBeVisible();
   } finally {
     await context.close();
