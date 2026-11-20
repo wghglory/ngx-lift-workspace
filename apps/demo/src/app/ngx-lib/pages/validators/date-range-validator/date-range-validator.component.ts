@@ -54,6 +54,18 @@ function startOfMinute(date: Date): Date {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateRangeValidatorComponent {
+  readonly upgradeExampleCode = highlight(`import {FormControl} from '@angular/forms';
+import {dateRangeValidator} from 'ngx-lift';
+
+const date = new FormControl('2026-01-15', [
+  dateRangeValidator({
+    minDate: new Date(2026, 0, 15), // Local January 15; months are zero-based.
+    minInclusive: true,
+  }),
+]);
+// In America/New_York: previously invalid (parsed as January 14), now valid.
+// new Date('2026-01-15') still represents UTC midnight, not local midnight.`);
+
   readonly firstTaskCode = highlight(
     `import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';

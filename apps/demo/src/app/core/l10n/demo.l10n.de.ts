@@ -2239,6 +2239,10 @@ export const deTranslations: Record<string, string> = {
     '(Optional) Property key to check uniqueness for object items. Wenn weggelassen, überprüft primitive Gleichheit.',
   'dateRangeValidator.firstTask':
     'Wählen Sie ein Datum zwischen morgen und in fünf Tagen, einschließlich beider Grenzen. Frühere, spätere und leere Pflichtwerte sind ungültig.',
+  'dateRangeValidator.upgradeNote':
+    "Upgrade: In America/New_York bedeutete '2026-01-15' bisher den 14. Januar um 19:00 Uhr (UTC-Mitternacht), jetzt den 15. Januar um lokale Mitternacht. Bei einem lokalen Minimum am 15. Januar und minInclusive: true ist dieser Tag jetzt gültig. Date-Objekte und Zeichenfolgen mit Uhrzeit werden unverändert interpretiert; gemischte Datumsangaben und Zeitpunkte können nach dem Upgrade andere Prüfergebnisse liefern.",
+  'urlValidator.upgradeNote':
+    'Upgrade: urlValidator und httpsValidator akzeptieren jetzt null, undefined und die leere Zeichenfolge für optionale Felder. Eine leere Zeichenfolge ist dadurch keine URL. Ergänzen Sie Validators.required, um leere Eingaben abzulehnen. Reine Leerzeichen ergeben weiterhin invalidUrl.',
   'dateRangeValidator.overview':
     'Der <code>dateRangeValidator</code> ist ein benutzerdefinierter Validierer, der prüft, ob ein Datum innerhalb eines spezifizierten Bereichs liegt. Er unterstützt die Validierung sowohl für Datumswerte als auch für Datum-Uhrzeit-Werte, mit konfigurierbaren inklusiven/exklusiven Grenzen und optionaler Uhrzeit-Validierung.',
   'dateRangeValidator.example1Title': 'Beispiel 1: Datumsbereichsvalidierung',

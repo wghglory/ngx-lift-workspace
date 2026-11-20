@@ -2136,6 +2136,10 @@ export const jaTranslations: Record<string, string> = {
     '(オプション)オブジェクトアイテムで一意性を確認するプロパティキー。省略するとプリミティブ等価性を確認します。',
   'dateRangeValidator.firstTask':
     '明日から5日後までの日付を選びます。両端を含みます。範囲外の日付と空の必須値は無効です。',
+  'dateRangeValidator.upgradeNote':
+    "更新時の注意：America/New_York では、'2026-01-15' は以前は 1 月 14 日 19:00（UTC の午前 0 時）でしたが、現在は現地の 1 月 15 日午前 0 時です。最小日を現地の 1 月 15 日とし minInclusive: true を指定すると、その日付は有効になります。Date オブジェクトと時刻を含む文字列の解析は変わりません。日付のみの文字列と時点を混在させると、更新後に検証結果が変わる場合があります。",
+  'urlValidator.upgradeNote':
+    '更新時の注意：urlValidator と httpsValidator は任意入力に対応するため、null、undefined、空文字列を許可します。空文字列が URL になるわけではありません。空の入力を拒否するには Validators.required を追加してください。空白だけの文字列は引き続き invalidUrl になります。',
   'dateRangeValidator.overview':
     'dateRangeValidatorはカスタムバリデーターで、指定された範囲内の日付を検証します。日付のみまたは日時をサポートし、含まれる/含まれない境界を設定可能で、オプションで時間比較をサポートします。',
   'dateRangeValidator.example1Title': '例1: 日付範囲検証',

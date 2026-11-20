@@ -36,6 +36,9 @@
       </form>
     </div>
   </app-demo-playground>
+
+  <p data-testid="date-range-validator-upgrade-note">{{ 'dateRangeValidator.upgradeNote' | translate }}</p>
+  <app-code-block [code]="upgradeExampleCode" lang="typescript" />
   <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
 
   <!-- Examples Section -->

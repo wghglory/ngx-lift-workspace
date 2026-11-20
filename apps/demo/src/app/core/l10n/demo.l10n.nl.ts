@@ -2221,6 +2221,10 @@ export const nlTranslations: Record<string, string> = {
     '(Optioneel) Eigenschap sleutel om de uniciteit van object items te controleren. Indien weggelaten, controleert primitieve gelijkheid.',
   'dateRangeValidator.firstTask':
     'Kies een datum van morgen tot over vijf dagen, inclusief de grenzen. Datums daarbuiten en lege verplichte waarden zijn ongeldig.',
+  'dateRangeValidator.upgradeNote':
+    "Upgrade: in America/New_York betekende '2026-01-15' eerst 14 januari om 19:00 (middernacht UTC); nu betekent het 15 januari om lokale middernacht. Met een lokaal minimum van 15 januari en minInclusive: true is die dag nu geldig. Date-objecten en tekenreeksen met een tijd behouden hun interpretatie; het combineren van datums zonder tijd en tijdstippen kan na de upgrade andere validatieresultaten geven.",
+  'urlValidator.upgradeNote':
+    'Upgrade: urlValidator en httpsValidator accepteren nu null, undefined en de lege tekenreeks voor optionele velden. Een lege tekenreeks is daarmee geen URL. Voeg Validators.required toe om lege invoer af te wijzen. Tekenreeksen met alleen spaties geven nog steeds invalidUrl terug.',
   'dateRangeValidator.overview':
     'De <code>dateRangeValidator</code> is een aangepaste validator die valideert dat een datum binnen een opgegeven bereik valt. Het ondersteunt validatie voor zowel datum-alleenwaarden als datum-tijdwaarden, met configurerbare inclusieve/uitgesloten grenzen en optionele tijdsgelijkaardigheid.',
   'dateRangeValidator.example1Title': 'Voorbeeld 1: Datumbereikvalidatie',
