@@ -3027,6 +3027,16 @@ export const enTranslations = {
   'sameValueValidator.returns':
     'A ValidatorFn that returns the valuesMismatch error on the group when two non-empty values differ, or null otherwise.',
   'sameValueValidator.minLengthError': 'Use at least 8 characters.',
+  'nav.upload': 'Upload files',
+  'uploadDemo.title': 'Upload files',
+  'uploadDemo.intro': 'Select bundles and watch progress without leaving the page.',
+  'uploadDemo.basic': 'Basic selection',
+  'uploadDemo.composition': 'Composition with query and mutation utilities',
+  'uploadDemo.registered': 'Registered bundles',
+  'uploadDemo.completionNote': 'Await completion(id), then register metadata and let the active query refresh.',
+  'uploadDemo.httpClientAdapter': 'HttpClient adapter with progress',
+  'uploadDemo.httpClientNote':
+    'Map upload progress events to the adapter callback and bridge AbortSignal to unsubscribe.',
 } as const satisfies Record<string, string>;
 
 /** Union of all demo translation keys, used to type dynamic key maps. */

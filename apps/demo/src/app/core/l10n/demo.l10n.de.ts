@@ -3181,4 +3181,15 @@ export const deTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'Eine ValidatorFn, die bei abweichenden nicht-leeren Werten den Fehler valuesMismatch auf der Gruppe zurückgibt, sonst null.',
   'sameValueValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
+  'nav.upload': 'Dateien hochladen',
+  'uploadDemo.title': 'Dateien hochladen',
+  'uploadDemo.intro': 'Wählen Sie Pakete aus und verfolgen Sie den Fortschritt, ohne die Seite zu verlassen.',
+  'uploadDemo.basic': 'Einfache Auswahl',
+  'uploadDemo.composition': 'Kombination mit Abfrage- und Änderungsfunktionen',
+  'uploadDemo.registered': 'Registrierte Pakete',
+  'uploadDemo.completionNote':
+    'Warten Sie auf completion(id), registrieren Sie Metadaten und lassen Sie die aktive Abfrage aktualisieren.',
+  'uploadDemo.httpClientAdapter': 'HttpClient-Adapter mit Fortschritt',
+  'uploadDemo.httpClientNote':
+    'Fortschrittsereignisse dem Adapter-Callback zuordnen und AbortSignal mit unsubscribe verbinden.',
 };

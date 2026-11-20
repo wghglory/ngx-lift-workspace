@@ -1,0 +1,37 @@
+<cll-page-container [title]="'uploadDemo.title' | translate">
+  <p>{{ 'uploadDemo.intro' | translate }}</p>
+
+  <app-demo-playground data-testid="upload-demo-basic" [title]="'uploadDemo.basic' | translate" [tsCode]="basicCode">
+    <div preview cds-layout="vertical gap:sm">
+      <cll-upload
+        [adapter]="adapter"
+        [multiple]="true"
+        accept=".zip,.tar"
+        [maxSize]="512"
+        (uploadComplete)="onComplete($event)"
+      />
+      <p data-testid="upload-demo-registered">{{ 'uploadDemo.registered' | translate }}: {{ registeredCount() }}</p>
+      <cll-upload-panel />
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-composition"
+    [title]="'uploadDemo.composition' | translate"
+    [tsCode]="compositionCode"
+  >
+    <div preview>
+      <p>{{ 'uploadDemo.completionNote' | translate }}</p>
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-http-client"
+    [title]="'uploadDemo.httpClientAdapter' | translate"
+    [tsCode]="httpClientCode"
+  >
+    <div preview>
+      <p>{{ 'uploadDemo.httpClientNote' | translate }}</p>
+    </div>
+  </app-demo-playground>
+</cll-page-container>

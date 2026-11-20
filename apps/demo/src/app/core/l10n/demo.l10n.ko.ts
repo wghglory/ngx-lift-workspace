@@ -2974,4 +2974,13 @@ export const koTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     '비어 있지 않은 두 값이 다르면 그룹에 valuesMismatch 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
   'sameValueValidator.minLengthError': '8자 이상 입력하세요.',
+  'nav.upload': '파일 업로드',
+  'uploadDemo.title': '파일 업로드',
+  'uploadDemo.intro': '페이지를 벗어나지 않고 번들을 선택하고 진행 상황을 확인하세요.',
+  'uploadDemo.basic': '기본 선택',
+  'uploadDemo.composition': '쿼리 및 변경 유틸리티와의 조합',
+  'uploadDemo.registered': '등록된 번들',
+  'uploadDemo.completionNote': 'completion(id)을 기다린 뒤 메타데이터를 등록하고 활성 쿼리를 새로 고칩니다.',
+  'uploadDemo.httpClientAdapter': '진행률이 있는 HttpClient 어댑터',
+  'uploadDemo.httpClientNote': '업로드 진행 이벤트를 어댑터 콜백에 매핑하고 AbortSignal을 unsubscribe에 연결합니다.',
 };

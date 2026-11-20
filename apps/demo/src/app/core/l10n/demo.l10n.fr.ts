@@ -3185,4 +3185,15 @@ export const frTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'Une ValidatorFn qui renvoie l’erreur valuesMismatch sur le groupe quand deux valeurs non vides diffèrent, ou null sinon.',
   'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
+  'nav.upload': 'Téléverser des fichiers',
+  'uploadDemo.title': 'Téléverser des fichiers',
+  'uploadDemo.intro': 'Sélectionnez des bundles et suivez la progression sans quitter la page.',
+  'uploadDemo.basic': 'Sélection simple',
+  'uploadDemo.composition': 'Composition avec les utilitaires de requête et de mutation',
+  'uploadDemo.registered': 'Bundles enregistrés',
+  'uploadDemo.completionNote':
+    'Attendez completion(id), enregistrez les métadonnées et laissez la requête active se rafraîchir.',
+  'uploadDemo.httpClientAdapter': 'Adaptateur HttpClient avec progression',
+  'uploadDemo.httpClientNote':
+    'Mappez les événements de progression vers le callback de l’adaptateur et reliez AbortSignal à unsubscribe.',
 };

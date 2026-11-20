@@ -2785,4 +2785,13 @@ export const zhCNTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     '返回一个 ValidatorFn：两个非空值不同时在表单组上给出 valuesMismatch 错误，否则返回 null。',
   'sameValueValidator.minLengthError': '请至少输入 8 个字符。',
+  'nav.upload': '上传文件',
+  'uploadDemo.title': '上传文件',
+  'uploadDemo.intro': '选择文件包并在不离开页面的情况下查看进度。',
+  'uploadDemo.basic': '基础选择',
+  'uploadDemo.composition': '与查询和变更工具组合使用',
+  'uploadDemo.registered': '已登记的文件包',
+  'uploadDemo.completionNote': '等待 completion(id)，登记元数据并让活动查询自动刷新。',
+  'uploadDemo.httpClientAdapter': '带进度的 HttpClient 适配器',
+  'uploadDemo.httpClientNote': '将上传进度事件映射到适配器回调，并把 AbortSignal 桥接到 unsubscribe。',
 };

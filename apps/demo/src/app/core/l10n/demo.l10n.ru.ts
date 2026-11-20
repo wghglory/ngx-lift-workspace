@@ -3112,4 +3112,15 @@ export const ruTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'ValidatorFn, возвращающая ошибку valuesMismatch у группы, когда два непустых значения различаются, иначе null.',
   'sameValueValidator.minLengthError': 'Используйте не менее 8 символов.',
+  'nav.upload': 'Загрузка файлов',
+  'uploadDemo.title': 'Загрузка файлов',
+  'uploadDemo.intro': 'Выбирайте пакеты и следите за ходом загрузки, не покидая страницу.',
+  'uploadDemo.basic': 'Простой выбор',
+  'uploadDemo.composition': 'Композиция с утилитами запросов и изменений',
+  'uploadDemo.registered': 'Зарегистрированные пакеты',
+  'uploadDemo.completionNote':
+    'Дождитесь completion(id), зарегистрируйте метаданные и позвольте активному запросу обновиться.',
+  'uploadDemo.httpClientAdapter': 'Адаптер HttpClient с прогрессом',
+  'uploadDemo.httpClientNote':
+    'Преобразуйте события прогресса в обратный вызов адаптера и свяжите AbortSignal с unsubscribe.',
 };

@@ -1,8 +1,8 @@
 # Upload files design specification
 
-Status: Draft. Owner: Maintainer. Updated: 2026-11-20 (decisions confirmed; completion and composition proposed).
-Approval: pending spec review. Package: `ngx-lift` (headless queue lifecycle) and `clr-lift` (rendered Clarity UI). All
-proposed symbols and examples are provisional and unavailable until implemented and verified.
+Status: API reviewed and approved in PR #243 (merged 2026-11-20); implementing in PR #250. Owner: Maintainer. Updated:
+2026-11-20 (implementation evidence added). Package: `ngx-lift` (headless queue lifecycle) and `clr-lift` (rendered
+Clarity UI). All proposed symbols and examples are provisional and unavailable until implemented and verified.
 
 ## Applicable contracts
 
@@ -753,12 +753,21 @@ New in this revision and pending spec review like the rest of the Draft:
 - `UploadQueueService.completion(id)` with the terminal-state, rejection and retry contract defined above.
 - A demo Composition tab covering promise, `HttpClient`, `queryResource` and `mutateResource` usage.
 
-No implementation is approved by this Draft.
+The reviewed API scope was approved in PR #243; implementation is tracked in PR #250.
 
 ## Evidence
 
-This document records planning, spec-review revisions and primary-source research only. No component tests, builds,
-browser scans, translation checks or installed-consumer checks have been run for this draft. Sources are the public URLs
-in the industry table, the project workflow documents, the accessibility and language acceptance contract, and
-maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in the PR. Acceptance
-evidence must be added with revision, scope and result before status can advance beyond Draft.
+Revision 2026-11-20, implementation scope in PR #250. Automated checks actually run on this revision: `test:ngx` 992
+passed (7 new queue tests), `test:clr` 501 passed (5 new component/panel tests), demo tests 345 passed, `typecheck` for
+ngx-lift, clr-lift and demo passed, `lint` for ngx-lift and clr-lift passed (14 non-null-assertion warnings in the
+queue, no errors), `i18n:check` reported no errors with all 11 locales complete, `build demo` succeeded, upload E2E
+passed 6/6 in Chromium, Firefox and WebKit, the demo accessibility scan passed in light and dark themes, and
+`bundle:check` and `verify:packages` passed on the production build. The aggregate `pnpm run validate` reached the
+coverage and build stages but could not complete because the environment's safe-delete guard blocked cleanup of
+generated `coverage/` and `dist/` files; the constituent checks were run directly where possible. These are engineering
+results, not human acceptance.
+
+Independent human language acceptance for the new upload strings has not yet been recorded. The 2026-11-10 manual
+assistive-technology waiver remains a decision rather than a passed assessment. Primary sources are the public URLs in
+the industry table, the project workflow documents and the accessibility and language acceptance contract; named
+consumer details from the 2026-11-20 interview are in PR #243.

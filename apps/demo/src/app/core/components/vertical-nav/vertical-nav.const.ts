@@ -120,6 +120,7 @@ export const clrLiftNavConfig: NavConfig[] = [
       {path: '/callout', value: 'Callout', i18nKey: 'nav.callout'},
       {path: '/certificate', value: 'Certificate View', i18nKey: 'nav.certificate'},
       {path: '/file-reader', value: 'File Reader', i18nKey: 'nav.fileReader'},
+      {path: '/upload', value: 'Upload files', i18nKey: 'nav.upload'},
       {path: '/key-value-inputs', value: 'Key Value Inputs', i18nKey: 'nav.keyValueInputs'},
       {path: '/status-indicator', value: 'Status Indicator', i18nKey: 'nav.statusIndicator'},
       {path: '/spinner', value: 'Spinner', i18nKey: 'nav.spinner'},

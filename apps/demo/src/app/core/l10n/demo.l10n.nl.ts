@@ -3137,4 +3137,14 @@ export const nlTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'Een ValidatorFn die de fout valuesMismatch op de groep teruggeeft als twee niet-lege waarden verschillen, en anders null.',
   'sameValueValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
+  'nav.upload': 'Bestanden uploaden',
+  'uploadDemo.title': 'Bestanden uploaden',
+  'uploadDemo.intro': 'Selecteer bundles en volg de voortgang zonder de pagina te verlaten.',
+  'uploadDemo.basic': 'Eenvoudige selectie',
+  'uploadDemo.composition': 'Compositie met query- en mutatiehulpprogramma’s',
+  'uploadDemo.registered': 'Geregistreerde bundles',
+  'uploadDemo.completionNote': 'Wacht op completion(id), registreer metadata en laat de actieve query vernieuwen.',
+  'uploadDemo.httpClientAdapter': 'HttpClient-adapter met voortgang',
+  'uploadDemo.httpClientNote':
+    'Koppel uploadvoortgangsgebeurtenissen aan de adaptercallback en AbortSignal aan unsubscribe.',
 };

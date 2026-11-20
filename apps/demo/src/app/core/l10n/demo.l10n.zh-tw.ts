@@ -2777,4 +2777,13 @@ export const zhTWTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     '回傳一個 ValidatorFn：兩個非空值不同時在表單群組給出 valuesMismatch 錯誤，否則回傳 null。',
   'sameValueValidator.minLengthError': '請至少輸入 8 個字元。',
+  'nav.upload': '上傳檔案',
+  'uploadDemo.title': '上傳檔案',
+  'uploadDemo.intro': '選擇檔案套件並在不離開頁面的情況下檢視進度。',
+  'uploadDemo.basic': '基礎選擇',
+  'uploadDemo.composition': '與查詢和變更工具組合使用',
+  'uploadDemo.registered': '已登錄的檔案套件',
+  'uploadDemo.completionNote': '等候 completion(id)，登錄中繼資料並讓作用中的查詢自動重新整理。',
+  'uploadDemo.httpClientAdapter': '含進度的 HttpClient 配接器',
+  'uploadDemo.httpClientNote': '將上傳進度事件對應至配接器回呼，並將 AbortSignal 橋接至 unsubscribe。',
 };

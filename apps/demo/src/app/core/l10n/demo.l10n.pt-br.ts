@@ -3112,4 +3112,14 @@ export const ptBRTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     'Uma ValidatorFn que retorna o erro valuesMismatch no grupo quando dois valores não vazios diferem, ou null caso contrário.',
   'sameValueValidator.minLengthError': 'Use pelo menos 8 caracteres.',
+  'nav.upload': 'Enviar arquivos',
+  'uploadDemo.title': 'Enviar arquivos',
+  'uploadDemo.intro': 'Selecione pacotes e acompanhe o progresso sem sair da página.',
+  'uploadDemo.basic': 'Seleção básica',
+  'uploadDemo.composition': 'Composição com utilitários de consulta e mutação',
+  'uploadDemo.registered': 'Pacotes registrados',
+  'uploadDemo.completionNote': 'Aguarde completion(id), registre os metadados e deixe a consulta ativa atualizar.',
+  'uploadDemo.httpClientAdapter': 'Adaptador HttpClient com progresso',
+  'uploadDemo.httpClientNote':
+    'Mapeie eventos de progresso para o callback do adaptador e conecte AbortSignal a unsubscribe.',
 };

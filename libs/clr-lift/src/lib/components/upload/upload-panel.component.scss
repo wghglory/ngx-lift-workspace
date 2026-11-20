@@ -1,0 +1,35 @@
+.cll-upload-panel {
+  max-inline-size: min(24rem, calc(100vw - 2rem));
+  max-block-size: calc(100vh - 2rem);
+  overflow: auto;
+  background: var(--clr-global-app-background, var(--cds-alias-object-container-background));
+  border: 1px solid var(--cds-alias-object-border-color);
+  box-shadow: var(--cds-alias-object-shadow-200);
+}
+
+.cll-upload-panel__card {
+  margin: 0;
+}
+
+.cll-upload-panel__item {
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--cds-alias-object-border-color);
+}
+
+.cll-upload-panel__name {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.cll-upload-panel__status,
+.cll-upload-panel__badge {
+  white-space: nowrap;
+}
+
+.cll-upload-panel__live {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}

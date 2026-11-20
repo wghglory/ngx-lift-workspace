@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+.cll-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cll-upload__names {
+  color: var(--cds-alias-typography-color-300, inherit);
+  overflow-wrap: anywhere;
+}
+
+.cll-upload__errors {
+  margin: 0.25rem 0 0;
+  padding-inline-start: 1rem;
+}

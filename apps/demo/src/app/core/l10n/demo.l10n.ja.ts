@@ -3013,4 +3013,14 @@ export const jaTranslations: Record<string, string> = {
   'sameValueValidator.returns':
     '空でない 2 つの値が異なる場合にグループへ valuesMismatch エラーを返し、それ以外は null を返す ValidatorFn です。',
   'sameValueValidator.minLengthError': '8 文字以上で入力してください。',
+  'nav.upload': 'ファイルのアップロード',
+  'uploadDemo.title': 'ファイルのアップロード',
+  'uploadDemo.intro': 'ページを離れずにバンドルを選択し、進捗を確認できます。',
+  'uploadDemo.basic': '基本の選択',
+  'uploadDemo.composition': 'クエリとミューテーションのユーティリティとの組み合わせ',
+  'uploadDemo.registered': '登録済みバンドル',
+  'uploadDemo.completionNote': 'completion(id) を待ち、メタデータを登録してアクティブなクエリを更新します。',
+  'uploadDemo.httpClientAdapter': '進捗付き HttpClient アダプター',
+  'uploadDemo.httpClientNote':
+    'アップロード進捗イベントをアダプターのコールバックにマップし、AbortSignal を unsubscribe に接続します。',
 };
