@@ -71,6 +71,15 @@ not blanket approval for later breaks. Peer ranges stay unbounded (`@angular/* >
 consumers before authorizing publication. The publish order, installed-consumer checks and credential check were
 verified before the 2026-11-09 publication. Any later incompatible change needs the same explicit review.
 
+**November 20, 2026 decision (approved for the 21.6.0 / 21.5.0 release):** the `buildObjectPathBreadcrumbs` return-type
+change and the removal of `DatagridSelectionAccessorDirective` / `DatagridSelectionBindingDirective` in `clr-lift`, and
+the `dateRangeValidator` calendar-day parsing and `urlValidator` / `httpsValidator` empty-value changes in `ngx-lift`,
+are a third explicit 21.x compatibility exception. The November 8 decision was not blanket approval. Peer ranges stay
+unbounded (`@angular/* >=21`, `@clr/angular >=18`, `rxjs >=7.8.0`, `ngx-lift >=21`); the verified platform remains
+Angular 21 / Clarity 18 / RxJS 7. Preserve the [21.6.0 / 21.5.0 breaking and migration notes](../CHANGELOG.md), publish
+`ngx-lift` first, confirm strict installed consumers and the publication dry run, and verify credentials before
+authorizing publication. Any later incompatible change needs the same explicit review.
+
 ## Release tags
 
 Tag events always publish; they are not dry runs. Commit reviewed version and changelog changes before pushing a tag:

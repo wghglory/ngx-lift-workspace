@@ -8,12 +8,22 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+## [21.6.0] (ngx-lift) / [21.5.0] (clr-lift) - 2026-11-20
+
+**Release decision — November 20, 2026 (approved):** both packages remain on 21.x while the supported platform remains
+Angular 21; 22.x stays reserved for the Angular 22 upgrade. The `buildObjectPathBreadcrumbs` return-type change and the
+removal of the datagrid selection directives in `clr-lift`, and the `dateRangeValidator` and `urlValidator` /
+`httpsValidator` behavior changes in `ngx-lift`, are an explicit maintainer-approved exception to SemVer's major-bump
+rule. This is not a claim of backward compatibility. Peer ranges stay unbounded; publish `ngx-lift` before `clr-lift`
+and confirm strict installed consumers. This approval does not cover later incompatible changes; see the
+[version policy](docs/deployment.md#version-policy).
+
 ### Added
 
 - `ngx-lift` exports `addCalendarDays(date, days)` for nonmutating local-calendar arithmetic. Offsets must be safe
   integers; invalid dates and Date overflow throw. The date-range demo uses this export with Angular `formatDate`
   instead of private calendar/formatting helpers. See the
-  [calendar-day arithmetic specification](docs/design/ngx-lift/local-calendar-utilities-design-spec.md). Unreleased.
+  [calendar-day arithmetic specification](docs/design/ngx-lift/local-calendar-utilities-design-spec.md).
 
 - `ngx-lift` exports four Reactive Forms validator factories (`integerValidator`, `jsonValidator`,
   `fileExtensionValidator`, `sameValueValidator`) and two supporting types (`NamedFile`, `FileSelection`). Each factory
@@ -21,28 +31,27 @@ recorded for the affected releases.
   group, never calls `setErrors` on child controls, and ignores disabled child controls so that a disabled field cannot
   leave an unfixable group error. The [design specification](docs/design/ngx-lift/standard-validators-design-spec.md)
   records the API, the scope decisions from the PR #138 review, and the deferred proposals. Four localized demo pages
-  document the validators with working playgrounds. API approval was recorded on 2026-11-16; this entry is not released.
+  document the validators with working playgrounds. API approval was recorded on 2026-11-16.
 - `ngx-lift` exports `getValueByPath` and `deleteValueByPath` for safe, own-property dot-path reads and in-place
   deletes. `getValueByPath<T>` returns `T | undefined` when the path is missing, invalid or reaches prototype state;
   `deleteValueByPath` reports whether an own property was removed. Numeric array segments are supported. The
   [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md) and a localized demo page document
-  the contract. This entry is not released.
+  the contract.
 - `ngx-lift` exports `downloadFile` for browser downloads from string or Blob content, with temporary URL and anchor
   cleanup. It starts a download without confirming the file was saved; see the
-  [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md). This entry is not released.
+  [core utilities specification](docs/design/ngx-lift/core-utilities-design-spec.md).
 - `clr-lift` also exports `BuildObjectPathResult`, `ObjectPathError`, `ObjectPathErrorCode`, `ObjectPathNavigation` and
   `EncodedObjectPathLocation` alongside `buildObjectPathBreadcrumbs`. `navigation` owns URL encoding and optional
-  collection prefixing; the deprecated `hrefFor` path remains available. This entry is not released.
+  collection prefixing; the deprecated `hrefFor` path remains available.
 
 ### Breaking
 
-**Release decision pending:** the 21.5.0 decision did not approve later breaks. The maintainer must record a dated 21.x
-compatibility exception for the two changes below before versioning; this entry does not claim that approval.
+The November 20, 2026 release decision above approves these 21.x compatibility exceptions.
 
 - **`buildObjectPathBreadcrumbs` return type (`clr-lift`).** The helper no longer returns `readonly BreadcrumbItem[]`.
   It returns a discriminated `BuildObjectPathResult` (`{ok: true, items}` or `{ok: false, error}`) and settles invalid
   application input in the error branch instead of throwing. The array-returning shape was released in clr-lift 21.4.0;
-  the new behavior belongs to this unreleased version.
+  the new behavior belongs to this release.
 - **Datagrid selection directives removed (`clr-lift`).** `DatagridSelectionAccessorDirective` and
   `DatagridSelectionBindingDirective` are no longer exported. `DatagridSelectionComponent` is the only CVA and
   value-control module. See [ADR-0003](docs/adr/0003-datagrid-selection-single-value-control.md).
@@ -69,7 +78,7 @@ compatibility exception for the two changes below before versioning; this entry 
   [compatibility specification](docs/design/ngx-lift/standard-validators-design-spec.md#existing-validator-upgrade-compatibility)
   explain optional URL fields, required-field migration, and local calendar dates versus instants. The date page
   presents ordered examples for required/optional dates, one-sided and inclusive/exclusive bounds, and date-time
-  comparisons. These notes clarify existing unreleased behavior; they do not change validator logic.
+  comparisons. These notes clarify behavior in this release; they do not change validator logic.
 
 - The floating query devtools launcher is now a 32px translucent button docked against the right viewport edge. Drag it
   away from footer controls and release to snap right; focused Up/Down and Home/End keys also reposition it. Placement
