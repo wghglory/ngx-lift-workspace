@@ -46,10 +46,10 @@
     <h2>{{ 'common.apiReference' | translate }}</h2>
     <h3>UploadComponent (<code>cll-upload</code>)</h3>
     <h4>{{ 'common.inputs' | translate }}</h4>
-    <app-api-table [properties]="inputs" />
+    <app-api-table [properties]="inputs()" />
     <h4>{{ 'common.outputs' | translate }}</h4>
-    <app-api-table [properties]="outputs" />
+    <app-api-table [properties]="outputs()" />
     <h4>{{ 'common.methods' | translate }}</h4>
-    <app-api-table [properties]="methods" />
+    <app-api-table [properties]="methods()" />
   </section>
 </cll-page-container>

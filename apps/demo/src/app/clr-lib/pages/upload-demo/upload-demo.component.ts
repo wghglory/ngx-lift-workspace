@@ -1,6 +1,12 @@
-import {ChangeDetectionStrategy, Component, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {mutateResource, type UploadAdapter, type UploadItem, UPLOAD_CHUNK_5MB} from 'ngx-lift';
-import {PageContainerComponent, TranslatePipe, UploadComponent, UploadPanelComponent} from 'clr-lift';
+import {
+  PageContainerComponent,
+  TranslatePipe,
+  TranslationService,
+  UploadComponent,
+  UploadPanelComponent,
+} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -24,8 +30,11 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadDemoComponent {
+  private readonly translation = inject(TranslationService);
   readonly registeredCount = signal(0);
   readonly chunk5Mb = UPLOAD_CHUNK_5MB;
+
+  private readonly api = (name: string): string => this.translation.translate(`uploadDemo.api.${name}`);
 
   readonly adapter: UploadAdapter = {
     initiate: async (file) => ({uploadId: `${file.name}-${Date.now()}`}),
@@ -46,68 +55,68 @@ export class UploadDemoComponent {
     {invalidateTags: [{type: 'Bundle'}]},
   );
 
-  readonly inputs: ApiProperty[] = [
+  readonly inputs = computed<ApiProperty[]>(() => [
     {
       name: 'adapter',
       type: 'UploadAdapter',
       required: true,
-      description: 'Transport for initiate, chunk, combine and cancel.',
+      description: this.api('adapter'),
     },
-    {name: 'accept', type: 'string', defaultValue: "''", description: 'Allowed extensions or MIME patterns.'},
-    {name: 'maxSize', type: 'number', defaultValue: 'Infinity', description: 'Maximum file size in MiB.'},
+    {name: 'accept', type: 'string', defaultValue: "''", description: this.api('accept')},
+    {name: 'maxSize', type: 'number', defaultValue: 'Infinity', description: this.api('maxSize')},
     {
       name: 'maxFiles',
       type: 'number',
       defaultValue: '0',
-      description: 'Maximum number of files per selection; 0 means unlimited.',
+      description: this.api('maxFiles'),
     },
-    {name: 'chunkSize', type: 'number', defaultValue: 'UPLOAD_CHUNK_25MB', description: 'Bytes per chunk.'},
+    {name: 'chunkSize', type: 'number', defaultValue: 'UPLOAD_CHUNK_25MB', description: this.api('chunkSize')},
     {
       name: 'concurrency',
       type: 'number',
       defaultValue: '2',
-      description: 'In-flight chunks for one file, from 1 to 4.',
+      description: this.api('concurrency'),
     },
-    {name: 'multiple', type: 'boolean', defaultValue: 'false', description: 'Allow more than one file per selection.'},
+    {name: 'multiple', type: 'boolean', defaultValue: 'false', description: this.api('multiple')},
     {
       name: 'autoRetry',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Retry retryable chunk errors automatically.',
+      description: this.api('autoRetry'),
     },
     {
       name: 'maxRetries',
       type: 'number',
       defaultValue: '3',
-      description: 'Automatic retry limit for retryable chunk errors.',
+      description: this.api('maxRetries'),
     },
-    {name: 'controlId', type: 'string', defaultValue: "''", description: 'Identifier of the native file input.'},
+    {name: 'controlId', type: 'string', defaultValue: "''", description: this.api('controlId')},
     {
       name: 'disabled',
       type: 'boolean',
       defaultValue: 'false',
-      description: 'Disable selection and cancel in-flight items.',
+      description: this.api('disabled'),
     },
-  ];
+  ]);
 
-  readonly outputs: ApiProperty[] = [
-    {name: 'filesChange', type: 'readonly File[]', description: 'Selected files after validation.'},
-    {name: 'validationErrors', type: 'readonly UploadError[]', description: 'Rejected files and localized reasons.'},
+  readonly outputs = computed<ApiProperty[]>(() => [
+    {name: 'filesChange', type: 'readonly File[]', description: this.api('filesChange')},
+    {name: 'validationErrors', type: 'readonly UploadError[]', description: this.api('validationErrors')},
     {
       name: 'uploadComplete',
       type: 'readonly UploadItem[]',
-      description: 'Items that reached a terminal success state.',
+      description: this.api('uploadComplete'),
     },
-    {name: 'uploadError', type: 'readonly UploadItem[]', description: 'Items that ended in an error state.'},
-    {name: 'uploadCancelled', type: 'readonly UploadItem[]', description: 'Items that ended in a cancelled state.'},
-  ];
+    {name: 'uploadError', type: 'readonly UploadItem[]', description: this.api('uploadError')},
+    {name: 'uploadCancelled', type: 'readonly UploadItem[]', description: this.api('uploadCancelled')},
+  ]);
 
-  readonly methods: ApiProperty[] = [
-    {name: 'clear()', description: 'Remove selected files and their queue items.'},
-    {name: 'clearValidationErrors()', description: 'Dismiss the validation error list.'},
-    {name: 'writeValue(files)', description: 'ControlValueAccessor write; replaces the current selection.'},
-    {name: 'setDisabledState(disabled)', description: 'ControlValueAccessor disabled state; cancels in-flight items.'},
-  ];
+  readonly methods = computed<ApiProperty[]>(() => [
+    {name: 'clear()', description: this.api('clear')},
+    {name: 'clearValidationErrors()', description: this.api('clearValidationErrors')},
+    {name: 'writeValue(files)', description: this.api('writeValue')},
+    {name: 'setDisabledState(disabled)', description: this.api('setDisabledState')},
+  ]);
 
   readonly basicCode = highlight(
     [

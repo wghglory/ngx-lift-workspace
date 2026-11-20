@@ -3037,6 +3037,26 @@ export const enTranslations = {
   'uploadDemo.httpClientAdapter': 'HttpClient adapter with progress',
   'uploadDemo.httpClientNote':
     'Map upload progress events to the adapter callback and bridge AbortSignal to unsubscribe.',
+  'uploadDemo.api.adapter': 'Transport for initiate, chunk, combine and cancel.',
+  'uploadDemo.api.accept': 'Allowed extensions or MIME patterns.',
+  'uploadDemo.api.maxSize': 'Maximum file size in MiB.',
+  'uploadDemo.api.maxFiles': 'Maximum files per selection; 0 means unlimited.',
+  'uploadDemo.api.chunkSize': 'Bytes per chunk.',
+  'uploadDemo.api.concurrency': 'In-flight chunks per file, from 1 to 4.',
+  'uploadDemo.api.multiple': 'Allow more than one file per selection.',
+  'uploadDemo.api.autoRetry': 'Retry retryable chunk errors automatically.',
+  'uploadDemo.api.maxRetries': 'Automatic retry limit for retryable chunk errors.',
+  'uploadDemo.api.controlId': 'Identifier of the native file input.',
+  'uploadDemo.api.disabled': 'Disable selection and cancel in-flight items.',
+  'uploadDemo.api.filesChange': 'Selected files after validation.',
+  'uploadDemo.api.validationErrors': 'Rejected files and localized reasons.',
+  'uploadDemo.api.uploadComplete': 'Items that reached a terminal success state.',
+  'uploadDemo.api.uploadError': 'Items that ended in an error state.',
+  'uploadDemo.api.uploadCancelled': 'Items that ended in a cancelled state.',
+  'uploadDemo.api.clear': 'Remove selected files and their queue items.',
+  'uploadDemo.api.clearValidationErrors': 'Dismiss the validation error list.',
+  'uploadDemo.api.writeValue': 'ControlValueAccessor write; replaces the current selection.',
+  'uploadDemo.api.setDisabledState': 'ControlValueAccessor disabled state; cancels in-flight items.',
 } as const satisfies Record<string, string>;
 
 /** Union of all demo translation keys, used to type dynamic key maps. */

@@ -1,3 +1,4 @@
+/** Owned upload messages for every supported locale. */
 export const uploadTranslations: Record<string, Record<string, string>> = {
   en: {
     selectFile: 'Select file',
