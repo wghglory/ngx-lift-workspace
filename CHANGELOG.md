@@ -10,6 +10,11 @@ recorded for the affected releases.
 
 ### Added
 
+- `ngx-lift` exports `addCalendarDays(date, days)` for nonmutating local-calendar arithmetic. Offsets must be safe
+  integers; invalid dates and Date overflow throw. The date-range demo uses this export with Angular `formatDate`
+  instead of private calendar/formatting helpers. See the
+  [calendar-day arithmetic specification](docs/design/ngx-lift/local-calendar-utilities-design-spec.md). Unreleased.
+
 - `ngx-lift` exports four Reactive Forms validator factories (`integerValidator`, `jsonValidator`,
   `fileExtensionValidator`, `sameValueValidator`) and two supporting types (`NamedFile`, `FileSelection`). Each factory
   allows empty values, returns one documented error key, and is pure — the group validator reports its error on the
@@ -59,6 +64,12 @@ compatibility exception for the two changes below before versioning; this entry 
   `keys` model or synchronization helper is required.
 
 ### Fixed
+
+- Validator demo pages and the
+  [compatibility specification](docs/design/ngx-lift/standard-validators-design-spec.md#existing-validator-upgrade-compatibility)
+  explain optional URL fields, required-field migration, and local calendar dates versus instants. The date page
+  presents ordered examples for required/optional dates, one-sided and inclusive/exclusive bounds, and date-time
+  comparisons. These notes clarify existing unreleased behavior; they do not change validator logic.
 
 - The floating query devtools launcher is now a 32px translucent button docked against the right viewport edge. Drag it
   away from footer controls and release to snap right; focused Up/Down and Home/End keys also reposition it. Placement

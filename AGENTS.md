@@ -31,10 +31,10 @@
 
 For a new or changed public component, utility, operator, directive, pipe, validator, service, form integration, or
 entry point, read [the component development workflow](docs/design/component-development.md) and use
-[the lift-design skill](.agents/skills/lift-design/SKILL.md). Follow its admission gate, docs-only spec PR and
-[spec-review](.agents/skills/spec-review/SKILL.md) sequence; implement only within an explicitly approved scope, and
-existing approval remains valid for its scope. The workflow owns industry comparisons, form applicability, Clarity
-demos, localization and validation; see
+[the lift-design skill](.agents/skills/lift-design/SKILL.md). Follow its admission gate and
+[spec-review](.agents/skills/spec-review/SKILL.md) sequence; spec and implementation may share one PR as defined by the
+workflow; implement only within an explicitly approved scope, and existing approval remains valid for its scope. The
+workflow owns industry comparisons, form applicability, Clarity demos, localization and validation; see
 [admission criteria](.agents/skills/lift-design/references/admission-criteria.md) and
 [review aspects](.agents/skills/spec-review/references/review-aspects.md) for the two gates. Use the
 [component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.

@@ -2113,26 +2113,30 @@ export const koTranslations: Record<string, string> = {
     '(선택 사항) 객체 항목을 검증할 프로퍼티 키. 생략하면 원시 타입의 등록 여부를 확인합니다.',
   'dateRangeValidator.firstTask':
     '내일부터 5일 후까지 날짜를 선택하세요. 양 끝 날짜도 포함됩니다. 범위 밖 날짜와 비어 있는 필수 값은 유효하지 않습니다.',
+  'dateRangeValidator.boundaryNote':
+    '빈 값은 Validators.required가 없으면 유효합니다. 양쪽 경계는 생략할 수 있습니다. minInclusive와 maxInclusive의 기본값은 false이며 true이면 경계를 포함합니다. 잘못된 값은 invalidDate를 반환합니다. 생성 시 잘못된 경계는 TypeError, 역순 경계는 RangeError를 발생시킵니다.',
+  'dateRangeValidator.calendarDayNote':
+    "달력 날짜와 minDate/maxDate에는 YYYY-MM-DD 문자열을 직접 사용하세요. '2026-01-15'는 현지 1월 15일입니다. new Date('2026-01-15')는 UTC 자정을 생성하므로 뉴욕에서는 1월 14일 19:00입니다. 날짜만 표현하려면 문자열을 직접 전달하세요.",
+  'urlValidator.presenceNote':
+    'urlValidator와 httpsValidator는 선택 입력을 위해 null, undefined, 빈 문자열을 허용합니다. 빈 문자열이 URL이라는 뜻은 아닙니다. 빈 입력을 거부하려면 Validators.required를 추가하세요. 공백만 있는 문자열은 여전히 invalidUrl을 반환합니다.',
   'dateRangeValidator.overview':
     'dateRangeValidator는 특정 범위 내에 날짜가 있는지 검증하는 커스텀 검증기입니다. 날짜만 또는 날짜-시간 모두 지원하며, 포함/제외 경계를 구성할 수 있으며, 시간 비교가 선택적입니다.',
   'dateRangeValidator.example1Title': '예제 1: 날짜 범위 검증',
-  'dateRangeValidator.example1Desc':
-    '최소 날짜와 최대 날짜 사이에 날짜가 있는지 검증합니다. 이 구성은 2024년 9월 1일부터 2024년 9월 15일(제외) 사이의 날짜를 선택해야 하며, 시간 부품은 무시합니다. 9월 15일은 <code>maxInclusive</code>가 false이기 때문에 유효하지 않습니다.',
   'dateRangeValidator.example2Title': '예제 2: 미래 날짜 선택',
   'dateRangeValidator.example2Desc':
-    '아래 예제는 미래 날짜를 선택하고 오늘을 포함할 수 있도록 합니다. <code>minDate</code>를 포함하려면 <code>minInclusive</code>를 <code>true</code>로 설정해야 합니다.',
-  'dateRangeValidator.expiresRawLabel': '만료 날짜 (생성된 HTML 입력)',
+    '오늘 이후의 선택 날짜 또는 내일부터 5일 후까지의 필수 날짜를 시험하세요. 코드는 상한만 지정하거나 끝점을 제외하는 방법도 보여 줍니다.',
+  'dateRangeValidator.expiresRawLabel': '만료 날짜 (선택)',
   'dateRangeValidator.minDateError': '날짜는 {{ minDate }}보다 빠르지 않아야 합니다',
-  'dateRangeValidator.futureDaysLabel': '5일 후 (명확한 날짜 입력)',
+  'dateRangeValidator.futureDaysLabel': '향후 5일 이내 날짜',
   'dateRangeValidator.invalidDate': '날짜가 유효하지 않습니다',
   'dateRangeValidator.maxDateError': '{{ maxDate }}보다 이후일 수 없습니다',
   'dateRangeValidator.clarityMax': '날짜가 너무 나중입니다 (명확성 검증)',
   'dateRangeValidator.clarityMin': '날짜가 너무 조기입니다 (명확성 검증)',
   'dateRangeValidator.minMaxCallout':
-    '범위를 검증하기 위해 <code>min</code>과 <code>max</code> 패턴을 사용할 수 있습니다. 그러나 숫자와 같은 12이나 문자와 같은 12hello를 입력할 때 이 검증이 실패하지 않습니다.',
+    '기본 min/max 안내를 검증기와 일치시키세요. 기본 경계는 끝점을 포함하므로 해당 플래그를 true로 설정합니다. 검증기를 사용하면 Reactive Forms 유효성이 브라우저 안내에 의존하지 않습니다.',
   'dateRangeValidator.example3Title': '예제 3: 날짜 및 시간 범위 검증',
   'dateRangeValidator.example3Desc':
-    '날짜와 시간을 모두 검증하려면 <code>compareTime</code>을 true로 설정해야 합니다. 다음 구성은 선택된 날짜와 시간이 2024년 9월 1일 오후 12시 UTC에서 2024년 9월 2일 오후 12시 UTC 사이에 있어야 하며, 시간 구성 요소를 고려하여 검증합니다.',
+    'compareTime: true이면 날짜와 시간을 비교합니다. 미리보기는 지금부터 5일 후까지 현지 시간을 양 끝을 포함해 허용합니다. 정확한 시점에는 명시적 오프셋을 사용하세요. compareTime이 없으면 현지 날짜만 비교합니다.',
   'dateRangeValidator.dateTimeExpires': '만료일',
   'dateRangeValidator.dateTimeMinError': '{{ minDate }}보다 이후일 수 없습니다',
   'dateRangeValidator.dateTimeMaxError': '{{ maxDate }}보다 이후일 수 없습니다',
@@ -2140,15 +2144,15 @@ export const koTranslations: Record<string, string> = {
   'dateRangeValidator.validationErrors': '검증 오류',
   'dateRangeValidator.errInvalidDate': '날짜가 유효하지 않을 때 반환됩니다 (예: "2023-13-01" 또는 "hello world")',
   'dateRangeValidator.errMinDate':
-    '선택된 날짜가 허용된 최소 날짜보다 이전이거나 동일할 때 반환됩니다. 오류 값은 ISO 형식으로 포맷된 최소 허용 날짜입니다.',
+    '값이 이 경계를 위반합니다. 오류 값은 경계의 ISO 문자열입니다. 해당 inclusive 플래그가 true일 때만 같은 값을 허용합니다.',
   'dateRangeValidator.errMaxDate':
-    '선택된 날짜가 허용된 최대 날짜보다 이후이거나 동일할 때 반환됩니다. 오류 값은 ISO 형식으로 포맷된 최대 허용 날짜입니다.',
+    '값이 이 경계를 위반합니다. 오류 값은 경계의 ISO 문자열입니다. 해당 inclusive 플래그가 true일 때만 같은 값을 허용합니다.',
   'dateRangeValidator.apiSummary': '일정 값이 지정된 minDate 및/또는 maxDate 범위 내에 있는지 확인합니다.',
   'dateRangeValidator.paramOptions': 'minDate, maxDate 및 포함 여부 플래그를 구성하는 DateRangeOptions.',
   'dateRangeValidator.optMinDate': '최소 허용 날짜.',
   'dateRangeValidator.optMaxDate': '최대 허용 날짜.',
-  'dateRangeValidator.optMinInclusive': '최소 날짜가 포함 여부. 기본값은 true입니다.',
-  'dateRangeValidator.optMaxInclusive': '최대 날짜가 포함 여부. 기본값은 true입니다.',
+  'dateRangeValidator.optMinInclusive': '최소 경계를 포함합니다. 기본값: false.',
+  'dateRangeValidator.optMaxInclusive': '최대 경계를 포함합니다. 기본값: false.',
   'rangePipe.overview':
     'Angular 템플릿에서 <code>range</code> 파이프는 지정된 범위 내의 숫자 배열을 생성하여 드롭다운 옵션, 페이지네이션 컨트롤, 또는 템플릿에서 필요한 수치 수열을 생성하는 데 유용합니다. Angular 템플릿에서 반복을 위해 숫자 배열을 생성해야 하는 경우가 있습니다. 예를 들어, 20이라는 수를 가진 경우 1에서 20까지의 배열을 드롭다운 목록에 표시하려면 Angular의 <code>@for</code> 지시문이 직접 수치 배열을 반복할 수 없습니다. TypeScript에서 이 배열을 생성할 수 있지만, 템플릿에서 직접 배열을 생성하는 경우가 더 편리할 수 있습니다.',
   'rangePipe.callout1':

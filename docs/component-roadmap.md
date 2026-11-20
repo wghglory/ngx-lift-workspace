@@ -17,6 +17,10 @@ New value controls target Angular 21 first. Angular 22 and the Nx major upgrade 
 delivery. Review the shared CVA contract and each feature API before implementation. Release fixes, security remediation
 and remaining acceptance records remain independent.
 
+The current date/time correctness increment includes the additive ngx-lift
+[calendar-day arithmetic](design/ngx-lift/local-calendar-utilities-design-spec.md), approved on 2026-11-20 for the
+existing date-range demo and downstream calendar-boundary consumers. This does not advance picker/calendar scope.
+
 ## Current baseline
 
 - Workspace manifest: Angular 21.2.25, CDK 21.2.10, Nx and official Nx plugins 22.7.10, TypeScript 5.9.x.

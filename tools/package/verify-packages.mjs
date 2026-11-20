@@ -48,7 +48,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';
@@ -56,6 +56,10 @@ void provideQueryDevtools();
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
 import {FormControl, FormGroup} from '@angular/forms';
+const calendarDate: Date = addCalendarDays(new Date(), 1);
+// @ts-expect-error Calendar helpers require Dates rather than ambiguous date strings.
+addCalendarDays('2026-01-15', 1);
+void calendarDate;
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
@@ -166,7 +170,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
   ]);
   writeFileSync(
     join(consumer, 'consumer.mjs'),
-    `import '@angular/compiler'; import assert from 'node:assert/strict'; import {isURL, range, serializeQueryKey} from 'ngx-lift'; import {JSDOM} from 'jsdom'; const dom = new JSDOM('<html><body></body></html>'); for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key]; const {SpinnerComponent} = await import('clr-lift'); assert.equal(isURL('https://example.technology'), true); assert.deepEqual(range(3), [0,1,2]); assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}])); assert.equal(typeof SpinnerComponent, 'function'); dom.window.close();`,
+    `import '@angular/compiler'; import assert from 'node:assert/strict'; import {addCalendarDays, isURL, range, serializeQueryKey} from 'ngx-lift'; import {JSDOM} from 'jsdom'; const dom = new JSDOM('<html><body></body></html>'); for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key]; const {SpinnerComponent} = await import('clr-lift'); const calendarBase = new Date('2026-01-15T12:00:00'); const calendarNext = addCalendarDays(calendarBase, 1); assert.equal(calendarNext.getTime(), new Date('2026-01-16T12:00:00').getTime()); assert.equal(calendarBase.getTime(), new Date('2026-01-15T12:00:00').getTime()); assert.notEqual(calendarNext, calendarBase); assert.equal(isURL('https://example.technology'), true); assert.deepEqual(range(3), [0,1,2]); assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}])); assert.equal(typeof SpinnerComponent, 'function'); dom.window.close();`,
   );
   run(process.execPath, ['consumer.mjs']);
 
@@ -392,12 +396,16 @@ class Negative {items=[{id:'org-1',name:'North'}]; key=(item:{id:string})=>item.
   writeFileSync(
     join(freshConsumer, 'consumer.ts'),
     `
-import {computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
 import {FormControl} from '@angular/forms';
+const calendarDate: Date = addCalendarDays(new Date(), 1);
+// @ts-expect-error The installed calendar API requires a Date rather than a date string.
+addCalendarDays('2026-01-15', 1);
+void calendarDate;
 const valid: boolean = isURL('https://example.technology');
 function computedTypes() {
   const value: number = computedAsync(() => of(42), {initialValue: 0, onError: () => 0})();
@@ -483,12 +491,21 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, re
     join(freshConsumer, 'consumer.mjs'),
     `import '@angular/compiler';
 import assert from 'node:assert/strict';
-import {isURL, range, serializeQueryKey, QueryClient, QueryTimeoutError, provideQueryClient, queryResources, fetchQueryObservable, observeQueryObservable} from 'ngx-lift';
+import {addCalendarDays, isURL, range, serializeQueryKey, QueryClient, QueryTimeoutError, provideQueryClient, queryResources, fetchQueryObservable, observeQueryObservable} from 'ngx-lift';
 import {of, throwError, firstValueFrom} from 'rxjs';
 import {JSDOM} from 'jsdom';
 const dom = new JSDOM('<html><body></body></html>');
 for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'CustomEvent', 'customElements']) globalThis[key] = dom.window[key];
 const {SpinnerComponent} = await import('clr-lift');
+const calendarBase = new Date('2026-01-15T12:00:00');
+const calendarNext = addCalendarDays(calendarBase, 1);
+assert.equal(calendarNext.getTime(), new Date('2026-01-16T12:00:00').getTime());
+assert.equal(addCalendarDays(calendarBase, -1).getTime(), new Date('2026-01-14T12:00:00').getTime());
+assert.equal(calendarBase.getTime(), new Date('2026-01-15T12:00:00').getTime());
+const calendarClone = addCalendarDays(calendarBase, 0);
+assert.notEqual(calendarClone, calendarBase);
+assert.equal(calendarClone.getTime(), calendarBase.getTime());
+assert.throws(() => addCalendarDays(calendarBase, 0.5), RangeError);
 assert.equal(isURL('https://example.technology'), true);
 assert.deepEqual(range(3), [0,1,2]);
 assert.equal(serializeQueryKey(['a',{b:1}]), serializeQueryKey(['a',{b:1}]));

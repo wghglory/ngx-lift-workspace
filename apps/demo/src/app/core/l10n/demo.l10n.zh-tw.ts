@@ -1975,26 +1975,30 @@ export const zhTWTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': '驗證 FormArray 控制元件或陣列中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可選）物件型別元素的唯一性檢查屬性名。若省略則檢查原始值相等性。',
   'dateRangeValidator.firstTask': '選擇明天到五天後的日期，包含兩個端點。範圍外日期無效，清空必填日期也無效。',
+  'dateRangeValidator.boundaryNote':
+    '空值預設通過；必填時加入 Validators.required。上下邊界皆可省略。minInclusive 和 maxInclusive 預設為 false；設為 true 才允許等於邊界。無效值回傳 invalidDate；建立驗證器時，無效邊界擲出 TypeError，顛倒的邊界擲出 RangeError。',
+  'dateRangeValidator.calendarDayNote':
+    "日曆日期及 minDate、maxDate 邊界請直接使用 YYYY-MM-DD 字串。'2026-01-15' 表示當地日曆的 1 月 15 日；new Date('2026-01-15') 則建立 UTC 零點，在紐約是 1 月 14 日 19:00。表示某一天時直接傳入純日期字串。",
+  'urlValidator.presenceNote':
+    'urlValidator 和 httpsValidator 允許 null、undefined 和空字串，以支援選填欄位；這不表示空字串是 URL。需要拒絕空值時，請加入 Validators.required。僅含空白的字串仍回傳 invalidUrl。',
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用於驗證日期是否在指定範圍內的自定義驗證器。它支援純日期與帶時間的日期格式校驗，具備可配置的邊界包含性（閉區間/開區間）以及可選的時間精度對比。',
   'dateRangeValidator.example1Title': '示例 1：日期範圍校驗',
-  'dateRangeValidator.example1Desc':
-    '校驗日期是否介於最小與最大日期之間。當前配置確保所選日期必須在 2024 年 9 月 1 日至 2024 年 9 月 15 日之間（開區間，忽略時間分量）。因 <code>maxInclusive</code> 為 false，9 月 15 日不可選。',
   'dateRangeValidator.example2Title': '示例 2：選擇未來日期',
   'dateRangeValidator.example2Desc':
-    '下方示例允許選擇包含今天在內的未來日期。若需包含 <code>minDate</code>，將 <code>minInclusive</code> 設為 <code>true</code>。',
-  'dateRangeValidator.expiresRawLabel': '到期日期（原生 HTML Input）',
+    '可嘗試從今天起的選填日期，或明天至五天後的必填日期。程式碼也示範僅設上界與排除端點的用法。',
+  'dateRangeValidator.expiresRawLabel': '選填到期日期',
   'dateRangeValidator.minDateError': '日期不能早於 {{ minDate }}',
-  'dateRangeValidator.futureDaysLabel': '未來 5 天（Clarity 日期選擇器）',
+  'dateRangeValidator.futureDaysLabel': '未來五天內的日期',
   'dateRangeValidator.invalidDate': '日期格式無效',
   'dateRangeValidator.maxDateError': '日期不能晚於 {{ maxDate }}',
   'dateRangeValidator.clarityMax': '日期過晚（Clarity 內建校驗）',
   'dateRangeValidator.clarityMin': '日期過早（Clarity 內建校驗）',
   'dateRangeValidator.minMaxCallout':
-    '我們也可以使用 <code>min</code> 和 <code>max</code> 模式校驗範圍。然而當使用者輸入類似 12 或 12hello 這種非法字串時，原生校驗不會報錯。',
+    '原生 min/max 提示應與驗證器一致。原生邊界包含端點，因此對應的 inclusive 旗標應設為 true。使用驗證器可讓 Reactive Forms 的有效狀態不依賴瀏覽器提示。',
   'dateRangeValidator.example3Title': '示例 3：日期與時間聯合校驗',
   'dateRangeValidator.example3Desc':
-    '若需同時對比日期與具體時間，可將 <code>compareTime</code> 設為 true。在下方配置下，選擇的日期時間必須在 2024 年 9 月 1 日中午 UTC 至 2024 年 9 月 2 日中午 UTC 之間（包含時間比對）。',
+    '設定 compareTime: true 可同時比較日期和時間。下方預覽允許從現在到五天後的當地時間，包含兩端。精確時間點請使用明確的時區偏移；未啟用 compareTime 時只比較當地日曆日期。',
   'dateRangeValidator.dateTimeExpires': '到期時間',
   'dateRangeValidator.dateTimeMinError': '日期時間不能早於 {{ minDate }}',
   'dateRangeValidator.dateTimeMaxError': '日期時間不能晚於 {{ maxDate }}',
@@ -2002,15 +2006,15 @@ export const zhTWTranslations: Record<string, string> = {
   'dateRangeValidator.validationErrors': '驗證錯誤',
   'dateRangeValidator.errInvalidDate': '日期無效時返回（例如 "2023-13-01" 或 "hello world"）',
   'dateRangeValidator.errMinDate':
-    '所選日期早於或等於允許的最小日期時返回。錯誤物件的值為 ISO 格式的最小允許日期字串。',
+    '值不符合此邊界。錯誤值為邊界的 ISO 字串；僅在對應的 inclusive 旗標為 true 時允許等於邊界。',
   'dateRangeValidator.errMaxDate':
-    '所選日期晚於或等於允許的最大日期時返回。錯誤物件的值為 ISO 格式的最大允許日期字串。',
+    '值不符合此邊界。錯誤值為邊界的 ISO 字串；僅在對應的 inclusive 旗標為 true 時允許等於邊界。',
   'dateRangeValidator.apiSummary': '驗證日期值是否在指定的 minDate 和/或 maxDate 範圍之內。',
   'dateRangeValidator.paramOptions': '配置 minDate、maxDate 及其包含性標誌的 DateRangeOptions 配置項。',
   'dateRangeValidator.optMinDate': '最小允許日期。',
   'dateRangeValidator.optMaxDate': '最大允許日期。',
-  'dateRangeValidator.optMinInclusive': '是否包含最小日期邊界，預設為 true。',
-  'dateRangeValidator.optMaxInclusive': '是否包含最大日期邊界，預設為 true。',
+  'dateRangeValidator.optMinInclusive': '是否允許等於最小邊界，預設 false。',
+  'dateRangeValidator.optMaxInclusive': '是否允許等於最大邊界，預設 false。',
   'rangePipe.overview':
     '<code>range</code> 管道在指定範圍內生成數字序列陣列，非常適合用於在模板中構建下拉選項、分頁控制元件或任意需要數字序列的場景。在 Angular 模板中，有時需要針對一系列數字進行迴圈。例如擁有數字 20 並希望生成 1 到 20 的列表項在下拉選單中顯示，但 Angular 的 <code>@for</code> 指令無法直接遍歷數字標量。儘管可以在 TypeScript 中預生成陣列，但直接在模板中宣告往往更簡潔靈活。',
   'rangePipe.callout1':

@@ -378,3 +378,72 @@ The maintainer approved this specification, including the four validator factori
 release and publication remain separate steps. Independent language review of the new demo strings is still an open
 gate, owned by the maintainer and tracked in [issue #234](https://github.com/wghglory/ngx-lift-workspace/issues/234);
 the 2026-11-10 maintainer waiver continues to cover manual assistive-technology assessment only.
+
+## Existing validator upgrade compatibility
+
+This section documents already implemented changes to existing validators; it does not introduce another API or change
+the four validator factories approved above. The changes remain unreleased until a versioned release is published. See
+the [changelog](../../../CHANGELOG.md#unreleased) for release and migration status.
+
+### URL and HTTPS: presence is separate from format
+
+`urlValidator` and `httpsValidator` now return `null` for `null`, `undefined` and `''`. Previously those inputs returned
+`{invalidUrl: true}`. Empty input is permitted for optional fields; it is not classified as a URL. Nonempty input must
+still pass the existing URL/protocol checks, and whitespace-only input still reports `invalidUrl`.
+
+This follows Angular's separation of presence from format: its email and pattern validators skip empty values, while
+`Validators.required` enforces presence. See the
+[Angular validators implementation](https://github.com/angular/angular/blob/main/packages/forms/src/validators.ts).
+
+```typescript
+// Optional URL: empty input is valid.
+const website = new FormControl('', [urlValidator]);
+// Required HTTPS URL: preserve requiredness explicitly.
+const endpoint = new FormControl('', [Validators.required, httpsValidator]);
+```
+
+**Compatibility:** consumers that relied on either URL validator alone to reject empty input must add
+`Validators.required`. Existing required-plus-format compositions retain their requiredness. The validation function
+signatures and `invalidUrl` error key are unchanged. The change must remain visible in release compatibility review and
+migration notes even when categorized as a fix.
+
+### Date range: a calendar day is not UTC midnight
+
+`dateRangeValidator` now parses a `YYYY-MM-DD` value or boundary as the local calendar day. Previously JavaScript's
+UTC-midnight parsing could move it to the preceding local day west of UTC. For example, in `America/New_York`:
+
+| Input                             | Previous interpretation                                   | Current interpretation                                           |
+| --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `'2026-01-15'`                    | January 14, 2026 at 19:00 local (January 15 at 00:00 UTC) | January 15, 2026 at 00:00 local                                  |
+| `new Date('2026-01-15T00:00:00')` | January 15 at local midnight                              | Unchanged                                                        |
+| `new Date('2026-01-15')`          | January 15 at UTC midnight                                | Unchanged; the validator receives an already constructed instant |
+| `'2026-01-15T09:00:00Z'`          | The specified instant                                     | Unchanged                                                        |
+
+```typescript
+const selectedDate = new FormControl('2026-01-15', [
+  dateRangeValidator({
+    minDate: new Date('2026-01-15T00:00:00'), // Local January 15 at midnight.
+    minInclusive: true,
+  }),
+]);
+// America/New_York: previously minDate error, now valid.
+```
+
+**Compatibility:** this is a behavior change, without a signature change. Review consumers mixing date-only strings with
+`Date` objects or timestamp boundaries, and consumers using date-only strings with `compareTime: true`. A
+`datetime-local` string containing a time retains its existing parsing. Valid `Date` objects, numeric timestamps and
+full timestamp strings retain their existing instant parsing; with `compareTime: false` the validator still compares
+their local calendar days. Requiredness remains separate. Impossible date-only values report `invalidDate`.
+
+Use `YYYY-MM-DD` for a calendar day. Use a full timestamp with an explicit offset for an exact instant. Do not replace
+an instant boundary with a date-only string merely to adopt the new parser. The demo's New York example describes a
+fixed timezone; visiting it in another timezone does not change the browser's timezone.
+
+Verification should cover UTC and timezones west and east of UTC, inclusive/exclusive boundaries, mixed input types,
+`compareTime`, impossible dates and required/optional URL compositions. Automated verification and independent human
+language acceptance for the new demo notes are separate records; earlier acceptance does not cover these new strings.
+
+The date-range demo teaches current behavior in this order: a working required calendar-date interval, optional and
+one-sided/exclusive bounds, local date-time and explicit-offset instant comparisons, then the API and error contract.
+Calendar-day examples pass readable `YYYY-MM-DD` boundaries directly. Callouts explain parsing and defaults without
+release-history narration; the changelog and this compatibility section retain migration history.

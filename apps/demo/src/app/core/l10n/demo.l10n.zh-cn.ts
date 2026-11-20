@@ -1951,26 +1951,30 @@ export const zhCNTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': '验证 FormArray 控件或数组中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可选）对象类型元素的唯一性检查属性名。若省略则检查原始值相等性。',
   'dateRangeValidator.firstTask': '选择明天到五天后的日期，包含两个端点。范围外日期无效，清空必填日期也无效。',
+  'dateRangeValidator.boundaryNote':
+    '空值默认通过；必填时添加 Validators.required。上下边界均可省略。minInclusive 和 maxInclusive 默认为 false；设为 true 才允许等于边界。非法值返回 invalidDate；创建校验器时，非法边界抛出 TypeError，倒置的边界抛出 RangeError。',
+  'dateRangeValidator.calendarDayNote':
+    "日历日期及 minDate、maxDate 边界请直接使用 YYYY-MM-DD 字符串。'2026-01-15' 表示当地日历的 1 月 15 日；new Date('2026-01-15') 则构造 UTC 零点，在纽约是 1 月 14 日 19:00。表达某一天时直接传纯日期字符串。",
+  'urlValidator.presenceNote':
+    'urlValidator 和 httpsValidator 允许 null、undefined 和空字符串，以支持可选字段；这并不表示空字符串是 URL。需要拒绝空值时，请添加 Validators.required。仅含空格的字符串仍返回 invalidUrl。',
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用于验证日期是否在指定范围内的自定义验证器。它支持纯日期与带时间的日期格式校验，具备可配置的边界包含性（闭区间/开区间）以及可选的时间精度对比。',
   'dateRangeValidator.example1Title': '示例 1：日期范围校验',
-  'dateRangeValidator.example1Desc':
-    '校验日期是否介于最小与最大日期之间。当前配置确保所选日期必须在 2024 年 9 月 1 日至 2024 年 9 月 15 日之间（开区间，忽略时间分量）。因 <code>maxInclusive</code> 为 false，9 月 15 日不可选。',
   'dateRangeValidator.example2Title': '示例 2：选择未来日期',
   'dateRangeValidator.example2Desc':
-    '下方示例允许选择包含今天在内的未来日期。若需包含 <code>minDate</code>，将 <code>minInclusive</code> 设为 <code>true</code>。',
-  'dateRangeValidator.expiresRawLabel': '到期日期（原生 HTML Input）',
+    '可尝试从今天起的可选日期，或明天至五天后的必填日期。代码还展示仅设上界和排除端点的用法。',
+  'dateRangeValidator.expiresRawLabel': '可选到期日期',
   'dateRangeValidator.minDateError': '日期不能早于 {{ minDate }}',
-  'dateRangeValidator.futureDaysLabel': '未来 5 天（Clarity 日期选择器）',
+  'dateRangeValidator.futureDaysLabel': '未来五天内的日期',
   'dateRangeValidator.invalidDate': '日期格式无效',
   'dateRangeValidator.maxDateError': '日期不能晚于 {{ maxDate }}',
   'dateRangeValidator.clarityMax': '日期过晚（Clarity 内置校验）',
   'dateRangeValidator.clarityMin': '日期过早（Clarity 内置校验）',
   'dateRangeValidator.minMaxCallout':
-    '我们也可以使用 <code>min</code> 和 <code>max</code> 模式校验范围。然而当用户输入类似 12 或 12hello 这种非法字符串时，原生校验不会报错。',
+    '原生 min/max 提示应与校验器一致。原生边界包含端点，因此对应的 inclusive 标志应设为 true。使用校验器可让 Reactive Forms 的有效状态不依赖浏览器提示。',
   'dateRangeValidator.example3Title': '示例 3：日期与时间联合校验',
   'dateRangeValidator.example3Desc':
-    '若需同时对比日期与具体时间，可将 <code>compareTime</code> 设为 true。在下方配置下，选择的日期时间必须在 2024 年 9 月 1 日中午 UTC 至 2024 年 9 月 2 日中午 UTC 之间（包含时间比对）。',
+    '设置 compareTime: true 可同时比较日期和时间。下方预览允许从当前时刻到五天后的当地时间，包含两端。精确时间点请使用显式时区偏移；不启用 compareTime 时只比较当地日历日期。',
   'dateRangeValidator.dateTimeExpires': '到期时间',
   'dateRangeValidator.dateTimeMinError': '日期时间不能早于 {{ minDate }}',
   'dateRangeValidator.dateTimeMaxError': '日期时间不能晚于 {{ maxDate }}',
@@ -1978,15 +1982,15 @@ export const zhCNTranslations: Record<string, string> = {
   'dateRangeValidator.validationErrors': '验证错误',
   'dateRangeValidator.errInvalidDate': '日期无效时返回（例如 "2023-13-01" 或 "hello world"）',
   'dateRangeValidator.errMinDate':
-    '所选日期早于或等于允许的最小日期时返回。错误对象的值为 ISO 格式的最小允许日期字符串。',
+    '值不符合此边界。错误值为边界的 ISO 字符串；仅在对应的 inclusive 标志为 true 时允许等于边界。',
   'dateRangeValidator.errMaxDate':
-    '所选日期晚于或等于允许的最大日期时返回。错误对象的值为 ISO 格式的最大允许日期字符串。',
+    '值不符合此边界。错误值为边界的 ISO 字符串；仅在对应的 inclusive 标志为 true 时允许等于边界。',
   'dateRangeValidator.apiSummary': '验证日期值是否在指定的 minDate 和/或 maxDate 范围之内。',
   'dateRangeValidator.paramOptions': '配置 minDate、maxDate 及其包含性标志的 DateRangeOptions 配置项。',
   'dateRangeValidator.optMinDate': '最小允许日期。',
   'dateRangeValidator.optMaxDate': '最大允许日期。',
-  'dateRangeValidator.optMinInclusive': '是否包含最小日期边界，默认为 true。',
-  'dateRangeValidator.optMaxInclusive': '是否包含最大日期边界，默认为 true。',
+  'dateRangeValidator.optMinInclusive': '是否允许等于最小边界，默认 false。',
+  'dateRangeValidator.optMaxInclusive': '是否允许等于最大边界，默认 false。',
   'rangePipe.overview':
     '<code>range</code> 管道在指定范围内生成数字序列数组，非常适合用于在模板中构建下拉选项、分页控件或任意需要数字序列的场景。在 Angular 模板中，有时需要针对一系列数字进行循环。例如拥有数字 20 并希望生成 1 到 20 的列表项在下拉菜单中显示，但 Angular 的 <code>@for</code> 指令无法直接遍历数字标量。尽管可以在 TypeScript 中预生成数组，但直接在模板中声明往往更简洁灵活。',
   'rangePipe.callout1':
