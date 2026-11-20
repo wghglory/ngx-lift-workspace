@@ -2152,30 +2152,30 @@ export const enTranslations = {
     '(Optional) Property key to check uniqueness for object items. If omitted, checks primitive equality.',
   'dateRangeValidator.firstTask':
     'Choose a date from tomorrow through five days from today. Both endpoints are allowed. An earlier or later date is invalid; clearing the required date is also invalid.',
-  'dateRangeValidator.upgradeNote':
-    "Upgrade: in America/New_York, '2026-01-15' previously meant January 14 at 19:00 (UTC midnight); it now means January 15 at local midnight. With a local January 15 minimum and minInclusive: true, that selected day now passes. Date objects and strings containing a time retain their existing parsing; mixed date-only strings and instants can produce different validation results after upgrading.",
-  'urlValidator.upgradeNote':
-    'Upgrade: urlValidator and httpsValidator now accept null, undefined and the empty string. This allows optional fields; it does not make an empty string a URL. Add Validators.required wherever empty input must be rejected. Whitespace-only strings still return invalidUrl.',
+  'dateRangeValidator.boundaryNote':
+    'Empty values are valid unless you add Validators.required. Either bound may be omitted. minInclusive and maxInclusive default to false; set them to true to allow equality. Invalid values return invalidDate; invalid boundaries throw TypeError, and reversed boundaries throw RangeError when the validator is created.',
+  'dateRangeValidator.calendarDayNote':
+    "Use YYYY-MM-DD strings for calendar dates, including minDate and maxDate. '2026-01-15' means January 15 in the local calendar. new Date('2026-01-15') instead constructs UTC midnight, which is January 14 at 19:00 in New York. Use date-only strings directly when you mean a day.",
+  'urlValidator.presenceNote':
+    'urlValidator and httpsValidator accept null, undefined and the empty string. This allows optional fields; it does not make an empty string a URL. Add Validators.required wherever empty input must be rejected. Whitespace-only strings still return invalidUrl.',
   'dateRangeValidator.overview':
     'The <code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range. It supports validation for both date-only values and date-time values, with configurable inclusive/exclusive boundaries and optional time comparison.',
   'dateRangeValidator.example1Title': 'Example 1: Date Range Validation',
-  'dateRangeValidator.example1Desc':
-    'Validate that a date falls between a minimum and maximum date. This configuration ensures that the selected date must fall between September 1st, 2024, and September 15th, 2024 (exclusive), ignoring the time components. Sep. 15th is not valid since <code>maxInclusive</code> is false.',
   'dateRangeValidator.example2Title': 'Example 2: Select a Future Date',
   'dateRangeValidator.example2Desc':
-    'Below example allows to select a future date and include today. To include the <code>minDate</code>, set <code>minInclusive</code> to <code>true</code>.',
-  'dateRangeValidator.expiresRawLabel': 'Expiration Date (Raw HTML Input)',
+    'Try an optional date from today onward, or a required date from tomorrow through five days from today. The snippets also show an upper-only bound and an exclusive endpoint.',
+  'dateRangeValidator.expiresRawLabel': 'Optional expiration date',
   'dateRangeValidator.minDateError': 'The date cannot be earlier than {{ minDate }}',
-  'dateRangeValidator.futureDaysLabel': 'Future 5 Days (Clarity Date Input)',
+  'dateRangeValidator.futureDaysLabel': 'Date within the next five days',
   'dateRangeValidator.invalidDate': 'The date is invalid',
   'dateRangeValidator.maxDateError': 'The date cannot be later than {{ maxDate }}',
   'dateRangeValidator.clarityMax': 'The date is too late (clarity validation)',
   'dateRangeValidator.clarityMin': 'The date is too early (clarity validation)',
   'dateRangeValidator.minMaxCallout':
-    'We could use the <code>min</code> and <code>max</code> pattern to validate the range. However, this validation will not fail when typing a number like 12 or a string like 12hello.',
+    'Keep native min/max hints aligned with the validator. Native bounds are inclusive; set the matching inclusive flags to true. Use the validator to keep Reactive Forms validity independent of browser hints.',
   'dateRangeValidator.example3Title': 'Example 3: Date and Time Range Validation',
   'dateRangeValidator.example3Desc':
-    'To validate both the date and the time, set <code>compareTime</code> to true. With the below configuration, the selected date and time must fall between September 1st, 2024, at noon UTC, and September 2nd, 2024, at noon UTC, considering the time components.',
+    'Set compareTime: true to compare times as well as dates. The live example accepts local times from now through five days from now, including both endpoints. Use an explicit offset for exact instants; without compareTime, only local calendar days are compared.',
   'dateRangeValidator.dateTimeExpires': 'Expiration Date',
   'dateRangeValidator.dateTimeMinError': 'The date time cannot be earlier than {{ minDate }}',
   'dateRangeValidator.dateTimeMaxError': 'The date time cannot be later than {{ maxDate }}',
@@ -2183,15 +2183,15 @@ export const enTranslations = {
   'dateRangeValidator.validationErrors': 'Validation Errors',
   'dateRangeValidator.errInvalidDate': 'Returned when the date is invalid (e.g., "2023-13-01" or "hello world")',
   'dateRangeValidator.errMinDate':
-    'Returned when the selected date is earlier than or equal to the minimum allowed date. The error value is the minimum allowed date formatted as an ISO string.',
+    'The value violates this boundary. The error value is the boundary as an ISO string; equality is allowed only when the matching inclusive flag is true.',
   'dateRangeValidator.errMaxDate':
-    'Returned when the selected date is later than or equal to the maximum allowed date. The error value is the maximum allowed date formatted as an ISO string.',
+    'The value violates this boundary. The error value is the boundary as an ISO string; equality is allowed only when the matching inclusive flag is true.',
   'dateRangeValidator.apiSummary': 'Validates that a date value falls within a specified minDate and/or maxDate range.',
   'dateRangeValidator.paramOptions': 'DateRangeOptions configuring minDate, maxDate, and inclusivity flags.',
   'dateRangeValidator.optMinDate': 'Minimum acceptable date.',
   'dateRangeValidator.optMaxDate': 'Maximum acceptable date.',
-  'dateRangeValidator.optMinInclusive': 'Whether the minimum date is inclusive. Defaults to true.',
-  'dateRangeValidator.optMaxInclusive': 'Whether the maximum date is inclusive. Defaults to true.',
+  'dateRangeValidator.optMinInclusive': 'Allow the minimum boundary. Default: false.',
+  'dateRangeValidator.optMaxInclusive': 'Allow the maximum boundary. Default: false.',
   'rangePipe.overview':
     "The <code>range</code> pipe generates an array of numbers within a specified range, making it ideal for creating dropdown options, pagination controls, or any scenario requiring numeric sequences in templates. When working with Angular templates, you may need to generate an array of numbers for iteration. For example, if you have the number 20 and want to create an array from 1 to 20 to display in a dropdown list, Angular's <code>@for</code> directive cannot directly iterate over a number. While you could generate this array in TypeScript, there are cases where creating the array directly in the template is more convenient.",
   'rangePipe.callout1':

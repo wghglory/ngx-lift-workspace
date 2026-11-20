@@ -2245,30 +2245,30 @@ export const frTranslations: Record<string, string> = {
     "(Facultatif) Clé de propriété pour vérifier l'unicité des objets. Si omis, vérifie l'égalité primitive.",
   'dateRangeValidator.firstTask':
     'Choisissez une date entre demain et dans cinq jours, bornes incluses. Les dates hors plage et les champs obligatoires vides sont invalides.',
-  'dateRangeValidator.upgradeNote':
-    "Mise à jour : dans America/New_York, '2026-01-15' désignait le 14 janvier à 19 h (minuit UTC) ; il désigne maintenant le 15 janvier à minuit local. Avec un minimum local au 15 janvier et minInclusive: true, ce jour est désormais valide. Les objets Date et les chaînes contenant une heure gardent leur interprétation ; mélanger dates seules et instants peut modifier la validation après mise à jour.",
-  'urlValidator.upgradeNote':
-    'Mise à jour : urlValidator et httpsValidator acceptent maintenant null, undefined et la chaîne vide pour permettre les champs facultatifs. Une chaîne vide ne devient pas une URL. Ajoutez Validators.required pour refuser les valeurs vides. Les chaînes composées uniquement d’espaces renvoient toujours invalidUrl.',
+  'dateRangeValidator.boundaryNote':
+    'Les valeurs vides sont valides sans Validators.required. Chaque borne est facultative. minInclusive et maxInclusive valent false par défaut ; true autorise l’égalité. Une valeur invalide renvoie invalidDate. À la création, des bornes invalides lèvent TypeError et des bornes inversées RangeError.',
+  'dateRangeValidator.calendarDayNote':
+    "Utilisez YYYY-MM-DD pour les dates calendaires et les bornes minDate/maxDate. '2026-01-15' désigne le 15 janvier local. new Date('2026-01-15') construit minuit UTC, soit le 14 janvier à 19 h à New York. Passez directement les chaînes de date sans heure.",
+  'urlValidator.presenceNote':
+    'urlValidator et httpsValidator acceptent null, undefined et la chaîne vide pour permettre les champs facultatifs. Une chaîne vide ne devient pas une URL. Ajoutez Validators.required pour refuser les valeurs vides. Les chaînes composées uniquement d’espaces renvoient toujours invalidUrl.',
   'dateRangeValidator.overview':
     "L'<code>dateRangeValidator</code> est un validateur personnalisé qui valide que la date est dans une plage spécifiée. Il prend en charge la validation pour des valeurs de date uniquement et des valeurs de date-heure, avec des bornes inclusives/exclusives configurables et une comparaison optionnelle du temps.",
   'dateRangeValidator.example1Title': 'Exemple 1: Validation de la plage de dates',
-  'dateRangeValidator.example1Desc':
-    "Valide que la date est entre une date minimale et une date maximale. Cette configuration assure que la date sélectionnée doit être entre le 1er septembre 2024 et le 15 septembre 2024 (exclus), en ignorant les composants de temps. Le 15 septembre n'est pas valide car <code>maxInclusive</code> est faux.",
   'dateRangeValidator.example2Title': 'Exemple 2: Sélectionner une date future',
   'dateRangeValidator.example2Desc':
-    "L'exemple ci-dessous permet de sélectionner une date future et d'inclure aujourd'hui. Pour inclure le <code>minDate</code>, définissez <code>minInclusive</code> à <code>true</code>.",
-  'dateRangeValidator.expiresRawLabel': "Date d'expiration (entrée Raw HTML)",
+    'Essayez une date facultative à partir d’aujourd’hui ou une date obligatoire de demain à dans cinq jours. Les extraits montrent aussi une borne supérieure seule et une borne exclusive.',
+  'dateRangeValidator.expiresRawLabel': 'Date d’expiration facultative',
   'dateRangeValidator.minDateError': 'La date ne peut être antérieure à {{ minDate }}',
-  'dateRangeValidator.futureDaysLabel': 'Futurs 5 jours (entrée de la date Clarity)',
+  'dateRangeValidator.futureDaysLabel': 'Date dans les cinq prochains jours',
   'dateRangeValidator.invalidDate': 'La date est invalide',
   'dateRangeValidator.maxDateError': 'La date ne peut être postérieure à {{ maxDate }}',
   'dateRangeValidator.clarityMax': 'La date est trop tardive (validation de la clarté)',
   'dateRangeValidator.clarityMin': 'La date est trop tôt (validation de la clarté)',
   'dateRangeValidator.minMaxCallout':
-    "Nous pourrions utiliser le modèle <code>min</code> et <code>max</code> pour valider la plage. Cependant, cette validation ne échouera pas lors de la saisie d'un nombre comme 12 ou d'une chaîne comme 12hello.",
+    'Alignez les indications natives min/max sur le validateur. Les bornes natives sont inclusives ; activez les options correspondantes. Le validateur rend la validité Reactive Forms indépendante des indications du navigateur.',
   'dateRangeValidator.example3Title': "Exemple 3 : Validation de la date et de l'intervalle",
   'dateRangeValidator.example3Desc':
-    "Pour valider à la fois la date et l'heure, définissez <code>compareTime</code> sur vrai. Avec la configuration ci-dessous, la date et l'heure sélectionnées doivent être entre le 1er septembre 2024 à midi UTC et le 2 septembre 2024 à midi UTC, en tenant compte des composants de temps.",
+    'compareTime: true compare la date et l’heure. L’exemple accepte les heures locales entre maintenant et dans cinq jours, bornes incluses. Utilisez un décalage explicite pour un instant exact ; sans compareTime, seuls les jours locaux sont comparés.',
   'dateRangeValidator.dateTimeExpires': "Date d'expiration",
   'dateRangeValidator.dateTimeMinError': "L'heure de la date ne peut pas être antérieure à {{ minDate }}",
   'dateRangeValidator.dateTimeMaxError': 'La date ne peut pas être postérieure à {{ maxDate }}',
@@ -2277,17 +2277,17 @@ export const frTranslations: Record<string, string> = {
   'dateRangeValidator.errInvalidDate':
     'Renvoyé lorsque la date est invalide (p. ex., « 2023-13-01 » ou « hello world »)',
   'dateRangeValidator.errMinDate':
-    "Renvoyé lorsque la date sélectionnée est antérieure ou égale à la date minimale autorisée. La valeur d'erreur est la date minimale autorisée formatée sous la forme d'une chaîne ISO.",
+    'La valeur ne respecte pas cette borne. L’erreur contient la borne au format ISO ; l’égalité nécessite le drapeau inclusive correspondant à true.',
   'dateRangeValidator.errMaxDate':
-    "Renvoyé lorsque la date sélectionnée est postérieure ou égale à la date maximale autorisée. La valeur d'erreur est la date maximale autorisée formatée en chaîne ISO.",
+    'La valeur ne respecte pas cette borne. L’erreur contient la borne au format ISO ; l’égalité nécessite le drapeau inclusive correspondant à true.',
   'dateRangeValidator.apiSummary':
     'Valide que la valeur de date est dans une plage spécifiée de minDate et/ou maxDate.',
   'dateRangeValidator.paramOptions':
     'Configuration de DateRangeOptions avec les drapeaux minDate, maxDate et inclusivité.',
   'dateRangeValidator.optMinDate': 'Date minimale acceptable.',
   'dateRangeValidator.optMaxDate': 'Date maximale acceptable.',
-  'dateRangeValidator.optMinInclusive': 'Indique si la date minimale est inclusive.',
-  'dateRangeValidator.optMaxInclusive': 'Indique si la date maximale est inclusive.',
+  'dateRangeValidator.optMinInclusive': 'Inclure la borne minimale. Par défaut : false.',
+  'dateRangeValidator.optMaxInclusive': 'Inclure la borne maximale. Par défaut : false.',
   'rangePipe.overview':
     "Le <code>range</code> pipe génère un tableau de nombres dans une plage spécifiée, ce qui en fait idéal pour créer des options de liste déroulante, des contrôles de pagination ou tout autre scenario nécessitant des séquences numériques dans les modèles. Lorsque vous travaillez avec des modèles Angular, vous pourriez avoir besoin de générer un tableau de nombres pour l'itération. Par exemple, si vous avez le nombre 20 et que vous voulez créer un tableau de 1 à 20 pour l'afficher dans une liste déroulante, la directive <code>@for</code> d'Angular ne peut pas itérer directement sur un nombre. Bien que vous puissiez générer ce tableau en TypeScript, il y a des cas où il est plus pratique de le créer directement dans le modèle.",
   'rangePipe.callout1':

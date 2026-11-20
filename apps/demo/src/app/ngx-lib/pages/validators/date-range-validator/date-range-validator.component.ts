@@ -54,18 +54,6 @@ function startOfMinute(date: Date): Date {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DateRangeValidatorComponent {
-  readonly upgradeExampleCode = highlight(`import {FormControl} from '@angular/forms';
-import {dateRangeValidator} from 'ngx-lift';
-
-const date = new FormControl('2026-01-15', [
-  dateRangeValidator({
-    minDate: new Date(2026, 0, 15), // Local January 15; months are zero-based.
-    minInclusive: true,
-  }),
-]);
-// In America/New_York: previously invalid (parsed as January 14), now valid.
-// new Date('2026-01-15') still represents UTC midnight, not local midnight.`);
-
   readonly firstTaskCode = highlight(
     `import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -201,16 +189,16 @@ export class DateExampleComponent {
   dateForm = new FormGroup({
     expires: new FormControl<string>('', {
       nonNullable: true,
-      validators: [dateRangeValidator({minDate: this.today, minInclusive: true})],
+      validators: [dateRangeValidator({minDate: this.todayInISO, minInclusive: true})],
     }),
     futureDays: new FormControl<string>('', {
       nonNullable: true,
       validators: [
         Validators.required,
         dateRangeValidator({
-          maxDate: this.fiveDaysLater,
+          maxDate: this.fiveDaysLaterInISO,
           maxInclusive: true,
-          minDate: this.tomorrow,
+          minDate: this.tomorrowInISO,
           minInclusive: true,
         }),
       ],
@@ -234,215 +222,110 @@ export class DateExampleComponent {
     }),
   });
 
-  dateCode = highlight(`import {dateRangeValidator} from 'ngx-lift';
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-
-@Component({
-  imports: [ReactiveFormsModule],
-  template: \`
-    <form [formGroup]="dateForm">
-      <clr-input-container>
-        <label>Expiration Date</label>
-        <input type="date" clrInput [formControl]="dateForm.controls.expires" [min]="todayInISO" />
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date cannot be earlier than {{ minDate }}
-        </clr-control-error>
-      </clr-input-container>
-
-      <clr-date-container>
-        <label class="clr-required-mark">Future 5 Days</label>
-        <input
-          type="date"
-          clrDate
-          [formControl]="dateForm.controls.futureDays"
-          required
-          [min]="tomorrowInISO"
-          [max]="fiveDaysLaterInISO"
-        />
-        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'invalidDate'">The date is invalid</clr-control-error>
-        <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-          The date cannot be later than {{ maxDate }}
-        </clr-control-error>
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date cannot be earlier than {{ minDate }}
-        </clr-control-error>
-      </clr-date-container>
-    </form>
-  \`,
-})
-export class DateRangeValidatorComponent {
-  private addLocalDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-  // Native date inputs take a local wall-clock date; toISOString() would report the UTC day.
-  private toDateInputValue(date: Date): string {
-    return [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-  }
-
-  today = new Date();
-  tomorrow = this.addLocalDays(this.today, 1);
-  fiveDaysLater = this.addLocalDays(this.today, 5);
-
-  todayInISO = this.toDateInputValue(this.today);
-  tomorrowInISO = this.toDateInputValue(this.tomorrow);
-  fiveDaysLaterInISO = this.toDateInputValue(this.fiveDaysLater);
-
-  dateForm = new FormGroup({
-    expires: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [dateRangeValidator({minDate: this.today, minInclusive: true})],
-    }),
-    futureDays: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        dateRangeValidator({
-          maxDate: this.fiveDaysLater,
-          maxInclusive: true,
-          minDate: this.tomorrow,
-          minInclusive: true,
-        }),
-      ],
-    }),
-  });
-}`);
-
-  dateTimeCode = highlight(`import {dateRangeValidator} from 'ngx-lift';
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-
-@Component({
-  imports: [ReactiveFormsModule],
-  template: \`
-    <form [formGroup]="dateTimeForm">
-      <clr-input-container>
-        <label class="clr-required-mark">Expiration Date</label>
-        <input
-          type="datetime-local"
-          clrInput
-          [formControl]="dateTimeForm.controls.expires"
-          required
-          [min]="minTimestamp"
-          [max]="maxTimestamp"
-        />
-        <clr-control-error *clrIfError="'required'">Required</clr-control-error>
-        <clr-control-error *clrIfError="'minDate'; error as minDate">
-          The date time cannot be earlier than {{ minDate }}
-        </clr-control-error>
-        <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-          The date time cannot be later than {{ maxDate }}
-        </clr-control-error>
-      </clr-input-container>
-    </form>
-  \`,
-})
-export class DateTimeRangeValidatorComponent {
-  private addLocalDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  }
-  // datetime-local takes local wall-clock values, so format the Date in local time.
-  private toDateTimeInputValue(date: Date): string {
-    const day = [
-      date.getFullYear(),
-      String(date.getMonth() + 1).padStart(2, '0'),
-      String(date.getDate()).padStart(2, '0'),
-    ].join('-');
-    const time = [date.getHours(), date.getMinutes()].map((part) => String(part).padStart(2, '0')).join(':');
-    return \`\${day}T\${time}\`;
-  }
-
-  // Truncate first so both hints name exactly the instants the validator compares.
-  today = this.startOfMinute(new Date());
-  fiveDaysLater = this.addLocalDays(this.today, 5);
-
-  minTimestamp = this.toDateTimeInputValue(this.today);
-  maxTimestamp = this.toDateTimeInputValue(this.fiveDaysLater);
-
-  dateTimeForm = new FormGroup({
-    expires: new FormControl<string>('', {
-      nonNullable: true,
-      validators: [
-        Validators.required,
-        // The min/max attributes are inclusive, so the validator is too.
-        dateRangeValidator({
-          minDate: this.today,
-          maxDate: this.fiveDaysLater,
-          compareTime: true,
-          minInclusive: true,
-          maxInclusive: true,
-        }),
-      ],
-    }),
-  });
-
-  private startOfMinute(date: Date): Date {
-    const result = new Date(date);
-    result.setSeconds(0, 0);
-    return result;
-  }
-}`);
-
-  dateExampleCode = highlight(`
+  readonly calendarExampleCode = highlight(`import {FormControl} from '@angular/forms';
 import {dateRangeValidator} from 'ngx-lift';
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
-@Component({
-  imports: [ReactiveFormsModule],
-})
-export class DateRangeExampleComponent {
-  // Date-only boundaries name a local calendar day; use a full ISO string for an exact instant.
-  validator = dateRangeValidator({
-    minDate: '2024-09-01',
-    maxDate: '2024-09-15',
+const date = new FormControl('2026-01-15', [dateRangeValidator({minDate: '2026-01-15', minInclusive: true})]);
+// Valid: both strings name January 15 in the local calendar.
+// new Date('2026-01-15') instead constructs an instant at UTC midnight.`);
+
+  readonly dateCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {dateRangeValidator} from 'ngx-lift';
+
+// The same moving bounds as the live preview.
+function day(offset: number): string {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, '0'),
+    String(date.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+const dateForm = new FormGroup({
+  expires: new FormControl('', [dateRangeValidator({minDate: day(0), minInclusive: true})]),
+  futureDays: new FormControl('', [
+    Validators.required,
+    dateRangeValidator({
+      minDate: day(1),
+      maxDate: day(5),
+      minInclusive: true,
+      maxInclusive: true,
+    }),
+  ]),
+});
+
+// Independent configurations below use fixed dates.
+// Optional, lower bound only. Empty input is valid.
+const expires = new FormControl('', [dateRangeValidator({minDate: '2026-01-15', minInclusive: true})]);
+
+// Optional, upper bound only. Equality is excluded by default.
+const beforeFebruary = new FormControl('', [dateRangeValidator({maxDate: '2026-02-01'})]);
+
+// Required interval: January 15 is included; February 1 is excluded.
+const bookingDate = new FormControl('', [
+  Validators.required,
+  dateRangeValidator({
+    minDate: '2026-01-15',
+    maxDate: '2026-02-01',
     minInclusive: true,
     maxInclusive: false,
-    compareTime: false,
-  });
+  }),
+]);`);
 
-  form = new FormGroup({
-    date: new FormControl('', [this.validator]),
-  });
-}
-  `);
-
-  dateTimeExampleCode = highlight(`
+  readonly dateTimeCode = highlight(`import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {dateRangeValidator} from 'ngx-lift';
-import {Component} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 
-@Component({
-  imports: [ReactiveFormsModule],
-})
-export class DateTimeRangeExampleComponent {
-  validator = dateRangeValidator({
-    minDate: '2024-09-01T12:00:00Z',
-    maxDate: '2024-09-02T12:00:00Z',
+// The same moving bounds as the live preview.
+const now = new Date();
+now.setSeconds(0, 0);
+const fiveDaysLater = new Date(now);
+fiveDaysLater.setDate(fiveDaysLater.getDate() + 5);
+const dateTimeForm = new FormGroup({
+  expires: new FormControl('', [
+    Validators.required,
+    dateRangeValidator({
+      minDate: now,
+      maxDate: fiveDaysLater,
+      minInclusive: true,
+      maxInclusive: true,
+      compareTime: true,
+    }),
+  ]),
+});
+// Pair expires with a datetime-local input. Format min/max in local time,
+// as in the calendar-date example, adding hours and minutes; not via toISOString().
+
+// Independent configurations below use fixed dates.
+// Local wall-clock time: pair with an input of type datetime-local.
+const appointment = new FormControl('', [
+  Validators.required,
+  dateRangeValidator({
+    minDate: '2026-01-15T09:00',
+    maxDate: '2026-01-15T17:00',
+    minInclusive: true,
+    maxInclusive: true,
     compareTime: true,
-  });
+  }),
+]);
 
-  form = new FormGroup({
-    dateTime: new FormControl('', [this.validator]),
-  });
-}
-  `);
+// Exact instants: use an explicit offset (Z means UTC).
+const instant = new FormControl('', [
+  dateRangeValidator({
+    minDate: '2026-01-15T09:00:00Z',
+    maxDate: '2026-01-15T17:00:00Z',
+    compareTime: true,
+  }),
+]);
+// Date objects and numeric timestamp control values also represent instants.
+// compareTime: false (default) compares their local calendar days instead.`);
 
   signatureCode = highlight(`interface DateRangeOptions {
   minDate?: Date | string | null;
   maxDate?: Date | string | null;
-  minInclusive?: boolean;
-  maxInclusive?: boolean;
-  compareTime?: boolean;
+  minInclusive?: boolean; // false by default
+  maxInclusive?: boolean; // false by default
+  compareTime?: boolean; // false by default
 }
 
 dateRangeValidator(options: DateRangeOptions): ValidatorFn;`);

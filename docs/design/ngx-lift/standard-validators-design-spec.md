@@ -412,17 +412,17 @@ migration notes even when categorized as a fix.
 `dateRangeValidator` now parses a `YYYY-MM-DD` value or boundary as the local calendar day. Previously JavaScript's
 UTC-midnight parsing could move it to the preceding local day west of UTC. For example, in `America/New_York`:
 
-| Input                    | Previous interpretation                                   | Current interpretation                                           |
-| ------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------- |
-| `'2026-01-15'`           | January 14, 2026 at 19:00 local (January 15 at 00:00 UTC) | January 15, 2026 at 00:00 local                                  |
-| `new Date(2026, 0, 15)`  | January 15 at local midnight                              | Unchanged                                                        |
-| `new Date('2026-01-15')` | January 15 at UTC midnight                                | Unchanged; the validator receives an already constructed instant |
-| `'2026-01-15T09:00:00Z'` | The specified instant                                     | Unchanged                                                        |
+| Input                             | Previous interpretation                                   | Current interpretation                                           |
+| --------------------------------- | --------------------------------------------------------- | ---------------------------------------------------------------- |
+| `'2026-01-15'`                    | January 14, 2026 at 19:00 local (January 15 at 00:00 UTC) | January 15, 2026 at 00:00 local                                  |
+| `new Date('2026-01-15T00:00:00')` | January 15 at local midnight                              | Unchanged                                                        |
+| `new Date('2026-01-15')`          | January 15 at UTC midnight                                | Unchanged; the validator receives an already constructed instant |
+| `'2026-01-15T09:00:00Z'`          | The specified instant                                     | Unchanged                                                        |
 
 ```typescript
 const selectedDate = new FormControl('2026-01-15', [
   dateRangeValidator({
-    minDate: new Date(2026, 0, 15), // Local January 15; months are zero-based.
+    minDate: new Date('2026-01-15T00:00:00'), // Local January 15 at midnight.
     minInclusive: true,
   }),
 ]);
@@ -442,3 +442,8 @@ fixed timezone; visiting it in another timezone does not change the browser's ti
 Verification should cover UTC and timezones west and east of UTC, inclusive/exclusive boundaries, mixed input types,
 `compareTime`, impossible dates and required/optional URL compositions. Automated verification and independent human
 language acceptance for the new demo notes are separate records; earlier acceptance does not cover these new strings.
+
+The date-range demo teaches current behavior in this order: a working required calendar-date interval, optional and
+one-sided/exclusive bounds, local date-time and explicit-offset instant comparisons, then the API and error contract.
+Calendar-day examples pass readable `YYYY-MM-DD` boundaries directly. Callouts explain parsing and defaults without
+release-history narration; the changelog and this compatibility section retain migration history.

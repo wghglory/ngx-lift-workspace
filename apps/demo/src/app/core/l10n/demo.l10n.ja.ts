@@ -2136,30 +2136,30 @@ export const jaTranslations: Record<string, string> = {
     '(オプション)オブジェクトアイテムで一意性を確認するプロパティキー。省略するとプリミティブ等価性を確認します。',
   'dateRangeValidator.firstTask':
     '明日から5日後までの日付を選びます。両端を含みます。範囲外の日付と空の必須値は無効です。',
-  'dateRangeValidator.upgradeNote':
-    "更新時の注意：America/New_York では、'2026-01-15' は以前は 1 月 14 日 19:00（UTC の午前 0 時）でしたが、現在は現地の 1 月 15 日午前 0 時です。最小日を現地の 1 月 15 日とし minInclusive: true を指定すると、その日付は有効になります。Date オブジェクトと時刻を含む文字列の解析は変わりません。日付のみの文字列と時点を混在させると、更新後に検証結果が変わる場合があります。",
-  'urlValidator.upgradeNote':
-    '更新時の注意：urlValidator と httpsValidator は任意入力に対応するため、null、undefined、空文字列を許可します。空文字列が URL になるわけではありません。空の入力を拒否するには Validators.required を追加してください。空白だけの文字列は引き続き invalidUrl になります。',
+  'dateRangeValidator.boundaryNote':
+    '空値は Validators.required がなければ有効です。上下の境界は省略できます。minInclusive と maxInclusive の既定値は false で、true にすると境界を含みます。不正な値は invalidDate を返します。作成時に不正な境界は TypeError、逆順の境界は RangeError を送出します。',
+  'dateRangeValidator.calendarDayNote':
+    "日付と minDate/maxDate には YYYY-MM-DD を直接指定します。'2026-01-15' は現地の 1 月 15 日です。new Date('2026-01-15') は UTC の午前 0 時を作成し、ニューヨークでは 1 月 14 日 19:00 です。日付だけを表す場合は文字列を直接渡してください。",
+  'urlValidator.presenceNote':
+    'urlValidator と httpsValidator は任意入力に対応するため、null、undefined、空文字列を許可します。空文字列が URL になるわけではありません。空の入力を拒否するには Validators.required を追加してください。空白だけの文字列は引き続き invalidUrl になります。',
   'dateRangeValidator.overview':
     'dateRangeValidatorはカスタムバリデーターで、指定された範囲内の日付を検証します。日付のみまたは日時をサポートし、含まれる/含まれない境界を設定可能で、オプションで時間比較をサポートします。',
   'dateRangeValidator.example1Title': '例1: 日付範囲検証',
-  'dateRangeValidator.example1Desc':
-    '日付が最小日と最大日之间にない場合を検証します。この構成では、選択された日付は2024年9月1日から2024年9月15日（排他的）之间にあり、時間成分は無視されます。9月15日は、<code>maxInclusive</code>がfalseであるため有効ではありません。',
   'dateRangeValidator.example2Title': '例2: 未来の日付を選択',
   'dateRangeValidator.example2Desc':
-    '以下例は未来の日付を選択できるようにします。今日を含めるには、<code>minDate</code>を含めるために<code>minInclusive</code>を<code>true</code>に設定します。',
-  'dateRangeValidator.expiresRawLabel': '有効期限日（原始HTML入力）',
+    '今日以降の任意の日付、または明日から 5 日後までの必須の日付を試せます。コードには上限のみの場合と端点を除外する場合も示します。',
+  'dateRangeValidator.expiresRawLabel': '有効期限日（任意）',
   'dateRangeValidator.minDateError': '日付は{{ minDate }}以降でなければなりません',
-  'dateRangeValidator.futureDaysLabel': '5日後（明確な日付入力）',
+  'dateRangeValidator.futureDaysLabel': '今後 5 日以内の日付',
   'dateRangeValidator.invalidDate': '日付が無効です',
   'dateRangeValidator.maxDateError': '{{ maxDate }}より後に設定できません',
   'dateRangeValidator.clarityMax': '日付が遅すぎます（明確な検証）',
   'dateRangeValidator.clarityMin': '日付が早すぎます（明確な検証）',
   'dateRangeValidator.minMaxCallout':
-    '範囲を検証するためには、<code>min</code>と<code>max</code>のパターンを使用できます。ただし、数字のように12や文字列のように12helloを入力するときには、この検証が失敗しません。',
+    '入力の min/max とバリデーターを一致させます。ネイティブの境界は両端を含むため、対応するフラグを true にします。バリデーターにより Reactive Forms の有効性をブラウザーのヒントに依存させずに管理できます。',
   'dateRangeValidator.example3Title': '例3: 日付と時間の範囲検証',
   'dateRangeValidator.example3Desc':
-    '日付と時間を検証するには、<code>compareTime</code>をtrueに設定します。以下の構成では、選択された日付と時間は、2024年9月1日正午UTCから2024年9月2日正午UTCまでの間でなければなりません。時間の成分を考慮します。',
+    'compareTime: true で日付と時刻を比較します。プレビューは現在から 5 日後までの現地時刻を両端を含めて許可します。正確な時点には明示的なオフセットを使います。compareTime が無効なら現地の日付だけを比較します。',
   'dateRangeValidator.dateTimeExpires': '有効期限日',
   'dateRangeValidator.dateTimeMinError': '{{ minDate }}より前に設定できません',
   'dateRangeValidator.dateTimeMaxError': '{{ maxDate }}より後に設定できません',
@@ -2167,15 +2167,15 @@ export const jaTranslations: Record<string, string> = {
   'dateRangeValidator.validationErrors': '検証エラー',
   'dateRangeValidator.errInvalidDate': '日付が無効な場合（例："2023-13-01"や"hello world"）',
   'dateRangeValidator.errMinDate':
-    '選択された日付が許可された最小日付以下の場合は返されます。エラー値はISO文字列形式で許可された最小日付が表示されます。',
+    '値がこの境界を満たしません。エラー値は境界の ISO 文字列です。等しい値は対応する inclusive フラグが true の場合だけ許可されます。',
   'dateRangeValidator.errMaxDate':
-    '選択された日付が許可された最大日付以上の場合は返されます。エラー値はISO文字列形式で許可された最大日付が表示されます。',
+    '値がこの境界を満たしません。エラー値は境界の ISO 文字列です。等しい値は対応する inclusive フラグが true の場合だけ許可されます。',
   'dateRangeValidator.apiSummary': '指定されたminDateおよび/またはmaxDate範囲内に日付値が存在することを検証します。',
   'dateRangeValidator.paramOptions': 'minDate、maxDate、および包含性フラグを設定するDateRangeOptions。',
   'dateRangeValidator.optMinDate': '最小の許容可能な日付。',
   'dateRangeValidator.optMaxDate': '最大の許容可能な日付。',
-  'dateRangeValidator.optMinInclusive': '最小日付が包含されるかどうか。デフォルトはtrueです。',
-  'dateRangeValidator.optMaxInclusive': '最大日付が包含されるかどうか。デフォルトはtrueです。',
+  'dateRangeValidator.optMinInclusive': '最小境界を含めます。既定値：false。',
+  'dateRangeValidator.optMaxInclusive': '最大境界を含めます。既定値：false。',
   'rangePipe.overview':
     '<code>range</code> パイプは指定した範囲の数値配列を作成します。ドロップダウン、ページネーション、テンプレート内の数値列に利用できます。<code>@for</code> は数値を直接反復できないため、たとえば 1 から 20 の配列が必要な場合に使用します。TypeScript で作成する代わりに、テンプレート内で直接配列を生成できます。',
   'rangePipe.callout1':

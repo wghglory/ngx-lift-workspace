@@ -2221,30 +2221,30 @@ export const nlTranslations: Record<string, string> = {
     '(Optioneel) Eigenschap sleutel om de uniciteit van object items te controleren. Indien weggelaten, controleert primitieve gelijkheid.',
   'dateRangeValidator.firstTask':
     'Kies een datum van morgen tot over vijf dagen, inclusief de grenzen. Datums daarbuiten en lege verplichte waarden zijn ongeldig.',
-  'dateRangeValidator.upgradeNote':
-    "Upgrade: in America/New_York betekende '2026-01-15' eerst 14 januari om 19:00 (middernacht UTC); nu betekent het 15 januari om lokale middernacht. Met een lokaal minimum van 15 januari en minInclusive: true is die dag nu geldig. Date-objecten en tekenreeksen met een tijd behouden hun interpretatie; het combineren van datums zonder tijd en tijdstippen kan na de upgrade andere validatieresultaten geven.",
-  'urlValidator.upgradeNote':
-    'Upgrade: urlValidator en httpsValidator accepteren nu null, undefined en de lege tekenreeks voor optionele velden. Een lege tekenreeks is daarmee geen URL. Voeg Validators.required toe om lege invoer af te wijzen. Tekenreeksen met alleen spaties geven nog steeds invalidUrl terug.',
+  'dateRangeValidator.boundaryNote':
+    'Lege waarden zijn geldig zonder Validators.required. Beide grenzen zijn optioneel. minInclusive en maxInclusive zijn standaard false; true staat gelijkheid toe. Ongeldige waarden geven invalidDate. Bij aanmaak geven ongeldige grenzen TypeError en omgekeerde grenzen RangeError.',
+  'dateRangeValidator.calendarDayNote':
+    "Gebruik YYYY-MM-DD voor kalenderdatums en minDate/maxDate. '2026-01-15' betekent de lokale 15 januari. new Date('2026-01-15') maakt middernacht UTC, in New York 14 januari om 19:00. Geef datumreeksen zonder tijd rechtstreeks door.",
+  'urlValidator.presenceNote':
+    'urlValidator en httpsValidator accepteren null, undefined en de lege tekenreeks voor optionele velden. Een lege tekenreeks is daarmee geen URL. Voeg Validators.required toe om lege invoer af te wijzen. Tekenreeksen met alleen spaties geven nog steeds invalidUrl terug.',
   'dateRangeValidator.overview':
     'De <code>dateRangeValidator</code> is een aangepaste validator die valideert dat een datum binnen een opgegeven bereik valt. Het ondersteunt validatie voor zowel datum-alleenwaarden als datum-tijdwaarden, met configurerbare inclusieve/uitgesloten grenzen en optionele tijdsgelijkaardigheid.',
   'dateRangeValidator.example1Title': 'Voorbeeld 1: Datumbereikvalidatie',
-  'dateRangeValidator.example1Desc':
-    'Valideer dat een datum tussen een minimaal en een maximum datum valt. Deze configuratie zorgt ervoor dat de geselecteerde datum tussen 1 september 2024 en 15 september 2024 (uitgesloten) valt, zonder rekening te houden met de tijdscomponenten. 15 september is niet geldig omdat <code>maxInclusive</code> false is.',
   'dateRangeValidator.example2Title': 'Voorbeeld 2: Selecteer een toekomstige datum',
   'dateRangeValidator.example2Desc':
-    'Hieronder kunt u een toekomstige datum te selecteren en te omvatten vandaag. Om de <code>minDate</code>, zet <code>minInclusive</code> op <code>true</code>.',
-  'dateRangeValidator.expiresRawLabel': 'Geldigheidsduur (Raw HTML-invoer)',
+    'Probeer een optionele datum vanaf vandaag of een verplichte datum van morgen tot over vijf dagen. De voorbeelden tonen ook alleen een bovengrens en een exclusief eindpunt.',
+  'dateRangeValidator.expiresRawLabel': 'Optionele vervaldatum',
   'dateRangeValidator.minDateError': 'De datum kan niet eerder zijn dan {{ minDate }}',
-  'dateRangeValidator.futureDaysLabel': 'Toekomst 5 dagen (Clarity datuminvoer)',
+  'dateRangeValidator.futureDaysLabel': 'Datum binnen de komende vijf dagen',
   'dateRangeValidator.invalidDate': 'De datum is ongeldig',
   'dateRangeValidator.maxDateError': 'De datum kan niet later zijn dan {{ maxDate }}',
   'dateRangeValidator.clarityMax': 'De datum is te laat (validering van de juistheid)',
   'dateRangeValidator.clarityMin': 'De datum is te vroeg (validering van de juistheid)',
   'dateRangeValidator.minMaxCallout':
-    'We kunnen het <code>min</code> en <code>max</code> patroon gebruiken om het bereik te valideren. Echter, deze validatie zal niet falen bij het typen van een getal als 12 of een string als 12hello.',
+    'Stem native min/max-hints af op de validator. Native grenzen zijn inclusief; zet de bijbehorende vlaggen op true. De validator houdt de geldigheid van Reactive Forms onafhankelijk van browserhints.',
   'dateRangeValidator.example3Title': 'Voorbeeld 3: Validatie van datum en tijdbereik',
   'dateRangeValidator.example3Desc':
-    'Om zowel datum als tijd te valideren, stel <code>compareTime</code> in op true. Met de onderstaande configuratie moet de geselecteerde datum en tijd tussen 1 september 2024 om middag UTC en 2 september 2024 om middag UTC vallen, rekening houdend met de tijdscomponenten.',
+    'compareTime: true vergelijkt datum en tijd. Het voorbeeld staat lokale tijden van nu tot over vijf dagen toe, inclusief beide grenzen. Gebruik een expliciete offset voor exacte tijdstippen; zonder compareTime worden alleen lokale kalenderdagen vergeleken.',
   'dateRangeValidator.dateTimeExpires': 'Geldigheidsduur',
   'dateRangeValidator.dateTimeMinError': 'De datumtijd kan niet eerder zijn dan {{ minDate }}',
   'dateRangeValidator.dateTimeMaxError': 'De datumtijd kan niet later zijn dan {{ maxDate }}',
@@ -2252,16 +2252,16 @@ export const nlTranslations: Record<string, string> = {
   'dateRangeValidator.validationErrors': 'Validatiefouten',
   'dateRangeValidator.errInvalidDate': 'Teruggeven wanneer de datum ongeldig is (bijv. "2023-13-01" of "hallo world")',
   'dateRangeValidator.errMinDate':
-    'Geeft terug wanneer de geselecteerde datum eerder is dan of gelijk is aan de minimaal toegestane datum. De foutwaarde is de minimaal toegestane datum die is geformatteerd als een ISO-tekenreeks.',
+    'De waarde overschrijdt deze grens. De foutwaarde is de grens als ISO-tekenreeks; gelijkheid vereist dat de bijbehorende inclusive-vlag true is.',
   'dateRangeValidator.errMaxDate':
-    'Geeft terug wanneer de geselecteerde datum later is dan of gelijk is aan de maximaal toegestane datum. De foutwaarde is de maximaal toegestane datum geformatteerd als een ISO-tekenreeks.',
+    'De waarde overschrijdt deze grens. De foutwaarde is de grens als ISO-tekenreeks; gelijkheid vereist dat de bijbehorende inclusive-vlag true is.',
   'dateRangeValidator.apiSummary':
     'Valideert dat een datumwaarde binnen een opgegeven minDate en/of maxDate bereik valt.',
   'dateRangeValidator.paramOptions': 'DateRangeOptions configureert minDate, maxDate en inclusiviteitsvlaggen.',
   'dateRangeValidator.optMinDate': 'Minimum aanvaardbare datum.',
   'dateRangeValidator.optMaxDate': 'Maximale aanvaardbare datum.',
-  'dateRangeValidator.optMinInclusive': 'Of de minimale datum inclusief is. Standaardwaarde is true.',
-  'dateRangeValidator.optMaxInclusive': 'Of de maximale datum inclusief is. Standaardwaarden zijn true.',
+  'dateRangeValidator.optMinInclusive': 'Sta de ondergrens toe. Standaard: false.',
+  'dateRangeValidator.optMaxInclusive': 'Sta de bovengrens toe. Standaard: false.',
   'rangePipe.overview':
     "De <code>range</code> pipe genereert een array van getallen binnen een opgegeven bereik, waarmee het ideaal is voor het maken van dropdownopties, paginatooltips of elk scenario dat numerieke reeksen in sjablonen vereist. Bij het werken met Angular-sjablonen, kan je er mogelijk voor zorgen dat een array van getallen wordt gegenereerd voor iteratie. Bijvoorbeeld, als je het getal 20 hebt en een array van 1 tot 20 wilt genereren om te weergeven in een dropdownlijst, kan Angular's <code>@for</code> directie dit niet direct itereren. Hoewel je dit in TypeScript kunt genereren, zijn er gevallen waarin het het meest praktisch is om de array rechtstreeks in de sjabloon te genereren.",
   'rangePipe.callout1':

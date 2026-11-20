@@ -2,7 +2,7 @@ import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playgr
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe} from 'clr-lift';
 import {httpsValidator, urlValidator} from 'ngx-lift';
 
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -12,6 +12,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   selector: 'app-url-validator',
   imports: [
     DemoPlaygroundComponent,
+    CalloutComponent,
     PageContainerComponent,
     ClarityModule,
     ReactiveFormsModule,

@@ -4,7 +4,7 @@
 
   <app-demo-playground
     data-testid="date-range-validator-starter"
-    [title]="'common.basicUsage' | translate"
+    [title]="'dateRangeValidator.example1Title' | translate"
     [tsCode]="firstTaskCode"
     [htmlCode]="firstTaskHtml"
   >
@@ -37,52 +37,14 @@
     </div>
   </app-demo-playground>
 
-  <p data-testid="date-range-validator-upgrade-note">{{ 'dateRangeValidator.upgradeNote' | translate }}</p>
-  <app-code-block [code]="upgradeExampleCode" lang="typescript" />
-  <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
+  <cll-callout data-testid="date-range-calendar-note">{{
+    'dateRangeValidator.calendarDayNote' | translate
+  }}</cll-callout>
+  <app-code-block [code]="calendarExampleCode" lang="typescript" />
 
-  <!-- Examples Section -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.examples' | translate }}</h2>
 
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'dateRangeValidator.example1Title' | translate }}</h3>
-      <p [innerHTML]="'dateRangeValidator.example1Desc' | translate"></p>
-      <app-code-block [code]="dateExampleCode" lang="typescript" />
-    </article>
-
-    <article cds-layout="vertical gap:sm">
-      <h3>{{ 'dateRangeValidator.example3Title' | translate }}</h3>
-      <p [innerHTML]="'dateRangeValidator.example3Desc' | translate"></p>
-      <app-code-block [code]="dateTimeExampleCode" lang="typescript" />
-      <form clrForm [formGroup]="dateTimeForm">
-        <clr-input-container>
-          <label class="clr-required-mark" for="datetime-expires">{{
-            'dateRangeValidator.dateTimeExpires' | translate
-          }}</label>
-          <input
-            type="datetime-local"
-            id="datetime-expires"
-            clrInput
-            [formControl]="dateTimeForm.controls.expires"
-            required
-            [min]="minTimestamp"
-            [max]="maxTimestamp"
-          />
-          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
-          <clr-control-error *clrIfError="'minDate'; error as minDate">
-            {{ 'dateRangeValidator.dateTimeMinError' | translate: {minDate} }}
-          </clr-control-error>
-          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-            {{ 'dateRangeValidator.dateTimeMaxError' | translate: {maxDate} }}
-          </clr-control-error>
-        </clr-input-container>
-      </form>
-      <app-code-block [code]="dateTimeCode" lang="typescript" />
-    </article>
-  </section>
-
-  <section cds-layout="vertical gap:md">
     <article cds-layout="vertical gap:sm">
       <h3>{{ 'dateRangeValidator.example2Title' | translate }}</h3>
       <p [innerHTML]="'dateRangeValidator.example2Desc' | translate"></p>
@@ -97,8 +59,8 @@
             [formControl]="dateForm.controls.expires"
             [min]="todayInISO"
           />
-          <clr-control-error *clrIfError="'minDate'; error as minDate">
-            {{ 'dateRangeValidator.minDateError' | translate: {minDate} }}
+          <clr-control-error *clrIfError="'minDate'">
+            {{ 'dateRangeValidator.minDateError' | translate: {minDate: todayInISO} }}
           </clr-control-error>
         </clr-input-container>
 
@@ -119,20 +81,52 @@
           <clr-control-error *clrIfError="'invalidDate'">{{
             'dateRangeValidator.invalidDate' | translate
           }}</clr-control-error>
-          <clr-control-error *clrIfError="'maxDate'; error as maxDate">
-            {{ 'dateRangeValidator.maxDateError' | translate: {maxDate} }}
+          <clr-control-error *clrIfError="'maxDate'">
+            {{ 'dateRangeValidator.maxDateError' | translate: {maxDate: fiveDaysLaterInISO} }}
           </clr-control-error>
-          <clr-control-error *clrIfError="'minDate'; error as minDate">
-            {{ 'dateRangeValidator.minDateError' | translate: {minDate} }}
+          <clr-control-error *clrIfError="'minDate'">
+            {{ 'dateRangeValidator.minDateError' | translate: {minDate: tomorrowInISO} }}
           </clr-control-error>
           <clr-control-error *clrIfError="'max'">{{ 'dateRangeValidator.clarityMax' | translate }}</clr-control-error>
           <clr-control-error *clrIfError="'min'">{{ 'dateRangeValidator.clarityMin' | translate }}</clr-control-error>
         </clr-date-container>
       </form>
       <app-code-block [code]="dateCode" lang="typescript" />
-      <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
+    </article>
+
+    <article cds-layout="vertical gap:sm">
+      <h3>{{ 'dateRangeValidator.example3Title' | translate }}</h3>
+      <p [innerHTML]="'dateRangeValidator.example3Desc' | translate"></p>
+      <form clrForm [formGroup]="dateTimeForm">
+        <clr-input-container>
+          <label class="clr-required-mark" for="datetime-expires">{{
+            'dateRangeValidator.dateTimeExpires' | translate
+          }}</label>
+          <input
+            type="datetime-local"
+            id="datetime-expires"
+            clrInput
+            [formControl]="dateTimeForm.controls.expires"
+            required
+            [min]="minTimestamp"
+            [max]="maxTimestamp"
+          />
+          <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
+          <clr-control-error *clrIfError="'minDate'">
+            {{ 'dateRangeValidator.dateTimeMinError' | translate: {minDate: minTimestamp} }}
+          </clr-control-error>
+          <clr-control-error *clrIfError="'maxDate'">
+            {{ 'dateRangeValidator.dateTimeMaxError' | translate: {maxDate: maxTimestamp} }}
+          </clr-control-error>
+        </clr-input-container>
+      </form>
+      <app-code-block [code]="dateTimeCode" lang="typescript" />
     </article>
   </section>
+
+  <cll-callout>{{ 'dateRangeValidator.boundaryNote' | translate }}</cll-callout>
+  <cll-callout [innerHTML]="'dateRangeValidator.minMaxCallout' | translate"></cll-callout>
+
   <!-- API Reference -->
   <section cds-layout="vertical gap:md">
     <h2>{{ 'common.apiReference' | translate }}</h2>
