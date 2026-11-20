@@ -2200,6 +2200,10 @@ export const ptBRTranslations: Record<string, string> = {
     '(Opcional) Chave de propriedade para verificar a singularidade para itens objeto. Se omitido, verifica a igualdade primitiva.',
   'dateRangeValidator.firstTask':
     'Escolha uma data entre amanhã e daqui a cinco dias, incluindo os limites. Datas fora do intervalo e valores obrigatórios vazios são inválidos.',
+  'dateRangeValidator.upgradeNote':
+    "Atualização: em America/New_York, '2026-01-15' antes significava 14 de janeiro às 19:00 (meia-noite UTC); agora significa 15 de janeiro à meia-noite local. Com mínimo local em 15 de janeiro e minInclusive: true, esse dia agora é válido. Objetos Date e strings com horário mantêm sua interpretação; misturar datas sem horário e instantes pode alterar a validação após atualizar.",
+  'urlValidator.upgradeNote':
+    'Atualização: urlValidator e httpsValidator agora aceitam null, undefined e a string vazia para permitir campos opcionais. Isso não torna uma string vazia uma URL. Adicione Validators.required para rejeitar valores vazios. Strings contendo apenas espaços continuam retornando invalidUrl.',
   'dateRangeValidator.overview':
     'O <code>dateRangeValidator</code> é um validador personalizado que valida que uma data esteja dentro de um intervalo especificado. Ele suporta a validação tanto para valores de data apenas quanto para valores de data e hora, com limites inclusivos/exclusivos configuráveis e comparação opcional de tempo.',
   'dateRangeValidator.example1Title': 'Exemplo 1: Validação da faixa de datas',

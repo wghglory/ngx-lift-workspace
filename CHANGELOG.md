@@ -60,6 +60,11 @@ compatibility exception for the two changes below before versioning; this entry 
 
 ### Fixed
 
+- Validator demo pages and the
+  [compatibility specification](docs/design/ngx-lift/standard-validators-design-spec.md#existing-validator-upgrade-compatibility)
+  explain optional URL fields, required-field migration, and the New York date-only parsing change with an inclusive
+  local minimum example. These notes clarify existing unreleased behavior; they do not change validator logic.
+
 - The floating query devtools launcher is now a 32px translucent button docked against the right viewport edge. Drag it
   away from footer controls and release to snap right; focused Up/Down and Home/End keys also reposition it. Placement
   survives reloads for the session and stays within the safe viewport after resizing. Hover/focus restores full opacity;

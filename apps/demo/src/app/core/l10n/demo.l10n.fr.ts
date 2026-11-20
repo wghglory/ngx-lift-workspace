@@ -2245,6 +2245,10 @@ export const frTranslations: Record<string, string> = {
     "(Facultatif) Clé de propriété pour vérifier l'unicité des objets. Si omis, vérifie l'égalité primitive.",
   'dateRangeValidator.firstTask':
     'Choisissez une date entre demain et dans cinq jours, bornes incluses. Les dates hors plage et les champs obligatoires vides sont invalides.',
+  'dateRangeValidator.upgradeNote':
+    "Mise à jour : dans America/New_York, '2026-01-15' désignait le 14 janvier à 19 h (minuit UTC) ; il désigne maintenant le 15 janvier à minuit local. Avec un minimum local au 15 janvier et minInclusive: true, ce jour est désormais valide. Les objets Date et les chaînes contenant une heure gardent leur interprétation ; mélanger dates seules et instants peut modifier la validation après mise à jour.",
+  'urlValidator.upgradeNote':
+    'Mise à jour : urlValidator et httpsValidator acceptent maintenant null, undefined et la chaîne vide pour permettre les champs facultatifs. Une chaîne vide ne devient pas une URL. Ajoutez Validators.required pour refuser les valeurs vides. Les chaînes composées uniquement d’espaces renvoient toujours invalidUrl.',
   'dateRangeValidator.overview':
     "L'<code>dateRangeValidator</code> est un validateur personnalisé qui valide que la date est dans une plage spécifiée. Il prend en charge la validation pour des valeurs de date uniquement et des valeurs de date-heure, avec des bornes inclusives/exclusives configurables et une comparaison optionnelle du temps.",
   'dateRangeValidator.example1Title': 'Exemple 1: Validation de la plage de dates',

@@ -2152,6 +2152,10 @@ export const enTranslations = {
     '(Optional) Property key to check uniqueness for object items. If omitted, checks primitive equality.',
   'dateRangeValidator.firstTask':
     'Choose a date from tomorrow through five days from today. Both endpoints are allowed. An earlier or later date is invalid; clearing the required date is also invalid.',
+  'dateRangeValidator.upgradeNote':
+    "Upgrade: in America/New_York, '2026-01-15' previously meant January 14 at 19:00 (UTC midnight); it now means January 15 at local midnight. With a local January 15 minimum and minInclusive: true, that selected day now passes. Date objects and strings containing a time retain their existing parsing; mixed date-only strings and instants can produce different validation results after upgrading.",
+  'urlValidator.upgradeNote':
+    'Upgrade: urlValidator and httpsValidator now accept null, undefined and the empty string. This allows optional fields; it does not make an empty string a URL. Add Validators.required wherever empty input must be rejected. Whitespace-only strings still return invalidUrl.',
   'dateRangeValidator.overview':
     'The <code>dateRangeValidator</code> is a custom validator that validates a date falls within a specified range. It supports validation for both date-only values and date-time values, with configurable inclusive/exclusive boundaries and optional time comparison.',
   'dateRangeValidator.example1Title': 'Example 1: Date Range Validation',

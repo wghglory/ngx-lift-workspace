@@ -2113,6 +2113,10 @@ export const koTranslations: Record<string, string> = {
     '(선택 사항) 객체 항목을 검증할 프로퍼티 키. 생략하면 원시 타입의 등록 여부를 확인합니다.',
   'dateRangeValidator.firstTask':
     '내일부터 5일 후까지 날짜를 선택하세요. 양 끝 날짜도 포함됩니다. 범위 밖 날짜와 비어 있는 필수 값은 유효하지 않습니다.',
+  'dateRangeValidator.upgradeNote':
+    "업그레이드 안내: America/New_York에서 '2026-01-15'는 이전에는 1월 14일 19:00(UTC 자정)이었지만 이제는 현지 1월 15일 자정입니다. 최솟값이 현지 1월 15일이고 minInclusive: true이면 선택한 날짜가 유효합니다. Date 객체와 시간이 포함된 문자열의 해석은 그대로입니다. 날짜 전용 문자열과 시점을 혼용하면 업그레이드 후 검증 결과가 달라질 수 있습니다.",
+  'urlValidator.upgradeNote':
+    '업그레이드 안내: urlValidator와 httpsValidator는 선택 입력을 위해 null, undefined, 빈 문자열을 허용합니다. 빈 문자열이 URL이라는 뜻은 아닙니다. 빈 입력을 거부하려면 Validators.required를 추가하세요. 공백만 있는 문자열은 여전히 invalidUrl을 반환합니다.',
   'dateRangeValidator.overview':
     'dateRangeValidator는 특정 범위 내에 날짜가 있는지 검증하는 커스텀 검증기입니다. 날짜만 또는 날짜-시간 모두 지원하며, 포함/제외 경계를 구성할 수 있으며, 시간 비교가 선택적입니다.',
   'dateRangeValidator.example1Title': '예제 1: 날짜 범위 검증',

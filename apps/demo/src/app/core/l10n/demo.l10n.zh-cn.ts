@@ -1951,6 +1951,10 @@ export const zhCNTranslations: Record<string, string> = {
   'uniqueValidator.apiSummary': '验证 FormArray 控件或数组中各元素的唯一性。',
   'uniqueValidator.paramKey': '（可选）对象类型元素的唯一性检查属性名。若省略则检查原始值相等性。',
   'dateRangeValidator.firstTask': '选择明天到五天后的日期，包含两个端点。范围外日期无效，清空必填日期也无效。',
+  'dateRangeValidator.upgradeNote':
+    "升级提示：在纽约，'2026-01-15' 以前表示当地 1 月 14 日 19:00（UTC 零点），现在表示当地 1 月 15 日零点。最小边界为当地 1 月 15 日且 minInclusive: true 时，所选日期现在会通过。Date 对象和包含时间的字符串保持原有解析方式；混用纯日期字符串和时间点时，升级后的校验结果可能改变。",
+  'urlValidator.upgradeNote':
+    '升级提示：urlValidator 和 httpsValidator 现在允许 null、undefined 和空字符串，以支持可选字段；这并不表示空字符串是 URL。需要拒绝空值时，请添加 Validators.required。仅含空格的字符串仍返回 invalidUrl。',
   'dateRangeValidator.overview':
     '<code>dateRangeValidator</code> 是一款用于验证日期是否在指定范围内的自定义验证器。它支持纯日期与带时间的日期格式校验，具备可配置的边界包含性（闭区间/开区间）以及可选的时间精度对比。',
   'dateRangeValidator.example1Title': '示例 1：日期范围校验',
