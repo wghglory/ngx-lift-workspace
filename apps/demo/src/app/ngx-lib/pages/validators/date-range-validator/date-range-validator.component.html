@@ -57,10 +57,10 @@
             class="date-input"
             clrInput
             [formControl]="dateForm.controls.expires"
-            [min]="todayInISO"
+            [min]="todayDate"
           />
           <clr-control-error *clrIfError="'minDate'">
-            {{ 'dateRangeValidator.minDateError' | translate: {minDate: todayInISO} }}
+            {{ 'dateRangeValidator.minDateError' | translate: {minDate: todayDate} }}
           </clr-control-error>
         </clr-input-container>
 
@@ -74,18 +74,18 @@
             clrDate
             [formControl]="dateForm.controls.futureDays"
             required
-            [min]="tomorrowInISO"
-            [max]="fiveDaysLaterInISO"
+            [min]="tomorrowDate"
+            [max]="fiveDaysLaterDate"
           />
           <clr-control-error *clrIfError="'required'">{{ 'common.required' | translate }}</clr-control-error>
           <clr-control-error *clrIfError="'invalidDate'">{{
             'dateRangeValidator.invalidDate' | translate
           }}</clr-control-error>
           <clr-control-error *clrIfError="'maxDate'">
-            {{ 'dateRangeValidator.maxDateError' | translate: {maxDate: fiveDaysLaterInISO} }}
+            {{ 'dateRangeValidator.maxDateError' | translate: {maxDate: fiveDaysLaterDate} }}
           </clr-control-error>
           <clr-control-error *clrIfError="'minDate'">
-            {{ 'dateRangeValidator.minDateError' | translate: {minDate: tomorrowInISO} }}
+            {{ 'dateRangeValidator.minDateError' | translate: {minDate: tomorrowDate} }}
           </clr-control-error>
           <clr-control-error *clrIfError="'max'">{{ 'dateRangeValidator.clarityMax' | translate }}</clr-control-error>
           <clr-control-error *clrIfError="'min'">{{ 'dateRangeValidator.clarityMin' | translate }}</clr-control-error>

@@ -1,8 +1,9 @@
 # Local calendar utilities design specification
 
 Status: Implemented (unreleased); API reviewed. Owner: ngx-lift maintainers. Updated: 2026-11-20. Package: ngx-lift.
-Approval: the maintainer explicitly requested the spec and both APIs in PR #240 on 2026-11-20. That instruction also
-authorizes the spec and implementation in the same PR instead of separate PRs. It does not authorize publication.
+Approval: the maintainer explicitly requested the spec and both APIs in
+[PR #240](https://github.com/wghglory/ngx-lift-workspace/pull/240) on 2026-11-20. That instruction also authorizes the
+spec and implementation in the same PR instead of separate PRs. It does not authorize publication.
 
 ## Problem, consumer evidence and admission
 

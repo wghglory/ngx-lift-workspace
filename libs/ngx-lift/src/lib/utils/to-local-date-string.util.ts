@@ -6,6 +6,8 @@
  * a date-only string already represents UTC midnight and is not converted back to its named day.
  * Uses the host timezone, so SSR and browser results require matching timezone assumptions.
  *
+ * @param date - Valid native Date whose local calendar fields should be formatted.
+ * @returns The local calendar day as a four-digit positive-year YYYY-MM-DD string.
  * @throws TypeError when date is not a native Date (cross-realm Dates are supported).
  * @throws RangeError for an invalid Date or a local year outside 1–9999.
  * @example

@@ -5,6 +5,9 @@
  * day can span 23 or 25 hours; use timestamp arithmetic for an exact elapsed duration.
  * Zero returns an exact clone, including during a repeated DST hour. No current clock is read.
  *
+ * @param date - Valid native Date used as the reference instant.
+ * @param days - Positive, negative or zero safe-integer number of local calendar days.
+ * @returns A distinct Date shifted by the requested calendar days.
  * @throws TypeError when date is not a native Date (cross-realm Dates are supported).
  * @throws RangeError for an invalid Date, a non-safe-integer offset, or Date overflow.
  * @example
