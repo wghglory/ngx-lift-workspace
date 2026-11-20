@@ -136,9 +136,9 @@ recorded in PR #240 separately from this design record.
 
 - Source: [addCalendarDays](../../../libs/ngx-lift/src/lib/utils/add-calendar-days.util.ts), exported by the existing
   root utility barrel. No dependency was added.
-- [Utility tests](../../../libs/ngx-lift/src/lib/utils/local-calendar.util.spec.ts) exercise the specified boundaries,
-  including fresh processes in UTC, New York, Shanghai, Honolulu and Apia. The current verification results are recorded
-  in PR #240; historical results for the withdrawn formatter are not evidence for this revision.
+- [Utility tests](../../../libs/ngx-lift/src/lib/utils/add-calendar-days.util.spec.ts) exercise the specified
+  boundaries, including fresh processes in UTC, New York, Shanghai, Honolulu and Apia. The current verification results
+  are recorded in PR #240; historical results for the withdrawn formatter are not evidence for this revision.
 - Both libraries and the demo passed lint/typecheck/build; translation, embedded-example and production bundle checks
   passed. The existing validation-documentation browser suite passed 12 tests across Chromium, Firefox and WebKit.
 - The [packed-consumer verifier](../../../tools/package/verify-packages.mjs) asserts the root export, strict public
