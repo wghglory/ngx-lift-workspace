@@ -1,6 +1,6 @@
 # Clarity component roadmap
 
-Updated 2026-11-17. This document records the recommended component sequence only; it does not approve APIs or authorize
+Updated 2026-11-20. This document records the recommended component sequence only; it does not approve APIs or authorize
 implementation. Release, security, acceptance and platform-upgrade work are tracked in GitHub issues and evidenced by PR
 and CI artifacts. YAML viewer/editor work is paused.
 
@@ -10,8 +10,9 @@ and CI artifacts. YAML viewer/editor work is paused.
 | ----- | --------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | 1     | Date/time inputs and ranges | Broad scheduling/filtering value, but substantial locale/time-zone complexity       | Date-only/time/instant contracts and range behavior verified      |
 | 2     | Drawer                      | Reusable details/edit surface once form and overlay behavior are settled            | Modal/nonmodal behavior and nested control focus verified         |
-| 3     | Cascader, then tree-select  | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved |
-| 4     | Calendar view               | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract         |
+| 3     | Upload files                | Consumer-driven chunk lifecycle and non-modal progress surface with real demand     | Chunk lifecycle, minimize/restore and all-locale demo verified    |
+| 4     | Cascader, then tree-select  | Specialized hierarchy selection; share only demonstrated common behavior            | Concrete hierarchy consumer and lazy-selection semantics approved |
+| 5     | Calendar view               | Event visualization differs from a picker; no current scheduling-engine requirement | Named consumer and bounded visible-range loading contract         |
 
 New value controls target Angular 21 first. Angular 22 and the Nx major upgrade are deferred and do not block component
 delivery. Review the shared CVA contract and each feature API before implementation. Release fixes, security remediation
@@ -63,6 +64,7 @@ The [forms contract](design/clr-lift/forms-compatibility-design-spec.md) owns th
 | Cascader and tree-select                             | [Hierarchical selection](design/clr-lift/hierarchical-selection-design-spec.md) |
 | Datagrid selection form control                      | [Native grid selection](design/clr-lift/datagrid-selection-design-spec.md)      |
 | Details and edit panels                              | [Drawer](design/clr-lift/drawer-design-spec.md)                                 |
+| Upload files                                         | [Upload files](design/clr-lift/upload-design-spec.md)                           |
 
 ## Delivery policy
 
