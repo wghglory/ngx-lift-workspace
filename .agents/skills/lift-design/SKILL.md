@@ -11,8 +11,7 @@ description:
 
 Use the repository's [development workflow](../../../docs/design/component-development.md) as the canonical acceptance
 policy. The [component roadmap](../../../docs/component-roadmap.md) defines Angular 21 delivery and the deferred
-platform upgrade. The sequence is admission decision, then industry comparison, then spec, then spec PR and review,
-then implementation; "design spec first" means the spec precedes implementation.
+platform upgrade. The sequence is admission decision, then industry comparison, then spec and review, then implementation; "design spec first" means the spec precedes implementation.
 
 ## Admission gate
 
@@ -46,20 +45,21 @@ display, navigation and utilities, explain the relevant integration instead of a
 
 **Completion:** the spec is reviewable and states the consumer, the industry gap, and every unresolved decision.
 
-## Spec PR and review
+## Spec review and PR
 
-Open a docs-only PR for the spec and run the [spec review](../spec-review/SKILL.md) on it before any implementation.
-For a full docs/codebase drift sweep, read [find-repo-gaps](../find-repo-gaps/SKILL.md). Present the draft/API changes
-for maintainer review unless explicit approval already covers that exact scope; record the approval scope. On a
-design-only request, stop here.
+Run the [spec review](../spec-review/SKILL.md) before implementation. Spec and implementation may share one PR under
+the [development workflow](../../../docs/design/component-development.md#design-before-implementation); a separate
+docs-only PR is optional. For a full docs/codebase drift sweep, read [find-repo-gaps](../find-repo-gaps/SKILL.md). Present
+the draft/API changes for maintainer review unless explicit approval already covers that exact scope; record the
+reviewed revision, findings and approved scope. On a design-only request, stop here.
 
-**Completion:** the spec PR link, the review findings, and the approval scope are recorded.
+**Completion:** the PR link, reviewed spec revision, review findings and approval scope are recorded.
 
 ## Implement after approval
 
 After approval, implement functional increments and satisfy the workflow's demos, localization, tests, accessibility,
 lifecycle, performance and installed-consumer gates. Update the spec with actual evidence and submit the implementation
-as a separate PR. Diff review of that PR is the built-in `code-review` pass, not a substitute for the earlier sections.
+in the same PR or a separate PR. Diff review of that PR is the built-in `code-review` pass, not a substitute for the earlier sections.
 
 **Completion:** the approved scope is implemented with acceptance evidence; remaining external gates are reported.
 

@@ -1,14 +1,15 @@
 ---
 name: spec-review
 description:
-  Review a design spec, a public API proposal, or its docs-only PR across admission, specification quality, contracts,
+  Review a design spec, a public API proposal, or its PR across admission, specification quality, contracts,
   accessibility/language, dependency cost, evidence, and codebase gaps. This skill should be used before implementation
-  and after a spec PR is opened; it complements the built-in code-review pass, which reviews an implementation diff only.
+  and after a PR containing spec changes is opened; it complements the built-in code-review pass, which reviews an implementation diff only.
 ---
 
 # Review a design spec
 
-Produce a multi-aspect review of a proposed public API before code exists. Use the canonical
+Produce a multi-aspect review of a proposed public API before implementation. Spec and code may share a PR under the
+canonical development workflow; review the contract independently of the implementation diff. Use the canonical
 [development workflow](../../../docs/design/component-development.md),
 [acceptance contract](../../../docs/guides/accessibility-and-localization.md), and
 [gap taxonomy](../find-repo-gaps/references/gap-taxonomy.md) as the rule sources. Read

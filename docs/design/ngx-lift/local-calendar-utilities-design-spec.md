@@ -2,8 +2,9 @@
 
 Status: Implemented (unreleased); API reviewed. Owner: ngx-lift maintainers. Updated: 2026-11-20. Package: ngx-lift.
 Approval: the maintainer explicitly requested the spec and both APIs in
-[PR #240](https://github.com/wghglory/ngx-lift-workspace/pull/240) on 2026-11-20. That instruction also authorizes the
-spec and implementation in the same PR instead of separate PRs. It does not authorize publication.
+[PR #240](https://github.com/wghglory/ngx-lift-workspace/pull/240) on 2026-11-20. Spec and implementation share that PR
+under the [development workflow](../component-development.md#design-before-implementation). Publication remains a
+separate gate.
 
 ## Problem, consumer evidence and admission
 
@@ -25,14 +26,22 @@ The maintainer requested these two exports specifically; no date library, timezo
 
 Sources checked 2026-11-20. These comparisons concern headless date operations, not a proposal for another picker.
 
-| Primary source                                                                                                                          | Evidence and decision                                                                                                                                                                |
-| --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [JavaScript setDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setDate)                     | Adopt local-calendar arithmetic; explicitly retain native DST gap/overlap normalization. Adapt by copying first and validating input/output. A calendar day is not a fixed 24 hours. |
-| [JavaScript toISOString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)             | Reject UTC ISO slicing for local calendar input values.                                                                                                                              |
-| [Angular Material NativeDateAdapter](https://github.com/angular/components/blob/main/src/material/core/datetime/native-date-adapter.ts) | Adopt the explicit calendar-day vocabulary; avoid requiring a Material adapter/provider for two pure functions.                                                                      |
-| [Clarity Date Picker](https://clarity.design/documentation/datepicker/code)                                                             | Keep Clarity responsible for picker UI and localized presentation; these utilities own native Date arithmetic and a machine-readable date string.                                    |
-| [NG-ZORRO DatePicker](https://ng.ant.design/components/date-picker/en)                                                                  | Keep component selection and date formatting infrastructure separate; no NG-ZORRO dependency or component wrapper.                                                                   |
-| [React native input](https://react.dev/reference/react-dom/components/input)                                                            | Preserve ordinary string input values; no framework-specific form bridge is required for a headless formatter.                                                                       |
+| Primary source                                                                                                                            | Evidence and decision                                                                                                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [JavaScript setDate](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/setDate)                       | Adopt local-calendar arithmetic; explicitly retain native DST gap/overlap normalization. Adapt by copying first and validating input/output. A calendar day is not a fixed 24 hours.                                                                                                                                 |
+| [JavaScript toISOString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toISOString)               | Reject UTC ISO slicing for local calendar input values.                                                                                                                                                                                                                                                              |
+| [JavaScript toLocaleDateString](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/toLocaleDateString) | Keep locale-sensitive human display formatting native. Output can vary even within a locale, so it is not the fixed date-input serialization contract.                                                                                                                                                               |
+| [Angular formatDate](https://angular.dev/api/common/formatDate)                                                                           | A valid alternative in Angular applications: `formatDate(date, 'yyyy-MM-dd', 'en-US')` uses local time when timezone is omitted. The new helper is optional convenience for the narrower validated Date-to-input-string contract; it does not add a capability unavailable through Angular or native field assembly. |
+| [Angular Material NativeDateAdapter](https://github.com/angular/components/blob/main/src/material/core/datetime/native-date-adapter.ts)   | Adopt the explicit calendar-day vocabulary; avoid requiring a Material adapter/provider for two pure functions.                                                                                                                                                                                                      |
+| [Clarity Date Picker](https://clarity.design/documentation/datepicker/code)                                                               | Keep Clarity responsible for picker UI and localized presentation; these utilities own native Date arithmetic and a machine-readable date string.                                                                                                                                                                    |
+| [NG-ZORRO DatePicker](https://ng.ant.design/components/date-picker/en)                                                                    | Keep component selection and date formatting infrastructure separate; no NG-ZORRO dependency or component wrapper.                                                                                                                                                                                                   |
+| [React native input](https://react.dev/reference/react-dom/components/input)                                                              | Preserve ordinary string input values; no framework-specific form bridge is required for a headless formatter.                                                                                                                                                                                                       |
+
+The formatter is not needed for ordinary localized date display; use native display APIs for that task. Its value is one
+shared, explicitly local, fixed `YYYY-MM-DD` contract for input values/bounds without repeated field padding or reliance
+on a locale's display order. This is a convenience/correctness boundary, not a requirement to replace existing
+formatters. `Local` in the name means the host timezone; native `toLocaleDateString` uses `Locale` to mean language and
+regional formatting. Applications already using an equivalent formatter do not need to migrate.
 
 ## Goals and non-goals
 
@@ -116,11 +125,12 @@ transitions, invalid dates/offsets, Date overflow, year padding/range, cross-rea
 
 ## Review decisions
 
-The explicit maintainer instruction supersedes the earlier request for additional consumer evidence and the default
-separate-PR sequence for this bounded scope. The admission table records the actual downstream evidence and the
-correctness guarantees beyond native mutation/UTC formatting. Spec review recommended approval before implementation in
-this PR on 2026-11-20 with no blocking contract findings. Implementation/review/check results must be recorded in the
-PR, not inferred from this plan.
+The maintainer explicitly authorized the bounded API scope and delivery in one PR. The
+[development workflow](../component-development.md#design-before-implementation) permits combined spec/implementation
+PRs while retaining admission, spec review and scoped approval before implementation. The admission table records
+observed downstream evidence and correctness guarantees beyond native mutation/UTC formatting. Spec review recommended
+approval before implementation on 2026-11-20 with no blocking contract findings. Implementation/review/check results are
+recorded in PR #240 separately from this design record.
 
 ## Implementation and local evidence
 

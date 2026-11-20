@@ -19,11 +19,12 @@ delivery work; the gate is not an extra numbered step.
    progressive learning path), minimal and advanced API examples, errors, and compatibility. Select additional contracts
    by behavior (forms, UI, async, shared cache), not by package. Keep proposed APIs visibly provisional. Show what the
    consumer imports, binds, and submits.
-4. Open a docs-only PR for the spec/API changes and review it with the
-   [spec-review skill](../../.agents/skills/spec-review/SKILL.md) across
-   [review aspects](../../.agents/skills/spec-review/references/review-aspects.md) and codebase gaps. Implement after
-   maintainer approval for that scope; existing explicit approval remains valid. A material new behavior or breaking API
-   requires review of the updated proposal.
+4. Review the spec/API changes with the [spec-review skill](../../.agents/skills/spec-review/SKILL.md) across
+   [review aspects](../../.agents/skills/spec-review/references/review-aspects.md) and codebase gaps before
+   implementation. Spec and implementation may share one PR; a separate docs-only PR is optional. Record the reviewed
+   spec revision, review findings and maintainer-approved scope in that PR or the linked spec. Implement after approval
+   for that scope; existing explicit approval remains valid. Combining files in one PR does not imply API approval. A
+   material new behavior or breaking API requires review of the updated proposal.
 5. Deliver small functional increments. Update the approved spec with final behavior and evidence.
 
 ## Form applicability
