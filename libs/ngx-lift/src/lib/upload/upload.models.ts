@@ -5,8 +5,9 @@ export type UploadStatus = 'queued' | 'uploading' | 'processing' | 'success' | '
 export interface UploadError {
   readonly code: string;
   readonly message?: string;
-  readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status';
+  readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean;
+  readonly fileName?: string;
 }
 
 /** Optional server-side task progress reported during processing. */

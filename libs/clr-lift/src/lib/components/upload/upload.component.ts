@@ -1,12 +1,20 @@
+import {isPlatformBrowser} from '@angular/common';
 import {
+  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
+  ComponentRef,
   computed,
+  createComponent,
+  effect,
+  EnvironmentInjector,
   forwardRef,
   inject,
   input,
   linkedSignal,
+  OnDestroy,
   output,
+  PLATFORM_ID,
   signal,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -15,8 +23,10 @@ import {UPLOAD_CHUNK_25MB, type UploadAdapter, type UploadError, type UploadItem
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
+import {UploadPanelComponent} from './upload-panel.component';
 import {uploadTranslations} from './upload.l10n';
 
+/** Clarity file-selection host: validates a selection and enqueues it on the shared queue. */
 @Component({
   selector: 'cll-upload',
   imports: [TranslatePipe, ClarityModule],
@@ -28,7 +38,11 @@ import {uploadTranslations} from './upload.l10n';
 export class UploadComponent implements ControlValueAccessor {
   private readonly queue = inject(UploadQueueService);
   private readonly translationService = inject(TranslationService);
+  private readonly appRef = inject(ApplicationRef);
+  private readonly environment = inject(EnvironmentInjector);
+  private readonly platformId = inject(PLATFORM_ID);
   private readonly tracked = new Map<string, true>();
+  private panelRef?: ComponentRef<UploadPanelComponent>;
 
   readonly adapter = input.required<UploadAdapter>();
   readonly multiple = input(false);
@@ -62,6 +76,14 @@ export class UploadComponent implements ControlValueAccessor {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
+    effect(() => {
+      if (this.disabled()) this.cancelTracked();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.panelRef?.destroy();
+    this.panelRef = undefined;
   }
 
   writeValue(files: readonly File[] | null): void {
@@ -79,9 +101,7 @@ export class UploadComponent implements ControlValueAccessor {
 
   setDisabledState(disabled: boolean): void {
     this.isDisabled.set(disabled);
-    if (disabled) {
-      for (const id of this.tracked.keys()) this.queue.cancel(id);
-    }
+    if (disabled) this.cancelTracked();
   }
 
   onSelected(event: Event): void {
@@ -96,11 +116,21 @@ export class UploadComponent implements ControlValueAccessor {
     const limit = this.maxFiles() > 0 ? this.maxFiles() : Infinity;
     for (const file of selected) {
       if (!this.matchesAccept(file)) {
-        rejections.push({code: 'upload.validation.accept', phase: 'validation'});
+        rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: file.name});
       } else if (file.size > this.maxSize() * 1024 * 1024) {
-        rejections.push({code: 'upload.validation.maxSize', phase: 'validation', message: String(this.maxSize())});
+        rejections.push({
+          code: 'upload.validation.maxSize',
+          phase: 'validation',
+          message: String(this.maxSize()),
+          fileName: file.name,
+        });
       } else if (accepted.length >= limit) {
-        rejections.push({code: 'upload.validation.maxFiles', phase: 'validation', message: String(limit)});
+        rejections.push({
+          code: 'upload.validation.maxFiles',
+          phase: 'validation',
+          message: String(limit),
+          fileName: file.name,
+        });
       } else {
         accepted.push(file);
       }
@@ -114,6 +144,7 @@ export class UploadComponent implements ControlValueAccessor {
     this.onChange(next);
     this.filesChange.emit(next);
 
+    this.ensurePanel();
     const items = this.queue.enqueue(accepted, {
       adapter: this.adapter(),
       chunkSize: this.chunkSize(),
@@ -144,6 +175,17 @@ export class UploadComponent implements ControlValueAccessor {
   private clearItems(): void {
     for (const id of this.tracked.keys()) this.queue.remove(id);
     this.tracked.clear();
+  }
+
+  private cancelTracked(): void {
+    for (const id of this.tracked.keys()) this.queue.cancel(id);
+  }
+
+  private ensurePanel(): void {
+    if (!isPlatformBrowser(this.platformId) || document.querySelector('cll-upload-panel')) return;
+    this.panelRef = createComponent(UploadPanelComponent, {environmentInjector: this.environment});
+    this.appRef.attachView(this.panelRef.hostView);
+    document.body.appendChild(this.panelRef.location.nativeElement);
   }
 
   private async watch(id: string): Promise<void> {

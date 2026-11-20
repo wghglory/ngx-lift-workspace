@@ -1,72 +1,76 @@
 <ng-template #panel>
   <div #container class="cll-upload-panel" tabindex="-1" cds-layout="vertical gap:sm" (keydown)="onEscape($event)">
-    @if (queue.minimized()) {
-      <button
-        #badge
-        type="button"
-        class="btn btn-sm btn-outline cll-upload-panel__badge"
-        (click)="restore()"
-        [attr.aria-label]="'upload.restore' | translate"
-      >
-        {{ 'upload.restore' | translate }} · {{ queue.aggregate().active }} · {{ queue.aggregate().progress }}%
-      </button>
-    } @else {
-      <div class="card cll-upload-panel__card" role="region" [attr.aria-label]="'upload.panel.title' | translate">
-        <div class="card-header">
-          <h3 class="card-title">{{ 'upload.panel.title' | translate }}</h3>
-          <button type="button" class="btn btn-sm btn-link cll-upload-panel__minimize" (click)="minimize()">
-            {{ 'upload.minimize' | translate }}
-          </button>
-        </div>
-        <div class="card-block" cds-layout="vertical gap:sm">
-          @for (item of queue.items(); track item.id) {
-            <div class="cll-upload-panel__item" cds-layout="vertical gap:xs">
-              <div cds-layout="horizontal gap:sm align:center">
-                <span class="cll-upload-panel__name">{{ item.file.name }}</span>
-                <span class="cll-upload-panel__status">{{ 'upload.status.' + item.status | translate }}</span>
-                @if (item.status === 'error') {
-                  <span class="clr-error">{{ 'upload.error.' + (item.error?.phase ?? 'unknown') | translate }}</span>
-                }
-              </div>
-              @if (isIndeterminate(item)) {
-                <progress max="100" [attr.aria-label]="item.file.name"></progress>
-              } @else {
-                <progress max="100" [value]="item.progress" [attr.aria-label]="item.file.name"></progress>
-              }
-              <div cds-layout="horizontal gap:xs">
-                @if (item.status === 'uploading' || item.status === 'processing' || item.status === 'queued') {
-                  <button type="button" class="btn btn-sm btn-link" (click)="cancel(item.id)">
-                    {{ 'upload.cancel' | translate }}
-                  </button>
-                }
-                @if (item.status === 'error') {
-                  <button type="button" class="btn btn-sm btn-link" (click)="retry(item.id)">
-                    {{ 'upload.retry' | translate }}
-                  </button>
-                }
-                <button type="button" class="btn btn-sm btn-link" (click)="remove(item.id)">
-                  {{ 'upload.remove' | translate }}
-                </button>
-              </div>
-            </div>
-          } @empty {
-            <p>{{ 'upload.done' | translate }}</p>
-          }
-          <div cds-layout="horizontal gap:sm align:center">
-            <button
-              type="button"
-              class="btn btn-sm btn-outline"
-              [disabled]="queue.aggregate().active > 0"
-              (click)="closeIdle()"
-            >
-              {{ 'upload.done' | translate }}
-            </button>
-            <button type="button" class="btn btn-sm btn-link" (click)="clearCompleted()">
-              {{ 'upload.clearCompleted' | translate }}
+    @if (!closed()) {
+      @if (queue.minimized()) {
+        <button
+          #badge
+          type="button"
+          class="btn btn-sm btn-outline cll-upload-panel__badge"
+          (click)="restore()"
+          [attr.aria-label]="
+            'upload.progress.aggregate' | translate: queue.aggregate().progress + ',' + queue.aggregate().active
+          "
+        >
+          {{ 'upload.restore' | translate }} · {{ queue.aggregate().active }} · {{ queue.aggregate().progress }}%
+        </button>
+      } @else {
+        <div class="card cll-upload-panel__card" role="region" [attr.aria-label]="'upload.panel.title' | translate">
+          <div class="card-header">
+            <h3 class="card-title">{{ 'upload.panel.title' | translate }}</h3>
+            <button type="button" class="btn btn-sm btn-link cll-upload-panel__minimize" (click)="minimize()">
+              {{ 'upload.minimize' | translate }}
             </button>
           </div>
+          <div class="card-block" cds-layout="vertical gap:sm">
+            @for (item of queue.items(); track item.id) {
+              <div class="cll-upload-panel__item" cds-layout="vertical gap:xs">
+                <div cds-layout="horizontal gap:sm align:center">
+                  <span class="cll-upload-panel__name">{{ item.file.name }}</span>
+                  <span class="cll-upload-panel__status">{{ 'upload.status.' + item.status | translate }}</span>
+                  @if (item.status === 'error') {
+                    <span class="clr-error">{{ 'upload.error.' + (item.error?.phase ?? 'unknown') | translate }}</span>
+                  }
+                </div>
+                @if (isIndeterminate(item)) {
+                  <progress max="100" [attr.aria-label]="item.file.name"></progress>
+                } @else {
+                  <progress max="100" [value]="item.progress" [attr.aria-label]="item.file.name"></progress>
+                }
+                <div cds-layout="horizontal gap:xs">
+                  @if (item.status === 'uploading' || item.status === 'processing' || item.status === 'queued') {
+                    <button type="button" class="btn btn-sm btn-link" (click)="cancel(item.id)">
+                      {{ 'upload.cancel' | translate }}
+                    </button>
+                  }
+                  @if (item.status === 'error') {
+                    <button type="button" class="btn btn-sm btn-link" (click)="retry(item.id)">
+                      {{ 'upload.retry' | translate }}
+                    </button>
+                  }
+                  <button type="button" class="btn btn-sm btn-link" (click)="remove(item.id)">
+                    {{ 'upload.remove' | translate }}
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <p>{{ 'upload.done' | translate }}</p>
+            }
+            <div cds-layout="horizontal gap:sm align:center">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline"
+                [disabled]="queue.aggregate().active > 0"
+                (click)="closeIdle()"
+              >
+                {{ 'upload.done' | translate }}
+              </button>
+              <button type="button" class="btn btn-sm btn-link" (click)="clearCompleted()">
+                {{ 'upload.clearCompleted' | translate }}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      }
     }
     <div class="cll-upload-panel__live" role="status" aria-live="polite">{{ announcement() }}</div>
   </div>

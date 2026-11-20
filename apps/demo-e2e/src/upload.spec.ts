@@ -15,7 +15,7 @@ test('uploads a bundle, registers it, and minimizes the shared panel', async ({p
   await expect(page.getByTestId('upload-demo-registered')).toContainText('1');
 
   await panel.getByRole('button', {name: 'Minimize'}).click();
-  const badge = panel.getByRole('button', {name: 'Restore upload progress'});
+  const badge = panel.locator('.cll-upload-panel__badge');
   await expect(badge).toBeVisible();
   await badge.click();
   await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();

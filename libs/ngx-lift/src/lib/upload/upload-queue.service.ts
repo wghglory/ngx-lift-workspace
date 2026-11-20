@@ -72,6 +72,7 @@ function toUploadError(error: unknown, phase: Phase): UploadError {
         message: candidate.message,
         phase: candidate.phase ?? phase,
         retryable: candidate.retryable,
+        fileName: candidate.fileName,
       };
     }
   }
@@ -82,7 +83,11 @@ function toUploadError(error: unknown, phase: Phase): UploadError {
   };
 }
 
-/** Root-scoped, transport-agnostic state machine for chunked uploads. */
+/** Root-scoped, transport-agnostic state machine for chunked uploads.
+ *
+ * Owns the lifecycle of each queued file, exposes immutable item snapshots, and settles
+ * `completion(id)` when an item reaches a terminal state.
+ */
 @Injectable({providedIn: 'root'})
 export class UploadQueueService {
   private readonly state = signal<readonly UploadItem[]>([]);
@@ -182,7 +187,13 @@ export class UploadQueueService {
     const uploadId = runtime.uploadId;
     runtime.controller.abort();
     this.clearTimer(runtime);
-    if (uploadId) void Promise.resolve(runtime.adapter.cancel(uploadId)).catch(() => undefined);
+    if (uploadId) {
+      void Promise.resolve(runtime.adapter.cancel(uploadId)).catch((error) => {
+        if (this.runtimes.get(id) === runtime) {
+          this.patch(id, {error: toUploadError(error, 'cancel')});
+        }
+      });
+    }
     if (!runtime.settlement) this.settle(runtime, {kind: 'cancelled'});
   }
 

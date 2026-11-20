@@ -7,7 +7,7 @@
     [accept]="accept()"
     [multiple]="multiple()"
     [disabled]="isDisabled()"
-    [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
+    [attr.aria-label]="'upload.browse' | translate"
     (change)="onSelected($event)"
   />
   <button #browse type="button" class="btn btn-outline btn-sm" [disabled]="isDisabled()" (click)="file.click()">
@@ -20,7 +20,7 @@
       class="btn btn-sm btn-icon btn-link btn-close"
       [disabled]="isDisabled()"
       (click)="clear(); browse.focus()"
-      [attr.aria-label]="'upload.remove' | translate"
+      [attr.aria-label]="'upload.clearAll' | translate"
     >
       <clr-icon shape="times" />
     </button>
@@ -31,6 +31,7 @@
   <ul class="cll-upload__errors">
     @for (error of errors(); track $index) {
       <li class="clr-error">
+        <span class="cll-upload__error-name">{{ error.fileName }}</span>
         @switch (error.code) {
           @case ('upload.validation.accept') {
             {{ 'upload.validation.accept' | translate }}

@@ -1,7 +1,12 @@
 <cll-page-container [title]="'uploadDemo.title' | translate">
   <p>{{ 'uploadDemo.intro' | translate }}</p>
 
-  <app-demo-playground data-testid="upload-demo-basic" [title]="'uploadDemo.basic' | translate" [tsCode]="basicCode">
+  <app-demo-playground
+    data-testid="upload-demo-basic"
+    [title]="'uploadDemo.basic' | translate"
+    [tsCode]="basicCode"
+    [htmlCode]="basicHtml"
+  >
     <div preview cds-layout="vertical gap:sm">
       <cll-upload
         [adapter]="adapter"
@@ -34,4 +39,13 @@
       <p>{{ 'uploadDemo.httpClientNote' | translate }}</p>
     </div>
   </app-demo-playground>
+
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <h3>UploadComponent (<code>cll-upload</code>)</h3>
+    <h4>{{ 'common.inputs' | translate }}</h4>
+    <app-api-table [properties]="inputs" />
+    <h4>{{ 'common.outputs' | translate }}</h4>
+    <app-api-table [properties]="outputs" />
+  </section>
 </cll-page-container>

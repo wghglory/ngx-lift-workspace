@@ -23,6 +23,7 @@ import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
 import {uploadTranslations} from './upload.l10n';
 
+/** Shared non-modal overlay that presents queue progress and transfer controls. */
 @Component({
   selector: 'cll-upload-panel',
   imports: [TranslatePipe, ClarityModule],
@@ -44,6 +45,7 @@ export class UploadPanelComponent implements AfterViewInit, OnDestroy {
 
   readonly queue = inject(UploadQueueService);
   readonly announcement = signal('');
+  readonly closed = signal(false);
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
@@ -51,7 +53,8 @@ export class UploadPanelComponent implements AfterViewInit, OnDestroy {
       const items = this.queue.items();
       if (!items.length || typeof document === 'undefined') return;
       const active = this.queue.aggregate().active;
-      if (active > 0 && !this.capturedFocus) {
+      if (active > 0) {
+        this.closed.set(false);
         const element = document.activeElement;
         const panel = document.querySelector('.cll-upload-panel');
         if (element instanceof HTMLElement && !panel?.contains(element)) {
@@ -95,6 +98,7 @@ export class UploadPanelComponent implements AfterViewInit, OnDestroy {
   closeIdle(): void {
     if (this.queue.aggregate().active > 0) return;
     this.queue.clearCompleted();
+    this.closed.set(true);
     this.restoreFocus();
   }
 

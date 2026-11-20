@@ -719,7 +719,7 @@ Decisions confirmed in the 2026-11-20 design interview:
    the items created from that value.
 8. All owned messages ship in every supported locale; raw HTML is never rendered.
 
-Spec-review revisions, 2026-11-20 (draft changes, pending maintainer confirmation):
+Spec-review revisions, 2026-11-20 (all applied and approved in PR #243):
 
 - `UploadQueueOptions` includes `adapter`; the root queue stores it per item. `getStatus()` returns `UploadStatusResult`
   with numeric processing progress. `autoRetry` uses `UploadError.retryable`.
@@ -748,7 +748,7 @@ Decisions confirmed by the maintainer on 2026-11-20:
 - Drag-and-drop remains a later additive feature.
 - No library-level `beforeunload` guard; applications opt in.
 
-New in this revision and pending spec review like the rest of the Draft:
+Additions approved with the spec in PR #243:
 
 - `UploadQueueService.completion(id)` with the terminal-state, rejection and retry contract defined above.
 - A demo Composition tab covering promise, `HttpClient`, `queryResource` and `mutateResource` usage.
@@ -757,15 +757,14 @@ The reviewed API scope was approved in PR #243; implementation is tracked in PR 
 
 ## Evidence
 
-Revision 2026-11-20, implementation scope in PR #250. Automated checks actually run on this revision: `test:ngx` 992
-passed (7 new queue tests), `test:clr` 501 passed (5 new component/panel tests), demo tests 345 passed, `typecheck` for
+Revision 2026-11-20, implementation scope in PR #250. Automated checks actually run on this revision: `test:ngx` 996
+passed (11 new queue tests), `test:clr` 501 passed (5 new component/panel tests), demo tests 345 passed, `typecheck` for
 ngx-lift, clr-lift and demo passed, `lint` for ngx-lift and clr-lift passed (14 non-null-assertion warnings in the
-queue, no errors), `i18n:check` reported no errors with all 11 locales complete, `build demo` succeeded, upload E2E
-passed 6/6 in Chromium, Firefox and WebKit, the demo accessibility scan passed in light and dark themes, and
-`bundle:check` and `verify:packages` passed on the production build. The aggregate `pnpm run validate` reached the
-coverage and build stages but could not complete because the environment's safe-delete guard blocked cleanup of
-generated `coverage/` and `dist/` files; the constituent checks were run directly where possible. These are engineering
-results, not human acceptance.
+queue, no errors), `i18n:check` reported no errors with all 11 locales complete, `build demo` succeeded, upload and
+accessibility E2E passed 12/12 in Chromium, Firefox and WebKit, and `bundle:check` and `verify:packages` passed on the
+production build. The aggregate `pnpm run validate` reached the coverage and build stages but could not complete because
+the environment's safe-delete guard blocked cleanup of generated `coverage/` and `dist/` files; the constituent checks
+were run directly where possible. These are engineering results, not human acceptance.
 
 Independent human language acceptance for the new upload strings has not yet been recorded. The 2026-11-10 manual
 assistive-technology waiver remains a decision rather than a passed assessment. Primary sources are the public URLs in

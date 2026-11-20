@@ -201,4 +201,96 @@ describe('UploadQueueService', () => {
     queue.remove(other.id);
     await expect(pending).rejects.toMatchObject({name: 'AbortError'});
   });
+
+  it('accepts out-of-order chunk acknowledgements', async () => {
+    const gates = new Map<number, ReturnType<typeof deferred<void>>>();
+    const calls: number[] = [];
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async (request) => {
+        calls.push(request.chunkNumber);
+        const gate = deferred<void>();
+        gates.set(request.chunkNumber, gate);
+        return gate.promise;
+      },
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 6)], options(adapter, {chunkSize: 2, concurrency: 3}));
+    const completion = queue.completion(item.id);
+    await flush();
+    for (const number of [3, 1, 2]) gates.get(number)!.resolve();
+    await flush();
+
+    expect((await completion).status).toBe('success');
+    expect(calls).toEqual([1, 2, 3]);
+  });
+
+  it('clamps in-flight progress to the file size', async () => {
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async (request) => {
+        request.onProgress(999);
+        request.onProgress(-5);
+      },
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+    const finished = await queue.completion(item.id);
+
+    expect(finished.uploadedBytes).toBeLessThanOrEqual(2);
+    expect(finished.progress).toBe(100);
+  });
+
+  it('cancels an item while the optional status poll is pending', async () => {
+    const status = deferred<{status: 'processing'; progress: number}>();
+    const cancel = vi.fn(async () => undefined);
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async () => undefined,
+      combine: async () => undefined,
+      cancel,
+      getStatus: async () => status.promise,
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+    const completion = queue.completion(item.id);
+    await flush();
+    await vi.advanceTimersByTimeAsync(1000);
+    await flush();
+
+    queue.cancel(item.id);
+    await expect(completion).rejects.toMatchObject({name: 'AbortError'});
+    expect(cancel).toHaveBeenCalledWith('u1');
+    expect(queue.items()[0].status).toBe('cancelled');
+    status.resolve({status: 'processing', progress: 40});
+  });
+
+  it('retries only the failed combine phase', async () => {
+    let initiates = 0;
+    let chunks = 0;
+    let combines = 0;
+    const adapter: UploadAdapter = {
+      initiate: async () => {
+        initiates += 1;
+        return {uploadId: 'u1'};
+      },
+      uploadChunk: async () => {
+        chunks += 1;
+      },
+      combine: async () => {
+        combines += 1;
+        if (combines === 1) throw {code: 'combine-failed', phase: 'combine'};
+      },
+      cancel: async () => undefined,
+    };
+
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+    await expect(queue.completion(item.id)).rejects.toMatchObject({code: 'combine-failed', phase: 'combine'});
+    queue.retry(item.id);
+    expect((await queue.completion(item.id)).status).toBe('success');
+    expect([initiates, chunks, combines]).toEqual([1, 1, 2]);
+  });
 });
