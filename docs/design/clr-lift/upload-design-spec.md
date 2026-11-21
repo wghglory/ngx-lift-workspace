@@ -163,7 +163,7 @@ export type UploadStatus = 'queued' | 'uploading' | 'processing' | 'success' | '
 export interface UploadError {
   readonly code: string;
   readonly message?: string;
-  readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status';
+  readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean; // default false; only `chunk` errors with true are auto-retried
 }
 
@@ -571,7 +571,8 @@ error      -> retry (action) -> the failed phase
 - Cancel on a `queued` item marks it `cancelled` without an adapter call because no `uploadId` exists. Cancel during
   upload aborts the `AbortSignal` and calls `cancel(uploadId)`. Cancel during processing stops `getStatus` polling and
   calls `cancel(uploadId)`; `combine` has already been issued and cannot be locally undone, so server termination is the
-  adapter's responsibility.
+  adapter's responsibility. A failed adapter `cancel()` still ends the item `cancelled` and reports an `UploadError`
+  with phase `cancel` through the error outputs.
 - `processing` begins after the last chunk and covers `combine` plus optional `getStatus` polling every `pollIntervalMs`
   (default 10000 ms). The interval is a queue option, not a UI transition delay; UI transitions remain state-driven.
 - `cancelled`, `success`, and exhausted `error` are terminal: none of them transitions automatically. `retry(id)` is the
@@ -687,6 +688,7 @@ dictionary. Runtime English fallback is not delivery.
 | `upload.error.combine`                        | The uploaded chunks could not be finalized. | Phase error                                          |
 | `upload.error.status`                         | The upload status could not be checked.     | Phase error                                          |
 | `upload.error.unknown`                        | The upload failed.                          | Fallback                                             |
+| `upload.error.cancel`                         | The upload could not be cancelled.          | Cancel-failure error                                 |
 | `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                  | Aggregate accessible value                           |
 | `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                | Footer meta line with byte totals and remaining time |
 | `upload.summary.success`                      | Uploaded {0} files · {1}                    | Success summary row                                  |
