@@ -1,8 +1,9 @@
 # Upload files design specification
 
-Status: Draft. Owner: Maintainer. Updated: 2026-11-20 (decisions confirmed; completion and composition proposed).
-Approval: pending spec review. Package: `ngx-lift` (headless queue lifecycle) and `clr-lift` (rendered Clarity UI). All
-proposed symbols and examples are provisional and unavailable until implemented and verified.
+Status: API reviewed and approved in PR #243 (merged 2026-11-20); panel interaction revised 2026-11-21 after a UI
+review. Owner: Maintainer. Updated: 2026-11-21 (panel window controls, footer batch actions, row anatomy and completion
+collapse; no public API change). Package: `ngx-lift` (headless queue lifecycle) and `clr-lift` (rendered Clarity UI).
+All proposed symbols and examples are provisional and unavailable until implemented and verified.
 
 ## Applicable contracts
 
@@ -63,11 +64,18 @@ transport-agnostic lifecycle in `ngx-lift` plus a non-modal Clarity panel in `cl
   derived from chunks; optional task progress is reported by `getStatus`.
 - **Panel**: the single non-modal floating progress surface for a root queue; **minimized badge** is its compact
   restored-state entry point.
+- **Window controls**: the three panel-header buttons following desktop window conventions — **Minimize**, **Expand /
+  Collapse** (panel size toggle) and **Close**. Restore is the badge action that un-minimizes.
+- **Close confirmation**: the inline panel-header prompt shown when Close is activated while items are active; it offers
+  "keep uploading in the background" versus "cancel all".
+- **Success summary row**: the collapsed representation of all `success` items ("Uploaded {0} files · {1}") with an
+  expand toggle; failed items are never collapsed into it.
 
 ## Goals
 
-- G1: An operator can select one or many files, watch per-file and aggregate progress, cancel, retry failures and see
-  success marks without leaving the current page.
+- G1: An operator can select one or many files, watch per-file and aggregate progress, cancel (per item or in bulk),
+  retry failures, collapse finished uploads, and drive the panel with the standard window controls (minimize, expand,
+  close) without leaving the current page. Closing never silently cancels active uploads.
 - G2: An application developer can integrate any backend protocol through a typed adapter and reuse one lifecycle
   instead of reimplementing chunking, progress, cancellation and error state.
 - G3: The API fits Angular 21 forms, all 11 supported locales, and the existing Clarity token and overlay conventions
@@ -94,32 +102,38 @@ the library never parses a vendor response format.
 
 ## Use cases and acceptance
 
-| ID  | Actor and task                                    | Initial data/state                              | Action                                               | Observable outcome                                                                                                                           | Failure/recovery                                                                           | Demo/test                                                       |
-| --- | ------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| UC1 | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose `.zip`, start upload                          | Item moves `queued -> uploading -> processing -> success`, success mark shown, `uploadComplete` emits                                        | Invalid extension appears as visible error; adapter error keeps item in `error` with Retry | Planned playground + unit transition test                       |
-| UC2 | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                        | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                       | `maxFiles` or `maxSize` rejection is visible and does not start a request                  | Planned playground + E2E multi-file fixture                     |
-| UC3 | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                         | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                   | Failed abort still marks local cancellation and reports an error event                     | Planned unit race test + E2E                                    |
-| UC4 | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                          | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                  | Exhausted retries remain `error` with visible message                                      | Planned unit test with stub adapter                             |
-| UC5 | Operator keeps working during upload              | Panel active with progress                      | Click Minimize, navigate in-app, click Restore badge | Page remains interactive; shared panel restores same per-file progress and history                                                           | Closing when idle clears terminal items (success, cancelled, exhausted error) only         | Planned E2E keyboard/focus journey                              |
-| UC6 | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                 | Rejected files listed with localized validation error; accepted files still enqueue                                                          | Clear validation errors removes rejections without changing form value or queue            | Planned unit + i18n check                                       |
-| UC7 | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                               | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected             | Invalid selection sets a validation error on the control                                   | Planned form demo + type test                                   |
-| UC8 | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                          | Named progress, status changes and errors announced once per transition                                                                      | Repeated renders do not re-announce identical state                                        | Planned interaction test; manual AT decision tracked separately |
-| UC9 | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase       | Planned headless unit test + Composition demo tab               |
+| ID   | Actor and task                                    | Initial data/state                              | Action                                                                                               | Observable outcome                                                                                                                                                                                                           | Failure/recovery                                                                                                   | Demo/test                                                       |
+| ---- | ------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| UC1  | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose `.zip`, start upload                                                                          | Item moves `queued -> uploading -> processing -> success`, success mark shown, `uploadComplete` emits                                                                                                                        | Invalid extension appears as visible error; adapter error keeps item in `error` with Retry                         | Planned playground + unit transition test                       |
+| UC2  | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                                                                        | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                                                                                                       | `maxFiles` or `maxSize` rejection is visible and does not start a request                                          | Planned playground + E2E multi-file fixture                     |
+| UC3  | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                                                                         | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                                                                                                   | Failed abort still marks local cancellation and reports an error event                                             | Planned unit race test + E2E                                    |
+| UC4  | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                                                                          | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                                                                                                  | Exhausted retries remain `error` with visible message                                                              | Planned unit test with stub adapter                             |
+| UC5  | Operator keeps working during upload              | Panel active with progress                      | Click Minimize, navigate in-app, click Restore badge; activate Close and choose "keep in background" | Page remains interactive; shared panel restores same per-file progress and history; Close with active items docks to the badge and uploads continue, announced via the live region                                           | "Cancel all" in the confirmation cancels every non-terminal item, clears terminal items and closes panel and badge | Planned E2E keyboard/focus journey                              |
+| UC10 | Operator cleans up a mixed queue in bulk          | Panel shows finished uploads plus failures      | Use footer actions and the success summary row                                                       | "Cancel all" cancels every non-terminal item; "Retry failed ({n})" retries every `error` item; "Clear completed" removes terminal items; success items collapse into one summary row while failures stay pinned and expanded | Batch actions apply the same per-item rules as the row actions, including retry of exhausted errors                | Planned unit + E2E batch-action fixture                         |
+| UC6  | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                                                                 | Rejected files listed with localized validation error; accepted files still enqueue                                                                                                                                          | Clear validation errors removes rejections without changing form value or queue                                    | Planned unit + i18n check                                       |
+| UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                                               | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected                                                                                             | Invalid selection sets a validation error on the control                                                           | Planned form demo + type test                                   |
+| UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                                          | Named progress, status changes and errors announced once per transition                                                                                                                                                      | Repeated renders do not re-announce identical state                                                                | Planned interaction test; manual AT decision tracked separately |
+| UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                                                 | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success                                                                                 | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                               | Planned headless unit test + Composition demo tab               |
 
 ## Industry evidence and current gaps
 
-All sources checked on 2026-11-20.
+All sources checked on 2026-11-20, except the Uppy row checked on 2026-11-21.
 
-| Existing implementation / primary source                                                                                                                                                 | Verified behavior                                                                                                                                                                              | Adopt, adapt, or reject            | Our gap and reason                                                                                       |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Clarity File Picker, current docs (v18): https://clarity.design/documentation/file-picker/overview                                                                                       | Clarity-styled file input with label, helper, success and error states and multiple selection; no upload lifecycle.                                                                            | Adapt                              | Reuse Clarity tokens and input container; add queue, progress and completion state.                      |
-| Clarity Progress Bar, current AI guide (v18): https://clarity.design/documentation/progress/ai and v16 guide: https://v16.clarity.design/documentation/progress                          | Determinate progress is recommended for file downloads/uploads; indeterminate/loop for unknown duration.                                                                                       | Adopt                              | Byte progress is determinate; `processing` uses reported task progress or indeterminate state.           |
-| Angular Material inputs: https://material.angular.dev/components/inputs/overview                                                                                                         | Native input/component docs only; no dedicated upload lifecycle component; CDK primitives are generic.                                                                                         | Reject as basis                    | Confirms the gap; adding an orchestration layer is not duplicating Material.                             |
-| NG-ZORRO Upload v22: https://ng.ant.design/components/upload/en                                                                                                                          | `nzMultiple`, `nzAccept`, `nzBeforeUpload`, `nzCustomRequest`, file list with `uploading/done/error`, callbacks for progress/error/success. No built-in chunking, resume, cancel or retry API. | Adapt                              | Borrow the status model and custom-request seam; add lifecycle, bounded concurrency and non-modal panel. |
-| tus resumable upload protocol 1.0: https://tus.io/protocols/resumable-upload                                                                                                             | `PATCH` with `Upload-Offset`, `HEAD` for resume, `DELETE` termination, feature discovery via `OPTIONS`; chunk size is client-chosen and not negotiated.                                        | Reject as built-in; adapt concepts | No new protocol dependency; keep adapter-agnostic lifecycle without byte-offset resume in v1.            |
-| MDN `XMLHttpRequest.upload`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload and `abort()`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort | Widely available upload `progress`, error, abort and timeout events; listeners must be attached before send.                                                                                   | Adopt in adapter examples only     | Adapter authors feed progress events into `onProgress` and cancellation into `signal`.                   |
-| Uppy React integration and tus plugin: https://uppy.io/docs/react/ and https://uppy.io/docs/tus/                                                                                         | Full resumable dashboard with crash recovery and large-upload support through a React wrapper.                                                                                                 | Reject as built-in                 | Heavyweight optional stack; a consumer may wrap it in `UploadAdapter` if needed.                         |
-| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                           | Adapt                              | Confirms selection is solved elsewhere; v1 uses the native input and drop remains deferred.              |
+| Existing implementation / primary source                                                                                                                                                 | Verified behavior                                                                                                                                                                                                                                                                                                       | Adopt, adapt, or reject            | Our gap and reason                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Clarity File Picker, current docs (v18): https://clarity.design/documentation/file-picker/overview                                                                                       | Clarity-styled file input with label, helper, success and error states and multiple selection; no upload lifecycle.                                                                                                                                                                                                     | Adapt                              | Reuse Clarity tokens and input container; add queue, progress and completion state.                                                                                                  |
+| Clarity Progress Bar, current AI guide (v18): https://clarity.design/documentation/progress/ai and v16 guide: https://v16.clarity.design/documentation/progress                          | Determinate progress is recommended for file downloads/uploads; indeterminate/loop for unknown duration.                                                                                                                                                                                                                | Adopt                              | Byte progress is determinate; `processing` uses reported task progress or indeterminate state.                                                                                       |
+| Angular Material inputs: https://material.angular.dev/components/inputs/overview                                                                                                         | Native input/component docs only; no dedicated upload lifecycle component; CDK primitives are generic.                                                                                                                                                                                                                  | Reject as basis                    | Confirms the gap; adding an orchestration layer is not duplicating Material.                                                                                                         |
+| NG-ZORRO Upload v22: https://ng.ant.design/components/upload/en                                                                                                                          | `nzMultiple`, `nzAccept`, `nzBeforeUpload`, `nzCustomRequest`, file list with `uploading/done/error`, callbacks for progress/error/success. No built-in chunking, resume, cancel or retry API.                                                                                                                          | Adapt                              | Borrow the status model and custom-request seam; add lifecycle, bounded concurrency and non-modal panel.                                                                             |
+| tus resumable upload protocol 1.0: https://tus.io/protocols/resumable-upload                                                                                                             | `PATCH` with `Upload-Offset`, `HEAD` for resume, `DELETE` termination, feature discovery via `OPTIONS`; chunk size is client-chosen and not negotiated.                                                                                                                                                                 | Reject as built-in; adapt concepts | No new protocol dependency; keep adapter-agnostic lifecycle without byte-offset resume in v1.                                                                                        |
+| MDN `XMLHttpRequest.upload`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload and `abort()`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort | Widely available upload `progress`, error, abort and timeout events; listeners must be attached before send.                                                                                                                                                                                                            | Adopt in adapter examples only     | Adapter authors feed progress events into `onProgress` and cancellation into `signal`.                                                                                               |
+| Uppy React integration and tus plugin: https://uppy.io/docs/react/ and https://uppy.io/docs/tus/                                                                                         | Full resumable dashboard with crash recovery and large-upload support through a React wrapper.                                                                                                                                                                                                                          | Reject as built-in                 | Heavyweight optional stack; a consumer may wrap it in `UploadAdapter` if needed.                                                                                                     |
+| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                                                                                                                                                    | Adapt                              | Confirms selection is solved elsewhere; v1 uses the native input and drop remains deferred.                                                                                          |
+| Uppy Dashboard, current docs: https://uppy.io/docs/dashboard                                                                                                                             | Status bar shows "Uploading: 45% - 43 MB of 101 MB - 8s left" with `showProgressDetails`; per-file retry/cancel plus `retryAll()`/`cancelAll()`; a Done button replaces pause/resume/cancel after finishing; `closeAfterFinish` auto-closes only when every upload succeeded, otherwise the panel stays open for retry. | Adapt                              | Adopt the progress meta line (bytes, speed, remaining time), footer batch actions and the failures-keep-the-panel-open ordering; keep our own non-modal panel and adapter lifecycle. |
+
+Closing a transfer surface without cancelling the transfers is the established desktop-browser pattern (the Chrome
+download bubble and Drive-style upload panels keep transfers running behind a progress indicator), so this spec defines
+Close as background-dismiss with an explicit cancel choice rather than silent cancellation.
 
 The industry gap is not file selection or progress display; it is a small, transport-agnostic lifecycle plus a
 non-blocking progress surface with cancellation and retry.
@@ -590,14 +604,38 @@ error      -> retry (action) -> the failed phase
 ### Panel and minimize behavior
 
 - One `cll-upload-panel` overlay exists per root queue; all `cll-upload` hosts append their items to it. The panel is
-  created automatically on the first enqueue; an application may declare `<cll-upload-panel>` once itself, in which case
-  hosts attach to that instance instead of creating a new overlay. Minimize docks a compact badge showing active count
-  and aggregate progress for the shared queue; Restore reopens that same panel, not a per-host panel.
-- Escape minimizes while any item is active. When no item is active, closing the panel or badge clears terminal items
-  (success, cancelled, exhausted error); no in-flight item can remain in that state. Escape is handled only while focus
-  is inside the panel or badge; it never intercepts Escape elsewhere on the page.
-- Focus returns to the `cll-upload` host that most recently opened or interacted with the panel. The panel has its own
-  focusable controls but is not a focus trap: Tab moves out into the page while the panel remains open and non-modal.
+  created automatically on the first enqueue and is not visible before any item exists; an application may declare
+  `<cll-upload-panel>` once itself, in which case hosts attach to that instance instead of creating a new overlay. The
+  panel survives host teardown while the queue still has items, so uploads started by a destroyed host remain visible
+  and controllable; the last host to interact owns focus restoration.
+- Panel anatomy follows desktop transfer-window conventions: a header row with the localized title and the three window
+  controls (Minimize, Expand/Collapse, Close), the item list, and a footer row with the aggregate progress line and the
+  batch actions. Minimize docks a compact badge showing active count and aggregate progress for the shared queue;
+  Restore (on the badge) reopens that same panel, not a per-host panel. Expand/Collapse toggles the item list between
+  full height and a compact height showing only the active and failed items; it never changes queue state. Close behaves
+  like the Chrome download bubble: closing never cancels uploads.
+- Close confirmation: activating Close while any item is active (queued, uploading, processing) swaps the item list for
+  an inline prompt with two actions — "keep uploading in the background" (dismisses to the minimized badge and uploads
+  continue, announced via the live region) and "cancel all" (cancels every non-terminal item, clears terminal items and
+  closes panel and badge). The prompt is a warning dialog (`role="alertdialog"`) with the two actions and no third
+  dismissal path; activating it again with no active items performs the idle close directly.
+- Idle close: when no item is active, Close (header button, badge action or Escape) clears terminal items (success,
+  cancelled, exhausted error) and hides the panel; no in-flight item can remain in that state. Escape is handled only
+  while focus is inside the panel or badge; it never intercepts Escape elsewhere on the page.
+- Row ordering is success-collapse, failure-pinned: successful items collapse into one summary row ("Uploaded {0} files
+  · {1}") with an expand/collapse toggle for the detail list; failed items stay expanded and pinned below the active
+  rows; queued and uploading rows follow enqueue order. The panel never grows unbounded: the item list scrolls at a
+  bounded height instead of pushing the footer out of view.
+- The footer shows the aggregate progress line (percent plus uploaded and total bytes, matching the Uppy
+  `showProgressDetails` pattern) and the batch actions: "Cancel all" when non-terminal items exist, "Retry failed ({n})"
+  when `error` items exist, and "Clear completed" when terminal items exist. Batch actions apply the same rules as the
+  row actions, including retry of exhausted errors; a batch action that changes no item is not rendered. Meta segments
+  without data (speed, remaining time) are omitted rather than rendered as placeholders; remaining time is estimated
+  from acknowledged-byte rate and never blocks rendering.
+- Overlay position uses a direction-aware strategy (inline-end/bottom rather than physical right) so RTL mirrors the
+  panel placement. Focus returns to the `cll-upload` host that most recently opened or interacted with the panel. The
+  panel has its own focusable controls but is not a focus trap: Tab moves out into the page while the panel remains open
+  and non-modal.
 
 ### Security and resource limits
 
@@ -616,35 +654,46 @@ narrow layouts, large text and RTL must be exercised in the demo. Owned messages
 `en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`, plus any alias already present in a
 dictionary. Runtime English fallback is not delivery.
 
-| Key                                        | English source                              | Use                                |
-| ------------------------------------------ | ------------------------------------------- | ---------------------------------- |
-| `upload.selectFile` / `upload.selectFiles` | Select file / Select files                  | Trigger label by `multiple`        |
-| `upload.browse`                            | Browse                                      | Input affordance                   |
-| `upload.remove`                            | Remove                                      | Remove item                        |
-| `upload.cancel`                            | Cancel                                      | Cancel active item                 |
-| `upload.retry`                             | Retry                                       | Retry error item                   |
-| `upload.minimize`                          | Minimize                                    | Panel action                       |
-| `upload.restore`                           | Restore upload progress                     | Minimized badge                    |
-| `upload.done`                              | Done                                        | Close idle panel                   |
-| `upload.clearCompleted`                    | Clear completed                             | Clear terminal items               |
-| `upload.status.queued`                     | Queued                                      | Item status                        |
-| `upload.status.uploading`                  | Uploading                                   | Item status                        |
-| `upload.status.processing`                 | Processing                                  | Item status, indeterminate         |
-| `upload.status.success`                    | Uploaded                                    | Item status and success mark label |
-| `upload.status.error`                      | Failed                                      | Item status                        |
-| `upload.status.cancelled`                  | Cancelled                                   | Item status                        |
-| `upload.validation.accept`                 | This file type is not allowed.              | Validation error                   |
-| `upload.validation.maxSize`                | The file is larger than {{max}} MiB.        | Validation error with placeholder  |
-| `upload.validation.maxFiles`               | You can select at most {{count}} files.     | Validation error with placeholder  |
-| `upload.error.initiate`                    | The upload could not be started.            | Phase error                        |
-| `upload.error.chunk`                       | A chunk could not be uploaded.              | Phase error                        |
-| `upload.error.combine`                     | The uploaded chunks could not be finalized. | Phase error                        |
-| `upload.error.status`                      | The upload status could not be checked.     | Phase error                        |
-| `upload.error.unknown`                     | The upload failed.                          | Fallback                           |
-| `upload.progress.aggregate`                | {{percent}}% uploaded ({{active}} active)   | Aggregate accessible value         |
-| `upload.announce.success`                  | {{name}} uploaded.                          | Live announcement                  |
-| `upload.announce.error`                    | {{name}} failed: {{message}}                | Live announcement                  |
-| `upload.announce.cancelled`                | {{name}} upload cancelled.                  | Live announcement                  |
+| Key                                           | English source                              | Use                                                  |
+| --------------------------------------------- | ------------------------------------------- | ---------------------------------------------------- |
+| `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                  | Trigger label by `multiple`                          |
+| `upload.browse`                               | Browse                                      | Input affordance                                     |
+| `upload.remove`                               | Remove                                      | Remove item                                          |
+| `upload.cancel`                               | Cancel                                      | Cancel active item                                   |
+| `upload.retry`                                | Retry                                       | Retry error item                                     |
+| `upload.panel.title`                          | Upload progress                             | Panel header title                                   |
+| `upload.minimize`                             | Minimize                                    | Panel window control                                 |
+| `upload.expand` / `upload.collapse`           | Show details / Show fewer                   | Panel size toggle                                    |
+| `upload.close`                                | Close                                       | Panel window control                                 |
+| `upload.restore`                              | Restore upload progress                     | Minimized badge                                      |
+| `upload.confirm.title`                        | Uploading in progress                       | Close-confirmation dialog title                      |
+| `upload.confirm.background`                   | Keep uploading in the background            | Confirmation action, dismiss to badge                |
+| `upload.confirm.cancelAll`                    | Cancel all and close                        | Confirmation action                                  |
+| `upload.done`                                 | Done                                        | Close idle panel                                     |
+| `upload.cancelAll`                            | Cancel all                                  | Footer batch action                                  |
+| `upload.retryFailed`                          | Retry failed ({0})                          | Footer batch action                                  |
+| `upload.clearCompleted`                       | Clear completed                             | Clear terminal items                                 |
+| `upload.status.queued`                        | Queued                                      | Item status                                          |
+| `upload.status.uploading`                     | Uploading                                   | Item status                                          |
+| `upload.status.processing`                    | Processing                                  | Item status, indeterminate                           |
+| `upload.status.success`                       | Uploaded                                    | Item status and success mark label                   |
+| `upload.status.error`                         | Failed                                      | Item status                                          |
+| `upload.status.cancelled`                     | Cancelled                                   | Item status                                          |
+| `upload.validation.accept`                    | This file type is not allowed.              | Validation error                                     |
+| `upload.validation.maxSize`                   | The file is larger than {0} MiB.            | Validation error with placeholder                    |
+| `upload.validation.maxFiles`                  | You can select at most {0} files.           | Validation error with placeholder                    |
+| `upload.error.initiate`                       | The upload could not be started.            | Phase error                                          |
+| `upload.error.chunk`                          | A chunk could not be uploaded.              | Phase error                                          |
+| `upload.error.combine`                        | The uploaded chunks could not be finalized. | Phase error                                          |
+| `upload.error.status`                         | The upload status could not be checked.     | Phase error                                          |
+| `upload.error.unknown`                        | The upload failed.                          | Fallback                                             |
+| `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                  | Aggregate accessible value                           |
+| `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                | Footer meta line with byte totals and remaining time |
+| `upload.summary.success`                      | Uploaded {0} files · {1}                    | Success summary row                                  |
+| `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files   | Summary expand/collapse toggle                       |
+| `upload.announce.success`                     | {0} uploaded.                               | Live announcement                                    |
+| `upload.announce.error`                       | {0} failed: {1}                             | Live announcement                                    |
+| `upload.announce.cancelled`                   | {0} upload cancelled.                       | Live announcement                                    |
 
 Accessibility contract:
 
@@ -653,11 +702,21 @@ Accessibility contract:
   color-only.
 - Progress updates are announced through a single polite live region with deduplication by item id and status; repeated
   renders do not re-announce identical values.
-- Minimize/Restore are real buttons with accessible names and visible focus. Focus returns to the trigger on close; page
-  interaction remains available while the panel is open.
-- Keyboard journeys cover Add, Cancel, Retry, Minimize, Restore, Remove, Done and Escape in both themes and RTL. The
-  panel has no essential animation; non-essential transitions honor `prefers-reduced-motion`, with all actions still
-  available when motion is reduced.
+- Window controls (Minimize, Expand/Collapse, Close) are real buttons with accessible names and visible focus; the size
+  toggle exposes its expanded state (`aria-expanded` plus a changed accessible name) and the Close button announces what
+  it does, never just "close". Dismissing to the background announces that uploads continue; cancelling all announces
+  how many items were cancelled.
+- The close-confirmation prompt is an `role="alertdialog"` with a title, the two actions and initial focus on the safe
+  action ("keep uploading in the background"); Escape inside the prompt chooses the safe action; focus stays in the
+  prompt until it resolves.
+- The success summary row is a disclosure with `aria-expanded` and an accessible name carrying the count and size; the
+  detail list is labelled so screen readers can skip it. Failed rows are never hidden by the summary toggle.
+- Minimize/Restore are real buttons with accessible names and visible focus; the minimized badge exposes the aggregate
+  value ("{0}% uploaded ({1} active)") as its name. Focus returns to the trigger on close; page interaction remains
+  available while the panel is open.
+- Keyboard journeys cover Add, Cancel, Retry, Cancel all, Retry failed, Clear completed, Minimize, Restore, Expand,
+  Collapse, Close, the confirmation actions and Escape in both themes and RTL. The panel has no essential animation;
+  non-essential transitions honor `prefers-reduced-motion`, with all actions still available when motion is reduced.
 - Automated scans and explicit interaction tests are engineering evidence. Independent human language approval and the
   manual assistive-technology decision remain separate records per the acceptance contract; the 2026-11-10 AT waiver is
   not a passed assessment.
@@ -668,20 +727,26 @@ Planned work, not yet evidence:
 
 - Add a `cll-upload` demo route and navigation entry using `cll-page-container`, `app-demo-playground` copyable
   TS/HTML/SCSS, and API tables through `ApiTableComponent`.
-- Cover UC1-UC9 in demo panels: basic, configuration, failure/retry, panel/minimize, forms and Composition. The
-  Composition tab must show a promise adapter, an `HttpClient` adapter with progress, `await completion(id)`,
-  `mutateResource.mutate()` and a `queryResource`-backed list; every snippet is copyable from `app-demo-playground`.
+- Cover UC1-UC10 in demo panels: basic, configuration, failure/retry, panel/minimize (window controls, close
+  confirmation, success summary row, footer batch actions), forms and Composition. The Composition tab must show a live
+  promise adapter, an `HttpClient` adapter with progress, `await completion(id)`, `mutateResource.mutate()` and a
+  `queryResource`-backed list; every snippet is copyable from `app-demo-playground`.
 - Unit/state tests: validation rejection, enqueue order, chunk numbering, out-of-order acknowledgement, `onProgress`
   byte clamping and failure reset, progress aggregation, combine/processing transition, cancellation from queued,
   uploading and processing, retry of each failed phase (initiate, unacknowledged chunks, combine, poll), auto-retry of
   retryable errors and exhaustion, stale callback identity, remove/clear including exhausted errors, owner reset/disable
   cancellation, shared-panel minimize/restore, repeated mount/disposal, and CVA write/reset/disabled/touched.
+- Panel behavior tests: close with active items shows the confirmation, "keep in background" preserves progress and
+  closes to the badge, "cancel all" cancels every non-terminal item, idle close clears terminal items, batch actions
+  match their per-item rules, success summary collapses and re-expands without hiding failed rows, and the panel
+  survives host teardown while the queue holds items.
 - Completion tests: resolve with the terminal snapshot on success, reject with `UploadError` or `AbortError`, unknown
   id, removal while pending, one shared outcome for multiple awaiters, and a fresh promise after `retry(id)`.
 - Type tests for `UploadAdapter`, `UploadChunkRequest`, `UploadStatusResult`, `UploadItem` and the `readonly File[]`
   control value.
 - Browser E2E with controlled network fixtures: multi-file selection, failure then success, cancel during upload,
-  minimize/navigate/restore, keyboard-only operation in Chromium, Firefox and WebKit.
+  minimize/navigate/restore, close-to-background with active items, batch retry and cancel-all, keyboard-only operation
+  in Chromium, Firefox and WebKit.
 - Localization: complete all dictionaries, run `pnpm run i18n:check`, verify runtime switching and long-label layouts;
   record human language approval separately.
 - Validation commands after implementation: `pnpm run test:clr`, `pnpm run test:ngx`, `pnpm run build:clr`,
@@ -719,7 +784,7 @@ Decisions confirmed in the 2026-11-20 design interview:
    the items created from that value.
 8. All owned messages ship in every supported locale; raw HTML is never rendered.
 
-Spec-review revisions, 2026-11-20 (draft changes, pending maintainer confirmation):
+Spec-review revisions, 2026-11-20 (all applied and approved in PR #243, merged 2026-11-20):
 
 - `UploadQueueOptions` includes `adapter`; the root queue stores it per item. `getStatus()` returns `UploadStatusResult`
   with numeric processing progress. `autoRetry` uses `UploadError.retryable`.
@@ -748,12 +813,31 @@ Decisions confirmed by the maintainer on 2026-11-20:
 - Drag-and-drop remains a later additive feature.
 - No library-level `beforeunload` guard; applications opt in.
 
-New in this revision and pending spec review like the rest of the Draft:
+Additions approved with the spec in PR #243:
 
 - `UploadQueueService.completion(id)` with the terminal-state, rejection and retry contract defined above.
 - A demo Composition tab covering promise, `HttpClient`, `queryResource` and `mutateResource` usage.
 
-No implementation is approved by this Draft.
+UI-review revision, 2026-11-21, pending maintainer confirmation (no public API change):
+
+- The PR #243 panel defined minimize and an idle close but no Close control, no size toggle and no batch actions; the
+  first implementation rendered minimize as a text link and a footer "Done", which does not read as a transfer window.
+  This revision adopts the standard window-control set (Minimize, Expand/Collapse, Close) with desktop semantics, and
+  adopts the Uppy Dashboard evidence for the footer meta line and batch actions.
+- Close never cancels silently. With active items, Close opens an inline confirmation offering "keep uploading in the
+  background" versus "cancel all"; this follows the established browser download-surface pattern and makes cancellation
+  at batch scope explicit. Escape and idle-close semantics from the 2026-11-20 decisions are unchanged.
+- Successful items collapse into a success summary row and failed items stay pinned and expanded, so the panel keeps a
+  bounded height while keeping every row reachable. This needs no new service state: `minimize/restore`, `cancel`,
+  `retry`, `remove` and `clearCompleted` already cover every action; collapse and the confirmation prompt are panel view
+  state.
+- New owned strings are added to the localization table (window controls, confirmation prompt, batch actions, progress
+  details, summary row); `upload.done` keeps its idle-close role. The 2026-11-20 industry table gains the Uppy Dashboard
+  row (checked 2026-11-21); Chrome download bubble and Drive-style panel behavior are cited as the widely observed
+  pattern for background-dismiss close.
+
+Implementation is tracked in PR #250 and its follow-up; the revised panel behavior in this section supersedes the PR
+#243 wording above wherever they differ.
 
 ## Evidence
 
