@@ -1,0 +1,139 @@
+<cll-page-container [title]="'uploadDemo.title' | translate">
+  <p>{{ 'uploadDemo.intro' | translate }}</p>
+
+  <app-demo-playground
+    data-testid="upload-demo-basic"
+    [title]="'uploadDemo.basic' | translate"
+    [tsCode]="basicCode"
+    [htmlCode]="basicHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <cll-upload
+        [adapter]="adapter"
+        [multiple]="true"
+        accept=".zip,.tar"
+        [maxSize]="512"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+        (uploadComplete)="onComplete($event)"
+      />
+      <p data-testid="upload-demo-registered">{{ 'uploadDemo.registered' | translate }}: {{ registeredCount() }}</p>
+      <cll-upload-panel />
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-configuration"
+    [title]="'uploadDemo.configuration' | translate"
+    [tsCode]="configurationCode"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <cll-upload
+        [adapter]="adapter"
+        [multiple]="true"
+        accept=".png,.jpg,.pdf"
+        [maxFiles]="3"
+        [maxSize]="1"
+        [autoRetry]="true"
+        [maxRetries]="3"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+      />
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-failure"
+    [title]="'uploadDemo.failure' | translate"
+    [tsCode]="failureCode"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uploadDemo.failureNote' | translate }}</p>
+      <cll-upload
+        [adapter]="failingAdapter"
+        [multiple]="true"
+        accept=".zip"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+        (uploadComplete)="onFailedComplete($event)"
+        (uploadCancelled)="onCancelled()"
+      />
+      <p data-testid="upload-demo-cancelled">{{ 'uploadDemo.cancelled' | translate }}: {{ cancelledCount() }}</p>
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground data-testid="upload-demo-panel" [title]="'uploadDemo.panelTab' | translate" [tsCode]="panelCode">
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uploadDemo.panelNote' | translate }}</p>
+      <button type="button" class="btn btn-primary" data-testid="upload-demo-add-files" (click)="addDemoFiles()">
+        {{ 'uploadDemo.addDemoFiles' | translate }}
+      </button>
+      <cll-upload [adapter]="slowAdapter" [multiple]="false" accept=".zip" [chunkSize]="chunk5Mb" />
+      <cll-upload-panel />
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-forms"
+    [title]="'uploadDemo.forms' | translate"
+    [tsCode]="formsCode"
+    [htmlCode]="formsHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uploadDemo.formsNote' | translate }}</p>
+      <form [formGroup]="bundlesForm" cds-layout="vertical gap:sm">
+        <cll-upload [adapter]="adapter" formControlName="bundles" [multiple]="true" [chunkSize]="chunk5Mb" />
+        <p data-testid="upload-demo-form-value">
+          {{ 'uploadDemo.selectedFiles' | translate }}: {{ bundlesForm.controls.bundles.value?.length ?? 0 }}
+        </p>
+        <button type="button" class="btn btn-outline" (click)="resetForm()">
+          {{ 'uploadDemo.reset' | translate }}
+        </button>
+      </form>
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-composition"
+    [title]="'uploadDemo.composition' | translate"
+    [tsCode]="compositionCode"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uploadDemo.completionNote' | translate }}</p>
+      <button type="button" class="btn btn-primary" data-testid="upload-demo-transfer" (click)="transferDemo()">
+        {{ 'uploadDemo.transfer' | translate }}
+      </button>
+      <p data-testid="upload-demo-registered-composition">
+        {{ 'uploadDemo.registered' | translate }}: {{ registeredCount() }}
+      </p>
+      @if (bundleList(); as bundles) {
+        <ul data-testid="upload-demo-bundles">
+          @for (name of bundles; track name) {
+            <li>{{ name }}</li>
+          }
+        </ul>
+      }
+    </div>
+  </app-demo-playground>
+
+  <app-demo-playground
+    data-testid="upload-demo-http-client"
+    [title]="'uploadDemo.httpClientAdapter' | translate"
+    [tsCode]="httpClientCode"
+  >
+    <div preview>
+      <p>{{ 'uploadDemo.httpClientNote' | translate }}</p>
+    </div>
+  </app-demo-playground>
+
+  <section cds-layout="vertical gap:md align:stretch">
+    <h2>{{ 'common.apiReference' | translate }}</h2>
+    <h3>UploadComponent (<code>cll-upload</code>)</h3>
+    <h4>{{ 'common.inputs' | translate }}</h4>
+    <app-api-table [properties]="inputs()" />
+    <h4>{{ 'common.outputs' | translate }}</h4>
+    <app-api-table [properties]="outputs()" />
+    <h4>{{ 'common.methods' | translate }}</h4>
+    <app-api-table [properties]="methods()" />
+  </section>
+</cll-page-container>
