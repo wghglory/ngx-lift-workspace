@@ -1,31 +1,65 @@
+// The docked badge must shrink to its content so the overlay's right-edge position
+// really docks it in the bottom-right corner. Fixed width lives on the window surfaces.
 .cll-upload-panel {
-  max-inline-size: min(24rem, calc(100vw - 2rem));
-  background: var(--clr-global-app-background, var(--cds-alias-object-container-background));
+  inline-size: fit-content;
 }
 
-.cll-upload-panel__card {
+.cll-upload-panel__card,
+.cll-upload-panel__confirm {
+  inline-size: min(24rem, calc(100vw - 2rem));
   margin: 0;
-  border: 1px solid var(--cds-alias-object-border-color);
+  border: none;
+  border-radius: var(--cds-alias-object-border-radius-100, 6px);
+  background: var(--cds-alias-object-container-background);
   box-shadow: var(--cds-alias-object-shadow-200);
 }
 
 .cll-upload-panel__header {
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-block-end: none;
+  padding: 0.4rem 0.6rem;
+
+  .card-title {
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1.1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .cll-upload-panel__controls {
   display: flex;
-  gap: 0.25rem;
+  gap: 0.125rem;
+  flex-shrink: 0;
 }
 
+// Quiet ghost icon buttons in the header row, matching desktop transfer-window conventions.
 .cll-upload-panel__control {
-  min-inline-size: 1.5rem;
-  min-block-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
   padding: 0;
-  color: var(--cds-global-color-gray-700, #565656);
+  margin: 0;
+  background: transparent;
+  border: none;
+  border-radius: 3px;
+  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
+  cursor: pointer;
+
+  cds-icon {
+    font-size: 0.7rem;
+  }
 
   &:hover {
-    color: var(--cds-global-color-gray-900, #313131);
+    color: var(--cds-alias-typography-color-500, var(--cds-global-color-gray-900, #313131));
+    background: var(--cds-alias-object-hover-background, rgba(0, 0, 0, 0.06));
   }
 
   &:focus-visible {
@@ -38,6 +72,8 @@
   max-block-size: 20rem;
   overflow-block: auto;
   margin: 0;
+  border: none;
+  padding: 0.25rem 0.6rem;
 
   &--compact {
     max-block-size: 9rem;
@@ -45,31 +81,30 @@
 }
 
 .cll-upload-panel__item {
-  border-block-end: 1px solid var(--cds-alias-object-border-color);
-  padding-block-end: 0.5rem;
-
-  &:last-child {
-    border-block-end: none;
-    padding-block-end: 0;
-  }
+  padding-block: 0.2rem;
 }
 
 .cll-upload-panel__row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: start;
   min-inline-size: 0;
 }
 
 .cll-upload-panel__badge-type {
-  inline-size: 2rem;
-  block-size: 2rem;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
   display: inline-grid;
   place-items: center;
   border-radius: 3px;
   background: var(--cds-global-color-gray-20, #fafafa);
   border: 1px solid var(--cds-alias-object-border-color);
   color: var(--cds-global-color-gray-700, #565656);
-  font-size: 0.5rem;
+  font-size: 0.4rem;
   font-weight: 600;
   flex-shrink: 0;
+  margin-block-start: 0.1rem;
 
   [data-status='success'] & {
     border-color: var(--clr-color-success-400, #61b510);
@@ -82,7 +117,22 @@
   }
 }
 
+.cll-upload-panel__main {
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cll-upload-panel__name-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-inline-size: 0;
+}
+
 .cll-upload-panel__name {
+  font-size: 0.65rem;
   font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -91,9 +141,12 @@
 }
 
 .cll-upload-panel__percent {
+  font-size: 0.6rem;
   color: var(--cds-global-color-gray-700, #565656);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
+  min-inline-size: 2.25rem;
+  text-align: end;
 }
 
 .cll-upload-panel__bar {
@@ -101,7 +154,6 @@
   border-radius: 2px;
   background: var(--cds-global-color-gray-100, #e3e3e3);
   overflow: hidden;
-  margin-block: 0.35rem;
 }
 
 .cll-upload-panel__bar-fill {
@@ -143,9 +195,33 @@
 }
 
 .cll-upload-panel__meta {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   color: var(--cds-global-color-gray-600, #737373);
   font-size: 0.55rem;
   min-inline-size: 0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+
+  span + span::before {
+    content: '·';
+    margin-inline-end: 0.25rem;
+  }
+
+  // Reserved widths keep the meta segments from shifting while values tick.
+  .cll-upload-panel__bytes {
+    min-inline-size: 5.5rem;
+  }
+
+  .cll-upload-panel__rate {
+    min-inline-size: 3.25rem;
+  }
+
+  .cll-upload-panel__remaining {
+    min-inline-size: 2.5rem;
+  }
 }
 
 .cll-upload-panel__error {
@@ -163,9 +239,10 @@
 }
 
 .cll-upload-panel__summary {
-  border: 1px solid var(--cds-alias-object-border-color);
   border-radius: 3px;
+  background: var(--cds-alias-object-interaction-background, rgba(0, 0, 0, 0.06));
   padding: 0.25rem 0.5rem;
+  font-size: 0.65rem;
 }
 
 .cll-upload-panel__summary-toggle {
@@ -196,29 +273,39 @@
   list-style: none;
   margin: 0.25rem 0 0;
   padding: 0;
-}
 
-.cll-upload-panel__summary-item {
-  border-block-start: 1px solid var(--cds-alias-object-border-color);
-  padding-block: 0.25rem;
-  min-inline-size: 0;
+  .cll-upload-panel__summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.2rem;
+    min-inline-size: 0;
+    font-size: 0.6rem;
+
+    > span:not(.cll-upload-panel__spacer) {
+      white-space: nowrap;
+    }
+  }
 }
 
 .cll-upload-panel__footer {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
+  border-block-start: none;
+  padding: 0.35rem 0.6rem;
 }
 
 .cll-upload-panel__aggregate {
   color: var(--cds-global-color-gray-700, #565656);
-  font-size: 0.6rem;
+  font-size: 0.55rem;
   font-variant-numeric: tabular-nums;
 }
 
 .cll-upload-panel__actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: flex-end;
   gap: 0.35rem;
 }
 
@@ -236,7 +323,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background: var(--clr-global-app-background, var(--cds-alias-object-container-background));
+  // Keep an opaque dock background: Clarity's .btn:active sets a transparent background,
+  // which would let page content bleed through the docked badge.
+  background-color: var(--cds-alias-object-container-background, var(--clr-global-app-background, #ffffff));
+
+  &:hover,
+  &:active {
+    background-color: var(--cds-alias-object-container-background, var(--clr-global-app-background, #ffffff));
+  }
 
   &:focus-visible {
     outline: 2px solid var(--cds-alias-status-info, var(--clr-color-action-600, #0072a3));

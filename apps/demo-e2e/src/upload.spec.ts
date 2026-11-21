@@ -8,7 +8,7 @@ const zipFile = (name: string, body = 'release bundle') => ({
 
 async function selectFiles(page: import('@playwright/test').Page, testId: string, files: ReturnType<typeof zipFile>[]) {
   const playground = page.getByTestId(testId);
-  await playground.locator('input[type="file"]').setInputFiles(files);
+  await playground.locator('input[type="file"]').first().setInputFiles(files);
   return playground;
 }
 
@@ -26,6 +26,22 @@ test('uploads a bundle, registers it, and minimizes the shared panel', async ({p
   await expect(badge).toBeVisible();
   await badge.click();
   await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
+});
+
+test('adds files by dropping them onto the dropzone', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+
+  const dropzone = page.getByTestId('upload-demo-basic').locator('.cll-upload__dropzone');
+  const dataTransfer = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['release bundle'], 'dropped.zip', {type: 'application/zip'}));
+    return transfer;
+  });
+  await dropzone.dispatchEvent('drop', {dataTransfer});
+
+  const panel = page.locator('.cll-upload-panel');
+  await expect(panel).toContainText('dropped.zip');
+  await expect(page.getByTestId('upload-demo-registered')).toContainText('1');
 });
 
 test('rejects a disallowed file without registering it', async ({page}) => {

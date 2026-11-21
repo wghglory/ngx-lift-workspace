@@ -90,8 +90,8 @@ transport-agnostic lifecycle in `ngx-lift` plus a non-modal Clarity panel in `cl
   documented presets.
 - Built-in `tus`, S3 multipart or object-storage clients. Consumers can implement them behind `UploadAdapter`; they add
   protocol dependencies this increment does not justify.
-- Drag-and-drop selection. Version 1 uses the native file input behind a Clarity-styled trigger; dropzone behavior can
-  be a later additive input.
+- Paste-to-upload (clipboard `paste` intake). The dropzone and the native input cover selection; clipboard intake can be
+  a later additive listener.
 - A library-installed `beforeunload` guard. Global side effects stay opt-in at the application layer.
 - Virus scanning, authorization, storage lifecycle, checksum verification and server-side deduplication.
 
@@ -114,6 +114,7 @@ the library never parses a vendor response format.
 | UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                                               | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected                                                                                             | Invalid selection sets a validation error on the control                                                           | Planned form demo + type test                                   |
 | UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                                          | Named progress, status changes and errors announced once per transition                                                                                                                                                      | Repeated renders do not re-announce identical state                                                                | Planned interaction test; manual AT decision tracked separately |
 | UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                                                 | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success                                                                                 | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                               | Planned headless unit test + Composition demo tab               |
+| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Add folder"                                   | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, usage hints and the used count                                                                             | Invalid files are rejected with the same localized validation errors and never enqueue                             | Planned unit + E2E drop fixture                                 |
 
 ## Industry evidence and current gaps
 
@@ -128,7 +129,7 @@ All sources checked on 2026-11-20, except the Uppy row checked on 2026-11-21.
 | tus resumable upload protocol 1.0: https://tus.io/protocols/resumable-upload                                                                                                             | `PATCH` with `Upload-Offset`, `HEAD` for resume, `DELETE` termination, feature discovery via `OPTIONS`; chunk size is client-chosen and not negotiated.                                                                                                                                                                 | Reject as built-in; adapt concepts | No new protocol dependency; keep adapter-agnostic lifecycle without byte-offset resume in v1.                                                                                        |
 | MDN `XMLHttpRequest.upload`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload and `abort()`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort | Widely available upload `progress`, error, abort and timeout events; listeners must be attached before send.                                                                                                                                                                                                            | Adopt in adapter examples only     | Adapter authors feed progress events into `onProgress` and cancellation into `signal`.                                                                                               |
 | Uppy React integration and tus plugin: https://uppy.io/docs/react/ and https://uppy.io/docs/tus/                                                                                         | Full resumable dashboard with crash recovery and large-upload support through a React wrapper.                                                                                                                                                                                                                          | Reject as built-in                 | Heavyweight optional stack; a consumer may wrap it in `UploadAdapter` if needed.                                                                                                     |
-| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                                                                                                                                                    | Adapt                              | Confirms selection is solved elsewhere; v1 uses the native input and drop remains deferred.                                                                                          |
+| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                                                                                                                                                    | Adapt                              | Adopts the dropzone interaction pattern (drag-over state, folder traversal via entries); the queue, progress panel and retry API remain our own.                                     |
 | Uppy Dashboard, current docs: https://uppy.io/docs/dashboard                                                                                                                             | Status bar shows "Uploading: 45% - 43 MB of 101 MB - 8s left" with `showProgressDetails`; per-file retry/cancel plus `retryAll()`/`cancelAll()`; a Done button replaces pause/resume/cancel after finishing; `closeAfterFinish` auto-closes only when every upload succeeded, otherwise the panel stays open for retry. | Adapt                              | Adopt the progress meta line (bytes, speed, remaining time), footer batch actions and the failures-keep-the-panel-open ordering; keep our own non-modal panel and adapter lifecycle. |
 
 Closing a transfer surface without cancelling the transfers is the established desktop-browser pattern (the Chrome
@@ -587,6 +588,12 @@ error      -> retry (action) -> the failed phase
   service owns no DOM or overlay.
 - `UploadComponent` owns selection, validation, CVA state and the call to `enqueue`, passing its `adapter` input in
   `UploadQueueOptions`. It attaches to the single shared `cll-upload-panel` for that root queue on first enqueue.
+- The `cll-upload` dropzone is the primary selection surface: it opens the native input on click, reacts to drag-over
+  with a highlighted state, and ingests dropped files through the same validation and enqueue path as the native input.
+  Dropped folders are traversed through `webkitGetAsEntry()` entries captured synchronously during the drop event and
+  read in repeated `readEntries` batches until exhausted. The "Add folder" action uses a hidden `webkitdirectory` input
+  and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files never
+  create queue items. Hint segments and the used count are omitted without data.
 - `UploadPanelComponent` renders one CDK overlay per root queue with `hasBackdrop: false`; it never locks page scroll or
   makes the background inert. It disposes its overlay on teardown and does not mutate global styles.
 - Each `uploadChunk` receives an `AbortSignal` from a per-item `AbortController`. Cancel aborts the signal, calls
@@ -659,6 +666,14 @@ dictionary. Runtime English fallback is not delivery.
 | --------------------------------------------- | ------------------------------------------- | ---------------------------------------------------- |
 | `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                  | Trigger label by `multiple`                          |
 | `upload.browse`                               | Browse                                      | Input affordance                                     |
+| `upload.dropzone`                             | Drag and drop files here, or browse         | Dropzone title                                       |
+| `upload.dropzone.dragOver`                    | Drop files to add them                      | Dropzone drag-over state                             |
+| `upload.folderAdd`                            | Add folder                                  | Folder selection, shown with `multiple`              |
+| `upload.usedFiles`                            | {0} of {1} files used                       | Dropzone usage count with `maxFiles`                 |
+| `upload.hint.accept`                          | Allowed types: {0}                          | Dropzone hint segment with `accept`                  |
+| `upload.hint.maxSize`                         | Up to {0} MiB per file                      | Dropzone hint segment with finite `maxSize`          |
+| `upload.hint.maxFiles`                        | Up to {0} files                             | Dropzone hint segment with `maxFiles`                |
+| `upload.rate`                                 | {0}/s                                       | Uploading row transfer rate                          |
 | `upload.remove`                               | Remove                                      | Remove item                                          |
 | `upload.cancel`                               | Cancel                                      | Cancel active item                                   |
 | `upload.retry`                                | Retry                                       | Retry error item                                     |
@@ -814,7 +829,7 @@ Decisions confirmed by the maintainer on 2026-11-20:
 
 - Escape minimizes during active uploads and closes when idle; Escape is handled only inside the panel or badge.
 - `getStatus` is optional; processing progress stays indeterminate when it is absent.
-- Drag-and-drop remains a later additive feature.
+- Drag-and-drop was deferred on 2026-11-20; the 2026-11-21 revision below brings the dropzone into scope.
 - No library-level `beforeunload` guard; applications opt in.
 
 Additions approved with the spec in PR #243:
@@ -842,6 +857,21 @@ UI-review revision, 2026-11-21, pending maintainer confirmation (no public API c
 
 Implementation is tracked in PR #250 and its follow-up; the revised panel behavior in this section supersedes the PR
 #243 wording above wherever they differ.
+
+Spec revision, 2026-11-21, dropzone selection (maintainer request; no new service API):
+
+- Drag-and-drop moves out of "Not now" into scope: `cll-upload` renders a dashed dropzone as the primary selection
+  surface with a drag-over state, hint segments (allowed types, per-file size, file count; omitted without data), a
+  used-files count with `maxFiles`, and an "Add folder" action (`webkitdirectory`, shown with `multiple`). Dropped
+  folders are traversed through `webkitGetAsEntry()` entries; drops run the same validation path as the native input,
+  and rejected files never enqueue. The per-file label trigger is replaced by the dropzone's Browse action;
+  `upload.selectFile` / `upload.selectFiles` remain available dictionary keys.
+- Uploading rows show the per-row transfer rate and estimated remaining time, sampled from published byte progress and
+  omitted without data, matching the Uppy meta-line pattern at row scope.
+- Rejected-file rows inside the transfer panel (as seen in some reference designs) stay out of scope: validation
+  failures never create queue items, per the PR #243 decision; the host renders rejections beside the dropzone.
+- New owned localization keys: `upload.dropzone`, `upload.dropzone.dragOver`, `upload.folderAdd`, `upload.usedFiles`,
+  `upload.hint.accept`, `upload.hint.maxSize`, `upload.hint.maxFiles`, `upload.rate`.
 
 ## Evidence
 

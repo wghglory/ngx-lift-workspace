@@ -1,10 +1,8 @@
 import {isPlatformBrowser} from '@angular/common';
 import {
-  ApplicationRef,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  EnvironmentInjector,
   PLATFORM_ID,
   computed,
   effect,
@@ -16,13 +14,16 @@ import {
   signal,
 } from '@angular/core';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {ClarityModule} from '@clr/angular';
+import {ClarityIcons, ClarityModule, uploadCloudIcon} from '@clr/angular';
 import {UPLOAD_CHUNK_25MB, type UploadAdapter, type UploadError, type UploadItem, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
+import {filesFromDataTransfer} from './drop-files';
 import {UploadPanelManager} from './upload-panel-manager';
 import {uploadTranslations} from './upload.l10n';
+
+ClarityIcons.addIcons(uploadCloudIcon);
 
 /** Clarity file-selection host: validates a selection and enqueues it on the shared queue. */
 @Component({
@@ -39,8 +40,6 @@ export class UploadComponent implements ControlValueAccessor {
   private readonly queue = inject(UploadQueueService);
   private readonly translationService = inject(TranslationService);
   private readonly panelManager = inject(UploadPanelManager);
-  private readonly appRef = inject(ApplicationRef);
-  private readonly environment = inject(EnvironmentInjector);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly tracked = new Map<string, true>();
@@ -67,6 +66,14 @@ export class UploadComponent implements ControlValueAccessor {
   readonly isDisabled = linkedSignal(() => this.disabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
+  readonly dragOver = signal(false);
+  private dragDepth = 0;
+  readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
+  readonly showMaxSizeHint = computed(() => Number.isFinite(this.maxSize()) && this.maxSize() > 0);
+  readonly showMaxFilesHint = computed(() => this.maxFiles() > 0);
+  readonly showDropzoneHint = computed(
+    () => this.showAcceptHint() || this.showMaxSizeHint() || this.showMaxFilesHint(),
+  );
   readonly fileNames = computed(() =>
     this.value()
       .map((file) => file.name)
@@ -107,6 +114,40 @@ export class UploadComponent implements ControlValueAccessor {
     const selected = Array.from(input.files ?? []);
     input.value = '';
     this.onTouched();
+    this.ingest(selected);
+  }
+
+  async onDrop(event: DragEvent): Promise<void> {
+    event.preventDefault();
+    this.dragDepth = 0;
+    this.dragOver.set(false);
+    if (this.isDisabled() || !event.dataTransfer) return;
+    const files = await filesFromDataTransfer(event.dataTransfer);
+    if (this.isDisabled()) return;
+    this.onTouched();
+    this.ingest(files);
+  }
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    if (this.isDisabled()) return;
+    this.dragDepth += 1;
+    this.dragOver.set(true);
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    if (event.dataTransfer) event.dataTransfer.dropEffect = this.isDisabled() ? 'none' : 'copy';
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.dragDepth = Math.max(0, this.dragDepth - 1);
+    if (this.dragDepth === 0) this.dragOver.set(false);
+  }
+
+  /** Validates a selection and enqueues the accepted files on the shared queue. */
+  private ingest(selected: readonly File[]): void {
     if (!selected.length || this.isDisabled()) return;
 
     const rejections: UploadError[] = [];
@@ -182,7 +223,7 @@ export class UploadComponent implements ControlValueAccessor {
   /** Opens the shared panel and records this host as the focus-restoration trigger. */
   private openPanel(): void {
     if (!isPlatformBrowser(this.platformId)) return;
-    this.panelManager.ensurePanel(this.environment, this.appRef);
+    this.panelManager.ensurePanel();
     this.panelManager.setTrigger(this.host.nativeElement);
   }
 

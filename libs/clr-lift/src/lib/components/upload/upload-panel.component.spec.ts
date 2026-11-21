@@ -1,3 +1,4 @@
+import {ApplicationRef} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
@@ -5,6 +6,7 @@ import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
 import {UploadPanelComponent} from './upload-panel.component';
+import {UploadPanelWindowComponent} from './upload-panel-window.component';
 
 function uploadFile(name: string, size = 4): File {
   return new File([new Uint8Array(size)], name);
@@ -34,12 +36,14 @@ describe('UploadPanelComponent', () => {
   let fixture: ReturnType<typeof TestBed.createComponent<UploadPanelComponent>>;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({imports: [UploadPanelComponent]});
+    TestBed.configureTestingModule({imports: [UploadPanelComponent, UploadPanelWindowComponent]});
     translation = TestBed.inject(TranslationService);
     translation.setLanguage('en');
     queue = TestBed.inject(UploadQueueService);
     fixture = TestBed.createComponent(UploadPanelComponent);
     fixture.detectChanges();
+    // The declared anchor bootstraps the shared window in a portal view outside the fixture.
+    TestBed.inject(ApplicationRef).tick();
   });
 
   afterEach(() => {
@@ -52,7 +56,7 @@ describe('UploadPanelComponent', () => {
 
   async function flush(microtasks = 64): Promise<void> {
     for (let index = 0; index < microtasks; index += 1) await Promise.resolve();
-    fixture.detectChanges();
+    TestBed.inject(ApplicationRef).tick();
   }
 
   function enqueueBlocked(): {release(): void} {
@@ -88,6 +92,23 @@ describe('UploadPanelComponent', () => {
     badge.click();
     fixture.detectChanges();
     expect(queue.minimized()).toBe(false);
+    expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
+  });
+
+  it('keeps the shared window alive after the declaring host is destroyed', async () => {
+    enqueueBlocked();
+    await flush();
+
+    // Route change: the page that declared the panel is torn down.
+    fixture.componentRef.destroy();
+    TestBed.inject(ApplicationRef).tick();
+    expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
+
+    // Navigating back declares the panel again; the window is neither duplicated nor lost.
+    const reentered = TestBed.createComponent(UploadPanelComponent);
+    reentered.detectChanges();
+    TestBed.inject(ApplicationRef).tick();
+    expect(overlay().querySelectorAll('.cll-upload-panel')).toHaveLength(1);
     expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
   });
 

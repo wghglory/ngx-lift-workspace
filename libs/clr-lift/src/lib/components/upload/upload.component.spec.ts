@@ -126,3 +126,77 @@ describe('UploadComponent', () => {
     expect(translation.translate('upload.restore')).toBe('Restore upload progress');
   });
 });
+
+describe('UploadComponent dropzone', () => {
+  let translation: TranslationService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({imports: [UploadComponent]});
+    translation = TestBed.inject(TranslationService);
+    translation.setLanguage('en');
+  });
+
+  afterEach(() => TestBed.resetTestingModule());
+
+  function create(inputs: Record<string, unknown> = {}): {component: UploadComponent; element: HTMLElement} {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    for (const [name, value] of Object.entries(inputs)) fixture.componentRef.setInput(name, value);
+    fixture.detectChanges();
+    return {component: fixture.componentInstance, element: fixture.nativeElement as HTMLElement};
+  }
+
+  async function drop(component: UploadComponent, files: readonly File[]): Promise<void> {
+    const dataTransfer = {files, items: []} as unknown as DataTransfer;
+    await component.onDrop({preventDefault: () => undefined, dataTransfer} as unknown as DragEvent);
+    for (let index = 0; index < 40; index += 1) await Promise.resolve();
+  }
+
+  function dragEvent(type: 'enter' | 'over' | 'leave'): DragEvent {
+    return {preventDefault: () => undefined, type} as unknown as DragEvent;
+  }
+
+  it('renders the dropzone with browse and folder actions plus the used count', () => {
+    const {element} = create({multiple: true, maxFiles: 20, accept: '.zip', maxSize: 20});
+
+    expect(element.querySelector('.cll-upload__dropzone')).toBeTruthy();
+    expect(element.querySelector('.cll-upload__browse')).toBeTruthy();
+    expect(element.querySelector('.cll-upload__folder')).toBeTruthy();
+    expect(element.textContent).toContain('20');
+    expect(element.querySelector('input[webkitdirectory]')).toBeTruthy();
+  });
+
+  it('enqueues dropped files and resets the drag state', async () => {
+    const {component} = create();
+    component.onDragEnter(dragEvent('enter'));
+    expect(component.dragOver()).toBe(true);
+    component.onDragEnter(dragEvent('enter'));
+    component.onDragLeave(dragEvent('leave'));
+    expect(component.dragOver()).toBe(true);
+
+    await drop(component, [file('dropped.zip')]);
+
+    expect(component.dragOver()).toBe(false);
+    expect(component.value().map((item) => item.name)).toEqual(['dropped.zip']);
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(1);
+  });
+
+  it('ignores drops and drag state while disabled', async () => {
+    const {component} = create();
+    component.setDisabledState(true);
+
+    await drop(component, [file('ignored.zip')]);
+    component.onDragEnter(dragEvent('enter'));
+
+    expect(component.dragOver()).toBe(false);
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+  });
+
+  it('exits the drag state once the pointer leaves the dropzone', () => {
+    const {component} = create();
+    component.onDragEnter(dragEvent('enter'));
+    component.onDragLeave(dragEvent('leave'));
+
+    expect(component.dragOver()).toBe(false);
+  });
+});

@@ -4,11 +4,11 @@
 
 .cll-upload {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.5rem;
 }
 
-// Visually hidden file input; keeps native pick, focus and label association.
+// Visually hidden file inputs; keep native pick, focus and label association.
 .cll-upload__file {
   position: absolute;
   inline-size: 1px;
@@ -18,15 +18,72 @@
   clip-path: inset(50%);
 }
 
-.cll-upload__trigger {
-  color: var(--clr-link-color, var(--clr-color-action-600, #0072a3));
-  text-decoration: underline;
+.cll-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
   cursor: pointer;
+  border: 1px dashed var(--cds-alias-object-border-color, var(--clr-color-neutral-400, #c4c4c4));
+  border-radius: var(--cds-alias-object-border-radius-100, 4px);
+  background: var(--cds-alias-object-app-background, transparent);
+  transition:
+    border-color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
 
-  &:focus-visible {
-    outline: 2px solid var(--clr-color-action-600, #0072a3);
-    outline-offset: 2px;
+  &:hover,
+  &:focus-within {
+    border-color: var(--clr-color-action-600, #0072a3);
   }
+
+  &--over {
+    border-color: var(--clr-color-action-600, #0072a3);
+    background: var(--cds-alias-object-hover-background, rgba(0, 114, 163, 0.06));
+  }
+
+  &--disabled {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.cll-upload__dropzone-icon {
+  color: var(--clr-color-action-600, #0072a3);
+  font-size: 1.5rem;
+}
+
+.cll-upload__dropzone-title {
+  margin: 0;
+  color: var(--cds-alias-typography-color-500, inherit);
+}
+
+.cll-upload__dropzone-hint {
+  margin: 0;
+  font-size: var(--cds-alias-typography-fontsize-0, 0.5rem);
+  color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
+
+  span + span::before {
+    content: ' · ';
+  }
+}
+
+.cll-upload__dropzone-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.cll-upload__count {
+  align-self: flex-end;
+  font-size: var(--cds-alias-typography-fontsize-0, 0.5rem);
+  color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
+}
+
+.cll-upload__names-row {
+  max-inline-size: 100%;
 }
 
 .cll-upload__names {

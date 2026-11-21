@@ -7,25 +7,84 @@
     [accept]="accept()"
     [multiple]="multiple()"
     [disabled]="isDisabled()"
+    [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
     (change)="onSelected($event)"
   />
-  <label class="cll-upload__trigger" for="{{ controlId() || inputId }}">
-    {{ (multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate }}
-  </label>
-  <button #browse type="button" class="btn btn-outline btn-sm" [disabled]="isDisabled()" (click)="file.click()">
-    {{ 'upload.browse' | translate }}
-  </button>
-  <span class="cll-upload__names">{{ fileNames() }}</span>
+  <div
+    class="cll-upload__dropzone"
+    [class.cll-upload__dropzone--over]="dragOver()"
+    [class.cll-upload__dropzone--disabled]="isDisabled()"
+    (drop)="onDrop($event)"
+    (dragover)="onDragOver($event)"
+    (dragenter)="onDragEnter($event)"
+    (dragleave)="onDragLeave($event)"
+  >
+    <cds-icon class="cll-upload__dropzone-icon" shape="upload-cloud" aria-hidden="true"></cds-icon>
+    <p class="cll-upload__dropzone-title">
+      {{ (dragOver() ? 'upload.dropzone.dragOver' : 'upload.dropzone') | translate }}
+    </p>
+    @if (showDropzoneHint()) {
+      <p class="cll-upload__dropzone-hint">
+        @if (showAcceptHint()) {
+          <span>{{ 'upload.hint.accept' | translate: accept() }}</span>
+        }
+        @if (showMaxSizeHint()) {
+          <span>{{ 'upload.hint.maxSize' | translate: maxSize() }}</span>
+        }
+        @if (showMaxFilesHint()) {
+          <span>{{ 'upload.hint.maxFiles' | translate: maxFiles() }}</span>
+        }
+      </p>
+    }
+    <div class="cll-upload__dropzone-actions">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary cll-upload__browse"
+        [disabled]="isDisabled()"
+        (click)="file.click(); $event.stopPropagation()"
+      >
+        {{ 'upload.browse' | translate }}
+      </button>
+      @if (multiple()) {
+        <input
+          #folder
+          class="cll-upload__file"
+          type="file"
+          multiple
+          webkitdirectory
+          aria-hidden="true"
+          tabindex="-1"
+          [attr.aria-label]="'upload.folderAdd' | translate"
+          [disabled]="isDisabled()"
+          (change)="onSelected($event)"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline cll-upload__folder"
+          [disabled]="isDisabled()"
+          (click)="folder.click(); $event.stopPropagation()"
+        >
+          {{ 'upload.folderAdd' | translate }}
+        </button>
+      }
+    </div>
+  </div>
+  @if (maxFiles() > 0) {
+    <span class="cll-upload__count">{{ 'upload.usedFiles' | translate: value().length : maxFiles() }}</span>
+  }
   @if (value().length) {
-    <button
-      type="button"
-      class="btn btn-sm btn-icon btn-link btn-close"
-      [disabled]="isDisabled()"
-      (click)="clear(); browse.focus()"
-      [attr.aria-label]="'upload.clearAll' | translate"
-    >
-      <clr-icon shape="times" />
-    </button>
+    <div class="cll-upload__names-row" cds-layout="horizontal gap:sm align:center">
+      <span class="cll-upload__names">{{ fileNames() }}</span>
+      <button
+        type="button"
+        class="btn btn-sm btn-icon btn-link btn-close"
+        [disabled]="isDisabled()"
+        (click)="clear()"
+        [attr.aria-label]="'upload.clearAll' | translate"
+      >
+        <clr-icon shape="times" />
+      </button>
+    </div>
   }
 </div>
 
