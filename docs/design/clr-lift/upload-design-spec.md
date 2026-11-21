@@ -175,10 +175,10 @@ export interface UploadStatusResult {
 export interface UploadItem {
   readonly id: string;
   readonly file: File;
-  status: UploadStatus;
-  progress: number; // 0..100 aggregate across upload and processing
-  uploadedBytes: number; // acknowledged bytes plus reported in-flight bytes
-  attempt: number; // 1-based attempt for the current phase; increments on retry
+  readonly status: UploadStatus;
+  readonly progress: number; // 0..100 aggregate across upload and processing
+  readonly uploadedBytes: number; // acknowledged bytes plus reported in-flight bytes
+  readonly attempt: number; // 1-based attempt for the current phase; increments on retry
   uploadId?: string;
   error?: UploadError;
 }
@@ -691,11 +691,13 @@ dictionary. Runtime English fallback is not delivery.
 | `upload.error.cancel`                         | The upload could not be cancelled.          | Cancel-failure error                                 |
 | `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                  | Aggregate accessible value                           |
 | `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                | Footer meta line with byte totals and remaining time |
+| `upload.progress.detailsBytes`                | {0}% · {1} of {2}                           | Footer meta line when remaining time is unknown      |
 | `upload.summary.success`                      | Uploaded {0} files · {1}                    | Success summary row                                  |
 | `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files   | Summary expand/collapse toggle                       |
 | `upload.announce.success`                     | {0} uploaded.                               | Live announcement                                    |
 | `upload.announce.error`                       | {0} failed: {1}                             | Live announcement                                    |
 | `upload.announce.cancelled`                   | {0} upload cancelled.                       | Live announcement                                    |
+| `upload.announce.background`                  | {0} uploads continue in the background.     | Background-dismiss announcement                      |
 
 Accessibility contract:
 
