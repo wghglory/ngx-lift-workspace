@@ -16,3 +16,4 @@ export * from './theme-toggle';
 export * from './timeline-wizard';
 export * from './toast';
 export * from './tooltip';
+export * from './upload';
