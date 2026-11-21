@@ -1,0 +1,40 @@
+:host {
+  display: block;
+}
+
+.cll-upload {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Visually hidden file input; keeps native pick, focus and label association.
+.cll-upload__file {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.cll-upload__trigger {
+  color: var(--clr-link-color, var(--clr-color-action-600, #0072a3));
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--clr-color-action-600, #0072a3);
+    outline-offset: 2px;
+  }
+}
+
+.cll-upload__names {
+  color: var(--cds-alias-typography-color-300, inherit);
+  overflow-wrap: anywhere;
+}
+
+.cll-upload__errors {
+  margin: 0.25rem 0 0;
+  padding-inline-start: 1rem;
+}

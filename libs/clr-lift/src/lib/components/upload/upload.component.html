@@ -1,0 +1,54 @@
+<div class="cll-upload">
+  <input
+    #file
+    class="clr-file cll-upload__file"
+    type="file"
+    [id]="controlId() || inputId"
+    [accept]="accept()"
+    [multiple]="multiple()"
+    [disabled]="isDisabled()"
+    (change)="onSelected($event)"
+  />
+  <label class="cll-upload__trigger" for="{{ controlId() || inputId }}">
+    {{ (multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate }}
+  </label>
+  <button #browse type="button" class="btn btn-outline btn-sm" [disabled]="isDisabled()" (click)="file.click()">
+    {{ 'upload.browse' | translate }}
+  </button>
+  <span class="cll-upload__names">{{ fileNames() }}</span>
+  @if (value().length) {
+    <button
+      type="button"
+      class="btn btn-sm btn-icon btn-link btn-close"
+      [disabled]="isDisabled()"
+      (click)="clear(); browse.focus()"
+      [attr.aria-label]="'upload.clearAll' | translate"
+    >
+      <clr-icon shape="times" />
+    </button>
+  }
+</div>
+
+@if (errors().length) {
+  <ul class="cll-upload__errors">
+    @for (error of errors(); track $index) {
+      <li class="clr-error">
+        <span class="cll-upload__error-name">{{ error.fileName }}</span>
+        @switch (error.code) {
+          @case ('upload.validation.accept') {
+            {{ 'upload.validation.accept' | translate }}
+          }
+          @case ('upload.validation.maxSize') {
+            {{ 'upload.validation.maxSize' | translate: error.message }}
+          }
+          @case ('upload.validation.maxFiles') {
+            {{ 'upload.validation.maxFiles' | translate: error.message }}
+          }
+        }
+      </li>
+    }
+  </ul>
+  <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
+    {{ 'upload.clearValidationErrors' | translate }}
+  </button>
+}

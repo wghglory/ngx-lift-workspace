@@ -8,5 +8,6 @@ export * from './lib/operators';
 export * from './lib/pipes';
 export * from './lib/query';
 export * from './lib/signals';
+export * from './lib/upload';
 export * from './lib/utils';
 export * from './lib/validators';
