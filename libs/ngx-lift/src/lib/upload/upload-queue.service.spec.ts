@@ -178,6 +178,35 @@ describe('UploadQueueService', () => {
     expect(finished.status).toBe('success');
   });
 
+  it('keeps a chunk retry uploading with acknowledged progress', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => (release = resolve));
+    let calls = 0;
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'resume'}),
+      uploadChunk: async (request) => {
+        calls += 1;
+        request.onProgress(request.chunk.size);
+        if (calls === 2) throw {code: 'chunk-failed', phase: 'chunk'};
+        if (calls === 4) await gate;
+      },
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+    const queue = TestBed.inject(UploadQueueService);
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 6)], options(adapter));
+    await expect(queue.completion(item.id)).rejects.toMatchObject({code: 'chunk-failed'});
+
+    queue.retry(item.id);
+    await flush();
+
+    expect(queue.items()[0].status).toBe('uploading');
+    expect(queue.items()[0].uploadedBytes).toBe(6);
+
+    release();
+    await expect(queue.completion(item.id)).resolves.toMatchObject({status: 'success'});
+  });
+
   it('auto-retries retryable chunk errors up to the configured limit', async () => {
     let calls = 0;
     const adapter: UploadAdapter = {

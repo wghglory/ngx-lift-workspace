@@ -292,3 +292,47 @@ test('cancelling an HTTP transfer settles completion with the abort error', asyn
   await item.getByRole('button', {name: 'Cancel'}).click();
   await expect(page.getByTestId('upload-demo-http-result')).toContainText(/cancel/i);
 });
+
+const queuedItemCount = async (page: import('@playwright/test').Page) => {
+  await page.waitForFunction(() => Boolean((window as unknown as {__uploadQueue?: unknown}).__uploadQueue));
+  return page.evaluate(
+    () =>
+      (window as unknown as {__uploadQueue: {snapshot(): {items: readonly unknown[]}}}).__uploadQueue.snapshot().items
+        .length,
+  );
+};
+
+test('confirm-first staging enqueues only after confirmation @cross-browser-smoke', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const before = await queuedItemCount(page);
+
+  await selectFiles(page, 'upload-demo-confirm-first', [zipFile('staged.zip')]);
+
+  await expect(page.getByTestId('upload-demo-confirm')).toBeVisible();
+  expect(await queuedItemCount(page)).toBe(before);
+
+  await page.getByTestId('upload-demo-confirm').click();
+  await expect(page.locator('.cll-upload-panel')).toContainText('staged.zip');
+  expect(await queuedItemCount(page)).toBe(before + 1);
+});
+
+test('the minimized panel survives in-app navigation and restores @cross-browser-smoke', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await page.getByTestId('upload-demo-add-files').click();
+
+  const panel = page.locator('.cll-upload-panel');
+  await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
+  await panel.locator('.cll-upload-panel__minimize').click();
+
+  const badge = panel.locator('.cll-upload-panel__badge');
+  await expect(badge).toBeVisible();
+  const before = await queuedItemCount(page);
+
+  await page.locator('.header-nav').getByRole('link', {name: 'ngx-lift', exact: true}).click();
+  await expect(page).not.toHaveURL(/\/clr-lift\/components\/upload/);
+  await expect(badge).toBeVisible();
+  expect(await queuedItemCount(page)).toBe(before);
+
+  await badge.click();
+  await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
+});

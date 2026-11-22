@@ -224,7 +224,6 @@ export class UploadDemoComponent {
   private logApi(method: string, path: string): void {
     const entry = `${method} ${path}`;
     this.apiCalls.update((calls) => [entry, ...calls].slice(0, 20));
-    console.info('[upload demo API]', entry);
   }
 
   formatFileSize(bytes: number): string {

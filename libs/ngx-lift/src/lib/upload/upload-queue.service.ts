@@ -165,6 +165,7 @@ export class UploadQueueService {
     };
   }
 
+  /** Adds files to the root queue and starts the transport; returns their initial immutable snapshots. */
   enqueue(files: readonly File[], options: UploadQueueOptions): readonly UploadItem[] {
     const created: UploadItem[] = [];
     for (const file of files) {
@@ -192,6 +193,7 @@ export class UploadQueueService {
     return created;
   }
 
+  /** Resolves with the terminal item, or rejects with the upload/abort error; rejects for an unknown id. */
   completion(id: string): Promise<UploadItem> {
     const runtime = this.runtimes.get(id);
     if (!runtime) {
@@ -213,6 +215,7 @@ export class UploadQueueService {
     });
   }
 
+  /** Re-runs the failed phase, resending only unacknowledged chunks and re-arming `completion(id)`. */
   retry(id: string): void {
     const runtime = this.runtimes.get(id);
     const item = this.item(id);
@@ -234,6 +237,7 @@ export class UploadQueueService {
     void this.pump();
   }
 
+  /** Aborts the active transfer and settles it as cancelled; calls the adapter only when an upload id exists. */
   cancel(id: string): void {
     const runtime = this.runtimes.get(id);
     if (!runtime) return;
@@ -260,6 +264,7 @@ export class UploadQueueService {
     }
   }
 
+  /** Removes one item from the queue, aborts it if active, and rejects any pending `completion(id)`. */
   remove(id: string): void {
     const runtime = this.runtimes.get(id);
     if (!runtime) return;
@@ -271,6 +276,7 @@ export class UploadQueueService {
     runtime.deferreds = [];
   }
 
+  /** Removes every terminal item (success, cancelled or error) without touching active transfers. */
   clearCompleted(): void {
     const completed = this.state().filter(
       (item) => item.status === 'success' || item.status === 'cancelled' || item.status === 'error',
@@ -278,10 +284,12 @@ export class UploadQueueService {
     for (const item of completed) this.remove(item.id);
   }
 
+  /** Docks the shared panel to its badge without cancelling any transfer. */
   minimize(): void {
     this.minimizedState.set(true);
   }
 
+  /** Reopens the shared panel from its minimized badge. */
   restore(): void {
     this.minimizedState.set(false);
   }
@@ -332,6 +340,11 @@ export class UploadQueueService {
       if (!resume || resume === 'initiate') {
         runtime.phase = 'initiate';
         this.patch(runtime.id, {status: 'uploading', progress: 0, uploadedBytes: 0});
+      } else if (resume === 'chunk') {
+        // Keep acknowledged bytes: a chunk retry resumes the same upload in place.
+        this.patch(runtime.id, {status: 'uploading'});
+      } else if (resume === 'status') {
+        this.patch(runtime.id, {status: 'processing'});
       }
       if (!runtime.uploadId && resume !== 'chunk' && resume !== 'combine' && resume !== 'status') {
         const result = await this.withAbort(runtime.adapter.initiate(runtime.file), signal);

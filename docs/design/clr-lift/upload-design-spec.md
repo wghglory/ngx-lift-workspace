@@ -166,6 +166,7 @@ export interface UploadError {
   readonly message?: string;
   readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean; // default false; only `chunk` errors with true are auto-retried
+  readonly fileName?: string; // rejected file name for phase `validation`
 }
 
 export interface UploadStatusResult {
@@ -306,6 +307,7 @@ export class UploadPanelComponent {
 | `autoRetry`        | input           | `false`             | Retry `chunk` errors marked `retryable: true` automatically.                                              |
 | `autoEnqueue`      | input           | `true`              | `false` validates and emits `filesChange` only, for staging flows that enqueue after a confirmation step. |
 | `maxRetries`       | input           | `3`                 | Automatic attempts per failing chunk.                                                                     |
+| `pollIntervalMs`   | input           | `10000`             | Server status poll interval for adapters that implement `getStatus`.                                      |
 | `disabled`         | input           | `false`             | Disable selection and queue actions; CVA disabling also cancels this control's in-flight items.           |
 | `controlId`        | input           | `''`                | Stable id for label/input association.                                                                    |
 | `filesChange`      | output          | -                   | Emits the current `readonly File[]` value.                                                                |
@@ -663,57 +665,61 @@ narrow layouts, large text and RTL must be exercised in the demo. Owned messages
 `en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`, plus any alias already present in a
 dictionary. Runtime English fallback is not delivery.
 
-| Key                                           | English source                              | Use                                                  |
-| --------------------------------------------- | ------------------------------------------- | ---------------------------------------------------- |
-| `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                  | Trigger label by `multiple`                          |
-| `upload.browse`                               | Browse                                      | Input affordance                                     |
-| `upload.dropzone`                             | Drag and drop files here, or browse         | Dropzone title                                       |
-| `upload.dropzone.dragOver`                    | Drop files to add them                      | Dropzone drag-over state                             |
-| `upload.folderAdd`                            | Add folder                                  | Folder selection, shown with `multiple`              |
-| `upload.usedFiles`                            | {0} of {1} files used                       | Dropzone usage count with `maxFiles`                 |
-| `upload.hint.accept`                          | Allowed types: {0}                          | Dropzone hint segment with `accept`                  |
-| `upload.hint.maxSize`                         | Up to {0} MiB per file                      | Dropzone hint segment with finite `maxSize`          |
-| `upload.hint.maxFiles`                        | Up to {0} files                             | Dropzone hint segment with `maxFiles`                |
-| `upload.rate`                                 | {0}/s                                       | Uploading row transfer rate                          |
-| `upload.remove`                               | Remove                                      | Remove item                                          |
-| `upload.cancel`                               | Cancel                                      | Cancel active item                                   |
-| `upload.retry`                                | Retry                                       | Retry error item                                     |
-| `upload.panel.title`                          | Upload progress                             | Panel header title                                   |
-| `upload.minimize`                             | Minimize                                    | Panel window control                                 |
-| `upload.expand` / `upload.collapse`           | Show details / Show fewer                   | Panel size toggle                                    |
-| `upload.close`                                | Close                                       | Panel window control                                 |
-| `upload.restore`                              | Restore upload progress                     | Minimized badge                                      |
-| `upload.confirm.title`                        | Uploading in progress                       | Close-confirmation dialog title                      |
-| `upload.confirm.background`                   | Keep uploading in the background            | Confirmation action, dismiss to badge                |
-| `upload.confirm.cancelAll`                    | Cancel all and close                        | Confirmation action                                  |
-| `upload.done`                                 | Done                                        | Close idle panel                                     |
-| `upload.cancelAll`                            | Cancel all                                  | Footer batch action                                  |
-| `upload.retryFailed`                          | Retry failed ({0})                          | Footer batch action                                  |
-| `upload.clearCompleted`                       | Clear completed                             | Clear terminal items                                 |
-| `upload.status.queued`                        | Queued                                      | Item status                                          |
-| `upload.status.uploading`                     | Uploading                                   | Item status                                          |
-| `upload.status.processing`                    | Processing                                  | Item status, indeterminate                           |
-| `upload.status.success`                       | Uploaded                                    | Item status and success mark label                   |
-| `upload.status.error`                         | Failed                                      | Item status                                          |
-| `upload.status.cancelled`                     | Cancelled                                   | Item status                                          |
-| `upload.validation.accept`                    | This file type is not allowed.              | Validation error                                     |
-| `upload.validation.maxSize`                   | The file is larger than {0} MiB.            | Validation error with placeholder                    |
-| `upload.validation.maxFiles`                  | You can select at most {0} files.           | Validation error with placeholder                    |
-| `upload.error.initiate`                       | The upload could not be started.            | Phase error                                          |
-| `upload.error.chunk`                          | A chunk could not be uploaded.              | Phase error                                          |
-| `upload.error.combine`                        | The uploaded chunks could not be finalized. | Phase error                                          |
-| `upload.error.status`                         | The upload status could not be checked.     | Phase error                                          |
-| `upload.error.unknown`                        | The upload failed.                          | Fallback                                             |
-| `upload.error.cancel`                         | The upload could not be cancelled.          | Cancel-failure error                                 |
-| `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                  | Aggregate accessible value                           |
-| `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                | Footer meta line with byte totals and remaining time |
-| `upload.progress.detailsBytes`                | {0}% · {1} of {2}                           | Footer meta line when remaining time is unknown      |
-| `upload.summary.success`                      | Uploaded {0} files · {1}                    | Success summary row                                  |
-| `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files   | Summary expand/collapse toggle                       |
-| `upload.announce.success`                     | {0} uploaded.                               | Live announcement                                    |
-| `upload.announce.error`                       | {0} failed: {1}                             | Live announcement                                    |
-| `upload.announce.cancelled`                   | {0} upload cancelled.                       | Live announcement                                    |
-| `upload.announce.background`                  | {0} uploads continue in the background.     | Background-dismiss announcement                      |
+| Key                                           | English source                                                | Use                                                  |
+| --------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------- |
+| `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                                    | Trigger label by `multiple`                          |
+| `upload.browse`                               | Browse                                                        | Input affordance                                     |
+| `upload.dropzone`                             | Drag and drop files here, or browse                           | Dropzone title                                       |
+| `upload.dropzone.dragOver`                    | Drop files to add them                                        | Dropzone drag-over state                             |
+| `upload.folderAdd`                            | Add folder                                                    | Folder selection, shown with `multiple`              |
+| `upload.usedFiles`                            | {0} of {1} files used                                         | Dropzone usage count with `maxFiles`                 |
+| `upload.hint.accept`                          | Allowed types: {0}                                            | Dropzone hint segment with `accept`                  |
+| `upload.hint.maxSize`                         | Up to {0} MiB per file                                        | Dropzone hint segment with finite `maxSize`          |
+| `upload.hint.maxFiles`                        | Up to {0} files                                               | Dropzone hint segment with `maxFiles`                |
+| `upload.rate`                                 | {0}/s                                                         | Uploading row transfer rate                          |
+| `upload.remove`                               | Remove                                                        | Remove item                                          |
+| `upload.remove.hint`                          | Dismiss {0} from the list (does not delete any uploaded file) | Accessible name for Remove                           |
+| `upload.clearAll`                             | Clear all files                                               | Clear the selection                                  |
+| `upload.clearValidationErrors`                | Clear validation errors                                       | Dismiss rejected-file messages                       |
+| `upload.cancel`                               | Cancel                                                        | Cancel active item                                   |
+| `upload.retry`                                | Retry                                                         | Retry error item                                     |
+| `upload.panel.title`                          | Upload progress                                               | Panel header title                                   |
+| `upload.minimize`                             | Minimize                                                      | Panel window control                                 |
+| `upload.expand` / `upload.collapse`           | Show details / Show fewer                                     | Panel size toggle                                    |
+| `upload.close`                                | Close                                                         | Panel window control label                           |
+| `upload.close.hint`                           | Close upload progress                                         | Accessible name of the panel Close button            |
+| `upload.restore`                              | Restore upload progress                                       | Minimized badge                                      |
+| `upload.confirm.title`                        | Uploading in progress                                         | Close-confirmation dialog title                      |
+| `upload.confirm.background`                   | Keep uploading in the background                              | Confirmation action, dismiss to badge                |
+| `upload.confirm.cancelAll`                    | Cancel all and close                                          | Confirmation action                                  |
+| `upload.done`                                 | Done                                                          | Close idle panel                                     |
+| `upload.cancelAll`                            | Cancel all                                                    | Footer batch action                                  |
+| `upload.retryFailed`                          | Retry failed ({0})                                            | Footer batch action                                  |
+| `upload.clearCompleted`                       | Clear completed                                               | Clear terminal items                                 |
+| `upload.status.queued`                        | Queued                                                        | Item status                                          |
+| `upload.status.uploading`                     | Uploading                                                     | Item status                                          |
+| `upload.status.processing`                    | Processing                                                    | Item status, indeterminate                           |
+| `upload.status.success`                       | Uploaded                                                      | Item status and success mark label                   |
+| `upload.status.error`                         | Failed                                                        | Item status                                          |
+| `upload.status.cancelled`                     | Cancelled                                                     | Item status                                          |
+| `upload.validation.accept`                    | This file type is not allowed.                                | Validation error                                     |
+| `upload.validation.maxSize`                   | The file is larger than {0} MiB.                              | Validation error with placeholder                    |
+| `upload.validation.maxFiles`                  | You can select at most {0} files.                             | Validation error with placeholder                    |
+| `upload.error.initiate`                       | The upload could not be started.                              | Phase error                                          |
+| `upload.error.chunk`                          | A chunk could not be uploaded.                                | Phase error                                          |
+| `upload.error.combine`                        | The uploaded chunks could not be finalized.                   | Phase error                                          |
+| `upload.error.status`                         | The upload status could not be checked.                       | Phase error                                          |
+| `upload.error.unknown`                        | The upload failed.                                            | Fallback                                             |
+| `upload.error.cancel`                         | The upload could not be cancelled.                            | Cancel-failure error                                 |
+| `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                                    | Aggregate accessible value                           |
+| `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                                  | Footer meta line with byte totals and remaining time |
+| `upload.progress.detailsBytes`                | {0}% · {1} of {2}                                             | Footer meta line when remaining time is unknown      |
+| `upload.summary.success`                      | Uploaded {0} files · {1}                                      | Success summary row                                  |
+| `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files                     | Summary expand/collapse toggle                       |
+| `upload.announce.success`                     | {0} uploaded.                                                 | Live announcement                                    |
+| `upload.announce.error`                       | {0} failed: {1}                                               | Live announcement                                    |
+| `upload.announce.cancelled`                   | {0} upload cancelled.                                         | Live announcement                                    |
+| `upload.announce.background`                  | {0} uploads continue in the background.                       | Background-dismiss announcement                      |
 
 Accessibility contract:
 
@@ -894,9 +900,10 @@ Verification run on 2026-11-22 (revision: confirm-first staging, dev queue snaps
 
 - `nx test clr-lift`: 42 files / 527 tests passed, covering the panel, `autoEnqueue` staging, CVA id/label/disabled
   contract and owner reset.
-- `nx test ngx-lift`: 65 files / 1007 tests passed, covering the headless lifecycle, retry/cancel/completion and inline
-  `expectTypeOf` contract assertions. Inline `expectTypeOf` is this repository's accepted type-test convention; there is
-  no `*.test-d.ts` target.
+- `nx test ngx-lift`: 65 files / 1008 tests passed, covering the headless lifecycle, retry/cancel/completion and inline
+  `expectTypeOf` contract assertions, including a regression test that a chunk retry keeps the item `uploading` with its
+  acknowledged progress. Inline `expectTypeOf` is this repository's accepted type-test convention; there is no
+  `*.test-d.ts` target.
 - `nx run @ngx-lift-workspace/source:i18n-check`: 0 errors, all 11 locale dictionaries complete.
 - `nx typecheck demo`, `nx typecheck clr-lift`, `nx typecheck ngx-lift`, `nx typecheck demo-e2e`: passed.
 - `nx lint demo`, `nx lint clr-lift`, `nx lint demo-e2e`: 0 errors.
@@ -904,11 +911,11 @@ Verification run on 2026-11-22 (revision: confirm-first staging, dev queue snaps
 - `nx build` for demo, clr-lift and ngx-lift, `bundle:check` and `verify:packages`: passed. `verify:packages` installs
   the packed libraries into a fresh strict-TypeScript consumer, covering the installed-consumer integration check.
 - `nx serve demo` compilation: passed.
-- Upload E2E (Chromium): 18/18 passed, covering selection and validation, window controls, cancel/retry/per-row Remove,
-  confirm-first staging, reactive/ngModel/signal-form bindings, a keyboard-only journey and an axe WCAG 2.0/2.1/2.2 A/AA
-  scan of the playground and the active panel.
-- Cross-browser smoke (Chromium, Firefox, WebKit): 12/12 passed across four tagged upload journeys, including the
-  keyboard-only journey and the stubbed `HttpClient` success path.
+- Upload E2E (Chromium): 20/20 passed, covering selection and validation, window controls, cancel/retry/per-row Remove,
+  confirm-first staging (queue empty until confirmation), reactive/ngModel/signal-form bindings, a keyboard-only
+  journey, minimize/navigate/restore survival and an axe WCAG 2.0/2.1/2.2 A/AA scan of the playground and active panel.
+- Cross-browser smoke (Chromium, Firefox, WebKit): 18/18 passed across six tagged upload journeys, including the
+  keyboard-only journey, confirm-first staging, minimize/navigate/restore and the stubbed `HttpClient` success path.
 - Controlled network fixtures: `page.route` stubs cover `HttpClient` chunk success, HTTP 500 failure and abort-timeout
   cancellation; `completion(id)` is asserted to reject with the abort error.
 - Manual browser verification (Playwright): 50-file layout and list max-height, bottom-right minimized badge,
@@ -920,5 +927,5 @@ Automated accessibility scanning found two WCAG AA color-contrast failures in de
 passes. The production build reports a pre-existing `anyComponentStyle` warning of 6.59 kB against a 6 kB warning
 budget; the stylesheet's byte size is unchanged by this revision and the value is below the 10 kB error budget.
 
-Human language acceptance and manual assistive-technology review are reported separately from these automated results:
-neither has been performed. Maintainer sign-off is still required before status can advance beyond Draft.
+Human language acceptance and the manual assistive-technology decision are reported separately from these automated
+results: the maintainer reviewed both and approved them on 2026-11-22.
