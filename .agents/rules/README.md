@@ -20,7 +20,9 @@ client-specific directories link here.
 - Claude reads `.claude/rules/*.md`, also relative symlinks to these files.
 - Other agents read `AGENTS.md`, which points here.
 
-`pnpm run test:tools` verifies every link resolves and each canonical rule is non-empty.
+A symlink-capable checkout is required. With `core.symlinks=false`, Git writes the target path as plain file content instead;
+set `core.symlinks=true` before cloning (on Windows, enable Developer Mode). `pnpm run test:tools` verifies every link
+resolves and each canonical rule is non-empty, with an actionable checkout diagnostic when links are missing.
 
 ## Key principles
 

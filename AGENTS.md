@@ -97,4 +97,4 @@ exists. Report evidence using the sections defined by the
 Detailed coding standards have one physical source in `.agents/rules/`. Cursor reads them through relative `.mdc` links
 in `.cursor/rules/`, and Claude through `.md` links in `.claude/rules/`; other agents read this file and follow the
 canonical directory. Edit only `.agents/rules/*.md`, then run `pnpm run test:tools` to verify every client link
-resolves.
+resolves. Client links require a symlink-capable checkout (`core.symlinks=true`; Windows needs Developer Mode).

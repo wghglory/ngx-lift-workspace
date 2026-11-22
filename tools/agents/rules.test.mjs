@@ -26,7 +26,10 @@ test('client rule entries resolve to the canonical source', () => {
     for (const name of names) {
       const extension = directory === '.cursor/rules' && name !== 'README' ? 'mdc' : 'md';
       const entry = join(root, directory, `${name}.${extension}`);
-      assert.ok(lstatSync(entry).isSymbolicLink(), `${entry} must be a link`);
+      assert.ok(
+        lstatSync(entry).isSymbolicLink(),
+        `${entry} must be a link; re-clone with core.symlinks=true (Windows: enable Developer Mode)`,
+      );
       assert.equal(realpathSync(entry), resolve(canonical, `${name}.md`));
     }
   }
