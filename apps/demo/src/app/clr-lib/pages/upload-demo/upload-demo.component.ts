@@ -1,3 +1,4 @@
+import {NgTemplateOutlet} from '@angular/common';
 import {HttpClient, HttpEventType} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject, signal, viewChild} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -35,6 +36,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
     ClarityModule,
     DemoPlaygroundComponent,
     FormsModule,
+    NgTemplateOutlet,
     PageContainerComponent,
     ReactiveFormsModule,
     TranslatePipe,

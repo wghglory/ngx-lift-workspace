@@ -3,6 +3,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   en: {
     selectFile: 'Select file',
     selectFiles: 'Select files',
+    selectedCount: '{0} files selected',
     browse: 'Browse',
     remove: 'Remove',
     'remove.hint': 'Dismiss {0} from the list (does not delete any uploaded file)',
@@ -61,6 +62,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   'en-US': {
     selectFile: 'Select file',
     selectFiles: 'Select files',
+    selectedCount: '{0} files selected',
     browse: 'Browse',
     remove: 'Remove',
     'remove.hint': 'Dismiss {0} from the list (does not delete any uploaded file)',
@@ -119,6 +121,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   de: {
     selectFile: 'Datei auswählen',
     selectFiles: 'Dateien auswählen',
+    selectedCount: '{0} Dateien ausgewählt',
     browse: 'Durchsuchen',
     remove: 'Entfernen',
     'remove.hint': '{0} aus der Liste entfernen (löscht keine hochgeladenen Dateien)',
@@ -177,6 +180,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   es: {
     selectFile: 'Seleccionar archivo',
     selectFiles: 'Seleccionar archivos',
+    selectedCount: '{0} archivos seleccionados',
     browse: 'Examinar',
     remove: 'Eliminar',
     'remove.hint': 'Descartar {0} de la lista (no elimina ningún archivo cargado)',
@@ -235,6 +239,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   fr: {
     selectFile: 'Sélectionner un fichier',
     selectFiles: 'Sélectionner des fichiers',
+    selectedCount: '{0} fichiers sélectionnés',
     browse: 'Parcourir',
     remove: 'Supprimer',
     'remove.hint': 'Retirer {0} de la liste (ne supprime aucun fichier téléversé)',
@@ -293,6 +298,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   it: {
     selectFile: 'Seleziona file',
     selectFiles: 'Seleziona file',
+    selectedCount: '{0} file selezionati',
     browse: 'Sfoglia',
     remove: 'Rimuovi',
     'remove.hint': 'Rimuovi {0} dall’elenco (non elimina alcun file caricato)',
@@ -351,6 +357,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   ja: {
     selectFile: 'ファイルを選択',
     selectFiles: 'ファイルを選択',
+    selectedCount: '{0} 件のファイルを選択済み',
     browse: '参照',
     remove: '削除',
     'remove.hint': '{0} を一覧から除外（アップロード済みファイルは削除されません）',
@@ -409,6 +416,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   ko: {
     selectFile: '파일 선택',
     selectFiles: '파일 선택',
+    selectedCount: '파일 {0}개 선택됨',
     browse: '찾아보기',
     remove: '제거',
     'remove.hint': '{0}을(를) 목록에서 제거(업로드된 파일은 삭제하지 않음)',
@@ -467,6 +475,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   nl: {
     selectFile: 'Bestand selecteren',
     selectFiles: 'Bestanden selecteren',
+    selectedCount: '{0} bestanden geselecteerd',
     browse: 'Bladeren',
     remove: 'Verwijderen',
     'remove.hint': '{0} uit de lijst verwijderen (verwijdert geen geüploade bestanden)',
@@ -525,6 +534,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   pt: {
     selectFile: 'Selecionar ficheiro',
     selectFiles: 'Selecionar ficheiros',
+    selectedCount: '{0} ficheiros selecionados',
     browse: 'Procurar',
     remove: 'Remover',
     'remove.hint': 'Dispensar {0} da lista (não elimina nenhum ficheiro carregado)',
@@ -583,6 +593,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   'pt-BR': {
     selectFile: 'Selecionar arquivo',
     selectFiles: 'Selecionar arquivos',
+    selectedCount: '{0} arquivos selecionados',
     browse: 'Procurar',
     remove: 'Remover',
     'remove.hint': 'Dispensar {0} da lista (não exclui nenhum arquivo enviado)',
@@ -642,6 +653,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   ru: {
     selectFile: 'Выбрать файл',
     selectFiles: 'Выбрать файлы',
+    selectedCount: 'Выбрано файлов: {0}',
     browse: 'Обзор',
     remove: 'Удалить',
     'remove.hint': 'Убрать {0} из списка (загруженные файлы не удаляются)',
@@ -700,6 +712,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   'zh-CN': {
     selectFile: '选择文件',
     selectFiles: '选择文件',
+    selectedCount: '已选择 {0} 个文件',
     browse: '浏览',
     remove: '移除',
     'remove.hint': '从列表移除 {0}（不会删除已上传的文件）',
@@ -758,6 +771,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
   'zh-TW': {
     selectFile: '選擇檔案',
     selectFiles: '選擇檔案',
+    selectedCount: '已選擇 {0} 個檔案',
     browse: '瀏覽',
     remove: '移除',
     'remove.hint': '從清單移除 {0}（不會刪除已上傳的檔案）',

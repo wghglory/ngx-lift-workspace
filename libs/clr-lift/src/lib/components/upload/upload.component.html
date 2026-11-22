@@ -10,8 +10,9 @@
     [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
     (change)="onSelected($event)"
   />
-  <div
+  <label
     class="cll-upload__dropzone"
+    [for]="controlId() || inputId"
     [class.cll-upload__dropzone--over]="dragOver()"
     [class.cll-upload__dropzone--disabled]="isDisabled()"
     (drop)="onDrop($event)"
@@ -68,13 +69,19 @@
         </button>
       }
     </div>
-  </div>
+  </label>
   @if (maxFiles() > 0) {
     <span class="cll-upload__count">{{ 'upload.usedFiles' | translate: value().length : maxFiles() }}</span>
   }
   @if (value().length) {
     <div class="cll-upload__names-row" cds-layout="horizontal gap:sm align:center">
-      <span class="cll-upload__names">{{ fileNames() }}</span>
+      <span class="cll-upload__names">
+        @if (value().length === 1) {
+          {{ value()[0].name }}
+        } @else {
+          {{ 'upload.selectedCount' | translate: value().length }}
+        }
+      </span>
       <button
         type="button"
         class="btn btn-sm btn-icon btn-link btn-close"

@@ -168,23 +168,30 @@
     </div>
   </app-demo-playground>
 
+  <ng-template #stagedFilesList>
+    <ul class="upload-confirm-list">
+      @for (file of stagedFiles(); track fileTrackKey(file)) {
+        <li>
+          <span>{{ file.name }}</span
+          ><span>{{ formatFileSize(file.size) }}</span>
+        </li>
+      }
+    </ul>
+  </ng-template>
+
   <clr-modal [(clrModalOpen)]="confirmOpen" [clrModalClosable]="false">
     <h3 class="modal-title">{{ 'uploadDemo.confirmTitle' | translate }}</h3>
     <div class="modal-body">
-      <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.confirmInfo' | translate"> </cll-alert>
-      <ul class="upload-confirm-list">
-        @for (file of stagedFiles(); track fileTrackKey(file)) {
-          <li>
-            <span>{{ file.name }}</span
-            ><span>{{ formatFileSize(file.size) }}</span>
-          </li>
+      <div cds-layout="vertical gap:sm">
+        <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.confirmInfo' | translate">
+        </cll-alert>
+        <ng-container [ngTemplateOutlet]="stagedFilesList" />
+        @if (duplicateNames().length) {
+          <p class="upload-confirm-duplicate">
+            {{ 'uploadDemo.confirmDuplicates' | translate: duplicateNames().join(', ') }}
+          </p>
         }
-      </ul>
-      @if (duplicateNames().length) {
-        <p class="upload-confirm-duplicate">
-          {{ 'uploadDemo.confirmDuplicates' | translate: duplicateNames().join(', ') }}
-        </p>
-      }
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline" (click)="cancelUpload()">
@@ -199,27 +206,22 @@
   <clr-modal [(clrModalOpen)]="modalOpen">
     <h3 class="modal-title">{{ 'uploadDemo.modalUpload' | translate }}</h3>
     <div class="modal-body">
-      <p>{{ 'uploadDemo.modalNote' | translate }}</p>
-      <cll-upload
-        #modalUpload
-        [adapter]="apiAdapter"
-        [multiple]="true"
-        accept=".zip,.tar"
-        [autoEnqueue]="false"
-        [chunkSize]="chunk5Mb"
-        [concurrency]="2"
-        (filesChange)="stageFiles($event)"
-      />
-      @if (stagedFiles().length) {
-        <ul class="upload-confirm-list">
-          @for (file of stagedFiles(); track fileTrackKey(file)) {
-            <li>
-              <span>{{ file.name }}</span
-              ><span>{{ formatFileSize(file.size) }}</span>
-            </li>
-          }
-        </ul>
-      }
+      <div cds-layout="vertical gap:sm">
+        <p>{{ 'uploadDemo.modalNote' | translate }}</p>
+        <cll-upload
+          #modalUpload
+          [adapter]="apiAdapter"
+          [multiple]="true"
+          accept=".zip,.tar"
+          [autoEnqueue]="false"
+          [chunkSize]="chunk5Mb"
+          [concurrency]="2"
+          (filesChange)="stageFiles($event)"
+        />
+        @if (stagedFiles().length) {
+          <ng-container [ngTemplateOutlet]="stagedFilesList" />
+        }
+      </div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline" (click)="cancelModalUpload()">

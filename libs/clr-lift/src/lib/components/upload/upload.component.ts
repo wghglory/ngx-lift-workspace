@@ -77,11 +77,6 @@ export class UploadComponent implements ControlValueAccessor {
   readonly showDropzoneHint = computed(
     () => this.showAcceptHint() || this.showMaxSizeHint() || this.showMaxFilesHint(),
   );
-  readonly fileNames = computed(() =>
-    this.value()
-      .map((file) => file.name)
-      .join(', '),
-  );
   readonly inputId: string = `cll-upload-${UploadComponent.nextId++}`;
 
   private onChange: (value: readonly File[]) => void = () => undefined;

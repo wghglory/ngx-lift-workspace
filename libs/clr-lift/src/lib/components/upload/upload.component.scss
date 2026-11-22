@@ -3,14 +3,18 @@
 }
 
 .cll-upload {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-// Visually hidden file inputs; keep native pick, focus and label association.
+// Visually hidden file inputs; keep native pick, focus and label association. Positioned relative
+// to this host so their absolute boxes cannot leak into the document scroll area.
 .cll-upload__file {
   position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
   inline-size: 1px;
   block-size: 1px;
   opacity: 0;
