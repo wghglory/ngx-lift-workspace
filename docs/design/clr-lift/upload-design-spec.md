@@ -668,6 +668,7 @@ dictionary. Runtime English fallback is not delivery.
 | Key                                           | English source                                                | Use                                                  |
 | --------------------------------------------- | ------------------------------------------------------------- | ---------------------------------------------------- |
 | `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                                    | Trigger label by `multiple`                          |
+| `upload.selectedCount`                        | {0} files selected                                            | Selected-files summary with `multiple`               |
 | `upload.browse`                               | Browse                                                        | Input affordance                                     |
 | `upload.dropzone`                             | Drag and drop files here, or browse                           | Dropzone title                                       |
 | `upload.dropzone.dragOver`                    | Drop files to add them                                        | Dropzone drag-over state                             |
@@ -719,6 +720,9 @@ dictionary. Runtime English fallback is not delivery.
 | `upload.announce.success`                     | {0} uploaded.                                                 | Live announcement                                    |
 | `upload.announce.error`                       | {0} failed: {1}                                               | Live announcement                                    |
 | `upload.announce.cancelled`                   | {0} upload cancelled.                                         | Live announcement                                    |
+| `upload.announce.uploading`                   | Uploading {0}.                                                | Live announcement on transfer start                  |
+| `upload.announce.processing`                  | Processing {0}.                                               | Live announcement on processing start                |
+| `upload.announce.cancelledAll`                | {0} uploads cancelled.                                        | Count announcement for batch cancel                  |
 | `upload.announce.background`                  | {0} uploads continue in the background.                       | Background-dismiss announcement                      |
 
 Accessibility contract:
