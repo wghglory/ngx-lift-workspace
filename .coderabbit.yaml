@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+tone_instructions: >-
+  Be concise and actionable. Prioritize correctness, security, public API contracts, accessibility, i18n completeness,
+  and Nx/build correctness. Prefer simpler repo-consistent patterns over new abstractions, and say plainly when the
+  existing pattern is already correct.
+reviews:
+  profile: chill
+  auto_review:
+    enabled: true
+    drafts: false
+    auto_incremental_review: true
+    auto_pause_after_reviewed_commits: 5
+  path_filters:
+    - '!pnpm-lock.yaml'
+    - '!dist/**'
+    - '!coverage/**'
+    - '!.nx/**'
+  path_instructions:
+    - path: 'libs/**/*.ts'
+      instructions: >-
+        Treat exported utilities, operators, directives, pipes, validators, services, form integrations, and entry
+        points as public API. Follow AGENTS.md and docs/design/component-development.md before suggesting API-shape
+        changes.
+    - path: 'apps/demo/**/*.html'
+      instructions: >-
+        Check keyboard and focus behavior, semantic names and state, and that every owned visible/announced message
+        exists in all supported locales.
+    - path: 'docs/**/*.md'
+      instructions: >-
+        Keep documentation in English and examples generic. Use ngx-lift and clr-lift names; omit internal company and
+        product identifiers.
+chat:
+  auto_reply: true
