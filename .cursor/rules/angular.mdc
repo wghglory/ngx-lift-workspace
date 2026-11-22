@@ -78,11 +78,11 @@ alwaysApply: true
   - Use `untracked()` when reading signals that shouldn't trigger re-computation
 
 - **Boolean State Inputs & Signals**:
-  - Name component inputs and properties representing state using adjectives or status nouns (e.g.,
-    `createDisabled = input(false)`, `loading = input(false)`), NOT imperative action verbs (e.g., avoid
-    `disableCreate`, `showModal`).
-  - Use `is*` / `has*` prefixes for internal boolean computed signals or flags (e.g., `isSaveDisabled`, `isFormInvalid`,
-    `hasErrors`).
+  - Name boolean inputs and signals with adjectives or status nouns (e.g. `disabled`, `multiple`, `autoEnqueue`,
+    `expanded`, `dragOver`), NOT imperative action verbs (e.g. avoid `disableCreate`, `showModal`). This matches
+    Angular's own `disabled` / `checked` / `multiple` inputs and this repository's existing signals.
+  - Reserve `is*` / `has*` prefixes for predicate methods that answer a question about another value (e.g.
+    `isRtl()`, `hasErrors()`), not for plain state signals.
 
 ### Dependency Injection
 
@@ -188,9 +188,10 @@ alwaysApply: true
   }
   ```
 
-- **Method Calls**: **NEVER** call component methods from templates
-  - Use computed signals or pipes instead
-  - Exception: Event handlers (`(click)="handleClick()"`)
+- **Function Calls**: Signal reads are function calls by design (`count()`, `items()`); use them freely in templates.
+  - For non-signal methods, prefer `computed()` for derived state and pipes for presentation formatting.
+  - Cheap, pure helpers (e.g. formatting one value passed from the template) are allowed; do not flag them.
+  - Event handlers (`(click)="handleClick()"`) are always allowed.
 
 - **Self-Closing Tags**: Use self-closing tags when possible (when tags have no content)
 
