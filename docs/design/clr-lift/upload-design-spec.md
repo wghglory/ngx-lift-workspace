@@ -933,3 +933,22 @@ budget; the stylesheet's byte size is unchanged by this revision and the value i
 
 Human language acceptance and the manual assistive-technology decision are reported separately from these automated
 results: the maintainer reviewed both and approved them on 2026-11-22.
+
+### PR #252 follow-up review (2026-11-22)
+
+The follow-up covers visible focus restoration after activating the dropzone label, publishing every new message from
+one announcement pass, handling repeated batch-retry failures, retaining the failed phase during retry, ignoring
+progress callbacks from settled chunk requests, and settling completion when a cancelled row is removed before server
+cancellation finishes. The form example binds the actual `FormGroup`, with `toSignalForm` observing it.
+
+- Upload browser suite: 63/63 passed across Chromium, Firefox and WebKit, including the new label-selection/focus
+  regression and the existing active-panel accessibility scan. The synthetic drop waits for the shared panel to attach;
+  WebKit keyboard traversal uses Option+Tab to include buttons under Safari's default keyboard-access setting.
+- `pnpm run validate` passed (format, tooling, translations, lint/typecheck, coverage, all builds, bundle and installed
+  package checks). Final headless coverage rerun: 65 files / 1014 tests, 94.12% statements and 90.45% branches;
+  component suite: 42 files / 537 tests, 91.14% statements and 80.73% branches. Final static checks passed with lint
+  warnings; Nx Cloud remote-cache uploads were unavailable because the organization exceeded its plan.
+- Unit regressions cover coalesced completion/start announcements, repeated batch failure, cancellation followed by
+  synchronous removal, status-retry state, and stale callbacks after manual and automatic retry.
+- No new public API, runtime dependency, or owned translation message is introduced. The human language acceptance and
+  assistive-technology decision recorded above are unchanged.

@@ -250,8 +250,8 @@ export class UploadQueueService {
     runtime.resume = undefined;
     this.patch(id, {status: 'cancelled'});
     const deferreds = runtime.deferreds;
-    runtime.deferreds = [];
     const finish = (error?: UploadError) => {
+      runtime.deferreds = [];
       if (error && this.runtimes.get(id) === runtime) this.patch(id, {error});
       for (const deferred of deferreds) deferred.reject(abortError());
     };
@@ -328,7 +328,6 @@ export class UploadQueueService {
       for (;;) {
         const runtime = [...this.runtimes.values()].find((candidate) => this.item(candidate.id)?.status === 'queued');
         if (!runtime) break;
-        runtime.resume = undefined;
         await this.process(runtime);
       }
     } finally {
@@ -433,6 +432,7 @@ export class UploadQueueService {
     const chunk = runtime.file.slice(start, Math.min(start + runtime.options.chunkSize, runtime.file.size));
     const signal = runtime.controller.signal;
     runtime.inFlight.set(number, 0);
+    let pending = true;
     try {
       await this.withAbort(
         runtime.adapter.uploadChunk({
@@ -442,7 +442,13 @@ export class UploadQueueService {
           totalChunks: total,
           signal,
           onProgress: (loaded) => {
-            if (!this.isCurrent(runtime) || this.item(runtime.id)?.status !== 'uploading') return;
+            if (
+              !pending ||
+              !runtime.inFlight.has(number) ||
+              !this.isCurrent(runtime) ||
+              this.item(runtime.id)?.status !== 'uploading'
+            )
+              return;
             runtime.inFlight.set(number, clamp(loaded, 0, chunk.size));
             this.updateProgress(runtime);
           },
@@ -458,6 +464,8 @@ export class UploadQueueService {
       runtime.inFlight.delete(number);
       this.updateProgress(runtime);
       throw error;
+    } finally {
+      pending = false;
     }
   }
 

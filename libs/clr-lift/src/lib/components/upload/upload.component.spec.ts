@@ -5,6 +5,7 @@ import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
 import {UploadComponent} from './upload.component';
+import {UploadPanelManager} from './upload-panel-manager';
 
 function file(name: string, size = 2): File {
   return new File([new Uint8Array(size)], name);
@@ -203,6 +204,35 @@ describe('UploadComponent', () => {
     expect(emitted).toHaveLength(1);
     expect(emitted[0].map((item) => item.name)).toEqual(['staged.zip']);
     expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+  });
+
+  it('uses Browse as the restore target when the clipped input has focus', async () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    fixture.detectChanges();
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    input.focus();
+    expect(document.activeElement).toBe(input);
+
+    await select(fixture.componentInstance, [file('bundle.zip')]);
+
+    expect(TestBed.inject(UploadPanelManager).restoreTarget()).toBe(
+      fixture.nativeElement.querySelector('.cll-upload__browse'),
+    );
+  });
+
+  it('emits cancellation even when the queue is cleared synchronously', async () => {
+    const component = create({adapter: {...stubAdapter(), uploadChunk: () => new Promise(() => undefined)}});
+    const cancelled: string[] = [];
+    component.uploadCancelled.subscribe((items) => cancelled.push(...items.map((item) => item.status)));
+    await select(component, [file('bundle.zip')]);
+    const queue = TestBed.inject(UploadQueueService);
+
+    queue.cancel(queue.items()[0].id);
+    queue.clearCompleted();
+    for (let index = 0; index < 40; index += 1) await Promise.resolve();
+
+    expect(cancelled).toEqual(['cancelled']);
   });
 
   it('ships owned messages in the active locale', () => {

@@ -182,6 +182,28 @@ describe('UploadQueueService', () => {
     chunk.resolve();
   });
 
+  it('settles completion on removal while server cancellation is still pending', async () => {
+    const cancellation = deferred<void>();
+    const chunk = deferred<void>();
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async () => chunk.promise,
+      combine: async () => undefined,
+      cancel: async () => cancellation.promise,
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+    const completion = queue.completion(item.id);
+    await flush();
+
+    queue.cancel(item.id);
+    queue.clearCompleted();
+
+    await expect(completion).rejects.toMatchObject({name: 'AbortError'});
+    expect(queue.items()).toEqual([]);
+    cancellation.resolve();
+    chunk.resolve();
+  });
+
   it('ignores a chunk that settles after the item was already cancelled', async () => {
     const chunk = deferred<void>();
     const adapter: UploadAdapter = {
@@ -259,6 +281,38 @@ describe('UploadQueueService', () => {
 
     release();
     await expect(queue.completion(item.id)).resolves.toMatchObject({status: 'success'});
+  });
+
+  it.each([false, true])('ignores stale chunk progress after retry (autoRetry: %s)', async (autoRetry) => {
+    let staleProgress: ((loaded: number) => void) | undefined;
+    const retryGate = deferred<void>();
+    let calls = 0;
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async (request) => {
+        calls += 1;
+        if (calls === 1) {
+          staleProgress = request.onProgress;
+          throw {code: 'chunk-failed', phase: 'chunk', retryable: true};
+        }
+        return retryGate.promise;
+      },
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter, {autoRetry, maxRetries: 1}));
+    let completion = queue.completion(item.id);
+    if (!autoRetry) {
+      await expect(completion).rejects.toMatchObject({phase: 'chunk'});
+      completion = queue.retry(item.id)!;
+    }
+    await flush();
+
+    staleProgress?.(2);
+
+    expect(queue.items()[0]).toMatchObject({status: 'uploading', uploadedBytes: 0, progress: 0});
+    retryGate.resolve();
+    await expect(completion).resolves.toMatchObject({status: 'success'});
   });
 
   it('auto-retries retryable chunk errors up to the configured limit', async () => {
@@ -368,6 +422,30 @@ describe('UploadQueueService', () => {
 
     expect((await queue.completion(item.id)).status).toBe('success');
     expect(getStatus).toHaveBeenCalledTimes(3);
+  });
+
+  it('keeps status retries in processing without resetting acknowledged bytes', async () => {
+    let polls = 0;
+    const states: string[] = [];
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async () => undefined,
+      combine: async () => undefined,
+      cancel: async () => undefined,
+      getStatus: async () => {
+        polls += 1;
+        if (polls === 1) throw {code: 'status-failed', phase: 'status'};
+        const current = queue.items()[0];
+        states.push(`${current.status}:${current.uploadedBytes}:${current.progress}`);
+        return {status: 'success', progress: 100};
+      },
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+    await expect(queue.completion(item.id)).rejects.toMatchObject({phase: 'status'});
+
+    await expect(queue.retry(item.id)).resolves.toMatchObject({status: 'success'});
+
+    expect(states).toEqual(['processing:2:100']);
   });
 
   it('leaves exhausted auto-retries in error and manual retry recovers', async () => {

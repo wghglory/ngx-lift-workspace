@@ -260,6 +260,46 @@ describe('UploadPanelComponent', () => {
     expect(live.textContent).toBe('bundle.zip uploaded.');
   });
 
+  it('publishes a completed file and the next start together in one render', async () => {
+    const blocked = blockedAdapter();
+    queue.enqueue(
+      [uploadFile('first.zip')],
+      options({
+        ...blocked.adapter,
+        uploadChunk: async () => undefined,
+      }),
+    );
+    queue.enqueue([uploadFile('second.zip')], options(blocked.adapter));
+    await flush();
+
+    const live = panel().querySelector('.cll-upload-panel__live')!;
+    expect(live.textContent).toContain('first.zip uploaded.');
+    expect(live.textContent).toContain('Uploading second.zip.');
+    await flush();
+    expect(live.textContent).toContain('first.zip uploaded.');
+  });
+
+  it('keeps batch retry failures handled and available for another retry', async () => {
+    queue.enqueue(
+      [uploadFile('broken.zip')],
+      options({
+        initiate: async () => ({uploadId: 'u1'}),
+        uploadChunk: async () => {
+          throw {code: 'chunk-failed', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    await flush();
+
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__retry-failed')!.click();
+    await flush();
+
+    expect(queue.items()[0]).toMatchObject({status: 'error', attempt: 2});
+    expect(panel().querySelector('.cll-upload-panel__retry-failed')).not.toBeNull();
+  });
+
   it('announces the transfer start and the processing phase once per attempt', async () => {
     let releaseChunk!: () => void;
     const chunkGate = new Promise<void>((resolve) => (releaseChunk = resolve));

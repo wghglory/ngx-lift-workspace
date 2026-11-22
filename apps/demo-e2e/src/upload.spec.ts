@@ -41,6 +41,21 @@ test('uploads a bundle, registers it, and minimizes the shared panel @cross-brow
   await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
 });
 
+test('restores visible Browse focus after selection from the dropzone label', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const host = page.getByTestId('upload-demo-basic');
+  const chooserPromise = page.waitForEvent('filechooser');
+  await host.locator('.cll-upload__dropzone-title').click();
+  const chooser = await chooserPromise;
+  await chooser.setFiles([zipFile('bundle.zip')]);
+
+  const panel = page.locator('.cll-upload-panel');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await panel.locator('.cll-upload-panel__done').click();
+
+  await expect(host.locator('.cll-upload__browse')).toBeFocused();
+});
+
 test('adds files by dropping them onto the dropzone', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
 
@@ -50,6 +65,7 @@ test('adds files by dropping them onto the dropzone', async ({page}) => {
     transfer.items.add(new File(['release bundle'], 'dropped.zip', {type: 'application/zip'}));
     return transfer;
   });
+  await expect(page.locator('.cll-upload-panel')).toBeAttached();
   await dropzone.dispatchEvent('drop', {dataTransfer});
 
   const panel = page.locator('.cll-upload-panel');
@@ -142,7 +158,15 @@ test('cancel-all in the confirmation closes the panel and clears the queue', asy
   await expect(panel.locator('.cll-upload-panel__badge')).toHaveCount(0);
 });
 
-test('the keyboard drives window controls and the confirmation', async ({page}) => {
+// Safari uses Option+Tab to include buttons when full keyboard access is off.
+const traversalKeys = {
+  chromium: {tab: 'Tab', backTab: 'Shift+Tab'},
+  firefox: {tab: 'Tab', backTab: 'Shift+Tab'},
+  webkit: {tab: 'Alt+Tab', backTab: 'Alt+Shift+Tab'},
+};
+
+test('the keyboard drives window controls and the confirmation', async ({page, browserName}) => {
+  const {tab, backTab} = traversalKeys[browserName];
   await page.goto('/clr-lift/components/upload');
 
   await page.getByTestId('upload-demo-add-files').click();
@@ -156,11 +180,11 @@ test('the keyboard drives window controls and the confirmation', async ({page}) 
   await page.keyboard.press('Enter');
   await expect(panel.locator('.cll-upload-panel__list--compact')).toHaveCount(0);
 
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(backTab);
   await expect(panel.locator('.cll-upload-panel__minimize')).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(tab);
   await expect(panel.locator('.cll-upload-panel__expand')).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(tab);
   await expect(panel.locator('.cll-upload-panel__close')).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(panel.locator('.cll-upload-panel__confirm')).toBeVisible();
@@ -168,9 +192,9 @@ test('the keyboard drives window controls and the confirmation', async ({page}) 
   const background = panel.locator('.cll-upload-panel__confirm-background');
   await background.focus();
   await expect(background).toBeFocused();
-  await page.keyboard.press('Tab');
+  await page.keyboard.press(tab);
   await expect(panel.locator('.cll-upload-panel__confirm-cancel')).toBeFocused();
-  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press(backTab);
   await expect(background).toBeFocused();
   await page.keyboard.press('Space');
   await expect(panel.locator('.cll-upload-panel__badge')).toBeVisible();

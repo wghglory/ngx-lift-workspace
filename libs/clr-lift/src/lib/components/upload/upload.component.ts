@@ -246,7 +246,13 @@ export class UploadComponent implements ControlValueAccessor {
     this.panelManager.ensurePanel();
     const host = this.host.nativeElement;
     const active = document.activeElement;
-    const focused = active instanceof HTMLElement && host.contains(active) && active.tabIndex >= 0 ? active : undefined;
+    const focused =
+      active instanceof HTMLElement &&
+      host.contains(active) &&
+      active.tabIndex >= 0 &&
+      !active.matches('input[type="file"]')
+        ? active
+        : undefined;
     this.panelManager.setTrigger(focused ?? host.querySelector<HTMLElement>('.cll-upload__browse') ?? host);
   }
 

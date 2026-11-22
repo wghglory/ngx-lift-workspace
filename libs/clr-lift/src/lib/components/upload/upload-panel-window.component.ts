@@ -136,7 +136,8 @@ export class UploadPanelWindowComponent {
       for (const key of [...this.announced]) {
         if (!items.some((item) => key.startsWith(`${item.id}:`))) this.announced.delete(key);
       }
-      for (const item of items) this.announce(item);
+      const messages = items.map((item) => this.announcementFor(item)).filter((message) => message !== undefined);
+      if (messages.length) this.announcement.set(messages.join(' '));
     });
   }
 
@@ -247,7 +248,7 @@ export class UploadPanelWindowComponent {
   }
 
   retryFailed(): void {
-    for (const item of this.errorItems()) this.queue.retry(item.id);
+    for (const item of this.errorItems()) this.retry(item.id);
   }
 
   isIndeterminate(item: UploadItem): boolean {
@@ -333,7 +334,7 @@ export class UploadPanelWindowComponent {
     );
   }
 
-  private announce(item: UploadItem): void {
+  private announcementFor(item: UploadItem): string | undefined {
     if (
       item.status !== 'uploading' &&
       item.status !== 'processing' &&
@@ -347,7 +348,7 @@ export class UploadPanelWindowComponent {
     if (this.announced.has(key)) return;
     this.announced.add(key);
     const detail = item.status === 'error' ? this.errorText(item) : '';
-    this.announcement.set(this.translationService.translate(`upload.announce.${item.status}`, item.file.name, detail));
+    return this.translationService.translate(`upload.announce.${item.status}`, item.file.name, detail);
   }
 
   private now(): number {
