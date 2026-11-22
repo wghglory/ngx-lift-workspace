@@ -94,7 +94,7 @@ exists. Report evidence using the sections defined by the
 
 ## Coding rules
 
-Detailed coding standards have one physical source in `.agents/rules/`. Cursor reads generated `.mdc` copies in
-`.cursor/rules/`, and Claude reads generated `.md` copies in `.claude/rules/`; other agents read this file and follow
-the canonical directory. Edit only `.agents/rules/*.md`, then run `pnpm run rules:generate` and `pnpm run test:tools` to
-verify every client copy is current.
+Detailed coding standards have one physical source in `.agents/rules/`. Cursor reads them through relative `.mdc` links
+in `.cursor/rules/`, and Claude through `.md` links in `.claude/rules/`; other agents read this file and follow the
+canonical directory. Edit only `.agents/rules/*.md`, then run `pnpm run test:tools` to verify every client link
+resolves.

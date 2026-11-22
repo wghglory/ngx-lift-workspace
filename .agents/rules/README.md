@@ -1,7 +1,7 @@
 # Agent coding rules
 
 Canonical source for this repository's detailed coding standards. All rules are always applied. Edit these files only;
-client-specific directories are generated from them.
+client-specific directories link here.
 
 ## Rule files
 
@@ -13,13 +13,14 @@ client-specific directories are generated from them.
 - **`nx.md`** — Nx workspace: project structure, boundaries, commands, dependencies
 - **`component-development.md`** — Required workflow for new or changed public components
 
-## Client copies
+## Client links
 
-- Cursor reads `.cursor/rules/*.mdc`, Claude reads `.claude/rules/*.md`. Both are generated regular files copied from
-  these sources, so checkouts with symlinks disabled still load the rules.
-- Run `pnpm run rules:generate` after editing a rule. `pnpm run test:tools` fails when a generated copy drifts or is
-  turned back into a link.
+- Cursor reads `.cursor/rules/*.mdc`, which are relative symlinks to these files. The `.mdc` extension and frontmatter
+  stay intact through the link so Cursor's discovery still works.
+- Claude reads `.claude/rules/*.md`, also relative symlinks to these files.
 - Other agents read `AGENTS.md`, which points here.
+
+`pnpm run test:tools` verifies every link resolves and each canonical rule is non-empty.
 
 ## Key principles
 

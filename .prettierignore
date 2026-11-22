@@ -10,9 +10,5 @@
 .opencode
 .codebuddy
 
-# Generated from .agents/rules; format the canonical source instead.
-.claude/rules
-.cursor/rules
-
 # pnpm owns the canonical lockfile formatting.
 pnpm-lock.yaml

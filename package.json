@@ -48,7 +48,6 @@
     "release:check": "pnpm run format:check && pnpm run i18n:check && pnpm run lint && pnpm run typecheck && pnpm run verify:packages",
     "prepare": "husky",
     "fix": "pnpm run format && pnpm run lint:fix",
-    "rules:generate": "node tools/agents/rules.mjs",
     "test:tools": "nx run @ngx-lift-workspace/source:tooling-test",
     "i18n:check": "nx run @ngx-lift-workspace/source:i18n-check",
     "verify:packages": "nx run @ngx-lift-workspace/source:package-verify",
@@ -195,8 +194,11 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}": [
+    "*.{mjs,cjs,mts,cts,json,css,scss,html,yml,yaml}": [
       "prettier --write"
+    ],
+    "*.md": [
+      "node tools/agents/prettier-markdown.mjs"
     ]
   }
 }
