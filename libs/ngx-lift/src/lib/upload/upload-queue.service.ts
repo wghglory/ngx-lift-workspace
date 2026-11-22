@@ -1,10 +1,13 @@
-import {computed, DestroyRef, inject, Injectable, signal, type Signal} from '@angular/core';
+import {isPlatformBrowser} from '@angular/common';
+import {computed, DestroyRef, inject, Injectable, isDevMode, PLATFORM_ID, signal, type Signal} from '@angular/core';
 
 import {
   type UploadAggregate,
   type UploadAdapter,
   type UploadError,
   type UploadItem,
+  type UploadQueueDebugApi,
+  type UploadQueueDebugSnapshot,
   type UploadQueueOptions,
   type UploadStatusResult,
 } from './upload.models';
@@ -107,7 +110,59 @@ export class UploadQueueService {
   });
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.dispose());
+    inject(DestroyRef).onDestroy(() => {
+      this.dispose();
+      if (typeof window !== 'undefined' && window.__uploadQueue?.owner === this) delete window.__uploadQueue;
+    });
+    if (isDevMode() && isPlatformBrowser(inject(PLATFORM_ID))) this.installDebugApi();
+  }
+
+  /** Dev-mode console handle: `window.__uploadQueue.snapshot()` for queue + runtime state. */
+  private installDebugApi(): void {
+    if (typeof window === 'undefined' || window.__uploadQueue) return;
+    const api: UploadQueueDebugApi = {
+      owner: this,
+      snapshot: () => this.debugSnapshot(),
+      items: () => this.debugSnapshot().items,
+      aggregate: () => this.aggregate(),
+    };
+    window.__uploadQueue = api;
+  }
+
+  private debugSnapshot(): UploadQueueDebugSnapshot {
+    const items = this.state();
+    return {
+      aggregate: this.aggregate(),
+      minimized: this.minimized(),
+      items: items.map((item) => ({
+        id: item.id,
+        name: item.file.name,
+        size: item.file.size,
+        status: item.status,
+        progress: item.progress,
+        uploadedBytes: item.uploadedBytes,
+        attempt: item.attempt,
+        ...(item.uploadId ? {uploadId: item.uploadId} : {}),
+        ...(item.error ? {error: item.error} : {}),
+      })),
+      runtimes: [...this.runtimes.values()].map((runtime) => ({
+        id: runtime.id,
+        phase: runtime.phase,
+        ...(runtime.uploadId ? {uploadId: runtime.uploadId} : {}),
+        retries: runtime.retries,
+        acknowledgedChunks: runtime.acknowledged.size,
+        inFlightChunks: runtime.inFlight.size,
+        acknowledgedBytes: runtime.acknowledgedBytes,
+        totalChunks: this.totalChunks(runtime),
+        options: {
+          chunkSize: runtime.options.chunkSize,
+          concurrency: runtime.options.concurrency,
+          autoRetry: runtime.options.autoRetry,
+          maxRetries: runtime.options.maxRetries,
+          pollIntervalMs: runtime.options.pollIntervalMs,
+        },
+      })),
+    };
   }
 
   enqueue(files: readonly File[], options: UploadQueueOptions): readonly UploadItem[] {

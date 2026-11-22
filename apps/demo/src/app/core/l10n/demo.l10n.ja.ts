@@ -3015,6 +3015,24 @@ export const jaTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': '8 文字以上で入力してください。',
   'nav.upload': 'ファイルのアップロード',
   'uploadDemo.title': 'ファイルのアップロード',
+  'uploadDemo.dsmBundle': 'DSM リリースバンドルのアップロード',
+  'uploadDemo.dsmBundleCancel': 'キャンセル',
+  'uploadDemo.dsmBundleClose': '閉じる',
+  'uploadDemo.dsmBundleNote':
+    'dsm-ui 風のフロー：ZIP をドロップし、検出されたバンドル種別を確認してから分割アップロードを開始します。',
+  'uploadDemo.dsmBundleModal': 'モーダルでアップロード',
+  'uploadDemo.dsmBundleConfirm': '更新バンドルの確認',
+  'uploadDemo.dsmBundleDetected': 'バンドル {0} を {1} として検出しました。',
+  'uploadDemo.dsmBundleHint':
+    'dsm-ui では確認時に ZIP 内のマニフェストを読み取ります。このデモではファイル名から種別を判定します。アップロードは同じキューとグローバルパネルを使用します。',
+  'uploadDemo.dsmBundleUpload': 'バンドルをアップロード',
+  'uploadDemo.dsmBundleModalNote': 'モーダル内アップロード（dsm-ui 風）',
+  'dsmBundle.type.controlPlane':
+    'ここで選択したバンドルは同じグローバルキューに追加され、ページ移動中も表示され続けます。',
+  'dsmBundle.type.dataPlane': 'コントロールプレーンバンドル',
+  'dsmBundle.type.dataService': 'データプレーンバンドル',
+  'dsmBundle.type.kubernetes': 'データサービスバンドル',
+  'dsmBundle.type.other': 'Kubernetes リリースバンドル',
   'uploadDemo.intro': 'ページを離れずにバンドルを選択し、進捗を確認できます。',
   'uploadDemo.basic': '基本の選択',
   'uploadDemo.composition': 'クエリとミューテーションのユーティリティとの組み合わせ',
@@ -3046,6 +3064,8 @@ export const jaTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'ファイルあたりの同時チャンク数（1〜4）。',
   'uploadDemo.api.multiple': '1 回の選択で複数ファイルを許可します。',
   'uploadDemo.api.autoRetry': '再試行可能なチャンク エラーを自動で再試行します。',
+  'uploadDemo.api.autoEnqueue':
+    'false の場合は選択を検証して filesChange のみを発行し、呼び出し側が確認後にキューへ追加します。',
   'uploadDemo.api.maxRetries': '再試行可能なチャンク エラーの自動再試行回数。',
   'uploadDemo.api.controlId': 'ネイティブ ファイル入力の識別子。',
   'uploadDemo.api.disabled': '選択を無効にし、進行中の項目をキャンセルします。',

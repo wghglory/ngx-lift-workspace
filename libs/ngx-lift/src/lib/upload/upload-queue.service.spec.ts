@@ -23,6 +23,48 @@ function options(adapter: UploadAdapter, overrides: Partial<Parameters<UploadQue
 
 const flush = () => vi.advanceTimersByTimeAsync(0);
 
+describe('UploadQueueService dev-only debug export', () => {
+  afterEach(() => {
+    TestBed.resetTestingModule();
+    delete window.__uploadQueue;
+  });
+
+  it('exposes a live queue + runtime snapshot on window.__uploadQueue', () => {
+    const queue = TestBed.inject(UploadQueueService);
+    const api = window.__uploadQueue;
+    expect(api).toBeDefined();
+
+    queue.enqueue([uploadFile('bundle.zip', 5)], options(stubDebugAdapter()));
+    const snapshot = api!.snapshot();
+    expect(snapshot.items).toMatchObject([{name: 'bundle.zip', status: 'queued', size: 5}]);
+    expect(snapshot.runtimes[0]).toMatchObject({
+      phase: 'initiate',
+      acknowledgedChunks: 0,
+      totalChunks: 3,
+      options: {chunkSize: 2, concurrency: 1},
+    });
+    expect(api!.aggregate().total).toBe(1);
+  });
+
+  it('removes the global handle when its owning queue is destroyed', () => {
+    const queue = TestBed.inject(UploadQueueService);
+    const handle = window.__uploadQueue;
+    expect(handle).toBeDefined();
+    TestBed.resetTestingModule();
+    expect(window.__uploadQueue).toBeUndefined();
+    expect(queue).toBeDefined();
+  });
+});
+
+function stubDebugAdapter(): UploadAdapter {
+  return {
+    initiate: async () => ({uploadId: 'debug-1'}),
+    uploadChunk: async () => undefined,
+    combine: async () => undefined,
+    cancel: async () => undefined,
+  };
+}
+
 describe('UploadQueueService', () => {
   let queue: UploadQueueService;
 

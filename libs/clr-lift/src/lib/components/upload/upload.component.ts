@@ -52,6 +52,8 @@ export class UploadComponent implements ControlValueAccessor {
   readonly chunkSize = input(UPLOAD_CHUNK_25MB);
   readonly concurrency = input(2);
   readonly autoRetry = input(false);
+  /** false: validate and emit `filesChange` only; caller enqueues after confirmation. */
+  readonly autoEnqueue = input(true);
   readonly maxRetries = input(3);
   readonly pollIntervalMs = input(10_000);
   readonly controlId = input('');
@@ -182,6 +184,9 @@ export class UploadComponent implements ControlValueAccessor {
     this.value.set(next);
     this.onChange(next);
     this.filesChange.emit(next);
+
+    // Staging mode: selection is validated and exposed, but the caller decides when to enqueue.
+    if (!this.autoEnqueue()) return;
 
     this.openPanel();
     const items = this.queue.enqueue(accepted, {

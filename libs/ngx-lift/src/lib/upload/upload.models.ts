@@ -67,3 +67,49 @@ export interface UploadAggregate {
   readonly active: number;
   readonly progress: number;
 }
+
+/** Plain-object debug snapshot; excludes `File` and adapter references so it can be logged. */
+export interface UploadQueueDebugSnapshot {
+  readonly aggregate: UploadAggregate;
+  readonly minimized: boolean;
+  readonly items: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly size: number;
+    readonly status: UploadStatus;
+    readonly progress: number;
+    readonly uploadedBytes: number;
+    readonly attempt: number;
+    readonly uploadId?: string;
+    readonly error?: UploadError;
+  }[];
+  readonly runtimes: readonly {
+    readonly id: string;
+    readonly phase: Phase;
+    readonly uploadId?: string;
+    readonly retries: number;
+    readonly acknowledgedChunks: number;
+    readonly inFlightChunks: number;
+    readonly acknowledgedBytes: number;
+    readonly totalChunks: number;
+    readonly options: Omit<UploadQueueOptions, 'adapter'>;
+  }[];
+}
+
+/** Dev-only console handle installed as `window.__uploadQueue` when `isDevMode()` is true. */
+export interface UploadQueueDebugApi {
+  /** Internal: identifies the owning service instance for cleanup. */
+  readonly owner: unknown;
+  snapshot(): UploadQueueDebugSnapshot;
+  items(): UploadQueueDebugSnapshot['items'];
+  aggregate(): UploadAggregate;
+}
+
+type Phase = UploadError['phase'];
+
+declare global {
+  interface Window {
+    /** Dev-only; undefined in production and on the server. */
+    __uploadQueue?: UploadQueueDebugApi;
+  }
+}

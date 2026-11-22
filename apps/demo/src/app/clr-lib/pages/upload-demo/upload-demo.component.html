@@ -117,6 +117,59 @@
   </app-demo-playground>
 
   <app-demo-playground
+    data-testid="upload-demo-dsm-bundle"
+    [title]="'uploadDemo.dsmBundle' | translate"
+    [htmlCode]="dsmBundleHtml"
+  >
+    <div preview cds-layout="vertical gap:sm">
+      <p>{{ 'uploadDemo.dsmBundleNote' | translate }}</p>
+      <cll-upload
+        [adapter]="adapter"
+        [multiple]="false"
+        accept=".zip"
+        [autoEnqueue]="false"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+        (filesChange)="stageBundle($event)"
+      />
+      <button type="button" class="btn btn-outline" data-testid="upload-demo-dsm-modal" (click)="modalOpen.set(true)">
+        {{ 'uploadDemo.dsmBundleModal' | translate }}
+      </button>
+    </div>
+  </app-demo-playground>
+
+  <clr-modal [(clrModalOpen)]="confirmOpen" [clrModalClosable]="false">
+    <h3 class="modal-title">{{ 'uploadDemo.dsmBundleConfirm' | translate }}</h3>
+    <div class="modal-body">
+      @if (stagedBundle(); as file) {
+        <p>{{ 'uploadDemo.dsmBundleDetected' | translate: file.name : stagedBundleType() }}</p>
+        <p>{{ 'uploadDemo.dsmBundleHint' | translate }}</p>
+      }
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" (click)="cancelBundleUpload()">
+        {{ 'uploadDemo.dsmBundleCancel' | translate }}
+      </button>
+      <button type="button" class="btn btn-primary" (click)="confirmBundleUpload()">
+        {{ 'uploadDemo.dsmBundleUpload' | translate }}
+      </button>
+    </div>
+  </clr-modal>
+
+  <clr-modal [(clrModalOpen)]="modalOpen" [clrModalSize]="'lg'">
+    <h3 class="modal-title">{{ 'uploadDemo.dsmBundleModal' | translate }}</h3>
+    <div class="modal-body">
+      <p>{{ 'uploadDemo.dsmBundleModalNote' | translate }}</p>
+      <cll-upload [adapter]="adapter" [multiple]="true" accept=".zip,.tar" [chunkSize]="chunk5Mb" [concurrency]="2" />
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="modalOpen.set(false)">
+        {{ 'uploadDemo.dsmBundleClose' | translate }}
+      </button>
+    </div>
+  </clr-modal>
+
+  <app-demo-playground
     data-testid="upload-demo-http-client"
     [title]="'uploadDemo.httpClientAdapter' | translate"
     [tsCode]="httpClientCode"

@@ -120,6 +120,21 @@ describe('UploadComponent', () => {
     expect((errors[0] as {error?: {phase: string}}[])[0].error?.phase).toBe('cancel');
   });
 
+  it('stages files without enqueueing when autoEnqueue is false', () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    fixture.componentRef.setInput('autoEnqueue', false);
+    fixture.detectChanges();
+    const emitted: readonly File[][] = [];
+    fixture.componentInstance.filesChange.subscribe((files) => emitted.push(files));
+
+    select(fixture.componentInstance, [file('staged.zip')]);
+
+    expect(emitted).toHaveLength(1);
+    expect(emitted[0].map((item) => item.name)).toEqual(['staged.zip']);
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+  });
+
   it('ships owned messages in the active locale', () => {
     create();
     expect(translation.translate('upload.status.queued')).toBe('Queued');

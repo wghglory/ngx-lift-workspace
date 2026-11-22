@@ -3139,6 +3139,24 @@ export const nlTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
   'nav.upload': 'Bestanden uploaden',
   'uploadDemo.title': 'Bestanden uploaden',
+  'uploadDemo.dsmBundle': 'DSM-releasebundle uploaden',
+  'uploadDemo.dsmBundleCancel': 'Annuleren',
+  'uploadDemo.dsmBundleClose': 'Sluiten',
+  'uploadDemo.dsmBundleNote':
+    'dsm-ui-stijl: laat een ZIP vallen, controleer het gedetecteerde bundeltype en bevestig daarna de chunked upload.',
+  'uploadDemo.dsmBundleModal': 'Uploaden in een modaal venster',
+  'uploadDemo.dsmBundleConfirm': 'Updatebundle bevestigen',
+  'uploadDemo.dsmBundleDetected': 'Bundle {0} gedetecteerd als {1}.',
+  'uploadDemo.dsmBundleHint':
+    'In dsm-ui leest de bevestiging het manifest in de ZIP. Deze demo leidt het type af van de bestandsnaam; de upload gebruikt dezelfde wachtrij en het globale venster.',
+  'uploadDemo.dsmBundleUpload': 'Bundle uploaden',
+  'uploadDemo.dsmBundleModalNote': 'Uploaden in modaal venster (dsm-ui-stijl)',
+  'dsmBundle.type.controlPlane':
+    'Hier geselecteerde bundels komen in dezelfde globale wachtrij en blijven zichtbaar tijdens navigatie.',
+  'dsmBundle.type.dataPlane': 'Control-planebundle',
+  'dsmBundle.type.dataService': 'Dataplanebundle',
+  'dsmBundle.type.kubernetes': 'Dataservicebundle',
+  'dsmBundle.type.other': 'Kubernetes-releasebundle',
   'uploadDemo.intro': 'Selecteer bundles en volg de voortgang zonder de pagina te verlaten.',
   'uploadDemo.basic': 'Eenvoudige selectie',
   'uploadDemo.composition': 'Compositie met query- en mutatiehulpprogramma’s',
@@ -3170,6 +3188,8 @@ export const nlTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Gelijktijdige chunks per bestand, 1 tot 4.',
   'uploadDemo.api.multiple': 'Meer dan één bestand per selectie toestaan.',
   'uploadDemo.api.autoRetry': 'Herhaalbare chunkfouten automatisch opnieuw proberen.',
+  'uploadDemo.api.autoEnqueue':
+    'false valideert de selectie en zendt alleen filesChange; de aanroeper voegt na bevestiging in de wachtrij in.',
   'uploadDemo.api.maxRetries': 'Automatisch limiet voor herhaalbare chunkfouten.',
   'uploadDemo.api.controlId': 'Identificatie van de native bestandsinvoer.',
   'uploadDemo.api.disabled': 'Selectie uitschakelen en actieve items annuleren.',

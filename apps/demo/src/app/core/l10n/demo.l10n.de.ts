@@ -3183,6 +3183,24 @@ export const deTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
   'nav.upload': 'Dateien hochladen',
   'uploadDemo.title': 'Dateien hochladen',
+  'uploadDemo.dsmBundle': 'DSM-Release-Bundle hochladen',
+  'uploadDemo.dsmBundleCancel': 'Abbrechen',
+  'uploadDemo.dsmBundleClose': 'Schließen',
+  'uploadDemo.dsmBundleNote':
+    'Ablauf im dsm-ui-Stil: ZIP ablegen, erkannten Bundle-Typ prüfen und dann den fragmentierten Upload bestätigen.',
+  'uploadDemo.dsmBundleModal': 'In einem Dialog hochladen',
+  'uploadDemo.dsmBundleConfirm': 'Update-Bundle bestätigen',
+  'uploadDemo.dsmBundleDetected': 'Bundle {0} wurde als {1} erkannt.',
+  'uploadDemo.dsmBundleHint':
+    'In dsm-ui würde die Bestätigung das Manifest innerhalb der ZIP lesen. Dieses Demo leitet den Typ aus dem Dateinamen ab; der Upload nutzt dieselbe Warteschlange und das globale Fenster.',
+  'uploadDemo.dsmBundleUpload': 'Bundle hochladen',
+  'uploadDemo.dsmBundleModalNote': 'Upload in einem Dialog (dsm-ui-Stil)',
+  'dsmBundle.type.controlPlane':
+    'Hier ausgewählte Bundles gelangen in dieselbe globale Warteschlange und bleiben beim Navigieren sichtbar.',
+  'dsmBundle.type.dataPlane': 'Control-Plane-Bundle',
+  'dsmBundle.type.dataService': 'Data-Plane-Bundle',
+  'dsmBundle.type.kubernetes': 'Data-Service-Bundle',
+  'dsmBundle.type.other': 'Kubernetes-Release-Bundle',
   'uploadDemo.intro': 'Wählen Sie Pakete aus und verfolgen Sie den Fortschritt, ohne die Seite zu verlassen.',
   'uploadDemo.basic': 'Einfache Auswahl',
   'uploadDemo.composition': 'Kombination mit Abfrage- und Änderungsfunktionen',
@@ -3216,6 +3234,8 @@ export const deTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Gleichzeitige Chunks pro Datei, 1 bis 4.',
   'uploadDemo.api.multiple': 'Mehr als eine Datei pro Auswahl erlauben.',
   'uploadDemo.api.autoRetry': 'Wiederholbare Chunk-Fehler automatisch wiederholen.',
+  'uploadDemo.api.autoEnqueue':
+    'Falsch validiert die Auswahl und gibt nur filesChange aus; der Aufrufer reiht nach der Bestätigung ein.',
   'uploadDemo.api.maxRetries': 'Automatische Wiederholungen für wiederholbare Chunk-Fehler.',
   'uploadDemo.api.controlId': 'Kennung der nativen Dateieingabe.',
   'uploadDemo.api.disabled': 'Auswahl deaktivieren und laufende Elemente abbrechen.',

@@ -304,6 +304,7 @@ export class UploadPanelComponent {
 | `chunkSize`        | input           | `UPLOAD_CHUNK_25MB` | Bytes per chunk.                                                                                          |
 | `concurrency`      | input           | `2`                 | In-flight chunk requests for the active file, clamped to 1..4; values above 1 require independent chunks. |
 | `autoRetry`        | input           | `false`             | Retry `chunk` errors marked `retryable: true` automatically.                                              |
+| `autoEnqueue`      | input           | `true`              | `false` validates and emits `filesChange` only, for staging flows that enqueue after a confirmation step. |
 | `maxRetries`       | input           | `3`                 | Automatic attempts per failing chunk.                                                                     |
 | `disabled`         | input           | `false`             | Disable selection and queue actions; CVA disabling also cancels this control's in-flight items.           |
 | `controlId`        | input           | `''`                | Stable id for label/input association.                                                                    |
@@ -872,6 +873,15 @@ Spec revision, 2026-11-21, dropzone selection (maintainer request; no new servic
   failures never create queue items, per the PR #243 decision; the host renders rejections beside the dropzone.
 - New owned localization keys: `upload.dropzone`, `upload.dropzone.dragOver`, `upload.folderAdd`, `upload.usedFiles`,
   `upload.hint.accept`, `upload.hint.maxSize`, `upload.hint.maxFiles`, `upload.rate`.
+
+Spec revision, 2026-11-22, staging and debugging:
+
+- `autoEnqueue=false` adds the "select → inspect → confirm → upload" second segment used by dsm-ui release bundles: the
+  host still validates and emits `filesChange`, but does not enqueue or open the panel. The caller enqueues with its own
+  adapter options after confirmation; the shared queue and global panel remain the single transport/view.
+- Dev-only: `window.__uploadQueue` is installed when `isDevMode()` is true in a browser. `snapshot()` returns plain
+  queue/runtime state (phases, acknowledged chunks, retries, normalized options) for console and Angular DevTools
+  inspection; production and SSR do not expose it.
 
 ## Evidence
 

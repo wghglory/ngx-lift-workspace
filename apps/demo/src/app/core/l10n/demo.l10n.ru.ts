@@ -3114,6 +3114,24 @@ export const ruTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Используйте не менее 8 символов.',
   'nav.upload': 'Загрузка файлов',
   'uploadDemo.title': 'Загрузка файлов',
+  'uploadDemo.dsmBundle': 'Загрузка пакета версии DSM',
+  'uploadDemo.dsmBundleCancel': 'Отмена',
+  'uploadDemo.dsmBundleClose': 'Закрыть',
+  'uploadDemo.dsmBundleNote':
+    'Процесс в стиле dsm-ui: перетащите ZIP, проверьте определённый тип пакета и подтвердите загрузку по частям.',
+  'uploadDemo.dsmBundleModal': 'Загрузить в модальном окне',
+  'uploadDemo.dsmBundleConfirm': 'Подтвердить пакет обновления',
+  'uploadDemo.dsmBundleDetected': 'Пакет {0} определён как {1}.',
+  'uploadDemo.dsmBundleHint':
+    'В dsm-ui подтверждение читает манифест внутри ZIP. В этой демонстрации тип определяется по имени файла; загрузка использует ту же очередь и глобальную панель.',
+  'uploadDemo.dsmBundleUpload': 'Загрузить пакет',
+  'uploadDemo.dsmBundleModalNote': 'Загрузка в модальном окне (стиль dsm-ui)',
+  'dsmBundle.type.controlPlane':
+    'Выбранные здесь пакеты попадают в ту же глобальную очередь и остаются видимыми при переходах.',
+  'dsmBundle.type.dataPlane': 'Пакет плоскости управления',
+  'dsmBundle.type.dataService': 'Пакет плоскости данных',
+  'dsmBundle.type.kubernetes': 'Пакет 서비스 данных',
+  'dsmBundle.type.other': 'Пакет версии Kubernetes',
   'uploadDemo.intro': 'Выбирайте пакеты и следите за ходом загрузки, не покидая страницу.',
   'uploadDemo.basic': 'Простой выбор',
   'uploadDemo.composition': 'Композиция с утилитами запросов и изменений',
@@ -3147,6 +3165,8 @@ export const ruTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Одновременных частей на файл, от 1 до 4.',
   'uploadDemo.api.multiple': 'Разрешить несколько файлов за один выбор.',
   'uploadDemo.api.autoRetry': 'Автоматически повторять устранимые ошибки частей.',
+  'uploadDemo.api.autoEnqueue':
+    'false проверяет выбор и создаёт только filesChange; вызывающая сторона добавляет в очередь после подтверждения.',
   'uploadDemo.api.maxRetries': 'Предел автоматических повторов ошибок частей.',
   'uploadDemo.api.controlId': 'Идентификатор нативного поля файла.',
   'uploadDemo.api.disabled': 'Отключить выбор и отменить активные элементы.',

@@ -3164,6 +3164,24 @@ export const esTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Usa al menos 8 caracteres.',
   'nav.upload': 'Subir archivos',
   'uploadDemo.title': 'Subir archivos',
+  'uploadDemo.dsmBundle': 'Cargar paquete de versión de DSM',
+  'uploadDemo.dsmBundleCancel': 'Cancelar',
+  'uploadDemo.dsmBundleClose': 'Cerrar',
+  'uploadDemo.dsmBundleNote':
+    'Flujo estilo dsm-ui: suelte un ZIP, revise el tipo de paquete detectado y confirme antes de iniciar la carga por fragmentos.',
+  'uploadDemo.dsmBundleModal': 'Cargar en un modal',
+  'uploadDemo.dsmBundleConfirm': 'Confirmar paquete de actualización',
+  'uploadDemo.dsmBundleDetected': 'Paquete {0} detectado como {1}.',
+  'uploadDemo.dsmBundleHint':
+    'En dsm-ui, la confirmación leería el manifiesto dentro del ZIP. Esta demo deriva el tipo del nombre de archivo; la carga usa la misma cola y el panel global.',
+  'uploadDemo.dsmBundleUpload': 'Cargar paquete',
+  'uploadDemo.dsmBundleModalNote': 'Carga en modal (estilo dsm-ui)',
+  'dsmBundle.type.controlPlane':
+    'Los paquetes seleccionados aquí se unen a la misma cola global y permanecen visibles al navegar.',
+  'dsmBundle.type.dataPlane': 'Paquete de plano de control',
+  'dsmBundle.type.dataService': 'Paquete de plano de datos',
+  'dsmBundle.type.kubernetes': 'Paquete de servicio de datos',
+  'dsmBundle.type.other': 'Paquete de versión de Kubernetes',
   'uploadDemo.intro': 'Seleccione paquetes y siga el progreso sin salir de la página.',
   'uploadDemo.basic': 'Selección básica',
   'uploadDemo.composition': 'Composición con utilidades de consulta y mutación',
@@ -3197,6 +3215,8 @@ export const esTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Fragmentos simultáneos por archivo, de 1 a 4.',
   'uploadDemo.api.multiple': 'Permitir más de un archivo por selección.',
   'uploadDemo.api.autoRetry': 'Reintentar automáticamente errores reintentables de fragmento.',
+  'uploadDemo.api.autoEnqueue':
+    'false valida la selección y solo emite filesChange; quien llama encola tras la confirmación.',
   'uploadDemo.api.maxRetries': 'Límite de reintentos automáticos para errores de fragmento.',
   'uploadDemo.api.controlId': 'Identificador de la entrada de archivo nativa.',
   'uploadDemo.api.disabled': 'Deshabilitar la selección y cancelar elementos en curso.',

@@ -3029,6 +3029,24 @@ export const enTranslations = {
   'sameValueValidator.minLengthError': 'Use at least 8 characters.',
   'nav.upload': 'Upload files',
   'uploadDemo.title': 'Upload files',
+  'uploadDemo.dsmBundle': 'DSM release bundle upload',
+  'uploadDemo.dsmBundleCancel': 'Cancel',
+  'uploadDemo.dsmBundleClose': 'Close',
+  'uploadDemo.dsmBundleNote':
+    'A dsm-ui style flow: drop a ZIP, inspect the detected bundle type, then confirm before the chunked upload starts.',
+  'uploadDemo.dsmBundleModal': 'Upload in a modal',
+  'uploadDemo.dsmBundleConfirm': 'Confirm update bundle',
+  'uploadDemo.dsmBundleDetected': 'Bundle {0} detected as {1}.',
+  'uploadDemo.dsmBundleHint':
+    'Confirmation would read the manifest inside the ZIP in dsm-ui. This demo derives the type from the file name; the upload itself uses the same queue and global panel.',
+  'uploadDemo.dsmBundleUpload': 'Upload bundle',
+  'uploadDemo.dsmBundleModalNote': 'Modal upload (dsm-ui style)',
+  'dsmBundle.type.controlPlane':
+    'Bundles selected here join the same global queue and remain visible while you navigate away.',
+  'dsmBundle.type.dataPlane': 'Control Plane bundle',
+  'dsmBundle.type.dataService': 'Data Plane bundle',
+  'dsmBundle.type.kubernetes': 'Data Service bundle',
+  'dsmBundle.type.other': 'Kubernetes release bundle',
   'uploadDemo.intro': 'Select bundles and watch progress without leaving the page.',
   'uploadDemo.basic': 'Basic selection',
   'uploadDemo.composition': 'Composition with query and mutation utilities',
@@ -3060,6 +3078,8 @@ export const enTranslations = {
   'uploadDemo.api.concurrency': 'In-flight chunks per file, from 1 to 4.',
   'uploadDemo.api.multiple': 'Allow more than one file per selection.',
   'uploadDemo.api.autoRetry': 'Retry retryable chunk errors automatically.',
+  'uploadDemo.api.autoEnqueue':
+    'False validates the selection and emits filesChange only; the caller enqueues after confirmation.',
   'uploadDemo.api.maxRetries': 'Automatic retry limit for retryable chunk errors.',
   'uploadDemo.api.controlId': 'Identifier of the native file input.',
   'uploadDemo.api.disabled': 'Disable selection and cancel in-flight items.',

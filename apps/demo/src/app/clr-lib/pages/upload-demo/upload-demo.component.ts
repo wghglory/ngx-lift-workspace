@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {ClarityModule} from '@clr/angular';
 import {
   mutateResource,
   queryResource,
@@ -27,6 +28,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
   selector: 'app-upload-demo',
   imports: [
     ApiTableComponent,
+    ClarityModule,
     DemoPlaygroundComponent,
     PageContainerComponent,
     ReactiveFormsModule,
@@ -93,6 +95,49 @@ export class UploadDemoComponent {
   readonly bundlesForm = new FormGroup({
     bundles: new FormControl<readonly File[] | null>(null),
   });
+
+  /** DSM-style release bundle staging: select -> inspect manifest -> confirm -> chunked upload. */
+  readonly stagedBundle = signal<File | null>(null);
+  readonly stagedBundleType = signal('');
+  readonly confirmOpen = signal(false);
+  readonly modalOpen = signal(false);
+
+  /** Mirrors dsm-ui bundle types; the real app reads `*-release.json` from inside the ZIP. */
+  private readonly bundleTypes: readonly {readonly pattern: RegExp; readonly key: string}[] = [
+    {pattern: /ds[mo]-|control-plane/i, key: 'dsmBundle.type.controlPlane'},
+    {pattern: /data-plane|dp-/i, key: 'dsmBundle.type.dataPlane'},
+    {pattern: /data-service|ds-/i, key: 'dsmBundle.type.dataService'},
+    {pattern: /k8s|kubernetes/i, key: 'dsmBundle.type.kubernetes'},
+  ];
+
+  stageBundle(files: readonly File[]): void {
+    const file = files[0];
+    if (!file) return;
+    this.stagedBundle.set(file);
+    const match = this.bundleTypes.find((type) => type.pattern.test(file.name));
+    this.stagedBundleType.set(this.translation.translate(match?.key ?? 'dsmBundle.type.other'));
+    this.confirmOpen.set(true);
+  }
+
+  confirmBundleUpload(): void {
+    const file = this.stagedBundle();
+    this.confirmOpen.set(false);
+    if (!file) return;
+    this.queue.enqueue([file], {
+      adapter: this.adapter,
+      chunkSize: this.chunk5Mb,
+      concurrency: 2,
+      autoRetry: true,
+      maxRetries: 3,
+      pollIntervalMs: 10_000,
+    });
+    this.stagedBundle.set(null);
+  }
+
+  cancelBundleUpload(): void {
+    this.confirmOpen.set(false);
+    this.stagedBundle.set(null);
+  }
 
   private readonly bundleNames = signal<readonly string[]>([]);
 
@@ -178,6 +223,7 @@ export class UploadDemoComponent {
     {name: 'concurrency', type: 'number', defaultValue: '2', description: this.api('concurrency')},
     {name: 'multiple', type: 'boolean', defaultValue: 'false', description: this.api('multiple')},
     {name: 'autoRetry', type: 'boolean', defaultValue: 'false', description: this.api('autoRetry')},
+    {name: 'autoEnqueue', type: 'boolean', defaultValue: 'true', description: this.api('autoEnqueue')},
     {name: 'maxRetries', type: 'number', defaultValue: '3', description: this.api('maxRetries')},
     {name: 'pollIntervalMs', type: 'number', defaultValue: '10000', description: this.api('pollIntervalMs')},
     {name: 'controlId', type: 'string', defaultValue: "''", description: this.api('controlId')},
@@ -217,6 +263,17 @@ export class UploadDemoComponent {
       '<cll-upload [adapter]="adapter" [multiple]="true" accept=".zip,.tar"',
       '  [chunkSize]="chunk5Mb" [concurrency]="2" (uploadComplete)="onComplete($event)" />',
       '<cll-upload-panel />',
+    ].join('\n'),
+  );
+
+  readonly dsmBundleHtml = highlight(
+    [
+      '<!-- Inline page, dsm-ui Update Bundles style -->',
+      '<cll-upload [adapter]="adapter" [multiple]="false" accept=".zip"',
+      '  [autoEnqueue]="false" [chunkSize]="chunk5Mb" [concurrency]="2"',
+      '  (filesChange)="stageBundle($event)" />',
+      '<clr-modal [(clrModalOpen)]="confirmOpen"> ... </clr-modal>',
+      '<cll-upload-panel /> <!-- one global window; survives route changes -->',
     ].join('\n'),
   );
 

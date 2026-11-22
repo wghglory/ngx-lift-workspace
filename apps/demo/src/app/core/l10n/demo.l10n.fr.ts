@@ -3187,6 +3187,24 @@ export const frTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
   'nav.upload': 'Téléverser des fichiers',
   'uploadDemo.title': 'Téléverser des fichiers',
+  'uploadDemo.dsmBundle': 'Téléverser un bundle de version DSM',
+  'uploadDemo.dsmBundleCancel': 'Annuler',
+  'uploadDemo.dsmBundleClose': 'Fermer',
+  'uploadDemo.dsmBundleNote':
+    'Flux de style dsm-ui : déposez un ZIP, vérifiez le type de bundle détecté, puis confirmez le téléversement par morceaux.',
+  'uploadDemo.dsmBundleModal': 'Téléverser dans une fenêtre modale',
+  'uploadDemo.dsmBundleConfirm': 'Confirmer le bundle de mise à jour',
+  'uploadDemo.dsmBundleDetected': 'Bundle {0} détecté comme {1}.',
+  'uploadDemo.dsmBundleHint':
+    'Dans dsm-ui, la confirmation lit le manifeste dans le ZIP. Cette démonstration déduit le type du nom de fichier ; le téléversement utilise la même file et le panneau global.',
+  'uploadDemo.dsmBundleUpload': 'Téléverser le bundle',
+  'uploadDemo.dsmBundleModalNote': 'Téléversement modale (style dsm-ui)',
+  'dsmBundle.type.controlPlane':
+    'Les bundles sélectionnés ici rejoignent la même file globale et restent visibles lors de la navigation.',
+  'dsmBundle.type.dataPlane': 'Bundle de plan de contrôle',
+  'dsmBundle.type.dataService': 'Bundle de plan de données',
+  'dsmBundle.type.kubernetes': 'Bundle de service de données',
+  'dsmBundle.type.other': 'Bundle de version Kubernetes',
   'uploadDemo.intro': 'Sélectionnez des bundles et suivez la progression sans quitter la page.',
   'uploadDemo.basic': 'Sélection simple',
   'uploadDemo.composition': 'Composition avec les utilitaires de requête et de mutation',
@@ -3220,6 +3238,8 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Blocs simultanés par fichier, de 1 à 4.',
   'uploadDemo.api.multiple': 'Autoriser plusieurs fichiers par sélection.',
   'uploadDemo.api.autoRetry': 'Relancer automatiquement les erreurs de bloc relançables.',
+  'uploadDemo.api.autoEnqueue':
+    'false valide la sélection et n’émet que filesChange ; l’appelant met en file après confirmation.',
   'uploadDemo.api.maxRetries': 'Limite des relances automatiques des erreurs de bloc.',
   'uploadDemo.api.controlId': 'Identifiant du champ de fichier natif.',
   'uploadDemo.api.disabled': 'Désactiver la sélection et annuler les éléments en cours.',

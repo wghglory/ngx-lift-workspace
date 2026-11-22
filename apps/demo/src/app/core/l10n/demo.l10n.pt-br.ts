@@ -3114,6 +3114,24 @@ export const ptBRTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Use pelo menos 8 caracteres.',
   'nav.upload': 'Enviar arquivos',
   'uploadDemo.title': 'Enviar arquivos',
+  'uploadDemo.dsmBundle': 'Enviar bundle de versão do DSM',
+  'uploadDemo.dsmBundleCancel': 'Cancelar',
+  'uploadDemo.dsmBundleClose': 'Fechar',
+  'uploadDemo.dsmBundleNote':
+    'Fluxo no estilo dsm-ui: solte um ZIP, verifique o tipo de bundle detectado e confirme antes do envio em partes.',
+  'uploadDemo.dsmBundleModal': 'Enviar em modal',
+  'uploadDemo.dsmBundleConfirm': 'Confirmar bundle de atualização',
+  'uploadDemo.dsmBundleDetected': 'Bundle {0} detectado como {1}.',
+  'uploadDemo.dsmBundleHint':
+    'No dsm-ui, a confirmação lê o manifesto dentro do ZIP. Esta demo-infere o tipo pelo nome do arquivo; o envio usa a mesma fila e o painel global.',
+  'uploadDemo.dsmBundleUpload': 'Enviar bundle',
+  'uploadDemo.dsmBundleModalNote': 'Envio em modal (estilo dsm-ui)',
+  'dsmBundle.type.controlPlane':
+    'Os bundles selecionados aqui entram na mesma fila global e permanecem visíveis durante a navegação.',
+  'dsmBundle.type.dataPlane': 'Bundle de plano de controle',
+  'dsmBundle.type.dataService': 'Bundle de plano de dados',
+  'dsmBundle.type.kubernetes': 'Bundle de serviço de dados',
+  'dsmBundle.type.other': 'Bundle de versão do Kubernetes',
   'uploadDemo.intro': 'Selecione pacotes e acompanhe o progresso sem sair da página.',
   'uploadDemo.basic': 'Seleção básica',
   'uploadDemo.composition': 'Composição com utilitários de consulta e mutação',
@@ -3145,6 +3163,8 @@ export const ptBRTranslations: Record<string, string> = {
   'uploadDemo.api.concurrency': 'Blocos simultâneos por arquivo, de 1 a 4.',
   'uploadDemo.api.multiple': 'Permitir mais de um arquivo por seleção.',
   'uploadDemo.api.autoRetry': 'Tentar novamente erros recuperáveis de bloco automaticamente.',
+  'uploadDemo.api.autoEnqueue':
+    'false valida a seleção e emite apenas filesChange; o chamador enfileira após a confirmação.',
   'uploadDemo.api.maxRetries': 'Limite de novas tentativas para erros de bloco.',
   'uploadDemo.api.controlId': 'Identificador da entrada de arquivo nativa.',
   'uploadDemo.api.disabled': 'Desabilitar a seleção e cancelar itens em andamento.',
