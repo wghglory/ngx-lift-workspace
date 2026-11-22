@@ -215,8 +215,8 @@ export class UploadQueueService {
     });
   }
 
-  /** Re-runs the failed phase, resending only unacknowledged chunks and re-arming `completion(id)`. */
-  retry(id: string): void {
+  /** Re-runs the failed phase and returns a fresh completion promise when the retry starts. */
+  retry(id: string): Promise<UploadItem> | undefined {
     const runtime = this.runtimes.get(id);
     const item = this.item(id);
     if (!runtime || !item || item.status !== 'error') return;
@@ -235,6 +235,7 @@ export class UploadQueueService {
     runtime.deferreds = [];
     this.patch(id, {status: 'queued', error: undefined, attempt: item.attempt + 1});
     void this.pump();
+    return this.completion(id);
   }
 
   /** Aborts the active transfer and settles it as cancelled; calls the adapter only when an upload id exists. */
@@ -268,12 +269,15 @@ export class UploadQueueService {
   remove(id: string): void {
     const runtime = this.runtimes.get(id);
     if (!runtime) return;
+    const uploadId = runtime.uploadId;
+    const notifyServer = !runtime.settlement && uploadId !== undefined;
     runtime.controller.abort();
     this.clearTimer(runtime);
     this.runtimes.delete(id);
     this.state.update((items) => items.filter((item) => item.id !== id));
     for (const deferred of runtime.deferreds) deferred.reject(abortError());
     runtime.deferreds = [];
+    if (notifyServer) void Promise.resolve(runtime.adapter.cancel(uploadId)).catch(() => undefined);
   }
 
   /** Removes every terminal item (success, cancelled or error) without touching active transfers. */

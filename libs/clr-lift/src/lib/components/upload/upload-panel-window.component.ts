@@ -188,7 +188,14 @@ export class UploadPanelWindowComponent {
   /** "Cancel all and close": cancel every non-terminal item, clear terminal items, close. */
   cancelAllAndClose(): void {
     this.confirmingClose.set(false);
-    for (const item of this.activeItems()) this.queue.cancel(item.id);
+    const active = this.activeItems();
+    for (const item of active) {
+      this.announced.add(`${item.id}:cancelled:`);
+      this.queue.cancel(item.id);
+    }
+    if (active.length) {
+      this.announcement.set(this.translationService.translate('upload.announce.cancelled', String(active.length)));
+    }
     this.queue.clearCompleted();
     this.closed.set(true);
     this.restoreTrigger();

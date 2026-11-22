@@ -9,6 +9,7 @@ import {PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading}
 import {provideQueryDevtools} from 'clr-lift/devtools';
 
 import {serverOrganizationFixtureInterceptor} from './clr-lib/pages/datagrid-selection/server-organization.fixture';
+import {uploadDemoStubInterceptor} from './clr-lib/pages/upload-demo/upload-demo.fixture';
 import {routes} from './app.routes';
 
 // Register only English locale to reduce initial bundle size
@@ -25,7 +26,7 @@ export const appConfig: ApplicationConfig = {
       withPreloading(PreloadAllModules),
     ),
     provideAnimations(),
-    provideHttpClient(withInterceptors([serverOrganizationFixtureInterceptor])),
+    provideHttpClient(withInterceptors([serverOrganizationFixtureInterceptor, uploadDemoStubInterceptor])),
     provideQueryDevtools(),
     {
       provide: LOCALE_ID,

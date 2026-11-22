@@ -170,7 +170,12 @@ export class UploadDemoComponent {
   stageFiles(files: readonly File[]): void {
     if (!files.length) return;
     // De-dupe against the LIVE queue only: a cancelled/cleared item must be selectable again.
-    const queuedKeys = new Set(this.queue.items().map((item) => this.fileKey(item.file)));
+    const queuedKeys = new Set(
+      this.queue
+        .items()
+        .filter((item) => item.status === 'queued' || item.status === 'uploading' || item.status === 'processing')
+        .map((item) => this.fileKey(item.file)),
+    );
     const staged = new Map(this.stagedFiles().map((file) => [this.fileKey(file), file]));
     const duplicates = new Set<string>();
     for (const file of files) {
@@ -239,8 +244,9 @@ export class UploadDemoComponent {
   }
 
   private fileKey(file: File): string {
-    // name + size + type: stable even when a re-selection supplies a new lastModified value.
-    return `${file.name}|${file.size}|${file.type}`;
+    // Keep folder-relative paths so same-named bundles in different folders stay distinct.
+    const path = (file as File & {webkitRelativePath?: string}).webkitRelativePath ?? '';
+    return `${path}|${file.name}|${file.size}|${file.type}`;
   }
 
   private readonly registeredBundles = signal<readonly {readonly id: string; readonly name: string}[]>([]);

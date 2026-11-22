@@ -264,6 +264,9 @@ test('the upload playground and an active panel pass accessibility checks', asyn
 
 test('HttpClient adapter maps stubbed progress events and reports success @cross-browser-smoke', async ({page}) => {
   await page.route('**/api/upload/**', (route) => route.fulfill({status: 200, body: 'ok'}));
+  await page.addInitScript(() => {
+    (window as unknown as {__uploadDemoStub?: boolean}).__uploadDemoStub = false;
+  });
   await page.goto('/clr-lift/components/upload');
 
   await page.getByTestId('upload-demo-http-transfer').click();
@@ -272,6 +275,9 @@ test('HttpClient adapter maps stubbed progress events and reports success @cross
 
 test('HttpClient adapter surfaces a stubbed server failure', async ({page}) => {
   await page.route('**/api/upload/**', (route) => route.fulfill({status: 500, body: 'boom'}));
+  await page.addInitScript(() => {
+    (window as unknown as {__uploadDemoStub?: boolean}).__uploadDemoStub = false;
+  });
   await page.goto('/clr-lift/components/upload');
 
   await page.getByTestId('upload-demo-http-transfer').click();
@@ -283,6 +289,9 @@ test('cancelling an HTTP transfer settles completion with the abort error', asyn
   await page.route('**/api/upload/**', async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 4_000));
     await route.fulfill({status: 200, body: 'ok'});
+  });
+  await page.addInitScript(() => {
+    (window as unknown as {__uploadDemoStub?: boolean}).__uploadDemoStub = false;
   });
   await page.goto('/clr-lift/components/upload');
 

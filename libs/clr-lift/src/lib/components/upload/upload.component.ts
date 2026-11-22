@@ -41,7 +41,7 @@ export class UploadComponent implements ControlValueAccessor {
   private readonly translationService = inject(TranslationService);
   private readonly panelManager = inject(UploadPanelManager);
   private readonly platformId = inject(PLATFORM_ID);
-  private readonly host = inject(ElementRef<HTMLElement>);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly tracked = new Map<string, true>();
 
   readonly adapter = input.required<UploadAdapter>();
@@ -68,6 +68,7 @@ export class UploadComponent implements ControlValueAccessor {
   readonly isDisabled = linkedSignal(() => this.disabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
+  private readonly retryWatch = signal<readonly {readonly id: string; readonly attempt: number}[]>([]);
   readonly dragOver = signal(false);
   private dragDepth = 0;
   readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
@@ -90,6 +91,21 @@ export class UploadComponent implements ControlValueAccessor {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
     effect(() => {
       if (this.disabled()) this.cancelTracked();
+    });
+    effect(() => {
+      const watches = this.retryWatch();
+      if (!watches.length) return;
+      const items = this.queue.items();
+      const retried = watches.filter((watch) => {
+        const item = items.find((candidate) => candidate.id === watch.id);
+        return item !== undefined && item.attempt > watch.attempt && item.status !== 'error';
+      });
+      if (!retried.length) return;
+      this.retryWatch.update((list) => list.filter((watch) => !retried.includes(watch)));
+      for (const watch of retried) {
+        const item = items.find((candidate) => candidate.id === watch.id);
+        if (item) void this.watch(watch.id, item);
+      }
     });
   }
 
@@ -154,7 +170,8 @@ export class UploadComponent implements ControlValueAccessor {
 
     const rejections: UploadError[] = [];
     const accepted: File[] = [];
-    const limit = this.maxFiles() > 0 ? this.maxFiles() : Infinity;
+    // A single-file host must reject extra dropped files even when maxFiles is unset.
+    const limit = this.multiple() ? (this.maxFiles() > 0 ? this.maxFiles() : Infinity) : 1;
     for (const file of selected) {
       if (!this.matchesAccept(file)) {
         rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: file.name});
@@ -199,7 +216,7 @@ export class UploadComponent implements ControlValueAccessor {
     });
     for (const item of items) {
       this.tracked.set(item.id, true);
-      void this.watch(item.id);
+      void this.watch(item.id, item);
     }
   }
 
@@ -219,6 +236,7 @@ export class UploadComponent implements ControlValueAccessor {
   private clearItems(): void {
     for (const id of this.tracked.keys()) this.queue.remove(id);
     this.tracked.clear();
+    this.retryWatch.set([]);
   }
 
   private cancelTracked(): void {
@@ -229,22 +247,25 @@ export class UploadComponent implements ControlValueAccessor {
   private openPanel(): void {
     if (!isPlatformBrowser(this.platformId)) return;
     this.panelManager.ensurePanel();
-    this.panelManager.setTrigger(this.host.nativeElement);
+    const host = this.host.nativeElement;
+    const active = document.activeElement;
+    const focused = active instanceof HTMLElement && host.contains(active) && active.tabIndex >= 0 ? active : undefined;
+    this.panelManager.setTrigger(focused ?? host.querySelector<HTMLElement>('.cll-upload__browse') ?? host);
   }
 
-  private async watch(id: string): Promise<void> {
+  private async watch(id: string, initial: UploadItem): Promise<void> {
     try {
       const item = await this.queue.completion(id);
-      this.tracked.delete(id);
       this.uploadComplete.emit([item]);
     } catch (error) {
-      this.tracked.delete(id);
-      const item = this.queue.items().find((candidate) => candidate.id === id);
-      if (!item) return;
-      if (error instanceof DOMException && error.name === 'AbortError' && item.error?.phase !== 'cancel') {
-        this.uploadCancelled.emit([item]);
-      } else {
+      // The panel can clear a cancelled item before this rejection is observed.
+      const item = this.queue.items().find((candidate) => candidate.id === id) ?? initial;
+      const aborted = error instanceof DOMException && error.name === 'AbortError';
+      if (aborted && item.error?.phase !== 'cancel') {
+        this.uploadCancelled.emit([{...item, status: 'cancelled'}]);
+      } else if (aborted || item.status === 'error') {
         this.uploadError.emit([item]);
+        if (item.status === 'error') this.retryWatch.update((list) => [...list, {id, attempt: item.attempt}]);
       }
     }
   }
