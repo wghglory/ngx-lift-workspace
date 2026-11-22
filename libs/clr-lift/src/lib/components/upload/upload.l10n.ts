@@ -57,6 +57,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} uploaded.',
     'announce.error': '{0} failed: {1}',
     'announce.cancelled': '{0} upload cancelled.',
+    'announce.uploading': 'Uploading {0}.',
+    'announce.processing': 'Processing {0}.',
+    'announce.cancelledAll': '{0} uploads cancelled.',
     'announce.background': '{0} uploads continue in the background.',
   },
   'en-US': {
@@ -116,6 +119,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} uploaded.',
     'announce.error': '{0} failed: {1}',
     'announce.cancelled': '{0} upload cancelled.',
+    'announce.uploading': 'Uploading {0}.',
+    'announce.processing': 'Processing {0}.',
+    'announce.cancelledAll': '{0} uploads cancelled.',
     'announce.background': '{0} uploads continue in the background.',
   },
   de: {
@@ -175,6 +181,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} hochgeladen.',
     'announce.error': '{0} fehlgeschlagen: {1}',
     'announce.cancelled': 'Upload von {0} abgebrochen.',
+    'announce.uploading': '{0} wird hochgeladen.',
+    'announce.processing': '{0} wird verarbeitet.',
+    'announce.cancelledAll': '{0} Uploads abgebrochen.',
     'announce.background': '{0} Uploads laufen im Hintergrund weiter.',
   },
   es: {
@@ -234,6 +243,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} cargado.',
     'announce.error': '{0} falló: {1}',
     'announce.cancelled': 'Carga de {0} cancelada.',
+    'announce.uploading': 'Cargando {0}.',
+    'announce.processing': 'Procesando {0}.',
+    'announce.cancelledAll': '{0} cargas canceladas.',
     'announce.background': '{0} cargas continúan en segundo plano.',
   },
   fr: {
@@ -293,6 +305,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} téléchargé.',
     'announce.error': '{0} a échoué : {1}',
     'announce.cancelled': 'Téléchargement de {0} annulé.',
+    'announce.uploading': 'Téléchargement de {0} en cours.',
+    'announce.processing': 'Traitement de {0} en cours.',
+    'announce.cancelledAll': '{0} téléchargements annulés.',
     'announce.background': '{0} téléchargements continuent en arrière-plan.',
   },
   it: {
@@ -352,6 +367,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} caricato.',
     'announce.error': '{0} non riuscito: {1}',
     'announce.cancelled': 'Caricamento di {0} annullato.',
+    'announce.uploading': 'Caricamento di {0} in corso.',
+    'announce.processing': 'Elaborazione di {0} in corso.',
+    'announce.cancelledAll': '{0} caricamenti annullati.',
     'announce.background': '{0} caricamenti continuano in background.',
   },
   ja: {
@@ -411,6 +429,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} をアップロードしました。',
     'announce.error': '{0} が失敗しました: {1}',
     'announce.cancelled': '{0} のアップロードをキャンセルしました。',
+    'announce.uploading': '{0} をアップロードしています。',
+    'announce.processing': '{0} を処理しています。',
+    'announce.cancelledAll': '{0} 件のアップロードをキャンセルしました。',
     'announce.background': '{0} 件のアップロードがバックグラウンドで続行されています。',
   },
   ko: {
@@ -470,6 +491,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} 업로드됨.',
     'announce.error': '{0} 실패: {1}',
     'announce.cancelled': '{0} 업로드가 취소되었습니다.',
+    'announce.uploading': '{0} 업로드 중입니다.',
+    'announce.processing': '{0} 처리 중입니다.',
+    'announce.cancelledAll': '업로드 {0}개가 취소되었습니다.',
     'announce.background': '{0}개의 업로드가 백그라운드에서 계속됩니다.',
   },
   nl: {
@@ -529,6 +553,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} geüpload.',
     'announce.error': '{0} mislukt: {1}',
     'announce.cancelled': 'Upload van {0} geannuleerd.',
+    'announce.uploading': '{0} wordt geüpload.',
+    'announce.processing': '{0} wordt verwerkt.',
+    'announce.cancelledAll': '{0} uploads geannuleerd.',
     'announce.background': '{0} uploads gaan op de achtergrond verder.',
   },
   pt: {
@@ -588,6 +615,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} carregado.',
     'announce.error': '{0} falhou: {1}',
     'announce.cancelled': 'Carregamento de {0} cancelado.',
+    'announce.uploading': 'A carregar {0}.',
+    'announce.processing': 'A processar {0}.',
+    'announce.cancelledAll': '{0} carregamentos cancelados.',
     'announce.background': '{0} carregamentos continuam em segundo plano.',
   },
   'pt-BR': {
@@ -648,6 +678,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} enviado.',
     'announce.error': '{0} falhou: {1}',
     'announce.cancelled': 'Envio de {0} cancelado.',
+    'announce.uploading': 'Enviando {0}.',
+    'announce.processing': 'Processando {0}.',
+    'announce.cancelledAll': '{0} envios cancelados.',
     'announce.background': '{0} envios continuam em segundo plano.',
   },
   ru: {
@@ -707,6 +740,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} загружен.',
     'announce.error': '{0}: ошибка — {1}',
     'announce.cancelled': 'Загрузка {0} отменена.',
+    'announce.uploading': 'Загружается {0}.',
+    'announce.processing': 'Обрабатывается {0}.',
+    'announce.cancelledAll': '{0} загрузок отменено.',
     'announce.background': '{0} загрузок продолжаются в фоне.',
   },
   'zh-CN': {
@@ -766,6 +802,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} 已上传。',
     'announce.error': '{0} 失败：{1}',
     'announce.cancelled': '{0} 的上传已取消。',
+    'announce.uploading': '正在上传 {0}。',
+    'announce.processing': '正在处理 {0}。',
+    'announce.cancelledAll': '已取消 {0} 个上传。',
     'announce.background': '{0} 个上传将继续在后台进行。',
   },
   'zh-TW': {
@@ -825,6 +864,9 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'announce.success': '{0} 已上傳。',
     'announce.error': '{0} 失敗：{1}',
     'announce.cancelled': '{0} 的上傳已取消。',
+    'announce.uploading': '正在上傳 {0}。',
+    'announce.processing': '正在處理 {0}。',
+    'announce.cancelledAll': '已取消 {0} 個上傳。',
     'announce.background': '{0} 個上傳將繼續在後台進行。',
   },
 };

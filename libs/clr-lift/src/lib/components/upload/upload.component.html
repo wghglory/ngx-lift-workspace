@@ -6,7 +6,7 @@
     [id]="controlId() || inputId"
     [accept]="accept()"
     [multiple]="multiple()"
-    [disabled]="isDisabled()"
+    [disabled]="disabledState()"
     [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
     (change)="onSelected($event)"
   />
@@ -14,7 +14,7 @@
     class="cll-upload__dropzone"
     [for]="controlId() || inputId"
     [class.cll-upload__dropzone--over]="dragOver()"
-    [class.cll-upload__dropzone--disabled]="isDisabled()"
+    [class.cll-upload__dropzone--disabled]="disabledState()"
     (drop)="onDrop($event)"
     (dragover)="onDragOver($event)"
     (dragenter)="onDragEnter($event)"
@@ -41,7 +41,7 @@
       <button
         type="button"
         class="btn btn-sm btn-primary cll-upload__browse"
-        [disabled]="isDisabled()"
+        [disabled]="disabledState()"
         (click)="file.click(); $event.stopPropagation()"
       >
         {{ 'upload.browse' | translate }}
@@ -56,13 +56,13 @@
           aria-hidden="true"
           tabindex="-1"
           [attr.aria-label]="'upload.folderAdd' | translate"
-          [disabled]="isDisabled()"
+          [disabled]="disabledState()"
           (change)="onSelected($event)"
         />
         <button
           type="button"
           class="btn btn-sm btn-outline cll-upload__folder"
-          [disabled]="isDisabled()"
+          [disabled]="disabledState()"
           (click)="folder.click(); $event.stopPropagation()"
         >
           {{ 'upload.folderAdd' | translate }}
@@ -85,7 +85,7 @@
       <button
         type="button"
         class="btn btn-sm btn-icon btn-link btn-close"
-        [disabled]="isDisabled()"
+        [disabled]="disabledState()"
         (click)="clear()"
         [attr.aria-label]="'upload.clearAll' | translate"
       >

@@ -65,7 +65,7 @@ export class UploadComponent implements ControlValueAccessor {
   readonly uploadError = output<readonly UploadItem[]>();
   readonly uploadCancelled = output<readonly UploadItem[]>();
 
-  readonly isDisabled = linkedSignal(() => this.disabled());
+  readonly disabledState = linkedSignal(() => this.disabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
   private readonly retryWatch = signal<readonly {readonly id: string; readonly attempt: number}[]>([]);
@@ -93,7 +93,9 @@ export class UploadComponent implements ControlValueAccessor {
       const items = this.queue.items();
       const retried = watches.filter((watch) => {
         const item = items.find((candidate) => candidate.id === watch.id);
-        return item !== undefined && item.attempt > watch.attempt && item.status !== 'error';
+        // The status is deliberately not checked: if the new attempt already settled,
+        // completion(id) replays the stored settlement instead of hanging.
+        return item !== undefined && item.attempt > watch.attempt;
       });
       if (!retried.length) return;
       this.retryWatch.update((list) => list.filter((watch) => !retried.includes(watch)));
@@ -118,7 +120,7 @@ export class UploadComponent implements ControlValueAccessor {
   }
 
   setDisabledState(disabled: boolean): void {
-    this.isDisabled.set(disabled);
+    this.disabledState.set(disabled);
     if (disabled) this.cancelTracked();
   }
 
@@ -134,23 +136,23 @@ export class UploadComponent implements ControlValueAccessor {
     event.preventDefault();
     this.dragDepth = 0;
     this.dragOver.set(false);
-    if (this.isDisabled() || !event.dataTransfer) return;
+    if (this.disabledState() || !event.dataTransfer) return;
     const files = await filesFromDataTransfer(event.dataTransfer);
-    if (this.isDisabled()) return;
+    if (this.disabledState()) return;
     this.onTouched();
     this.ingest(files);
   }
 
   onDragEnter(event: DragEvent): void {
     event.preventDefault();
-    if (this.isDisabled()) return;
+    if (this.disabledState()) return;
     this.dragDepth += 1;
     this.dragOver.set(true);
   }
 
   onDragOver(event: DragEvent): void {
     event.preventDefault();
-    if (event.dataTransfer) event.dataTransfer.dropEffect = this.isDisabled() ? 'none' : 'copy';
+    if (event.dataTransfer) event.dataTransfer.dropEffect = this.disabledState() ? 'none' : 'copy';
   }
 
   onDragLeave(event: DragEvent): void {
@@ -161,7 +163,7 @@ export class UploadComponent implements ControlValueAccessor {
 
   /** Validates a selection and enqueues the accepted files on the shared queue. */
   private ingest(selected: readonly File[]): void {
-    if (!selected.length || this.isDisabled()) return;
+    if (!selected.length || this.disabledState()) return;
 
     const rejections: UploadError[] = [];
     const accepted: File[] = [];

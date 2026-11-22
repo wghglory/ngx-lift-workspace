@@ -28,11 +28,15 @@ export class UploadPanelManager {
   /** Creates the shared window once per application; later calls are no-ops. */
   ensurePanel(): void {
     if (this.overlayRef || !isPlatformBrowser(this.platformId)) return;
+    const rtl = this.isRtl();
     const position = this.overlay.position().global().bottom('1rem');
-    if (this.isRtl()) position.left('1rem');
+    if (rtl) position.left('1rem');
     else position.right('1rem');
     this.overlayRef = this.overlay.create({
       hasBackdrop: false,
+      // CDK's global position strategy only flips its flex direction from this config
+      // value, not from the document direction, so it must be passed explicitly.
+      direction: rtl ? 'rtl' : 'ltr',
       positionStrategy: position,
       scrollStrategy: this.overlay.scrollStrategies.noop(),
     });

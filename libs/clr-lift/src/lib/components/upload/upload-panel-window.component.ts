@@ -103,7 +103,7 @@ export class UploadPanelWindowComponent {
       const now = this.now();
       if (this.lastSampleAt > 0 && bytes > this.lastSampleBytes && now > this.lastSampleAt) {
         const instant = ((bytes - this.lastSampleBytes) / (now - this.lastSampleAt)) * 1000;
-        this.rateBytesPerSecond = this.rateBytesPerSecond > 0 ? this.rateBytesPerSecond * 0.6 + instant * 0.4 : instant;
+        this.rateBytesPerSecond = this.smoothRate(this.rateBytesPerSecond, instant);
       }
       this.lastSampleBytes = bytes;
       this.lastSampleAt = now;
@@ -116,8 +116,7 @@ export class UploadPanelWindowComponent {
         const sample = this.itemSamples.get(item.id);
         if (sample && now > sample.at && item.uploadedBytes > sample.bytes) {
           const instant = ((item.uploadedBytes - sample.bytes) / (now - sample.at)) * 1000;
-          const previous = this.itemSmoothed.get(item.id);
-          const rate = previous ? previous * 0.6 + instant * 0.4 : instant;
+          const rate = this.smoothRate(this.itemSmoothed.get(item.id) ?? 0, instant);
           this.itemSmoothed.set(item.id, rate);
           next[item.id] = rate;
         }
@@ -188,14 +187,7 @@ export class UploadPanelWindowComponent {
   /** "Cancel all and close": cancel every non-terminal item, clear terminal items, close. */
   cancelAllAndClose(): void {
     this.confirmingClose.set(false);
-    const active = this.activeItems();
-    for (const item of active) {
-      this.announced.add(`${item.id}:cancelled:`);
-      this.queue.cancel(item.id);
-    }
-    if (active.length) {
-      this.announcement.set(this.translationService.translate('upload.announce.cancelled', String(active.length)));
-    }
+    this.cancelActiveAndAnnounce();
     this.queue.clearCompleted();
     this.closed.set(true);
     this.restoreTrigger();
@@ -230,7 +222,8 @@ export class UploadPanelWindowComponent {
   }
 
   retry(id: string): void {
-    this.queue.retry(id);
+    // The completion promise rejects on failure; the panel reacts through item state instead.
+    void this.queue.retry(id)?.catch(() => undefined);
   }
 
   remove(id: string): void {
@@ -238,7 +231,19 @@ export class UploadPanelWindowComponent {
   }
 
   cancelAll(): void {
-    for (const item of this.activeItems()) this.queue.cancel(item.id);
+    this.cancelActiveAndAnnounce();
+  }
+
+  /** Cancels every active item, pre-marking their announcements so one count message is spoken. */
+  private cancelActiveAndAnnounce(): void {
+    const active = this.activeItems();
+    for (const item of active) {
+      this.announced.add(`${item.id}:cancelled:${item.error?.code ?? ''}:${item.attempt}`);
+      this.queue.cancel(item.id);
+    }
+    if (active.length) {
+      this.announcement.set(this.translationService.translate('upload.announce.cancelledAll', String(active.length)));
+    }
   }
 
   retryFailed(): void {
@@ -329,8 +334,16 @@ export class UploadPanelWindowComponent {
   }
 
   private announce(item: UploadItem): void {
-    if (item.status !== 'success' && item.status !== 'error' && item.status !== 'cancelled') return;
-    const key = `${item.id}:${item.status}:${item.error?.code ?? ''}`;
+    if (
+      item.status !== 'uploading' &&
+      item.status !== 'processing' &&
+      item.status !== 'success' &&
+      item.status !== 'error' &&
+      item.status !== 'cancelled'
+    )
+      return;
+    // The attempt in the key re-announces a failure with the same code after a retry.
+    const key = `${item.id}:${item.status}:${item.error?.code ?? ''}:${item.attempt}`;
     if (this.announced.has(key)) return;
     this.announced.add(key);
     const detail = item.status === 'error' ? this.errorText(item) : '';
@@ -339,5 +352,10 @@ export class UploadPanelWindowComponent {
 
   private now(): number {
     return typeof performance !== 'undefined' ? performance.now() : Date.now();
+  }
+
+  /** 60/40 exponential blend that smooths an observed byte rate; the first sample seeds it. */
+  private smoothRate(previous: number, instant: number): number {
+    return previous > 0 ? previous * 0.6 + instant * 0.4 : instant;
   }
 }
