@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
-import {lstatSync, readFileSync, readdirSync, realpathSync} from 'node:fs';
+import {lstatSync, readFileSync, readdirSync} from 'node:fs';
+import {join} from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {join, resolve} from 'node:path';
 import test from 'node:test';
+import {ruleDrift, ruleTargets} from './rules.mjs';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const canonical = join(root, '.agents/rules');
-const clients = ['.cursor/rules', '.claude/rules'];
 const names = readdirSync(canonical)
   .filter((name) => name.endsWith('.md'))
   .map((name) => name.slice(0, -3));
@@ -21,15 +21,13 @@ test('canonical coding rules are non-empty and keep client frontmatter', () => {
   }
 });
 
-test('client rule entries resolve to the canonical source', () => {
-  for (const directory of clients) {
-    for (const name of names) {
-      const extension = directory === '.cursor/rules' && name !== 'README' ? 'mdc' : 'md';
-      const entry = join(root, directory, `${name}.${extension}`);
-      assert.ok(lstatSync(entry).isSymbolicLink(), `${entry} must be a link`);
-      assert.equal(realpathSync(entry), resolve(canonical, `${name}.md`));
-    }
+test('client rule entries are regular generated files matching the canonical source', () => {
+  const targets = ruleTargets();
+  assert.ok(targets.length > 0, 'expected generated client rules');
+  for (const {target} of targets) {
+    assert.ok(!lstatSync(target).isSymbolicLink(), `${target} must be a regular generated file`);
   }
+  assert.deepEqual(ruleDrift(), [], 'run pnpm run rules:generate after editing .agents/rules');
 });
 
 test('AGENTS.md points at the canonical rules', () => {
