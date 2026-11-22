@@ -1,0 +1,253 @@
+---
+alwaysApply: true
+---
+
+## Modern Angular Guidelines
+
+### Component Architecture
+
+- **Standalone Components**: All components are standalone by default in modern Angular.
+  - **NEVER** add `standalone: true` to `@Component` decorators.
+- **Imports**: Use `imports` array in `@Component` decorator, not `@NgModule`.
+- **Change Detection**: **ALWAYS** use `ChangeDetectionStrategy.OnPush` for all components.
+- **Component Lifecycle**: Use lifecycle hooks appropriately:
+  - `ngOnInit`: Component initialization, data fetching setup
+  - `ngAfterViewInit`: View-related initialization (ViewChild, ElementRef)
+  - `ngOnDestroy`: Cleanup subscriptions (if any), timers, event listeners
+  - **Never** put subscription logic in constructor
+
+### Signal-Based Development
+
+- **Signal Inputs**: Always use signal inputs instead of `@Input()` decorators
+
+  ```typescript
+  // ✅ Correct
+  name = input<string>();
+  age = input.required<number>();
+
+  // ❌ Wrong
+  @Input() name?: string;
+  @Input() age!: number;
+  ```
+
+- **Signal Outputs**: Use `output()` instead of `@Output()` decorators
+
+  ```typescript
+  // ✅ Correct
+  userChange = output<User>();
+
+  // ❌ Wrong
+  @Output() userChange = new EventEmitter<User>();
+  ```
+
+- **ViewChild/ViewChildren**: Use signal-based view queries
+
+  ```typescript
+  // ✅ Correct
+  fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');
+  items = viewChildren(ItemComponent);
+
+  // ❌ Wrong
+  @ViewChild('file') fileElement!: ElementRef;
+  ```
+
+- **Computed Signals**: Use `computed()` for derived state
+
+  ```typescript
+  fullName = computed(() => `${this.firstName()} ${this.lastName()}`);
+  ```
+
+- **Async Resources (`resourceAsync`)**:
+  - Prefer `resourceAsync()` from `ngx-lift` for asynchronous data fetching and mutations (replacing `computedAsync` for
+    resources).
+  - Provides `value`, `isLoading`, `error`, `status`, `reload()`, `execute()`, and `reset()`.
+
+  ```typescript
+  // In component:
+  userRef = resourceAsync(() => this.userService.getUser(this.userId()));
+
+  // In template:
+  @if (userRef.isLoading()) { <cll-spinner /> }
+  @if (userRef.error(); as err) { <cll-alert [error]="err" /> }
+  @if (userRef.value(); as user) { <p>{{ user.name }}</p> }
+  ```
+
+- **Effects**: Use `effect()` only for side effects (logging, external API calls)
+  - **Never** manipulate DOM in effects
+  - **Never** update signals that trigger effects (avoid circular dependencies)
+  - Use `untracked()` when reading signals that shouldn't trigger re-computation
+
+- **Boolean State Inputs & Signals**:
+  - Name boolean inputs and signals with adjectives or status nouns (e.g. `disabled`, `multiple`, `autoEnqueue`,
+    `expanded`, `dragOver`), NOT imperative action verbs (e.g. avoid `disableCreate`, `showModal`). This matches
+    Angular's own `disabled` / `checked` / `multiple` inputs and this repository's existing signals.
+  - Reserve `is*` / `has*` prefixes for predicate methods that answer a question about another value (e.g.
+    `isRtl()`, `hasErrors()`), not for plain state signals.
+
+### Dependency Injection
+
+- **Preferred Method**: Use `inject()` function over constructor injection
+
+  ```typescript
+  // ✅ Correct
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
+  // ❌ Wrong (unless required for specific use case)
+  constructor(private http: HttpClient) {}
+  ```
+
+- **Optional Injection**: Use `{optional: true}` for optional dependencies
+
+  ```typescript
+  private config = inject(ConfigService, {optional: true});
+  ```
+
+- **Injection Context**: Use `runInInjectionContext()` when accessing injectors outside constructor/injection context
+
+### Forms
+
+- **Signal-Driven Forms (`toSignalForm`)**:
+  - Prefer wrapping reactive forms with `toSignalForm(form)` from `ngx-lift` to access reactive field signals,
+    form-level status signals, declarative bindings (`bindIf`, `bindDisabled`, `revalidate`), and sanitized submission
+    values.
+
+  ```typescript
+  readonly sf = toSignalForm(this.form, {
+    omit: ['confirmPassword'],
+  });
+  ```
+
+- **Reactive Form Validity in Signals**: When bridging reactive forms (`FormGroup`) to signals without `toSignalForm`,
+  note that `form.invalid` or `form.valid` alone is NOT reactive inside `computed()`. Bridge via `toSignal()` with
+  `statusChanges`:
+
+  ```typescript
+  isFormInvalid = toSignal(this.form.statusChanges.pipe(map((status) => status !== 'VALID')), {
+    initialValue: this.form.invalid,
+  });
+  ```
+
+- **Action Disabled State**: Encapsulate button/action disabled conditions in a `computed()` signal (e.g.,
+  `isSaveDisabled = computed(() => this.sf.invalid() || this.createRef.isLoading())`) instead of long composite boolean
+  expressions in templates.
+
+- **ControlValueAccessor**: Implement for custom form controls with strict types (no `any`):
+
+  ```typescript
+  export class CustomControl implements ControlValueAccessor {
+    private onChange: (value: string) => void = () => {};
+    private onTouched: () => void = () => {};
+
+    writeValue(value: string | null): void {}
+    registerOnChange(fn: (value: string) => void): void {
+      this.onChange = fn;
+    }
+    registerOnTouched(fn: () => void): void {
+      this.onTouched = fn;
+    }
+    setDisabledState(isDisabled: boolean): void {}
+  }
+  ```
+
+### Template Syntax
+
+- **Control Flow**: Use new Angular control flow syntax (`@if`, `@for`, `@switch`)
+  - **Exception**: Use `*clrDgItems` for Clarity datagrids (`clr-datagrid`) as it is required for built-in sorting,
+    filtering, and pagination.
+
+  ```typescript
+  // ✅ Correct
+  @if (user(); as user) {
+    <p>{{ user.name }}</p>
+  }
+
+  @for (item of items(); track item.id) {
+    <div>{{ item.name }}</div>
+  }
+
+  // ❌ Wrong
+  <div *ngIf="user$ | async as user">
+  <div *ngFor="let item of items">
+  ```
+
+- **Async Pipe**: Always use async pipe for observables in templates
+
+  ```typescript
+  // ✅ Correct
+  @if (user$ | async; as user) {
+    <p>{{ user.name }}</p>
+  }
+  ```
+
+- **Track Functions**: Always provide track function for `@for` loops
+
+  ```typescript
+  @for (item of items(); track item.id) {
+    // ...
+  }
+  ```
+
+- **Function Calls**: Signal reads are function calls by design (`count()`, `items()`); use them freely in templates.
+  - For non-signal methods, prefer `computed()` for derived state and pipes for presentation formatting.
+  - Cheap, pure helpers (e.g. formatting one value passed from the template) are allowed; do not flag them.
+  - Event handlers (`(click)="handleClick()"`) are always allowed.
+
+- **Self-Closing Tags**: Use self-closing tags when possible (when tags have no content)
+
+  ```html
+  <!-- ✅ Correct -->
+  <br />
+  <img [src]="imageUrl" [alt]="altText" />
+  <input [formControl]="control" />
+  <clr-icon shape="user" />
+  <clr-icon shape="check" />
+
+  <!-- ❌ Wrong -->
+  <br></br>
+  <img [src]="imageUrl" [alt]="altText"></img>
+  <input [formControl]="control"></input>
+  <clr-icon shape="user"></clr-icon>
+  <clr-icon shape="check"></clr-icon>
+  ```
+
+- **Class and Style Bindings**: Prefer `class` over `ngClass` and `style` over `ngStyle`
+
+  ```html
+  <!-- ✅ Correct -->
+  <div [class.active]="isActive()" [class.disabled]="isDisabled()">
+    <div [style.color]="textColor()" [style.font-size.px]="fontSize()"></div>
+  </div>
+  ```
+
+### Routing
+
+- **Route Params**: Prefer `injectParams()` from `ngx-lift` for route parameters (reactive)
+- **Query Params**: Prefer `injectQueryParams()` from `ngx-lift` for query parameters (reactive)
+- **Route Guards**: Implement guards as functional guards
+
+### Performance Optimization
+
+- **OnPush Strategy**: **MANDATORY** for all components
+- **Track Functions**: **MANDATORY** for all `@for` loops
+- **Async Pipe**: **MANDATORY** for observables in templates
+- **Lazy Loading**: Use `@defer` for non-critical components
+- **Change Detection**: Minimize by using signals and computed values
+- **Memory Leaks**: Always clean up subscriptions, timers, and event listeners in `ngOnDestroy`
+
+## Code Review Checklist - Angular Patterns
+
+Use this checklist when reviewing Angular code changes:
+
+- [ ] `ChangeDetectionStrategy.OnPush` on all components
+- [ ] No `standalone: true` on component decorators (default in modern Angular)
+- [ ] Signal inputs: `input()` not `@Input()`
+- [ ] Signal outputs: `output()` not `@Output()`
+- [ ] Signal view queries: `viewChild()` not `@ViewChild()`
+- [ ] `inject()` not constructor injection
+- [ ] `resourceAsync()` for async state (not `computedAsync`)
+- [ ] `@if`, `@for`, `@switch` not `*ngIf`, `*ngFor`, `*ngSwitch`
+- [ ] Track functions in `@for` loops
+- [ ] No method calls in templates (use computed signals/pipes)
+- [ ] Self-closing tags when possible (`<img />`, `<input />`, `<clr-icon />`)
+- [ ] `[class.x]` / `[style.x]` not `ngClass` / `ngStyle`

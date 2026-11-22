@@ -1,0 +1,1 @@
+../../.agents/rules/component-development.md

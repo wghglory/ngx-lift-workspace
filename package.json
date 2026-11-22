@@ -188,14 +188,5 @@
         }
       }
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}": [
-      "prettier --write"
-    ]
   }
 }

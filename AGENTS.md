@@ -91,3 +91,10 @@ Before approving a public API spec, read `.agents/skills/spec-review/SKILL.md`. 
 diff; spec review covers admission, specification quality, contracts, language, evidence, and codebase gaps before code
 exists. Report evidence using the sections defined by the
 [acceptance contract](docs/guides/accessibility-and-localization.md).
+
+## Coding rules
+
+Detailed coding standards have one physical source in `.agents/rules/`. Cursor reads them through relative `.mdc` links
+in `.cursor/rules/`, and Claude through `.md` links in `.claude/rules/`; other agents read this file and follow the
+canonical directory. Edit only `.agents/rules/*.md`, then run `pnpm run test:tools` to verify every client link
+resolves.
