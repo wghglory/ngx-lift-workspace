@@ -80,6 +80,47 @@ describe('UploadComponent', () => {
     expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
   });
 
+  it('exposes a stable input id, a programmatic label and native disabled state', () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    fixture.componentRef.setInput('controlId', 'bundle-input');
+    fixture.componentRef.setInput('multiple', true);
+    fixture.componentRef.setInput('disabled', true);
+    fixture.detectChanges();
+
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    expect(input.id).toBe('bundle-input');
+    expect(input.getAttribute('aria-label')).toBe(translation.translate('upload.selectFiles'));
+    expect(input.disabled).toBe(true);
+  });
+
+  it('generates a stable input id when controlId is not supplied', () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    fixture.detectChanges();
+
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    expect(input.id).toMatch(/^cll-upload-\d+$/);
+  });
+
+  it('cancels owner-supplied items on disable without emitting change or touch', async () => {
+    const pending = new Promise<void>(() => undefined);
+    const component = create({adapter: {...stubAdapter(), uploadChunk: async () => pending}});
+    let changes = 0;
+    let touches = 0;
+    component.registerOnChange(() => (changes += 1));
+    component.registerOnTouched(() => (touches += 1));
+    await select(component, [file('bundle.zip')]);
+    const changesAfterSelection = changes;
+    touches = 0;
+
+    component.setDisabledState(true);
+
+    expect(TestBed.inject(UploadQueueService).items()[0].status).toBe('cancelled');
+    expect(changes).toBe(changesAfterSelection);
+    expect(touches).toBe(0);
+  });
+
   it('reports size and count violations with the rejected file names', async () => {
     const component = create({maxSize: 1, maxFiles: 1});
     const errors: {code: string; fileName?: string}[][] = [];

@@ -198,7 +198,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  color: var(--cds-global-color-gray-600, #737373);
+  color: var(--cds-global-color-gray-700, #565656);
   font-size: 0.55rem;
   min-inline-size: 0;
   font-variant-numeric: tabular-nums;
@@ -230,7 +230,7 @@
 }
 
 .cll-upload-panel__error-detail {
-  color: var(--cds-global-color-gray-600, #737373);
+  color: var(--cds-global-color-gray-700, #565656);
   font-size: 0.55rem;
 }
 
@@ -264,7 +264,7 @@
 }
 
 .cll-upload-panel__summary-label {
-  color: var(--cds-global-color-gray-600, #737373);
+  color: var(--cds-global-color-gray-700, #565656);
   font-size: 0.55rem;
   margin-inline-start: auto;
 }

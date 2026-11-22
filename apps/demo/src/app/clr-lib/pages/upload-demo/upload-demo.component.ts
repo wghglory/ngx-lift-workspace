@@ -1,9 +1,11 @@
+import {HttpClient, HttpEventType} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject, signal, viewChild} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
   mutateResource,
   queryResource,
+  toSignalForm,
   UPLOAD_CHUNK_5MB,
   type UploadAdapter,
   type UploadItem,
@@ -32,6 +34,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
     ApiTableComponent,
     ClarityModule,
     DemoPlaygroundComponent,
+    FormsModule,
     PageContainerComponent,
     ReactiveFormsModule,
     TranslatePipe,
@@ -45,6 +48,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
 export class UploadDemoComponent {
   private readonly translation = inject(TranslationService);
   private readonly queue = inject(UploadQueueService);
+  private readonly http = inject(HttpClient);
   readonly registeredCount = signal(0);
   readonly cancelledCount = signal(0);
   readonly chunk5Mb = UPLOAD_CHUNK_5MB;
@@ -97,6 +101,12 @@ export class UploadDemoComponent {
   readonly bundlesForm = new FormGroup({
     bundles: new FormControl<readonly File[] | null>(null),
   });
+  readonly ngModelFiles = signal<readonly File[]>([]);
+  readonly signalFormGroup = new FormGroup({
+    bundles: new FormControl<readonly File[] | null>(null),
+  });
+  private readonly signalForm = toSignalForm(this.signalFormGroup);
+  readonly signalFormValue = this.signalForm.controlValue('bundles');
 
   /** Confirm-first upload: select -> inspect file metadata -> confirm -> chunked upload. */
   readonly stagedFiles = signal<readonly File[]>([]);
@@ -124,6 +134,38 @@ export class UploadDemoComponent {
     },
     cancel: async (uploadId) => this.logApi('DELETE', `/api/bundles/${uploadId}`),
   };
+
+  /** Executable HttpClient transport: maps progress events and bridges abort to the adapter contract. */
+  readonly httpAdapter: UploadAdapter = {
+    initiate: async (file) => ({uploadId: `${file.name}-${Date.now()}`}),
+    uploadChunk: (request) =>
+      new Promise<void>((resolve, reject) => {
+        const subscription = this.http
+          .post(`/api/upload/${encodeURIComponent(request.uploadId)}/${request.chunkNumber}`, request.chunk, {
+            reportProgress: true,
+            observe: 'events',
+            responseType: 'text',
+          })
+          .subscribe({
+            next: (event) => {
+              if (event.type === HttpEventType.UploadProgress) request.onProgress(event.loaded ?? 0);
+            },
+            error: reject,
+            complete: () => resolve(),
+          });
+        request.signal.addEventListener(
+          'abort',
+          () => {
+            subscription.unsubscribe();
+            reject(new DOMException('Upload cancelled', 'AbortError'));
+          },
+          {once: true},
+        );
+      }),
+    combine: async () => undefined,
+    cancel: async () => undefined,
+  };
+  readonly httpResult = signal('');
 
   stageFiles(files: readonly File[]): void {
     if (!files.length) return;
@@ -256,6 +298,29 @@ export class UploadDemoComponent {
     void this.addAndAwait();
   }
 
+  /** Awaits completion so both the success and abort/failure paths are observable in the browser. */
+  transferHttp(): void {
+    this.httpResult.set('');
+    const [item] = this.queue.enqueue([new File([new Uint8Array(700_000)], 'http-bundle.zip')], {
+      adapter: this.httpAdapter,
+      chunkSize: 350_000,
+      concurrency: 1,
+      autoRetry: false,
+      maxRetries: 3,
+      pollIntervalMs: 10_000,
+    });
+    void this.queue.completion(item.id).then(
+      (finished) => {
+        this.httpResult.set(finished.status);
+        void this.register.mutate([finished]);
+      },
+      (error: unknown) => {
+        const message = error instanceof Error ? error.message : (error as {message?: string})?.message;
+        this.httpResult.set(message || 'Upload failed');
+      },
+    );
+  }
+
   private async addAndAwait(): Promise<void> {
     const [item] = this.queue.enqueue([new File([new Uint8Array(700_000)], 'container-image.tar')], {
       adapter: this.adapter,
@@ -376,16 +441,13 @@ export class UploadDemoComponent {
 
   readonly formsCode = highlight(
     [
-      "import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';",
+      "import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';",
+      "import {toSignalForm} from 'ngx-lift';",
       '',
-      'bundlesForm = new FormGroup({',
-      '  bundles: new FormControl<readonly File[] | null>(null),',
-      '});',
-      '',
-      '<form [formGroup]="bundlesForm">',
-      '  <cll-upload [adapter]="adapter" formControlName="bundles" [multiple]="true" />',
-      '</form>',
-      '<!-- ngModel: <cll-upload [(ngModel)]="files" [adapter]="adapter" name="bundles" /> -->',
+      'readonly bundlesForm = new FormGroup({bundles: new FormControl<readonly File[] | null>(null)});',
+      'readonly signalForm = toSignalForm(this.bundlesForm);',
+      "readonly value = this.signalForm.controlValue('bundles');",
+      'readonly ngModelFiles = signal<readonly File[]>([]);',
     ].join('\n'),
   );
 
@@ -394,7 +456,13 @@ export class UploadDemoComponent {
       '<form [formGroup]="bundlesForm">',
       '  <cll-upload [adapter]="adapter" formControlName="bundles" [multiple]="true" />',
       '</form>',
-      '<button type="button" (click)="resetForm()">Reset</button>',
+      '<form>',
+      '  <cll-upload [adapter]="adapter" name="bundles" [ngModel]="ngModelFiles()"',
+      '    (ngModelChange)="ngModelFiles.set($event)" [multiple]="true" />',
+      '</form>',
+      '<form [formGroup]="signalForm">',
+      '  <cll-upload [adapter]="adapter" formControlName="bundles" [multiple]="true" />',
+      '</form>',
     ].join('\n'),
   );
 
@@ -420,18 +488,16 @@ export class UploadDemoComponent {
 
   readonly httpClientCode = highlight(
     [
-      "import {HttpClient, HttpEventType, HttpUploadProgressEvent} from '@angular/common/http';",
+      "import {HttpClient, HttpEventType} from '@angular/common/http';",
       '',
       'uploadChunk: (request) => new Promise<void>((resolve, reject) => {',
-      '  const body = new FormData();',
-      "  body.append('chunk', request.chunk);",
-      "  const subscription = this.http.post(url, body, {reportProgress: true, observe: 'events'}).subscribe({",
+      '  const subscription = this.http.post(url, request.chunk, {',
+      "    reportProgress: true, observe: 'events', responseType: 'text',",
+      '  }).subscribe({',
       '    next: (event) => {',
-      '      if (event.type === HttpEventType.UploadProgress) {',
-      '        request.onProgress((event as HttpUploadProgressEvent).loaded);',
-      '      }',
+      '      if (event.type === HttpEventType.UploadProgress) request.onProgress(event.loaded ?? 0);',
       '    },',
-      '    error: (error) => reject(error),',
+      '    error: reject,',
       '    complete: () => resolve(),',
       '  });',
       "  request.signal.addEventListener('abort', () => {",

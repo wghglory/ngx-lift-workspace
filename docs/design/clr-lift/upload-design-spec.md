@@ -889,18 +889,36 @@ Sources are the public URLs in the industry table, the project workflow document
 acceptance contract, and maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in
 the PR.
 
-Verification run on 2026-11-22 for the staging, debug-snapshot and panel-UX revision:
+Verification run on 2026-11-22 (revision: confirm-first staging, dev queue snapshot, panel UX, form integrations,
+`HttpClient` transport demo and release gates):
 
-- `nx test clr-lift`: 42 files / 524 tests passed, including upload panel and `autoEnqueue` staging coverage.
-- `nx test ngx-lift`: 65 files / 1007 tests passed, including queue snapshot and debug-global coverage.
-- `nx run @ngx-lift-workspace/source:i18n-check`: 0 errors, all supported locales complete.
-- `nx typecheck demo`, `nx typecheck clr-lift`, `nx typecheck ngx-lift`: passed.
-- `nx lint demo`, `nx lint clr-lift`: passed with 0 errors.
+- `nx test clr-lift`: 42 files / 527 tests passed, covering the panel, `autoEnqueue` staging, CVA id/label/disabled
+  contract and owner reset.
+- `nx test ngx-lift`: 65 files / 1007 tests passed, covering the headless lifecycle, retry/cancel/completion and inline
+  `expectTypeOf` contract assertions. Inline `expectTypeOf` is this repository's accepted type-test convention; there is
+  no `*.test-d.ts` target.
+- `nx run @ngx-lift-workspace/source:i18n-check`: 0 errors, all 11 locale dictionaries complete.
+- `nx typecheck demo`, `nx typecheck clr-lift`, `nx typecheck ngx-lift`, `nx typecheck demo-e2e`: passed.
+- `nx lint demo`, `nx lint clr-lift`, `nx lint demo-e2e`: 0 errors.
+- Coverage: 91.62% statements and 93.04% lines overall; all projects passed.
+- `nx build` for demo, clr-lift and ngx-lift, `bundle:check` and `verify:packages`: passed. `verify:packages` installs
+  the packed libraries into a fresh strict-TypeScript consumer, covering the installed-consumer integration check.
 - `nx serve demo` compilation: passed.
+- Upload E2E (Chromium): 18/18 passed, covering selection and validation, window controls, cancel/retry/per-row Remove,
+  confirm-first staging, reactive/ngModel/signal-form bindings, a keyboard-only journey and an axe WCAG 2.0/2.1/2.2 A/AA
+  scan of the playground and the active panel.
+- Cross-browser smoke (Chromium, Firefox, WebKit): 12/12 passed across four tagged upload journeys, including the
+  keyboard-only journey and the stubbed `HttpClient` success path.
+- Controlled network fixtures: `page.route` stubs cover `HttpClient` chunk success, HTTP 500 failure and abort-timeout
+  cancellation; `completion(id)` is asserted to reject with the abort error.
 - Manual browser verification (Playwright): 50-file layout and list max-height, bottom-right minimized badge,
-  confirm-first enqueue timing, cancel/clear staging, repeated folder upload after cancel/close, duplicate suppression
-  and zero console errors in those flows.
+  confirm-first enqueue timing, cancel/clear staging, repeated folder upload after cancel/close and duplicate
+  suppression.
 
-Still outstanding before status can advance beyond Draft: keyboard-only E2E coverage, controlled network fixtures for
-success/failure/abort paths, an installed-consumer integration check, and recorded human language and assistive
-technology acceptance.
+Automated accessibility scanning found two WCAG AA color-contrast failures in dense panel labels
+(`.cll-upload-panel__bytes` and `.cll-upload-panel__summary-label`). Both were corrected to `gray-700` and the scan now
+passes. The production build reports a pre-existing `anyComponentStyle` warning of 6.59 kB against a 6 kB warning
+budget; the stylesheet's byte size is unchanged by this revision and the value is below the 10 kB error budget.
+
+Human language acceptance and manual assistive-technology review are reported separately from these automated results:
+neither has been performed. Maintainer sign-off is still required before status can advance beyond Draft.

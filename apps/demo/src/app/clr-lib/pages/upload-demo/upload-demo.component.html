@@ -90,6 +90,25 @@
           {{ 'uploadDemo.reset' | translate }}
         </button>
       </form>
+      <form cds-layout="vertical gap:sm">
+        <cll-upload
+          [adapter]="adapter"
+          name="bundlesModel"
+          [ngModel]="ngModelFiles()"
+          (ngModelChange)="ngModelFiles.set($event)"
+          [multiple]="true"
+          [chunkSize]="chunk5Mb"
+        />
+        <p data-testid="upload-demo-ngmodel-value">
+          {{ 'uploadDemo.selectedFiles' | translate }}: {{ ngModelFiles().length }}
+        </p>
+      </form>
+      <form [formGroup]="signalFormGroup" cds-layout="vertical gap:sm">
+        <cll-upload [adapter]="adapter" formControlName="bundles" [multiple]="true" [chunkSize]="chunk5Mb" />
+        <p data-testid="upload-demo-signal-form-value">
+          {{ 'uploadDemo.selectedFiles' | translate }}: {{ signalFormValue()?.length ?? 0 }}
+        </p>
+      </form>
     </div>
   </app-demo-playground>
 
@@ -219,8 +238,12 @@
     [title]="'uploadDemo.httpClientAdapter' | translate"
     [tsCode]="httpClientCode"
   >
-    <div preview>
+    <div preview cds-layout="vertical gap:sm">
       <p>{{ 'uploadDemo.httpClientNote' | translate }}</p>
+      <button type="button" class="btn btn-primary" data-testid="upload-demo-http-transfer" (click)="transferHttp()">
+        {{ 'uploadDemo.transfer' | translate }}
+      </button>
+      <p data-testid="upload-demo-http-result">{{ httpResult() }}</p>
     </div>
   </app-demo-playground>
 

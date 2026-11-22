@@ -1,5 +1,7 @@
 import {expect, test} from '@playwright/test';
 
+import {expectAccessible} from './support/accessibility';
+
 const zipFile = (name: string, body = 'release bundle') => ({
   name,
   mimeType: 'application/zip',
@@ -12,7 +14,18 @@ async function selectFiles(page: import('@playwright/test').Page, testId: string
   return playground;
 }
 
-test('uploads a bundle, registers it, and minimizes the shared panel', async ({page}) => {
+async function selectHostFiles(
+  page: import('@playwright/test').Page,
+  testId: string,
+  hostIndex: number,
+  files: ReturnType<typeof zipFile>[],
+) {
+  const host = page.getByTestId(testId).locator('cll-upload').nth(hostIndex);
+  await host.locator('input[type="file"]').first().setInputFiles(files);
+  return host;
+}
+
+test('uploads a bundle, registers it, and minimizes the shared panel @cross-browser-smoke', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
 
   await selectFiles(page, 'upload-demo-basic', [zipFile('bundle.zip')]);
@@ -66,7 +79,7 @@ test('uploads several files and collapses successes while failures stay pinned',
   await expect(panel.locator('.cll-upload-panel__summary-list')).toContainText('first.zip');
 });
 
-test('retries a failed item from the footer until it succeeds', async ({page}) => {
+test('retries a failed item from the footer until it succeeds @cross-browser-smoke', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
 
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip'), zipFile('passing.zip')]);
@@ -137,16 +150,29 @@ test('the keyboard drives window controls and the confirmation', async ({page}) 
   await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
 
   await panel.locator('.cll-upload-panel__expand').focus();
+  await expect(panel.locator('.cll-upload-panel__expand')).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(panel.locator('.cll-upload-panel__list--compact')).toBeVisible();
   await page.keyboard.press('Enter');
+  await expect(panel.locator('.cll-upload-panel__list--compact')).toHaveCount(0);
 
-  await panel.locator('.cll-upload-panel__close').focus();
+  await page.keyboard.press('Shift+Tab');
+  await expect(panel.locator('.cll-upload-panel__minimize')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(panel.locator('.cll-upload-panel__expand')).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(panel.locator('.cll-upload-panel__close')).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(panel.locator('.cll-upload-panel__confirm')).toBeVisible();
 
-  await panel.locator('.cll-upload-panel__confirm-background').focus();
-  await page.keyboard.press('Enter');
+  const background = panel.locator('.cll-upload-panel__confirm-background');
+  await background.focus();
+  await expect(background).toBeFocused();
+  await page.keyboard.press('Tab');
+  await expect(panel.locator('.cll-upload-panel__confirm-cancel')).toBeFocused();
+  await page.keyboard.press('Shift+Tab');
+  await expect(background).toBeFocused();
+  await page.keyboard.press('Space');
   await expect(panel.locator('.cll-upload-panel__badge')).toBeVisible();
 });
 
@@ -169,4 +195,100 @@ test('composition transfers, registers and refreshes the query list', async ({pa
   await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
   await expect(page.getByTestId('upload-demo-registered-composition')).toContainText('1');
   await expect(page.getByTestId('upload-demo-bundles')).toContainText('container-image.tar');
+});
+
+test('a keyboard-only journey opens the file chooser and restores the panel @cross-browser-smoke', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+
+  const browse = page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse'});
+  await browse.focus();
+  await expect(browse).toBeFocused();
+  const chooser = page.waitForEvent('filechooser');
+  await browse.press('Space');
+  await (await chooser).setFiles([zipFile('keyboard.zip')]);
+
+  const panel = page.locator('.cll-upload-panel');
+  await expect(panel).toContainText('keyboard.zip');
+
+  await panel.locator('.cll-upload-panel__minimize').press('Enter');
+  const badge = panel.locator('.cll-upload-panel__badge');
+  await expect(badge).toBeVisible();
+  await badge.focus();
+  await expect(badge).toBeFocused();
+  await badge.press('Enter');
+  await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
+});
+
+test('error rows expose keyboard-operable Retry and Remove actions', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
+
+  const panel = page.locator('.cll-upload-panel');
+  const errorRow = panel.locator('.cll-upload-panel__item[data-status="error"]');
+  await expect(errorRow).toBeVisible();
+
+  const retry = errorRow.getByRole('button', {name: 'Retry'});
+  await retry.focus();
+  await expect(retry).toBeFocused();
+  await retry.press('Enter');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+
+  await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
+  const nextError = panel.locator('.cll-upload-panel__item[data-status="error"]');
+  await expect(nextError).toBeVisible();
+  const remove = nextError.getByRole('button', {name: /Dismiss failing\.zip/});
+  await remove.focus();
+  await expect(remove).toBeFocused();
+  await remove.press('Enter');
+  await expect(panel.locator('.cll-upload-panel__item[data-status="error"]')).toHaveCount(0);
+});
+
+test('ngModel and signal-form facade bindings reflect the selected files', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+
+  await selectHostFiles(page, 'upload-demo-forms', 1, [zipFile('model.zip')]);
+  await expect(page.getByTestId('upload-demo-ngmodel-value')).toContainText('1');
+
+  await selectHostFiles(page, 'upload-demo-forms', 2, [zipFile('signal.zip')]);
+  await expect(page.getByTestId('upload-demo-signal-form-value')).toContainText('1');
+});
+
+test('the upload playground and an active panel pass accessibility checks', async ({page}, testInfo) => {
+  await page.goto('/clr-lift/components/upload');
+  await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
+
+  await selectFiles(page, 'upload-demo-basic', [zipFile('a11y.zip')]);
+  await expect(page.locator('.cll-upload-panel')).toContainText('a11y.zip');
+  await expectAccessible(page, testInfo, '.cll-upload-panel');
+});
+
+test('HttpClient adapter maps stubbed progress events and reports success @cross-browser-smoke', async ({page}) => {
+  await page.route('**/api/upload/**', (route) => route.fulfill({status: 200, body: 'ok'}));
+  await page.goto('/clr-lift/components/upload');
+
+  await page.getByTestId('upload-demo-http-transfer').click();
+  await expect(page.getByTestId('upload-demo-http-result')).toHaveText('success');
+});
+
+test('HttpClient adapter surfaces a stubbed server failure', async ({page}) => {
+  await page.route('**/api/upload/**', (route) => route.fulfill({status: 500, body: 'boom'}));
+  await page.goto('/clr-lift/components/upload');
+
+  await page.getByTestId('upload-demo-http-transfer').click();
+  await expect(page.getByTestId('upload-demo-http-result')).not.toHaveText('');
+  await expect(page.getByTestId('upload-demo-http-result')).not.toHaveText('success');
+});
+
+test('cancelling an HTTP transfer settles completion with the abort error', async ({page}) => {
+  await page.route('**/api/upload/**', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 4_000));
+    await route.fulfill({status: 200, body: 'ok'});
+  });
+  await page.goto('/clr-lift/components/upload');
+
+  await page.getByTestId('upload-demo-http-transfer').click();
+  const item = page.locator('.cll-upload-panel__item').filter({hasText: 'http-bundle.zip'});
+  await expect(item).toBeVisible();
+  await item.getByRole('button', {name: 'Cancel'}).click();
+  await expect(page.getByTestId('upload-demo-http-result')).toContainText(/cancel/i);
 });
