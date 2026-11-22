@@ -151,6 +151,60 @@ describe('UploadQueueService', () => {
     expect(queue.items().find((item) => item.id === first.id)?.status).toBe('cancelled');
   });
 
+  it('ignores stale adapter progress callbacks after the item is cancelled', async () => {
+    let deliverProgress!: (loaded: number) => void;
+    const chunk = deferred<void>();
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async (request: UploadChunkRequest) => {
+        deliverProgress = request.onProgress;
+        return chunk.promise;
+      },
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 3)], options(adapter));
+    const completion = queue.completion(item.id);
+    await flush();
+
+    deliverProgress(1);
+    await flush();
+    expect(queue.items()[0].uploadedBytes).toBe(1);
+
+    queue.cancel(item.id);
+    await expect(completion).rejects.toMatchObject({name: 'AbortError'});
+    const bytesAtCancel = queue.items()[0].uploadedBytes;
+
+    deliverProgress(2); // stale callback from the aborted attempt must not move progress
+    await flush();
+    expect(queue.items()[0].uploadedBytes).toBe(bytesAtCancel);
+    chunk.resolve();
+  });
+
+  it('ignores a chunk that settles after the item was already cancelled', async () => {
+    const chunk = deferred<void>();
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'u1'}),
+      uploadChunk: async () => chunk.promise,
+      combine: async () => undefined,
+      cancel: async () => undefined,
+    };
+
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 3)], options(adapter));
+    const completion = queue.completion(item.id);
+    await flush();
+
+    queue.cancel(item.id);
+    await expect(completion).rejects.toMatchObject({name: 'AbortError'});
+    expect(queue.items()[0].status).toBe('cancelled');
+
+    chunk.resolve(); // the aborted chunk later reports success
+    await flush();
+    expect(queue.items()[0].status).toBe('cancelled');
+    expect(queue.items()[0].progress).toBeLessThan(100);
+  });
+
   it('retries only unacknowledged chunks and re-arms completion', async () => {
     let attempts = 0;
     const chunkNumbers: number[] = [];

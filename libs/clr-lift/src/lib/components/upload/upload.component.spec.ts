@@ -72,7 +72,7 @@ describe('UploadComponent', () => {
     expect(changes.at(-1)).toHaveLength(1);
 
     component.setDisabledState(true);
-    expect(component.isDisabled()).toBe(true);
+    expect(component.disabledState()).toBe(true);
     expect(TestBed.inject(UploadQueueService).items()[0].status).toBe('cancelled');
 
     component.writeValue([]);
@@ -159,6 +159,35 @@ describe('UploadComponent', () => {
     expect(errors).toHaveLength(1);
     expect(cancellations).toHaveLength(0);
     expect((errors[0] as {error?: {phase: string}}[])[0].error?.phase).toBe('cancel');
+  });
+
+  it('emits uploadError when a retried item fails again before the watcher re-arms', async () => {
+    const component = create({
+      adapter: {
+        initiate: async () => ({uploadId: 'u1'}),
+        uploadChunk: async () => {
+          throw {code: 'chunk-failed', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      },
+    });
+    const attempts: number[] = [];
+    component.uploadError.subscribe((value) => attempts.push(...value.map((item) => item.attempt)));
+
+    await select(component, [file('bundle.zip')]);
+    expect(attempts).toEqual([1]);
+
+    const queue = TestBed.inject(UploadQueueService);
+    void queue.retry(queue.items()[0].id)?.catch(() => undefined);
+    // The second attempt settles before change detection re-runs the watcher effect.
+    for (let index = 0; index < 40; index += 1) await Promise.resolve();
+    expect(queue.items()[0].status).toBe('error');
+    expect(queue.items()[0].attempt).toBe(2);
+
+    TestBed.inject(ApplicationRef).tick();
+    for (let index = 0; index < 40; index += 1) await Promise.resolve();
+    expect(attempts).toEqual([1, 2]);
   });
 
   it('stages files without enqueueing when autoEnqueue is false', () => {

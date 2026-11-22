@@ -2,9 +2,10 @@ import {ApplicationRef} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {OverlayContainer} from '@angular/cdk/overlay';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
-import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
+import {UploadPanelManager} from './upload-panel-manager';
 import {UploadPanelComponent} from './upload-panel.component';
 import {UploadPanelWindowComponent} from './upload-panel-window.component';
 
@@ -35,7 +36,7 @@ describe('UploadPanelComponent', () => {
   let translation: TranslationService;
   let fixture: ReturnType<typeof TestBed.createComponent<UploadPanelComponent>>;
 
-  beforeEach(() => {
+  function bootstrap(): void {
     TestBed.configureTestingModule({imports: [UploadPanelComponent, UploadPanelWindowComponent]});
     translation = TestBed.inject(TranslationService);
     translation.setLanguage('en');
@@ -44,7 +45,9 @@ describe('UploadPanelComponent', () => {
     fixture.detectChanges();
     // The declared anchor bootstraps the shared window in a portal view outside the fixture.
     TestBed.inject(ApplicationRef).tick();
-  });
+  }
+
+  beforeEach(() => bootstrap());
 
   afterEach(() => {
     TestBed.inject(OverlayContainer).ngOnDestroy();
@@ -255,6 +258,121 @@ describe('UploadPanelComponent', () => {
 
     const live = panel().querySelector('.cll-upload-panel__live')!;
     expect(live.textContent).toBe('bundle.zip uploaded.');
+  });
+
+  it('announces the transfer start and the processing phase once per attempt', async () => {
+    let releaseChunk!: () => void;
+    const chunkGate = new Promise<void>((resolve) => (releaseChunk = resolve));
+    let statusCalls = 0;
+    queue.enqueue(
+      [uploadFile('bundle.zip')],
+      options({
+        initiate: async () => ({uploadId: 'u1'}),
+        uploadChunk: async () => {
+          await chunkGate;
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+        getStatus: async () => {
+          statusCalls += 1;
+          return statusCalls === 1 ? {status: 'processing', progress: 50} : new Promise(() => undefined);
+        },
+      }),
+    );
+    await flush();
+
+    const live = panel().querySelector('.cll-upload-panel__live')!;
+    expect(live.textContent).toBe('Uploading bundle.zip.');
+
+    releaseChunk();
+    await flush();
+    expect(live.textContent).toBe('Processing bundle.zip.');
+  });
+
+  it('re-announces a failure with the same code after a retry', async () => {
+    const translate = vi.spyOn(translation, 'translate');
+    queue.enqueue(
+      [uploadFile('broken.zip')],
+      options({
+        initiate: async () => ({uploadId: 'u1'}),
+        uploadChunk: async () => {
+          throw {code: 'chunk-failed', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    await flush();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__live')!.textContent).toContain('failed');
+    expect(translate.mock.calls.some(([key]) => key === 'upload.announce.error')).toBe(true);
+
+    translate.mockClear();
+    void queue.retry(queue.items()[0].id)?.catch(() => undefined);
+    await flush();
+    await flush();
+    expect(queue.items()[0].status).toBe('error');
+    expect(queue.items()[0].attempt).toBe(2);
+    expect(translate.mock.calls.some(([key]) => key === 'upload.announce.error')).toBe(true);
+  });
+
+  it('announces one count message when cancelling all active items', async () => {
+    enqueueBlocked();
+    enqueueBlocked();
+    await flush();
+
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
+    fixture.detectChanges();
+
+    expect(queue.items().every((item) => item.status === 'cancelled')).toBe(true);
+    expect(panel().querySelector('.cll-upload-panel__live')!.textContent).toBe('2 uploads cancelled.');
+  });
+
+  it('returns focus to the recorded trigger when the panel closes', async () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    TestBed.inject(UploadPanelManager).setTrigger(trigger);
+    enqueueBlocked();
+    await flush();
+
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
+    fixture.detectChanges();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-cancel')!.click();
+    fixture.detectChanges();
+
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
+  it('docks the shared window on the left in RTL documents', async () => {
+    TestBed.resetTestingModule();
+    try {
+      // The TranslationService effect syncs the document dir to the locale, and the panel
+      // creates the overlay in ngAfterViewInit — so an RTL locale must be set and flushed
+      // before the declaring host is created.
+      TestBed.configureTestingModule({imports: [UploadPanelComponent, UploadPanelWindowComponent]});
+      translation = TestBed.inject(TranslationService);
+      translation.setLanguage('he');
+      queue = TestBed.inject(UploadQueueService);
+      TestBed.inject(ApplicationRef).tick();
+      expect(document.documentElement.getAttribute('dir')).toBe('rtl');
+
+      fixture = TestBed.createComponent(UploadPanelComponent);
+      fixture.detectChanges();
+      TestBed.inject(ApplicationRef).tick();
+      enqueueBlocked();
+      await flush();
+
+      // CDK's global strategy docks via flex margins, not left/right offsets.
+      const pane = panel().closest('.cdk-overlay-pane') as HTMLElement;
+      const wrapper = pane.parentElement as HTMLElement;
+      expect(pane.style.marginLeft).toBe('1rem');
+      expect(pane.style.marginRight).toBe('');
+      expect(wrapper.style.justifyContent).toBe('flex-end');
+    } finally {
+      document.documentElement.setAttribute('dir', 'ltr');
+    }
   });
 
   it('handles Escape inside the panel only, choosing the safe action in the confirmation', async () => {
