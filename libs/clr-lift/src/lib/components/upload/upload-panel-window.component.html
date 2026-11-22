@@ -148,7 +148,12 @@
                     <button type="button" class="btn btn-sm btn-link" (click)="retry(item.id)">
                       {{ 'upload.retry' | translate }}
                     </button>
-                    <button type="button" class="btn btn-sm btn-link" (click)="remove(item.id)">
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-link"
+                      (click)="remove(item.id)"
+                      [attr.aria-label]="'upload.remove.hint' | translate: item.file.name"
+                    >
                       {{ 'upload.remove' | translate }}
                     </button>
                   </div>
@@ -184,10 +189,6 @@
                   <div class="cll-upload-panel__main">
                     <div class="cll-upload-panel__name-line">
                       <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
-                      <span class="cll-upload-panel__spacer"></span>
-                      <button type="button" class="btn btn-sm btn-link" (click)="remove(item.id)">
-                        {{ 'upload.remove' | translate }}
-                      </button>
                     </div>
                     <div class="cll-upload-panel__meta">
                       <span>{{ 'upload.status.cancelled' | translate }}</span>
@@ -229,9 +230,6 @@
                         <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
                         <span class="cll-upload-panel__spacer"></span>
                         <span aria-hidden="true">{{ formatBytes(item.file.size) }}</span>
-                        <button type="button" class="btn btn-sm btn-link" (click)="remove(item.id)">
-                          {{ 'upload.remove' | translate }}
-                        </button>
                       </li>
                     }
                   </ul>

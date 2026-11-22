@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, signal, viewChild} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -10,6 +10,7 @@ import {
   UploadQueueService,
 } from 'ngx-lift';
 import {
+  AlertComponent,
   PageContainerComponent,
   TranslatePipe,
   TranslationService,
@@ -27,6 +28,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
 @Component({
   selector: 'app-upload-demo',
   imports: [
+    AlertComponent,
     ApiTableComponent,
     ClarityModule,
     DemoPlaygroundComponent,
@@ -96,56 +98,117 @@ export class UploadDemoComponent {
     bundles: new FormControl<readonly File[] | null>(null),
   });
 
-  /** DSM-style release bundle staging: select -> inspect manifest -> confirm -> chunked upload. */
-  readonly stagedBundle = signal<File | null>(null);
-  readonly stagedBundleType = signal('');
+  /** Confirm-first upload: select -> inspect file metadata -> confirm -> chunked upload. */
+  readonly stagedFiles = signal<readonly File[]>([]);
+  readonly duplicateNames = signal<readonly string[]>([]);
   readonly confirmOpen = signal(false);
   readonly modalOpen = signal(false);
+  readonly apiCalls = signal<readonly string[]>([]);
+  private readonly inlineUpload = viewChild<UploadComponent>('inlineUpload');
+  private readonly modalUpload = viewChild<UploadComponent>('modalUpload');
 
-  /** Mirrors dsm-ui bundle types; the real app reads `*-release.json` from inside the ZIP. */
-  private readonly bundleTypes: readonly {readonly pattern: RegExp; readonly key: string}[] = [
-    {pattern: /ds[mo]-|control-plane/i, key: 'dsmBundle.type.controlPlane'},
-    {pattern: /data-plane|dp-/i, key: 'dsmBundle.type.dataPlane'},
-    {pattern: /data-service|ds-/i, key: 'dsmBundle.type.dataService'},
-    {pattern: /k8s|kubernetes/i, key: 'dsmBundle.type.kubernetes'},
-  ];
+  /** Adapter that logs simulated REST calls so the transport contract is visible in the demo. */
+  readonly apiAdapter: UploadAdapter = {
+    initiate: async (file) => {
+      this.logApi('POST', `/api/bundles/initiate?name=${encodeURIComponent(file.name)}`);
+      return {uploadId: `${file.name}-${Date.now()}`};
+    },
+    uploadChunk: async (request) => {
+      await wait(120);
+      request.onProgress(request.chunk.size);
+      this.logApi('PUT', `/api/bundles/${request.uploadId}/chunks/${request.chunkNumber}`);
+    },
+    combine: async ({uploadId}) => {
+      await wait(200);
+      this.logApi('POST', `/api/bundles/${uploadId}/combine`);
+    },
+    cancel: async (uploadId) => this.logApi('DELETE', `/api/bundles/${uploadId}`),
+  };
 
-  stageBundle(files: readonly File[]): void {
-    const file = files[0];
-    if (!file) return;
-    this.stagedBundle.set(file);
-    const match = this.bundleTypes.find((type) => type.pattern.test(file.name));
-    this.stagedBundleType.set(this.translation.translate(match?.key ?? 'dsmBundle.type.other'));
-    this.confirmOpen.set(true);
+  stageFiles(files: readonly File[]): void {
+    if (!files.length) return;
+    // De-dupe against the LIVE queue only: a cancelled/cleared item must be selectable again.
+    const queuedKeys = new Set(this.queue.items().map((item) => this.fileKey(item.file)));
+    const staged = new Map(this.stagedFiles().map((file) => [this.fileKey(file), file]));
+    const duplicates = new Set<string>();
+    for (const file of files) {
+      const key = this.fileKey(file);
+      if (staged.has(key) || queuedKeys.has(key)) duplicates.add(file.name);
+      else staged.set(key, file);
+    }
+    this.stagedFiles.set([...staged.values()]);
+    this.duplicateNames.set([...duplicates]);
+    if (staged.size > 0 || files.length > 0) this.confirmOpen.set(true);
   }
 
-  confirmBundleUpload(): void {
-    const file = this.stagedBundle();
+  confirmUpload(): void {
+    const files = this.stagedFiles();
     this.confirmOpen.set(false);
-    if (!file) return;
-    this.queue.enqueue([file], {
-      adapter: this.adapter,
+    this.modalOpen.set(false);
+    if (!files.length) return;
+    this.queue.enqueue(files, {
+      adapter: this.apiAdapter,
       chunkSize: this.chunk5Mb,
       concurrency: 2,
       autoRetry: true,
       maxRetries: 3,
       pollIntervalMs: 10_000,
     });
-    this.stagedBundle.set(null);
+    this.clearStaging();
   }
 
-  cancelBundleUpload(): void {
+  cancelUpload(): void {
     this.confirmOpen.set(false);
-    this.stagedBundle.set(null);
+    this.clearStaging();
   }
 
-  private readonly bundleNames = signal<readonly string[]>([]);
+  cancelModalUpload(): void {
+    this.modalOpen.set(false);
+    this.clearStaging();
+  }
+
+  /** Clears staged state AND the host's own selection so the next pick starts fresh. */
+  private clearStaging(): void {
+    this.inlineUpload()?.clear();
+    this.modalUpload()?.clear();
+    this.stagedFiles.set([]);
+    this.duplicateNames.set([]);
+  }
+
+  fileTrackKey(file: File): string {
+    return this.fileKey(file);
+  }
+
+  private logApi(method: string, path: string): void {
+    const entry = `${method} ${path}`;
+    this.apiCalls.update((calls) => [entry, ...calls].slice(0, 20));
+    console.info('[upload demo API]', entry);
+  }
+
+  formatFileSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    const units = ['KB', 'MB', 'GB'];
+    let value = bytes;
+    let unit = -1;
+    do {
+      value /= 1024;
+      unit += 1;
+    } while (value >= 1024 && unit < units.length - 1);
+    return `${value >= 100 ? Math.round(value) : Math.round(value * 10) / 10} ${units[unit]}`;
+  }
+
+  private fileKey(file: File): string {
+    // name + size + type: stable even when a re-selection supplies a new lastModified value.
+    return `${file.name}|${file.size}|${file.type}`;
+  }
+
+  private readonly registeredBundles = signal<readonly {readonly id: string; readonly name: string}[]>([]);
 
   private readonly register = mutateResource(
     async (items: readonly UploadItem[]) => {
       await wait(100);
       this.registeredCount.update((count) => count + items.length);
-      this.bundleNames.update((list) => [...list, ...items.map((item) => item.file.name)]);
+      this.registeredBundles.update((list) => [...list, ...items.map((item) => ({id: item.id, name: item.file.name}))]);
       return items.length;
     },
     {invalidateTags: [{type: 'Bundle'}]},
@@ -153,7 +216,7 @@ export class UploadDemoComponent {
 
   private readonly bundlesQuery = queryResource(() => ({
     key: ['upload-demo', 'bundles'],
-    loader: async () => this.bundleNames(),
+    loader: async () => this.registeredBundles(),
     tags: [{type: 'Bundle'}],
   }));
   readonly bundleList = this.bundlesQuery.value;
@@ -266,12 +329,11 @@ export class UploadDemoComponent {
     ].join('\n'),
   );
 
-  readonly dsmBundleHtml = highlight(
+  readonly confirmHtml = highlight(
     [
-      '<!-- Inline page, dsm-ui Update Bundles style -->',
-      '<cll-upload [adapter]="adapter" [multiple]="false" accept=".zip"',
-      '  [autoEnqueue]="false" [chunkSize]="chunk5Mb" [concurrency]="2"',
-      '  (filesChange)="stageBundle($event)" />',
+      '<!-- Inline page: select -> confirm -> upload -->',
+      '<cll-upload [adapter]="adapter" [multiple]="true" accept=".zip,.tar"',
+      '  [autoEnqueue]="false" (filesChange)="stageFiles($event)" />',
       '<clr-modal [(clrModalOpen)]="confirmOpen"> ... </clr-modal>',
       '<cll-upload-panel /> <!-- one global window; survives route changes -->',
     ].join('\n'),

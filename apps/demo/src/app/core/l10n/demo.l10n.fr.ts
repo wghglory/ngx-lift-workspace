@@ -3187,24 +3187,19 @@ export const frTranslations: Record<string, string> = {
   'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
   'nav.upload': 'Téléverser des fichiers',
   'uploadDemo.title': 'Téléverser des fichiers',
-  'uploadDemo.dsmBundle': 'Téléverser un bundle de version DSM',
-  'uploadDemo.dsmBundleCancel': 'Annuler',
-  'uploadDemo.dsmBundleClose': 'Fermer',
-  'uploadDemo.dsmBundleNote':
-    'Flux de style dsm-ui : déposez un ZIP, vérifiez le type de bundle détecté, puis confirmez le téléversement par morceaux.',
-  'uploadDemo.dsmBundleModal': 'Téléverser dans une fenêtre modale',
-  'uploadDemo.dsmBundleConfirm': 'Confirmer le bundle de mise à jour',
-  'uploadDemo.dsmBundleDetected': 'Bundle {0} détecté comme {1}.',
-  'uploadDemo.dsmBundleHint':
-    'Dans dsm-ui, la confirmation lit le manifeste dans le ZIP. Cette démonstration déduit le type du nom de fichier ; le téléversement utilise la même file et le panneau global.',
-  'uploadDemo.dsmBundleUpload': 'Téléverser le bundle',
-  'uploadDemo.dsmBundleModalNote': 'Téléversement modale (style dsm-ui)',
-  'dsmBundle.type.controlPlane':
-    'Les bundles sélectionnés ici rejoignent la même file globale et restent visibles lors de la navigation.',
-  'dsmBundle.type.dataPlane': 'Bundle de plan de contrôle',
-  'dsmBundle.type.dataService': 'Bundle de plan de données',
-  'dsmBundle.type.kubernetes': 'Bundle de service de données',
-  'dsmBundle.type.other': 'Bundle de version Kubernetes',
+  'uploadDemo.confirmFirst': 'Téléversement avec confirmation',
+  'uploadDemo.confirmFirstNote':
+    'Sélectionnez des fichiers pour les préparer ; rien n’est téléversé avant confirmation.',
+  'uploadDemo.modalUpload': 'Téléverser dans une fenêtre modale',
+  'uploadDemo.confirmTitle': 'Confirmer les fichiers à téléverser',
+  'uploadDemo.confirmInfo':
+    'Confirmez pour démarrer le téléversement. Il se poursuit en arrière-plan et vous pouvez naviguer vers d’autres pages en toute sécurité.',
+  'uploadDemo.confirmDuplicates': 'Les fichiers en double ont été ignorés : {0}',
+  'uploadDemo.confirmCancel': 'Annuler',
+  'uploadDemo.confirmUpload': 'Téléverser',
+  'uploadDemo.modalNote':
+    'Sélectionnez des fichiers dans cette fenêtre, vérifiez-les, puis confirmez. La fenêtre se ferme avant le téléversement en arrière-plan.',
+  'uploadDemo.confirmHtml': 'Page intégrée : sélectionner → confirmer → téléverser',
   'uploadDemo.intro': 'Sélectionnez des bundles et suivez la progression sans quitter la page.',
   'uploadDemo.basic': 'Sélection simple',
   'uploadDemo.composition': 'Composition avec les utilitaires de requête et de mutation',
@@ -3240,6 +3235,7 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.api.autoRetry': 'Relancer automatiquement les erreurs de bloc relançables.',
   'uploadDemo.api.autoEnqueue':
     'false valide la sélection et n’émet que filesChange ; l’appelant met en file après confirmation.',
+  'uploadDemo.apiCalls': 'Appels API simulés (DELETE à l’annulation)',
   'uploadDemo.api.maxRetries': 'Limite des relances automatiques des erreurs de bloc.',
   'uploadDemo.api.controlId': 'Identifiant du champ de fichier natif.',
   'uploadDemo.api.disabled': 'Désactiver la sélection et annuler les éléments en cours.',

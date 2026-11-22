@@ -876,17 +876,31 @@ Spec revision, 2026-11-21, dropzone selection (maintainer request; no new servic
 
 Spec revision, 2026-11-22, staging and debugging:
 
-- `autoEnqueue=false` adds the "select → inspect → confirm → upload" second segment used by dsm-ui release bundles: the
-  host still validates and emits `filesChange`, but does not enqueue or open the panel. The caller enqueues with its own
-  adapter options after confirmation; the shared queue and global panel remain the single transport/view.
+- `autoEnqueue=false` adds the "select → inspect → confirm → upload" second segment used by release-bundle style flows:
+  the host still validates and emits `filesChange`, but does not enqueue or open the panel. The caller enqueues with its
+  own adapter options after confirmation; the shared queue and global panel remain the single transport/view.
 - Dev-only: `window.__uploadQueue` is installed when `isDevMode()` is true in a browser. `snapshot()` returns plain
   queue/runtime state (phases, acknowledged chunks, retries, normalized options) for console and Angular DevTools
   inspection; production and SSR do not expose it.
 
 ## Evidence
 
-This document records planning, spec-review revisions and primary-source research only. No component tests, builds,
-browser scans, translation checks or installed-consumer checks have been run for this draft. Sources are the public URLs
-in the industry table, the project workflow documents, the accessibility and language acceptance contract, and
-maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in the PR. Acceptance
-evidence must be added with revision, scope and result before status can advance beyond Draft.
+Sources are the public URLs in the industry table, the project workflow documents, the accessibility and language
+acceptance contract, and maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in
+the PR.
+
+Verification run on 2026-11-22 for the staging, debug-snapshot and panel-UX revision:
+
+- `nx test clr-lift`: 42 files / 524 tests passed, including upload panel and `autoEnqueue` staging coverage.
+- `nx test ngx-lift`: 65 files / 1007 tests passed, including queue snapshot and debug-global coverage.
+- `nx run @ngx-lift-workspace/source:i18n-check`: 0 errors, all supported locales complete.
+- `nx typecheck demo`, `nx typecheck clr-lift`, `nx typecheck ngx-lift`: passed.
+- `nx lint demo`, `nx lint clr-lift`: passed with 0 errors.
+- `nx serve demo` compilation: passed.
+- Manual browser verification (Playwright): 50-file layout and list max-height, bottom-right minimized badge,
+  confirm-first enqueue timing, cancel/clear staging, repeated folder upload after cancel/close, duplicate suppression
+  and zero console errors in those flows.
+
+Still outstanding before status can advance beyond Draft: keyboard-only E2E coverage, controlled network fixtures for
+success/failure/abort paths, an installed-consumer integration check, and recorded human language and assistive
+technology acceptance.

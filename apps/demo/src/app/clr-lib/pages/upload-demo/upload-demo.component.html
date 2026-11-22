@@ -108,8 +108,8 @@
       </p>
       @if (bundleList(); as bundles) {
         <ul data-testid="upload-demo-bundles">
-          @for (name of bundles; track name) {
-            <li>{{ name }}</li>
+          @for (bundle of bundles; track bundle.id) {
+            <li>{{ bundle.name }}</li>
           }
         </ul>
       }
@@ -117,55 +117,100 @@
   </app-demo-playground>
 
   <app-demo-playground
-    data-testid="upload-demo-dsm-bundle"
-    [title]="'uploadDemo.dsmBundle' | translate"
-    [htmlCode]="dsmBundleHtml"
+    data-testid="upload-demo-confirm-first"
+    [title]="'uploadDemo.confirmFirst' | translate"
+    [htmlCode]="confirmHtml"
   >
     <div preview cds-layout="vertical gap:sm">
-      <p>{{ 'uploadDemo.dsmBundleNote' | translate }}</p>
+      <p>{{ 'uploadDemo.confirmFirstNote' | translate }}</p>
       <cll-upload
-        [adapter]="adapter"
-        [multiple]="false"
-        accept=".zip"
+        #inlineUpload
+        [adapter]="apiAdapter"
+        [multiple]="true"
+        accept=".zip,.tar"
         [autoEnqueue]="false"
         [chunkSize]="chunk5Mb"
         [concurrency]="2"
-        (filesChange)="stageBundle($event)"
+        (filesChange)="stageFiles($event)"
       />
-      <button type="button" class="btn btn-outline" data-testid="upload-demo-dsm-modal" (click)="modalOpen.set(true)">
-        {{ 'uploadDemo.dsmBundleModal' | translate }}
+      <button type="button" class="btn btn-outline" data-testid="upload-demo-modal-open" (click)="modalOpen.set(true)">
+        {{ 'uploadDemo.modalUpload' | translate }}
       </button>
+      @if (apiCalls().length) {
+        <details class="upload-api-log" data-testid="upload-demo-api-log">
+          <summary>{{ 'uploadDemo.apiCalls' | translate }}</summary>
+          <ul>
+            @for (call of apiCalls(); track $index) {
+              <li>{{ call }}</li>
+            }
+          </ul>
+        </details>
+      }
     </div>
   </app-demo-playground>
 
   <clr-modal [(clrModalOpen)]="confirmOpen" [clrModalClosable]="false">
-    <h3 class="modal-title">{{ 'uploadDemo.dsmBundleConfirm' | translate }}</h3>
+    <h3 class="modal-title">{{ 'uploadDemo.confirmTitle' | translate }}</h3>
     <div class="modal-body">
-      @if (stagedBundle(); as file) {
-        <p>{{ 'uploadDemo.dsmBundleDetected' | translate: file.name : stagedBundleType() }}</p>
-        <p>{{ 'uploadDemo.dsmBundleHint' | translate }}</p>
+      <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.confirmInfo' | translate"> </cll-alert>
+      <ul class="upload-confirm-list">
+        @for (file of stagedFiles(); track fileTrackKey(file)) {
+          <li>
+            <span>{{ file.name }}</span
+            ><span>{{ formatFileSize(file.size) }}</span>
+          </li>
+        }
+      </ul>
+      @if (duplicateNames().length) {
+        <p class="upload-confirm-duplicate">
+          {{ 'uploadDemo.confirmDuplicates' | translate: duplicateNames().join(', ') }}
+        </p>
       }
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline" (click)="cancelBundleUpload()">
-        {{ 'uploadDemo.dsmBundleCancel' | translate }}
+      <button type="button" class="btn btn-outline" (click)="cancelUpload()">
+        {{ 'uploadDemo.confirmCancel' | translate }}
       </button>
-      <button type="button" class="btn btn-primary" (click)="confirmBundleUpload()">
-        {{ 'uploadDemo.dsmBundleUpload' | translate }}
+      <button type="button" class="btn btn-primary" data-testid="upload-demo-confirm" (click)="confirmUpload()">
+        {{ 'uploadDemo.confirmUpload' | translate }}
       </button>
     </div>
   </clr-modal>
 
-  <clr-modal [(clrModalOpen)]="modalOpen" [clrModalSize]="'lg'">
-    <h3 class="modal-title">{{ 'uploadDemo.dsmBundleModal' | translate }}</h3>
+  <clr-modal [(clrModalOpen)]="modalOpen">
+    <h3 class="modal-title">{{ 'uploadDemo.modalUpload' | translate }}</h3>
     <div class="modal-body">
-      <p>{{ 'uploadDemo.dsmBundleModalNote' | translate }}</p>
-      <cll-upload [adapter]="adapter" [multiple]="true" accept=".zip,.tar" [chunkSize]="chunk5Mb" [concurrency]="2" />
+      <p>{{ 'uploadDemo.modalNote' | translate }}</p>
+      <cll-upload
+        #modalUpload
+        [adapter]="apiAdapter"
+        [multiple]="true"
+        accept=".zip,.tar"
+        [autoEnqueue]="false"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+        (filesChange)="stageFiles($event)"
+      />
+      @if (stagedFiles().length) {
+        <ul class="upload-confirm-list">
+          @for (file of stagedFiles(); track fileTrackKey(file)) {
+            <li>
+              <span>{{ file.name }}</span
+              ><span>{{ formatFileSize(file.size) }}</span>
+            </li>
+          }
+        </ul>
+      }
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" (click)="modalOpen.set(false)">
-        {{ 'uploadDemo.dsmBundleClose' | translate }}
+      <button type="button" class="btn btn-outline" (click)="cancelModalUpload()">
+        {{ 'uploadDemo.confirmCancel' | translate }}
       </button>
+      @if (stagedFiles().length) {
+        <button type="button" class="btn btn-primary" data-testid="upload-demo-modal-confirm" (click)="confirmUpload()">
+          {{ 'uploadDemo.confirmUpload' | translate }}
+        </button>
+      }
     </div>
   </clr-modal>
 
