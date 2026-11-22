@@ -1,12 +1,7 @@
 <cll-page-container [title]="'uploadDemo.title' | translate">
   <p>{{ 'uploadDemo.intro' | translate }}</p>
 
-  <app-demo-playground
-    data-testid="upload-demo-basic"
-    [title]="'uploadDemo.basic' | translate"
-    [tsCode]="basicCode"
-    [htmlCode]="basicHtml"
-  >
+  <app-demo-playground data-testid="upload-demo-basic" [title]="'uploadDemo.basic' | translate" [tsCode]="basicCode">
     <div preview cds-layout="vertical gap:sm">
       <cll-upload
         [adapter]="adapter"
@@ -73,12 +68,7 @@
     </div>
   </app-demo-playground>
 
-  <app-demo-playground
-    data-testid="upload-demo-forms"
-    [title]="'uploadDemo.forms' | translate"
-    [tsCode]="formsCode"
-    [htmlCode]="formsHtml"
-  >
+  <app-demo-playground data-testid="upload-demo-forms" [title]="'uploadDemo.forms' | translate" [tsCode]="formsCode">
     <div preview cds-layout="vertical gap:sm">
       <p>{{ 'uploadDemo.formsNote' | translate }}</p>
       <form [formGroup]="bundlesForm" cds-layout="vertical gap:sm">
@@ -138,7 +128,7 @@
   <app-demo-playground
     data-testid="upload-demo-confirm-first"
     [title]="'uploadDemo.confirmFirst' | translate"
-    [htmlCode]="confirmHtml"
+    [tsCode]="confirmCode"
   >
     <div preview cds-layout="vertical gap:sm">
       <p>{{ 'uploadDemo.confirmFirstNote' | translate }}</p>
