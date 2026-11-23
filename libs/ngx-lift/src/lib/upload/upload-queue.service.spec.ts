@@ -176,6 +176,30 @@ describe('UploadQueueService', () => {
     },
   );
 
+  it('settles active and waiting uploads when the injector is destroyed', async () => {
+    const initiate = vi.fn(async () => ({uploadId: 'destroyed-session'}));
+    const items = queue.enqueue(
+      [uploadFile('active.zip', 2), uploadFile('waiting.zip', 2)],
+      options({
+        ...stubDebugAdapter(),
+        initiate,
+        uploadChunk: () => new Promise<void>(() => undefined),
+      }),
+    );
+    await flush();
+    const outcomes = items.map((item) => queue.completion(item.id).catch((error: DOMException) => error.name));
+    TestBed.resetTestingModule();
+    try {
+      // Assert before yielding; cleanup also keeps the broken version from spinning forever in this regression.
+      expect(queue.items().map((item) => item.status)).toEqual(['cancelled', 'cancelled']);
+      expect(await Promise.all(outcomes)).toEqual(['AbortError', 'AbortError']);
+      await flush();
+      expect(initiate).toHaveBeenCalledTimes(1);
+    } finally {
+      for (const item of items) queue.remove(item.id);
+    }
+  });
+
   it('uploads one file through initiate, ordered chunks and combine, then resolves completion', async () => {
     const calls: string[] = [];
     const adapter: UploadAdapter = {

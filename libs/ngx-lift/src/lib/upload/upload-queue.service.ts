@@ -584,8 +584,7 @@ export class UploadQueueService {
     for (const runtime of this.runtimes.values()) {
       runtime.controller.abort();
       this.clearTimer(runtime);
-      for (const deferred of runtime.deferreds) deferred.reject(abortError());
-      runtime.deferreds = [];
+      if (!runtime.settlement) this.settle(runtime, {kind: 'cancelled'});
     }
   }
 }
