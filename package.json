@@ -194,8 +194,11 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{mjs,cjs,mts,cts,json,css,scss,md,html,yml,yaml}": [
+    "*.{mjs,cjs,mts,cts,json,css,scss,html,yml,yaml}": [
       "prettier --write"
+    ],
+    "*.md": [
+      "node tools/agents/prettier-markdown.mjs"
     ]
   }
 }
