@@ -200,6 +200,71 @@ describe('UploadQueueService', () => {
     }
   });
 
+  it.each(['chunk', 'combine', 'status'] as const)(
+    'cancels the server session during teardown in %s',
+    async (phase) => {
+      const pending = new Promise<never>(() => undefined);
+      const cancel = vi.fn(async () => undefined);
+      const [item] = queue.enqueue(
+        [uploadFile('active.zip', 2)],
+        options({
+          ...stubDebugAdapter(),
+          uploadChunk: async () => (phase === 'chunk' ? pending : undefined),
+          combine: async () => (phase === 'combine' ? pending : undefined),
+          getStatus: async () => pending,
+          cancel,
+        }),
+      );
+      await flush();
+      const outcome = queue.completion(item.id).catch((error: DOMException) => error.name);
+      TestBed.resetTestingModule();
+      expect(await outcome).toBe('AbortError');
+      await flush();
+      expect(cancel).toHaveBeenCalledExactlyOnceWith('debug-1');
+    },
+  );
+
+  it('cleans up an initiation resolving after injector teardown', async () => {
+    const initiation = deferred<{uploadId: string}>();
+    const cancel = vi.fn(async () => undefined);
+    const chunk = vi.fn(async () => undefined);
+    const [item] = queue.enqueue(
+      [uploadFile('late.zip', 2)],
+      options({
+        ...stubDebugAdapter(),
+        initiate: () => initiation.promise,
+        uploadChunk: chunk,
+        cancel,
+      }),
+    );
+    await flush();
+    const outcome = queue.completion(item.id).catch((error: DOMException) => error.name);
+    TestBed.resetTestingModule();
+    expect(await outcome).toBe('AbortError');
+    initiation.resolve({uploadId: 'late-destroyed-session'});
+    await flush();
+    expect(cancel).toHaveBeenCalledExactlyOnceWith('late-destroyed-session');
+    expect(chunk).not.toHaveBeenCalled();
+  });
+
+  it('keeps teardown terminal when server cancellation rejects', async () => {
+    const [item] = queue.enqueue(
+      [uploadFile('active.zip', 2)],
+      options({
+        ...stubDebugAdapter(),
+        uploadChunk: () => new Promise<void>(() => undefined),
+        cancel: async () => {
+          throw new Error('Cleanup failed');
+        },
+      }),
+    );
+    await flush();
+    TestBed.resetTestingModule();
+    await flush();
+    expect(queue.items()[0]).toMatchObject({status: 'cancelled', error: {phase: 'cancel', message: 'Cleanup failed'}});
+    await expect(queue.completion(item.id)).rejects.toMatchObject({name: 'AbortError'});
+  });
+
   it('uploads one file through initiate, ordered chunks and combine, then resolves completion', async () => {
     const calls: string[] = [];
     const adapter: UploadAdapter = {

@@ -19,14 +19,15 @@ export function createS3DemoAdapter(
   destination: S3DemoDestination,
   onStored: (objectPath: string) => void,
 ): UploadAdapter {
-  const sessions = new Map<string, {file: File; url: string}>();
+  const sessions = new Map<string, {contentType: string; url: string}>();
   return {
     initiate: async (file) => {
       const uploadId = crypto.randomUUID();
       // Encode segments independently: slashes separate keys, while spaces, #, %, etc. remain data.
-      const key = [destination.prefix.replace(/^\/+|\/+$/g, ''), file.name].filter(Boolean).join('/');
+      const prefix = destination.prefix;
+      const key = prefix && !prefix.endsWith('/') ? `${prefix}/${file.name}` : `${prefix}${file.name}`;
       const url = '/api/s3/' + [destination.bucket, ...key.split('/')].map(encodeURIComponent).join('/');
-      sessions.set(uploadId, {file, url});
+      sessions.set(uploadId, {contentType: file.type || 'application/octet-stream', url});
       return {uploadId};
     },
     uploadChunk: async (request) => {
@@ -35,20 +36,20 @@ export function createS3DemoAdapter(
       if (request.totalChunks !== 1) throw new Error('Whole-object PUT requires exactly one chunk');
       request.signal.throwIfAborted();
       // Hash in the signal-bearing phase. Web Crypto itself cannot be aborted; do not send after cancellation.
-      const bytes = await session.file.arrayBuffer();
+      const bytes = await request.chunk.arrayBuffer();
       request.signal.throwIfAborted();
       const digest = await crypto.subtle.digest('SHA-256', bytes);
       request.signal.throwIfAborted();
       const sha256 = Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
       const headers: Record<string, string> = {
-        'Content-Type': session.file.type || 'application/octet-stream',
+        'Content-Type': session.contentType,
         'x-amz-content-sha256': sha256,
       };
       if (!destination.overwrite) headers['If-None-Match'] = '*';
       try {
         await firstValueFrom(
           http
-            .put(session.url, session.file, {headers, observe: 'events', reportProgress: true, responseType: 'text'})
+            .put(session.url, request.chunk, {headers, observe: 'events', reportProgress: true, responseType: 'text'})
             .pipe(
               tap((event) => {
                 if (event.type === HttpEventType.UploadProgress) request.onProgress(event.loaded);

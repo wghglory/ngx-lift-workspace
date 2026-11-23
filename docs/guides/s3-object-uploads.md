@@ -25,8 +25,8 @@ S3 service. The completed-destinations list is local to this demo component; it 
 
 | Queue method           | Application adapter responsibility                                                                                       |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `initiate(file)`       | Allocate a local ID and capture the File and destination URL. No server session is needed.                               |
-| `uploadChunk(request)` | Hash the whole file, send one raw PUT, map progress, and abort HttpClient on signal cancellation.                        |
+| `initiate(file)`       | Allocate a local ID and capture the content type and destination URL. No server session is needed.                       |
+| `uploadChunk(request)` | Hash the supplied whole-file blob, send one raw PUT, map progress, and abort HttpClient on signal cancellation.          |
 | `combine()`            | No remote assembly: PUT has already committed the object. Notify the application after the HTTP response.                |
 | `cancel()`             | Release local state. Aborting a PUT is not proof that the server did not commit it; do not delete an object as rollback. |
 | `getStatus()`          | Omit when a successful PUT response is the final acknowledgement.                                                        |
@@ -36,10 +36,13 @@ rejects multi-chunk calls in the adapter. Sending each generic queue chunk to th
 replace the object, not assemble it.
 
 The application captures bucket, prefix and overwrite policy when it enqueues a batch. It encodes key segments
-independently and sends `Content-Type`, `x-amz-content-sha256`, and, with overwrite disabled, `If-None-Match: *`.
-Authentication and S3 signing belong to the same-origin proxy. This endpoint is an example API contract; a real
-application must map it to its own authenticated server. Path-based proxies also need an explicit policy for dot-only
-key segments and other URL-normalized keys; use an opaque key parameter if arbitrary S3 keys must be preserved.
+independently, preserves leading and repeated prefix slashes, and sends `Content-Type`, `x-amz-content-sha256`, and,
+with overwrite disabled, `If-None-Match: *`. Authentication and S3 signing belong to the same-origin proxy. This
+endpoint is an example API contract; a real application must map it to its own authenticated server. Path-based proxies
+also need an explicit policy for dot-only key segments and other URL-normalized keys; use an opaque key parameter if
+arbitrary S3 keys must be preserved. The adapter retains only URL and MIME metadata for retries; the queue owns the file
+data. On submission, the application records the picker's Browse button as the stable focus target for closing the
+transfer window.
 
 Hashing reads the entire file into memory, so the demo restricts each file to **16 MiB**. This is an example limit, not
 a library or S3 object limit. Hashing runs in the phase receiving an AbortSignal. Web Crypto digest cannot itself be

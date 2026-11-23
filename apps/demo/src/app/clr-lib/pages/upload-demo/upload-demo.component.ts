@@ -1,6 +1,6 @@
 import {NgTemplateOutlet} from '@angular/common';
 import {HttpClient, HttpEventType} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, inject, signal, viewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -19,6 +19,7 @@ import {
   TranslationService,
   UploadComponent,
   UploadPanelComponent,
+  UploadPanelManager,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -53,6 +54,8 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
 export class UploadDemoComponent {
   private readonly translation = inject(TranslationService);
   private readonly queue = inject(UploadQueueService);
+  private readonly panelManager = inject(UploadPanelManager);
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly http = inject(HttpClient);
   readonly registeredCount = signal(0);
   readonly cancelledCount = signal(0);
@@ -195,6 +198,12 @@ export class UploadDemoComponent {
 
   confirmUpload(): void {
     const files = this.stagedFiles();
+    if (files.length)
+      this.openPanel(
+        this.modalOpen()
+          ? '[data-testid="upload-demo-modal-open"]'
+          : '[data-testid="upload-demo-confirm-first"] .cll-upload__browse',
+      );
     this.confirmOpen.set(false);
     this.modalOpen.set(false);
     if (!files.length) return;
@@ -287,6 +296,7 @@ export class UploadDemoComponent {
 
   /** Adds synthetic files through the headless queue so panel journeys run without the OS dialog. */
   addDemoFiles(): void {
+    this.openPanel('[data-testid="upload-demo-add-files"]');
     this.queue.enqueue(
       [
         new File([new Uint8Array(1_400_000)], 'release-bundle.zip'),
@@ -304,12 +314,19 @@ export class UploadDemoComponent {
     );
   }
 
+  private openPanel(triggerSelector: string): void {
+    this.panelManager.ensurePanel();
+    const trigger = this.host.nativeElement.querySelector<HTMLElement>(triggerSelector);
+    if (trigger) this.panelManager.setTrigger(trigger);
+  }
+
   transferDemo(): void {
     void this.addAndAwait();
   }
 
   /** Awaits completion so both the success and abort/failure paths are observable in the browser. */
   transferHttp(): void {
+    this.openPanel('[data-testid="upload-demo-http-transfer"]');
     this.httpResult.set('');
     const [item] = this.queue.enqueue([new File([new Uint8Array(700_000)], 'http-bundle.zip')], {
       adapter: this.httpAdapter,

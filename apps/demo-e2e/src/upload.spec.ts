@@ -156,6 +156,7 @@ test('cancel-all in the confirmation closes the panel and clears the queue', asy
   await panel.locator('.cll-upload-panel__confirm-cancel').click();
   await expect(panel.locator('.cll-upload-panel__card')).toHaveCount(0);
   await expect(panel.locator('.cll-upload-panel__badge')).toHaveCount(0);
+  await expect(page.getByTestId('upload-demo-add-files')).toBeFocused();
 });
 
 // Safari uses Option+Tab to include buttons when full keyboard access is off.
@@ -296,6 +297,8 @@ test('HttpClient adapter maps stubbed progress events and reports success @cross
 
   await page.getByTestId('upload-demo-http-transfer').click();
   await expect(page.getByTestId('upload-demo-http-result')).toHaveText('success');
+  await page.locator('.cll-upload-panel__done').click();
+  await expect(page.getByTestId('upload-demo-http-transfer')).toBeFocused();
 });
 
 test('HttpClient adapter surfaces a stubbed server failure', async ({page}) => {
@@ -348,6 +351,10 @@ test('confirm-first staging enqueues only after confirmation @cross-browser-smok
   await page.getByTestId('upload-demo-confirm').click();
   await expect(page.locator('.cll-upload-panel')).toContainText('staged.zip');
   expect(await queuedItemCount(page)).toBe(before + 1);
+  await page.locator('.cll-upload-panel__done').click();
+  await expect(
+    page.getByTestId('upload-demo-confirm-first').getByRole('button', {name: 'Browse', exact: true}),
+  ).toBeFocused();
 });
 
 test('the minimized panel survives in-app navigation and restores @cross-browser-smoke', async ({page}) => {
@@ -413,4 +420,14 @@ test('picker validation has an associated live error description', async ({page}
   );
   await expect(page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true})).toBeVisible();
   await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
+});
+
+test('confirmed modal uploads return focus to the persistent modal launcher', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const launcher = page.getByTestId('upload-demo-modal-open');
+  await launcher.click();
+  await page.locator('clr-modal cll-upload input[type="file"]').first().setInputFiles(zipFile('modal.zip'));
+  await page.getByTestId('upload-demo-modal-confirm').click();
+  await page.locator('.cll-upload-panel__done').click();
+  await expect(launcher).toBeFocused();
 });

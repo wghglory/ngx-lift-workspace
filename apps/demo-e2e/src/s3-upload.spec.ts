@@ -187,3 +187,28 @@ test('S3 fields and teaching text render in every locale at a narrow width', asy
     expect(await demo.evaluate((element) => element.scrollWidth <= element.clientWidth + 1)).toBe(true);
   }
 });
+
+test('S3 preserves leading and repeated prefix slashes as distinct object keys', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const demo = page.getByTestId('upload-demo-s3');
+  for (const prefix of ['documents/', '/documents/', '//documents//']) {
+    await demo.getByLabel('Object key prefix', {exact: true}).fill(prefix);
+    await demo.locator('input[type="file"]').first().setInputFiles(file('same.txt'));
+    await demo.getByRole('button', {name: 'Upload', exact: true}).click();
+    await expect(demo.getByTestId('s3-demo-stored')).toContainText('/api/s3/demo-uploads/' + prefix + 'same.txt');
+  }
+  await expect(demo.getByTestId('s3-demo-stored').locator('li')).toHaveCount(3);
+  await expect(page.locator('.cll-upload-panel [data-status="error"]')).toHaveCount(0);
+});
+
+test('S3 Done returns keyboard focus to its Browse control', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const demo = page.getByTestId('upload-demo-s3');
+  await demo.locator('input[type="file"]').first().setInputFiles(file('focus.txt'));
+  await demo.getByRole('button', {name: 'Upload', exact: true}).click();
+  const done = page.locator('.cll-upload-panel').getByRole('button', {name: 'Done', exact: true});
+  await expect(done).toBeVisible();
+  await done.focus();
+  await page.keyboard.press('Enter');
+  await expect(demo.getByRole('button', {name: 'Browse', exact: true})).toBeFocused();
+});

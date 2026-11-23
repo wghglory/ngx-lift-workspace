@@ -582,9 +582,7 @@ export class UploadQueueService {
 
   private dispose(): void {
     for (const runtime of this.runtimes.values()) {
-      runtime.controller.abort();
-      this.clearTimer(runtime);
-      if (!runtime.settlement) this.settle(runtime, {kind: 'cancelled'});
+      if (!runtime.settlement) this.cancel(runtime.id);
     }
   }
 }
