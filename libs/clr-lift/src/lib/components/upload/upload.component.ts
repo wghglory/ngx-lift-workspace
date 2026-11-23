@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  DestroyRef,
   PLATFORM_ID,
   computed,
   effect,
@@ -81,6 +82,7 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   private readonly retryWatch = signal<readonly {readonly id: string; readonly attempt: number}[]>([]);
   readonly dragOver = signal(false);
   private dragDepth = 0;
+  private selectionVersion = 0;
   readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
   readonly showMaxSizeHint = computed(() => Number.isFinite(this.maxSize()) && this.maxSize() > 0);
   readonly showMaxFilesHint = computed(() => this.maxFiles() > 0);
@@ -95,6 +97,9 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
+    inject(DestroyRef).onDestroy(() => {
+      this.selectionVersion++;
+    });
     effect(() => {
       for (const item of this.queue.items()) {
         if (this.tracked.has(item.id) && item.error?.phase === 'cancel' && !this.reportedCancelErrors.has(item.id)) {
@@ -171,8 +176,9 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.dragDepth = 0;
     this.dragOver.set(false);
     if (this.disabledState() || !event.dataTransfer) return;
+    const selectionVersion = this.selectionVersion;
     const files = await filesFromDataTransfer(event.dataTransfer);
-    if (this.disabledState()) return;
+    if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
     this.ingest(files);
     this.onTouched();
   }
@@ -266,6 +272,7 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   }
 
   private clearItems(): void {
+    this.selectionVersion++;
     for (const id of this.tracked.keys()) this.queue.remove(id);
     this.tracked.clear();
     this.reportedCancelErrors.clear();
@@ -273,6 +280,7 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   }
 
   private cancelTracked(): void {
+    this.selectionVersion++;
     for (const id of this.tracked.keys()) this.queue.cancel(id);
   }
 

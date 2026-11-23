@@ -309,7 +309,11 @@ export class UploadQueueService {
   }
 
   private isCurrent(runtime: Runtime): boolean {
-    return this.runtimes.get(runtime.id) === runtime && this.item(runtime.id)?.status !== 'cancelled';
+    return (
+      this.runtimes.get(runtime.id) === runtime &&
+      runtime.settlement === undefined &&
+      !runtime.controller.signal.aborted
+    );
   }
 
   private updateProgress(runtime: Runtime): void {
@@ -373,6 +377,7 @@ export class UploadQueueService {
       }
       if (!resume || resume === 'initiate' || resume === 'chunk') {
         await this.uploadChunks(runtime);
+        if (!this.isCurrent(runtime)) throw abortError();
       }
       if (!resume || resume === 'initiate' || resume === 'chunk' || resume === 'combine') {
         runtime.phase = 'combine';
@@ -385,6 +390,7 @@ export class UploadQueueService {
           const uploadId = runtime.uploadId;
           if (!uploadId) throw new Error('combine requires a server upload id');
           await this.withAbort(runtime.adapter.combine({uploadId, totalChunks: this.totalChunks(runtime)}), signal);
+          if (!this.isCurrent(runtime)) throw abortError();
           runtime.combined = true;
         }
       }
@@ -492,6 +498,7 @@ export class UploadQueueService {
     const uploadId = runtime.uploadId;
     if (!uploadId) throw new Error('status polling requires a server upload id');
     for (;;) {
+      if (!this.isCurrent(runtime)) throw abortError();
       const result: UploadStatusResult = await this.withAbort(runtime.adapter.getStatus(uploadId), signal);
       if (!this.isCurrent(runtime)) throw abortError();
       runtime.processingProgress = clamp(Math.round(result.progress), 0, 100);

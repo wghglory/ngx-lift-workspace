@@ -142,6 +142,40 @@ describe('UploadQueueService', () => {
     expect(chunk).not.toHaveBeenCalled();
   });
 
+  it.each(['cancel', 'remove'] as const)(
+    'does not combine when %s races the final chunk continuation',
+    async (action) => {
+      let id = '';
+      let statusAtCancellation: string | undefined;
+      const combine = vi.fn(async () => undefined);
+      const cancelLater = (remaining: number): void => {
+        queueMicrotask(() => {
+          if (remaining) cancelLater(remaining - 1);
+          else {
+            statusAtCancellation = queue.items()[0]?.status;
+            queue[action](id);
+          }
+        });
+      };
+      [id] = queue
+        .enqueue(
+          [uploadFile('boundary.zip', 2)],
+          options({
+            ...stubDebugAdapter(),
+            uploadChunk: async () => {
+              cancelLater(5);
+            },
+            combine,
+          }),
+        )
+        .map((item) => item.id);
+      await flush();
+      expect(statusAtCancellation).toBe('uploading');
+      expect(combine).not.toHaveBeenCalled();
+      expect(queue.items()[0]?.status).toBe(action === 'cancel' ? 'cancelled' : undefined);
+    },
+  );
+
   it('uploads one file through initiate, ordered chunks and combine, then resolves completion', async () => {
     const calls: string[] = [];
     const adapter: UploadAdapter = {

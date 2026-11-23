@@ -321,6 +321,55 @@ describe('UploadComponent dropzone', () => {
     return {preventDefault: () => undefined, type} as unknown as DragEvent;
   }
 
+  it.each(['reset', 'clear', 'disable', 'destroy'] as const)(
+    'invalidates a pending directory drop on %s',
+    async (action) => {
+      const {component} = create({multiple: true});
+      const queue = TestBed.inject(UploadQueueService);
+      let release: (entries: FileSystemEntry[]) => void = () => undefined;
+      let reads = 0;
+      const directory = {
+        isDirectory: true,
+        isFile: false,
+        createReader: () => ({
+          readEntries: (next: (entries: FileSystemEntry[]) => void) => {
+            if (reads++ === 0) release = next;
+            else next([]);
+          },
+        }),
+      } as unknown as FileSystemEntry;
+      const child = {
+        isFile: true,
+        file: (next: (value: File) => void) => next(file('late.zip')),
+      } as unknown as FileSystemEntry;
+      let changes = 0;
+      let touches = 0;
+      component.registerOnChange(() => {
+        changes++;
+      });
+      component.registerOnTouched(() => {
+        touches++;
+      });
+      const pending = component.onDrop({
+        preventDefault: () => undefined,
+        dataTransfer: {files: [], items: [{kind: 'file', webkitGetAsEntry: () => directory}]},
+      } as unknown as DragEvent);
+      if (action === 'reset') component.writeValue([]);
+      if (action === 'clear') component.clear();
+      if (action === 'disable') {
+        component.setDisabledState(true);
+        component.setDisabledState(false);
+      }
+      if (action === 'destroy') TestBed.resetTestingModule();
+      release([child]);
+      await pending;
+      expect(component.value()).toEqual([]);
+      expect(queue.items()).toEqual([]);
+      expect(changes).toBe(0);
+      expect(touches).toBe(0);
+    },
+  );
+
   it('renders the dropzone with browse and folder actions plus the used count', () => {
     const {element} = create({multiple: true, maxFiles: 20, accept: '.zip', maxSize: 20});
 
