@@ -3028,6 +3028,15 @@ export const enTranslations = {
     'A ValidatorFn that returns the valuesMismatch error on the group when two non-empty values differ, or null otherwise.',
   'sameValueValidator.minLengthError': 'Use at least 8 characters.',
   'nav.upload': 'Upload files',
+  'uploadDemo.s3.title': 'S3 object uploads',
+  'uploadDemo.s3.note':
+    'Simulated S3 proxy: select files, choose a bucket and prefix, then upload. SHA-256 and overwrite protection use real request headers. Upload the same key twice to see HTTP 412.',
+  'uploadDemo.s3.bucket': 'Bucket',
+  'uploadDemo.s3.prefix': 'Object key prefix',
+  'uploadDemo.s3.overwrite': 'Overwrite existing objects',
+  'uploadDemo.s3.completed': 'Completed object destinations',
+  'uploadDemo.s3.limits':
+    'One PUT per file, one file at a time. Files are limited to 16 MiB because hashing reads the whole file into memory. No multipart, folder hierarchy, or resume after reload.',
   'uploadDemo.title': 'Upload files',
   'uploadDemo.confirmFirst': 'Confirm-first upload',
   'uploadDemo.confirmFirstNote': 'Select files to stage them; nothing uploads until you confirm.',

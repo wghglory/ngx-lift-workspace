@@ -3182,6 +3182,15 @@ export const deTranslations: Record<string, string> = {
     'Eine ValidatorFn, die bei abweichenden nicht-leeren Werten den Fehler valuesMismatch auf der Gruppe zurückgibt, sonst null.',
   'sameValueValidator.minLengthError': 'Verwenden Sie mindestens 8 Zeichen.',
   'nav.upload': 'Dateien hochladen',
+  'uploadDemo.s3.title': 'S3-Objekte hochladen',
+  'uploadDemo.s3.note':
+    'Simulierter S3-Proxy: Dateien, Bucket und Präfix wählen, dann hochladen. SHA-256 und Überschreibschutz verwenden echte Anfrageheader. Derselbe Schlüssel löst beim zweiten Upload HTTP 412 aus.',
+  'uploadDemo.s3.bucket': 'Bucket',
+  'uploadDemo.s3.prefix': 'Präfix des Objektschlüssels',
+  'uploadDemo.s3.overwrite': 'Vorhandene Objekte überschreiben',
+  'uploadDemo.s3.completed': 'Ziele abgeschlossener Objektuploads',
+  'uploadDemo.s3.limits':
+    'Ein PUT pro Datei, eine Datei nach der anderen. Maximal 16 MiB pro Datei, da der Hash die gesamte Datei in den Speicher liest. Kein Multipart, keine Ordnerhierarchie und keine Fortsetzung nach dem Neuladen.',
   'uploadDemo.title': 'Dateien hochladen',
   'uploadDemo.confirmFirst': 'Upload mit Bestätigung',
   'uploadDemo.confirmFirstNote': 'Dateien auswählen und prüfen; der Upload startet erst nach der Bestätigung.',

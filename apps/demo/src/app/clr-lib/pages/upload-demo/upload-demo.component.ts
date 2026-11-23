@@ -23,6 +23,8 @@ import {
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
+import {S3UploadDemoComponent} from './s3-upload-demo.component';
+
 import {highlight} from '../../../shared/utils/highlight.util';
 
 const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
@@ -39,6 +41,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
     NgTemplateOutlet,
     PageContainerComponent,
     ReactiveFormsModule,
+    S3UploadDemoComponent,
     TranslatePipe,
     UploadComponent,
     UploadPanelComponent,

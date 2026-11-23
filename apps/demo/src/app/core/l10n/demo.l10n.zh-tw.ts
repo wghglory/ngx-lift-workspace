@@ -2778,6 +2778,15 @@ export const zhTWTranslations: Record<string, string> = {
     '回傳一個 ValidatorFn：兩個非空值不同時在表單群組給出 valuesMismatch 錯誤，否則回傳 null。',
   'sameValueValidator.minLengthError': '請至少輸入 8 個字元。',
   'nav.upload': '上傳檔案',
+  'uploadDemo.s3.title': 'S3 物件上傳',
+  'uploadDemo.s3.note':
+    '模擬 S3 Proxy：選取檔案、儲存貯體和前綴，然後上傳。SHA-256 和覆寫保護使用實際要求標頭。重複上傳相同索引鍵可查看 HTTP 412。',
+  'uploadDemo.s3.bucket': '儲存貯體',
+  'uploadDemo.s3.prefix': '物件索引鍵前綴',
+  'uploadDemo.s3.overwrite': '覆寫現有物件',
+  'uploadDemo.s3.completed': '已完成上傳的物件目的地',
+  'uploadDemo.s3.limits':
+    '每個檔案使用一次 PUT，檔案依序上傳。雜湊計算會將整個檔案讀入記憶體，因此檔案上限為 16 MiB。不支援分段上傳、資料夾階層或重新載入後續傳。',
   'uploadDemo.title': '上傳檔案',
   'uploadDemo.confirmFirst': '確認後上傳',
   'uploadDemo.confirmFirstNote': '選擇檔案會先暫存，確認後才會開始上傳。',

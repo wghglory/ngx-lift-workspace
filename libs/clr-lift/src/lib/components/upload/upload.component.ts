@@ -13,7 +13,13 @@ import {
   output,
   signal,
 } from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
+import {
+  ControlValueAccessor,
+  NG_VALUE_ACCESSOR,
+  NG_VALIDATORS,
+  type ValidationErrors,
+  type Validator,
+} from '@angular/forms';
 import {ClarityIcons, ClarityModule, uploadCloudIcon} from '@clr/angular';
 import {UPLOAD_CHUNK_25MB, type UploadAdapter, type UploadError, type UploadItem, UploadQueueService} from 'ngx-lift';
 
@@ -32,9 +38,12 @@ ClarityIcons.addIcons(uploadCloudIcon);
   templateUrl: './upload.component.html',
   styleUrls: ['./upload.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [{provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UploadComponent), multi: true}],
+  providers: [
+    {provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => UploadComponent), multi: true},
+    {provide: NG_VALIDATORS, useExisting: forwardRef(() => UploadComponent), multi: true},
+  ],
 })
-export class UploadComponent implements ControlValueAccessor {
+export class UploadComponent implements ControlValueAccessor, Validator {
   private static nextId = 0;
 
   private readonly queue = inject(UploadQueueService);
@@ -43,6 +52,7 @@ export class UploadComponent implements ControlValueAccessor {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly tracked = new Map<string, true>();
+  private readonly reportedCancelErrors = new Set<string>();
 
   readonly adapter = input.required<UploadAdapter>();
   readonly multiple = input(false);
@@ -80,10 +90,19 @@ export class UploadComponent implements ControlValueAccessor {
   readonly inputId: string = `cll-upload-${UploadComponent.nextId++}`;
 
   private onChange: (value: readonly File[]) => void = () => undefined;
+  private onValidatorChange: () => void = () => undefined;
   private onTouched: () => void = () => undefined;
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
+    effect(() => {
+      for (const item of this.queue.items()) {
+        if (this.tracked.has(item.id) && item.error?.phase === 'cancel' && !this.reportedCancelErrors.has(item.id)) {
+          this.reportedCancelErrors.add(item.id);
+          this.uploadError.emit([item]);
+        }
+      }
+    });
     effect(() => {
       if (this.disabled()) this.cancelTracked();
     });
@@ -109,6 +128,7 @@ export class UploadComponent implements ControlValueAccessor {
   writeValue(files: readonly File[] | null): void {
     this.clearItems();
     this.value.set(files ?? []);
+    this.setErrors([]);
   }
 
   registerOnChange(fn: (value: readonly File[]) => void): void {
@@ -117,6 +137,20 @@ export class UploadComponent implements ControlValueAccessor {
 
   registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
+  }
+
+  /** Angular selection validation; transport failures do not invalidate the selected-file value. */
+  validate(): ValidationErrors | null {
+    return this.errors().length ? {upload: this.errors()} : null;
+  }
+
+  registerOnValidatorChange(fn: () => void): void {
+    this.onValidatorChange = fn;
+  }
+
+  private setErrors(errors: readonly UploadError[]): void {
+    this.errors.set(errors);
+    this.onValidatorChange();
   }
 
   setDisabledState(disabled: boolean): void {
@@ -128,8 +162,8 @@ export class UploadComponent implements ControlValueAccessor {
     const input = event.target as HTMLInputElement;
     const selected = Array.from(input.files ?? []);
     input.value = '';
-    this.onTouched();
     this.ingest(selected);
+    this.onTouched();
   }
 
   async onDrop(event: DragEvent): Promise<void> {
@@ -139,8 +173,8 @@ export class UploadComponent implements ControlValueAccessor {
     if (this.disabledState() || !event.dataTransfer) return;
     const files = await filesFromDataTransfer(event.dataTransfer);
     if (this.disabledState()) return;
-    this.onTouched();
     this.ingest(files);
+    this.onTouched();
   }
 
   onDragEnter(event: DragEvent): void {
@@ -190,7 +224,7 @@ export class UploadComponent implements ControlValueAccessor {
         accepted.push(file);
       }
     }
-    this.errors.set(rejections);
+    this.setErrors(rejections);
     if (rejections.length) this.validationErrors.emit(rejections);
     if (!accepted.length) return;
 
@@ -219,20 +253,22 @@ export class UploadComponent implements ControlValueAccessor {
 
   clear(): void {
     this.clearItems();
+    this.setErrors([]);
     if (!this.value().length) return;
     this.value.set([]);
     this.onChange([]);
+    this.onTouched();
     this.filesChange.emit([]);
-    this.errors.set([]);
   }
 
   clearValidationErrors(): void {
-    this.errors.set([]);
+    this.setErrors([]);
   }
 
   private clearItems(): void {
     for (const id of this.tracked.keys()) this.queue.remove(id);
     this.tracked.clear();
+    this.reportedCancelErrors.clear();
     this.retryWatch.set([]);
   }
 
@@ -264,9 +300,9 @@ export class UploadComponent implements ControlValueAccessor {
       // The panel can clear a cancelled item before this rejection is observed.
       const item = this.queue.items().find((candidate) => candidate.id === id) ?? initial;
       const aborted = error instanceof DOMException && error.name === 'AbortError';
-      if (aborted && item.error?.phase !== 'cancel') {
+      if (aborted) {
         this.uploadCancelled.emit([{...item, status: 'cancelled'}]);
-      } else if (aborted || item.status === 'error') {
+      } else if (item.status === 'error') {
         this.uploadError.emit([item]);
         if (item.status === 'error') this.retryWatch.update((list) => [...list, {id, attempt: item.attempt}]);
       }

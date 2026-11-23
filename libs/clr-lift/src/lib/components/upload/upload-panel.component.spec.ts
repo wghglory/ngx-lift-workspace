@@ -68,6 +68,29 @@ describe('UploadPanelComponent', () => {
     return blocked;
   }
 
+  it('uses determinate processing only after the server reports task progress', async () => {
+    let finish: (value: {status: 'success'; progress: number}) => void = () => undefined;
+    const pending = new Promise<{status: 'success'; progress: number}>((resolve) => {
+      finish = resolve;
+    });
+    let polls = 0;
+    const adapter: UploadAdapter = {
+      initiate: async () => ({uploadId: 'processing'}),
+      uploadChunk: async () => undefined,
+      combine: async () => undefined,
+      getStatus: async () => (++polls === 1 ? {status: 'processing', progress: 42} : pending),
+      cancel: async () => undefined,
+    };
+    const [item] = queue.enqueue([uploadFile('processing.zip')], options(adapter));
+    await flush();
+    expect(queue.items()[0].processingProgress).toBe(42);
+    expect(panel().querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('42');
+    expect(panel().querySelector('.cll-upload-panel__bar--indeterminate')).toBeNull();
+    queue.cancel(item.id);
+    finish({status: 'success', progress: 100});
+    await flush();
+  });
+
   it('stays hidden until the first item exists and renders rows afterwards', async () => {
     expect(panel().querySelector('.cll-upload-panel__card')).toBeNull();
 

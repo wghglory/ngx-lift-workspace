@@ -5,6 +5,8 @@
     type="file"
     [id]="controlId() || inputId"
     [accept]="accept()"
+    [attr.aria-invalid]="errors().length ? true : null"
+    [attr.aria-describedby]="errors().length ? inputId + '-errors' : null"
     [multiple]="multiple()"
     [disabled]="disabledState()"
     [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
@@ -41,6 +43,7 @@
       <button
         type="button"
         class="btn btn-sm btn-primary cll-upload__browse"
+        [attr.aria-describedby]="errors().length ? inputId + '-errors' : null"
         [disabled]="disabledState()"
         (click)="file.click(); $event.stopPropagation()"
       >
@@ -95,26 +98,28 @@
   }
 </div>
 
-@if (errors().length) {
-  <ul class="cll-upload__errors">
-    @for (error of errors(); track $index) {
-      <li class="clr-error">
-        <span class="cll-upload__error-name">{{ error.fileName }}</span>
-        @switch (error.code) {
-          @case ('upload.validation.accept') {
-            {{ 'upload.validation.accept' | translate }}
+<div [id]="inputId + '-errors'" aria-live="polite" aria-atomic="true">
+  @if (errors().length) {
+    <ul class="cll-upload__errors">
+      @for (error of errors(); track $index) {
+        <li class="clr-error">
+          <span class="cll-upload__error-name">{{ error.fileName }}</span>
+          @switch (error.code) {
+            @case ('upload.validation.accept') {
+              {{ 'upload.validation.accept' | translate }}
+            }
+            @case ('upload.validation.maxSize') {
+              {{ 'upload.validation.maxSize' | translate: error.message }}
+            }
+            @case ('upload.validation.maxFiles') {
+              {{ 'upload.validation.maxFiles' | translate: error.message }}
+            }
           }
-          @case ('upload.validation.maxSize') {
-            {{ 'upload.validation.maxSize' | translate: error.message }}
-          }
-          @case ('upload.validation.maxFiles') {
-            {{ 'upload.validation.maxFiles' | translate: error.message }}
-          }
-        }
-      </li>
-    }
-  </ul>
-  <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
-    {{ 'upload.clearValidationErrors' | translate }}
-  </button>
-}
+        </li>
+      }
+    </ul>
+    <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
+      {{ 'upload.clearValidationErrors' | translate }}
+    </button>
+  }
+</div>

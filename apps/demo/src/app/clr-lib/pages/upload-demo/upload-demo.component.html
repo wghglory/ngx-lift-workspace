@@ -239,6 +239,11 @@
     </div>
   </app-demo-playground>
 
+  <section id="s3-object-uploads" cds-layout="vertical gap:sm" [attr.aria-label]="'uploadDemo.s3.title' | translate">
+    <h2>{{ 'uploadDemo.s3.title' | translate }}</h2>
+    <app-s3-upload-demo />
+  </section>
+
   <section cds-layout="vertical gap:md align:stretch">
     <h2>{{ 'common.apiReference' | translate }}</h2>
     <h3>UploadComponent (<code>cll-upload</code>)</h3>

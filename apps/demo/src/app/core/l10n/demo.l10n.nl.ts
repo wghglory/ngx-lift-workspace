@@ -3138,6 +3138,15 @@ export const nlTranslations: Record<string, string> = {
     'Een ValidatorFn die de fout valuesMismatch op de groep teruggeeft als twee niet-lege waarden verschillen, en anders null.',
   'sameValueValidator.minLengthError': 'Gebruik minimaal 8 tekens.',
   'nav.upload': 'Bestanden uploaden',
+  'uploadDemo.s3.title': 'S3-objecten uploaden',
+  'uploadDemo.s3.note':
+    'Gesimuleerde S3-proxy: selecteer bestanden, een bucket en een voorvoegsel en upload ze. SHA-256 en overschrijfbeveiliging gebruiken echte aanvraagheaders. Upload dezelfde sleutel tweemaal voor HTTP 412.',
+  'uploadDemo.s3.bucket': 'Bucket',
+  'uploadDemo.s3.prefix': 'Voorvoegsel van objectsleutel',
+  'uploadDemo.s3.overwrite': 'Bestaande objecten overschrijven',
+  'uploadDemo.s3.completed': 'Bestemmingen van geüploade objecten',
+  'uploadDemo.s3.limits':
+    'Eén PUT per bestand, één bestand tegelijk. Maximaal 16 MiB per bestand omdat de hash het hele bestand in het geheugen leest. Geen multipart, mappenhiërarchie of hervatten na herladen.',
   'uploadDemo.title': 'Bestanden uploaden',
   'uploadDemo.confirmFirst': 'Uploaden met bevestiging',
   'uploadDemo.confirmFirstNote': 'Selecteer bestanden om ze voor te bereiden; er wordt niets geüpload tot u bevestigt.',

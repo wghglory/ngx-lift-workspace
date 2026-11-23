@@ -1,6 +1,8 @@
-import {ApplicationRef} from '@angular/core';
+import {ApplicationRef, Component} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
+import {FormControl, ReactiveFormsModule} from '@angular/forms';
+import {By} from '@angular/platform-browser';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
 import {TranslationService} from '../../services/translation.service';
@@ -27,6 +29,16 @@ async function select(component: UploadComponent, files: readonly File[]): Promi
   for (let index = 0; index < 40; index += 1) await Promise.resolve();
 }
 
+@Component({
+  imports: [ReactiveFormsModule, UploadComponent],
+  template:
+    '<cll-upload [formControl]="control" [adapter]="adapter" [autoEnqueue]="false" [multiple]="true" accept=".zip" />',
+})
+class BlurUploadHost {
+  readonly adapter = stubAdapter();
+  readonly control = new FormControl<readonly File[]>([], {nonNullable: true, updateOn: 'blur'});
+}
+
 describe('UploadComponent', () => {
   let translation: TranslationService;
 
@@ -45,6 +57,43 @@ describe('UploadComponent', () => {
     fixture.detectChanges();
     return fixture.componentInstance;
   }
+
+  it('commits the current selection on the first touch with updateOn blur', async () => {
+    const fixture = TestBed.createComponent(BlurUploadHost);
+    fixture.detectChanges();
+    const component: UploadComponent = fixture.debugElement.query(By.directive(UploadComponent)).componentInstance;
+    await select(component, [file('first.zip')]);
+    expect(fixture.componentInstance.control.value.map((item) => item.name)).toEqual(['first.zip']);
+    expect(fixture.componentInstance.control.touched).toBe(true);
+    await select(component, [file('second.zip')]);
+    expect(fixture.componentInstance.control.value.map((item) => item.name)).toEqual(['first.zip', 'second.zip']);
+    component.clear();
+    expect(fixture.componentInstance.control.value).toEqual([]);
+  });
+
+  it('integrates selection errors with Angular validation and accessible feedback', async () => {
+    const fixture = TestBed.createComponent(BlurUploadHost);
+    fixture.detectChanges();
+    const component: UploadComponent = fixture.debugElement.query(By.directive(UploadComponent)).componentInstance;
+    const control = fixture.componentInstance.control;
+    await select(component, [file('bad.txt')]);
+    fixture.detectChanges();
+    expect(control.hasError('upload')).toBe(true);
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    const errors: HTMLElement = fixture.nativeElement.querySelector('[aria-live="polite"]');
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(input.getAttribute('aria-describedby')).toBe(errors.id);
+    expect(errors.textContent).toContain('bad.txt');
+    component.clearValidationErrors();
+    expect(control.valid).toBe(true);
+    await select(component, [file('another.txt')]);
+    expect(control.invalid).toBe(true);
+    control.reset();
+    fixture.detectChanges();
+    expect(control.valid).toBe(true);
+    expect(component.errors()).toEqual([]);
+    expect(input.hasAttribute('aria-invalid')).toBe(false);
+  });
 
   it('reports rejected files without enqueueing them while accepted files still upload', async () => {
     const component = create({accept: '.zip'});
@@ -157,8 +206,9 @@ describe('UploadComponent', () => {
     component.setDisabledState(true);
     for (let index = 0; index < 20; index += 1) await Promise.resolve();
 
+    TestBed.inject(ApplicationRef).tick();
     expect(errors).toHaveLength(1);
-    expect(cancellations).toHaveLength(0);
+    expect(cancellations).toHaveLength(1);
     expect((errors[0] as {error?: {phase: string}}[])[0].error?.phase).toBe('cancel');
   });
 

@@ -2786,6 +2786,15 @@ export const zhCNTranslations: Record<string, string> = {
     '返回一个 ValidatorFn：两个非空值不同时在表单组上给出 valuesMismatch 错误，否则返回 null。',
   'sameValueValidator.minLengthError': '请至少输入 8 个字符。',
   'nav.upload': '上传文件',
+  'uploadDemo.s3.title': 'S3 对象上传',
+  'uploadDemo.s3.note':
+    '模拟 S3 代理：选择文件、存储桶和前缀，然后上传。SHA-256 和覆盖保护使用真实请求头。重复上传同一键可查看 HTTP 412。',
+  'uploadDemo.s3.bucket': '存储桶',
+  'uploadDemo.s3.prefix': '对象键前缀',
+  'uploadDemo.s3.overwrite': '覆盖现有对象',
+  'uploadDemo.s3.completed': '已完成上传的对象目标',
+  'uploadDemo.s3.limits':
+    '每个文件使用一次 PUT，文件依次上传。哈希计算会将整个文件读入内存，因此文件上限为 16 MiB。不支持分段上传、文件夹层级或刷新后续传。',
   'uploadDemo.title': '上传文件',
   'uploadDemo.confirmFirst': '确认后上传',
   'uploadDemo.confirmFirstNote': '选择文件先暂存，确认后才会开始上传。',

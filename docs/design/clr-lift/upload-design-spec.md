@@ -181,6 +181,7 @@ export interface UploadItem {
   readonly progress: number; // 0..100 aggregate across upload and processing
   readonly uploadedBytes: number; // acknowledged bytes plus reported in-flight bytes
   readonly attempt: number; // 1-based attempt for the current phase; increments on retry
+  readonly processingProgress?: number; // present after numeric server processing progress is reported
   uploadId?: string;
   error?: UploadError;
 }
@@ -751,6 +752,26 @@ Accessibility contract:
   manual assistive-technology decision remain separate records per the acceptance contract; the 2026-11-10 AT waiver is
   not a passed assessment.
 
+## Whole-object S3 demonstration
+
+The existing demo page also composes the queue with an application-owned whole-object PUT adapter; see the
+[S3 integration guide](../../guides/s3-object-uploads.md). This adds no public library API. The demo stages files,
+freezes bucket/prefix/overwrite context at enqueue, hashes file bytes, sends one PUT per object, and uses the shared
+panel for progress, cancellation and retry. Its endpoint is a local simulation, not backend acceptance evidence.
+
+Visible messages and accessible names are owned by the demo dictionaries in all eleven demo locales: S3 object uploads,
+simulation explanation, Bucket, Object key prefix, Overwrite existing objects, Completed object destinations, and the
+size/concurrency/multipart limitations. The Upload action reuses the existing translated confirmation label; file
+selection and panel actions reuse library messages. HTTP status numbers are transport diagnostics under the localized
+phase error. Standard Clarity fields and semantic form submission provide keyboard operation and labels; no new overlay
+or focus owner is introduced.
+
+The example limits files to 16 MiB because Web Crypto hashing reads the whole file into memory. It uploads files
+serially, preserves no folder hierarchy, implements no real multipart protocol, and cannot resume after reload. These
+limitations must remain visible alongside the example. Browser tests cover exact request bytes/headers, conditional
+overwrite, queued destination isolation, zero-byte files, retry and cancellation during hashing/transfer. Independent
+language acceptance remains separate from automated dictionary and accessibility checks.
+
 ## Demo and validation plan
 
 Planned work, not yet evidence:
@@ -952,3 +973,26 @@ cancellation finishes. The form example binds the actual `FormGroup`, with `toSi
   synchronous removal, status-retry state, and stale callbacks after manual and automatic retry.
 - No new public API, runtime dependency, or owned translation message is introduced. The human language acceptance and
   assistive-technology decision recorded above are unchanged.
+
+## Review hardening and S3 composition (2026-11-23)
+
+Maintainer-approved scope: address the review findings and deliver the whole-object S3 demo together in PR #252, against
+main. The S3 adapter remains application code with no new library export or runtime dependency.
+
+- CVA change precedes touch for selection/drop, including updateOn: 'blur'. NG_VALIDATORS exposes selection errors as
+  {upload: readonly UploadError[]} and notifies Angular when errors clear, reset or change. Rejections are announced in
+  a persistent polite region and associated with the picker and Browse button through unique descriptions.
+- Cancellation rejects existing completion awaiters immediately; server cleanup runs independently and can report a
+  cancel-phase error. A session ID arriving after cancellation/removal is cancelled best-effort, never uploaded.
+- UploadItem.processingProgress is optional and present only after numeric server task progress is reported. The panel
+  shows determinate processing then, and indeterminate processing while progress is unknown. Retrying status keeps known
+  processing progress; a fresh initiation clears it.
+- Keyboard Retry, Cancel and Remove restore focus to an available action for that item or a persistent panel control
+  when the row disappears; they do not move focus if another control already owns it. Error text uses semantic theme
+  tokens. Existing translated phase/error labels remain unchanged.
+
+Spec review: admission/consumer evidence/industry comparison retain the approved upload seam; this increment adds no
+public tool or dependency. Contracts, forms, lifecycle, keyboard/error semantics and test races are specified above; S3
+messages and limitations are listed in the whole-object demonstration section. The optional progress field is additive.
+Unit and browser regressions plus installed package checks provide engineering evidence; human language acceptance
+remains separate. Release/publication is outside this PR's readiness claim.

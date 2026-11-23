@@ -3186,6 +3186,15 @@ export const frTranslations: Record<string, string> = {
     'Une ValidatorFn qui renvoie l’erreur valuesMismatch sur le groupe quand deux valeurs non vides diffèrent, ou null sinon.',
   'sameValueValidator.minLengthError': 'Utilisez au moins 8 caractères.',
   'nav.upload': 'Téléverser des fichiers',
+  'uploadDemo.s3.title': 'Importer des objets S3',
+  'uploadDemo.s3.note':
+    'Proxy S3 simulé : choisissez les fichiers, le compartiment et le préfixe, puis importez. SHA-256 et la protection contre l’écrasement utilisent de vrais en-têtes. Importez deux fois la même clé pour obtenir HTTP 412.',
+  'uploadDemo.s3.bucket': 'Compartiment',
+  'uploadDemo.s3.prefix': 'Préfixe de clé d’objet',
+  'uploadDemo.s3.overwrite': 'Écraser les objets existants',
+  'uploadDemo.s3.completed': 'Destinations des objets importés',
+  'uploadDemo.s3.limits':
+    'Un PUT par fichier, un fichier à la fois. Limite de 16 MiB par fichier, car le hachage lit tout le fichier en mémoire. Sans import multipartie, hiérarchie de dossiers ni reprise après rechargement.',
   'uploadDemo.title': 'Téléverser des fichiers',
   'uploadDemo.confirmFirst': 'Téléversement avec confirmation',
   'uploadDemo.confirmFirstNote':

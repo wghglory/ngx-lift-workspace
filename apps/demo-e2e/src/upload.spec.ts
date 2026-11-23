@@ -279,6 +279,7 @@ test('ngModel and signal-form facade bindings reflect the selected files', async
 
 test('the upload playground and an active panel pass accessibility checks', async ({page}, testInfo) => {
   await page.goto('/clr-lift/components/upload');
+  await expect(page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true})).toBeVisible();
   await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 
   await selectFiles(page, 'upload-demo-basic', [zipFile('a11y.zip')]);
@@ -368,4 +369,48 @@ test('the minimized panel survives in-app navigation and restores @cross-browser
 
   await badge.click();
   await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
+});
+
+test('row retry, remove and cancel preserve keyboard focus on a stable window control', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
+  const panel = page.locator('.cll-upload-panel');
+  const header = panel.locator('.cll-upload-panel__minimize');
+  const retry = panel.locator('[data-status="error"]').getByRole('button', {name: 'Retry', exact: true});
+  await retry.focus();
+  await retry.press('Enter');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(header).toBeFocused();
+
+  await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
+  const remove = panel.locator('[data-status="error"]').getByRole('button', {name: /Dismiss failing/});
+  await remove.focus();
+  await remove.press('Enter');
+  await expect(header).toBeFocused();
+
+  await selectFiles(page, 'upload-demo-panel', [zipFile('cancel-focus.zip')]);
+  const cancel = panel.locator('[data-status="uploading"]').getByRole('button', {name: 'Cancel', exact: true});
+  await cancel.focus();
+  await cancel.press('Enter');
+  await expect(panel).toContainText('Cancelled');
+  await expect(header).toBeFocused();
+});
+
+test('picker validation has an associated live error description', async ({page}, testInfo) => {
+  await page.goto('/clr-lift/components/upload');
+  const picker = await selectFiles(page, 'upload-demo-basic', [
+    {name: 'bad.txt', mimeType: 'text/plain', buffer: Buffer.from('x')},
+  ]);
+  const input = picker.locator('input[type="file"]').first();
+  await expect(input).toHaveAttribute('aria-invalid', 'true');
+  const live = picker.locator('[aria-live="polite"]');
+  await expect(live).toContainText('bad.txt');
+  const id = await live.getAttribute('id');
+  await expect(input).toHaveAttribute('aria-describedby', String(id));
+  await expect(picker.getByRole('button', {name: 'Browse', exact: true})).toHaveAttribute(
+    'aria-describedby',
+    String(id),
+  );
+  await expect(page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true})).toBeVisible();
+  await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 });

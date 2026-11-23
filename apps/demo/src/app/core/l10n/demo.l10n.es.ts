@@ -3163,6 +3163,15 @@ export const esTranslations: Record<string, string> = {
     'Una ValidatorFn que devuelve el error valuesMismatch en el grupo cuando dos valores no vacíos difieren, o null en caso contrario.',
   'sameValueValidator.minLengthError': 'Usa al menos 8 caracteres.',
   'nav.upload': 'Subir archivos',
+  'uploadDemo.s3.title': 'Subir objetos a S3',
+  'uploadDemo.s3.note':
+    'Proxy S3 simulado: seleccione archivos, un bucket y un prefijo, y súbalos. SHA-256 y la protección contra sobrescritura usan cabeceras reales. Suba la misma clave dos veces para ver HTTP 412.',
+  'uploadDemo.s3.bucket': 'Bucket',
+  'uploadDemo.s3.prefix': 'Prefijo de clave de objeto',
+  'uploadDemo.s3.overwrite': 'Sobrescribir objetos existentes',
+  'uploadDemo.s3.completed': 'Destinos de objetos subidos',
+  'uploadDemo.s3.limits':
+    'Un PUT por archivo, un archivo a la vez. Límite de 16 MiB por archivo porque el cálculo del hash lee todo el archivo en memoria. Sin carga multiparte, jerarquía de carpetas ni reanudación tras recargar.',
   'uploadDemo.title': 'Subir archivos',
   'uploadDemo.confirmFirst': 'Carga con confirmación',
   'uploadDemo.confirmFirstNote': 'Seleccione archivos para prepararlos; nada se carga hasta que lo confirme.',

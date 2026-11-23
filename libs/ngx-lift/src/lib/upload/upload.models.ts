@@ -24,6 +24,8 @@ export interface UploadItem {
   readonly progress: number;
   readonly uploadedBytes: number;
   readonly attempt: number;
+  /** Numeric server task progress; absent until processing progress is reported. */
+  readonly processingProgress?: number;
   readonly uploadId?: string;
   readonly error?: UploadError;
 }

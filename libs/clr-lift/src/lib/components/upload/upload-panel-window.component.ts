@@ -1,9 +1,7 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  PLATFORM_ID,
   afterNextRender,
   computed,
   effect,
@@ -219,15 +217,18 @@ export class UploadPanelWindowComponent {
   }
 
   cancel(id: string): void {
+    this.restoreRowFocus(id);
     this.queue.cancel(id);
   }
 
   retry(id: string): void {
     // The completion promise rejects on failure; the panel reacts through item state instead.
+    this.restoreRowFocus(id);
     void this.queue.retry(id)?.catch(() => undefined);
   }
 
   remove(id: string): void {
+    this.restoreRowFocus(id);
     this.queue.remove(id);
   }
 
@@ -252,7 +253,7 @@ export class UploadPanelWindowComponent {
   }
 
   isIndeterminate(item: UploadItem): boolean {
-    return item.status === 'processing';
+    return item.status === 'processing' && item.processingProgress === undefined;
   }
 
   fileExtension(item: UploadItem): string {
@@ -269,7 +270,7 @@ export class UploadPanelWindowComponent {
 
   hasErrorDetail(item: UploadItem): boolean {
     const message = item.error?.message;
-    return Boolean(message) && !message!.startsWith('upload.');
+    return Boolean(message && !message.startsWith('upload.'));
   }
 
   formatBytes(bytes: number): string {
@@ -302,6 +303,27 @@ export class UploadPanelWindowComponent {
     const remainingBytes = item.file.size - item.uploadedBytes;
     if (remainingBytes <= 0) return undefined;
     return Math.max(1, Math.round(remainingBytes / rate));
+  }
+
+  private restoreRowFocus(id: string): void {
+    const active = this.host.nativeElement.ownerDocument.activeElement;
+    if (!(active instanceof HTMLElement) || !this.host.nativeElement.contains(active)) return;
+    const row = active.closest<HTMLElement>('[data-upload-id]');
+    if (row?.dataset['uploadId'] !== id) return;
+    afterNextRender(
+      () => {
+        const document = this.host.nativeElement.ownerDocument;
+        // Preserve a still-focused action and any deliberate user move outside this action.
+        if (document.activeElement !== document.body && document.activeElement !== active) return;
+        if (active.isConnected && document.activeElement === active) return;
+        // Use a stable window control: a retried row may finish again immediately.
+        const target = this.host.nativeElement.querySelector<HTMLButtonElement>(
+          '.cll-upload-panel__minimize, .cll-upload-panel__badge',
+        );
+        target?.focus();
+      },
+      {injector: this.injector},
+    );
   }
 
   private restoreTrigger(): void {

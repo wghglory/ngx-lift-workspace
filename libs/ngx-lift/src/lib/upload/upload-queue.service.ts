@@ -250,16 +250,18 @@ export class UploadQueueService {
     runtime.resume = undefined;
     this.patch(id, {status: 'cancelled'});
     const deferreds = runtime.deferreds;
+    runtime.deferreds = [];
+    for (const deferred of deferreds) deferred.reject(abortError());
     const finish = (error?: UploadError) => {
-      runtime.deferreds = [];
       if (error && this.runtimes.get(id) === runtime) this.patch(id, {error});
-      for (const deferred of deferreds) deferred.reject(abortError());
     };
     if (uploadId) {
-      void Promise.resolve(runtime.adapter.cancel(uploadId)).then(
-        () => finish(),
-        (error) => finish(toUploadError(error, 'cancel')),
-      );
+      void Promise.resolve()
+        .then(() => runtime.adapter.cancel(uploadId))
+        .then(
+          () => finish(),
+          (error) => finish(toUploadError(error, 'cancel')),
+        );
     } else {
       finish();
     }
@@ -342,7 +344,7 @@ export class UploadQueueService {
       const resume = runtime.resume;
       if (!resume || resume === 'initiate') {
         runtime.phase = 'initiate';
-        this.patch(runtime.id, {status: 'uploading', progress: 0, uploadedBytes: 0});
+        this.patch(runtime.id, {status: 'uploading', progress: 0, uploadedBytes: 0, processingProgress: undefined});
       } else if (resume === 'chunk') {
         // Keep acknowledged bytes: a chunk retry resumes the same upload in place.
         this.patch(runtime.id, {status: 'uploading'});
@@ -350,10 +352,24 @@ export class UploadQueueService {
         this.patch(runtime.id, {status: 'processing'});
       }
       if (!runtime.uploadId && resume !== 'chunk' && resume !== 'combine' && resume !== 'status') {
-        const result = await this.withAbort(runtime.adapter.initiate(runtime.file), signal);
+        const initiating = runtime.adapter.initiate(runtime.file).then((result) => {
+          // Initiation has no transport signal. Clean up a late session after cancel/remove/dispose.
+          if (signal.aborted) {
+            void Promise.resolve()
+              .then(() => runtime.adapter.cancel(result.uploadId))
+              .catch((error) => {
+                if (this.runtimes.get(runtime.id) === runtime)
+                  this.patch(runtime.id, {error: toUploadError(error, 'cancel')});
+              });
+          } else {
+            // Transfer ownership before yielding again: cancellation must always see this session.
+            runtime.uploadId = result.uploadId;
+            this.patch(runtime.id, {uploadId: result.uploadId});
+          }
+          return result;
+        });
+        await this.withAbort(initiating, signal);
         if (!this.isCurrent(runtime)) throw abortError();
-        runtime.uploadId = result.uploadId;
-        this.patch(runtime.id, {uploadId: result.uploadId});
       }
       if (!resume || resume === 'initiate' || resume === 'chunk') {
         await this.uploadChunks(runtime);
@@ -479,7 +495,7 @@ export class UploadQueueService {
       const result: UploadStatusResult = await this.withAbort(runtime.adapter.getStatus(uploadId), signal);
       if (!this.isCurrent(runtime)) throw abortError();
       runtime.processingProgress = clamp(Math.round(result.progress), 0, 100);
-      this.patch(runtime.id, {progress: runtime.processingProgress});
+      this.patch(runtime.id, {progress: runtime.processingProgress, processingProgress: runtime.processingProgress});
       if (result.status === 'success') return;
       if (result.status === 'cancelled') throw abortError();
       if (result.status === 'error') {

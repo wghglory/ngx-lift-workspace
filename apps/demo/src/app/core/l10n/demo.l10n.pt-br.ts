@@ -3113,6 +3113,15 @@ export const ptBRTranslations: Record<string, string> = {
     'Uma ValidatorFn que retorna o erro valuesMismatch no grupo quando dois valores não vazios diferem, ou null caso contrário.',
   'sameValueValidator.minLengthError': 'Use pelo menos 8 caracteres.',
   'nav.upload': 'Enviar arquivos',
+  'uploadDemo.s3.title': 'Enviar objetos S3',
+  'uploadDemo.s3.note':
+    'Proxy S3 simulado: selecione arquivos, bucket e prefixo e envie. SHA-256 e proteção contra sobrescrita usam cabeçalhos reais. Envie a mesma chave duas vezes para ver HTTP 412.',
+  'uploadDemo.s3.bucket': 'Bucket',
+  'uploadDemo.s3.prefix': 'Prefixo da chave do objeto',
+  'uploadDemo.s3.overwrite': 'Sobrescrever objetos existentes',
+  'uploadDemo.s3.completed': 'Destinos dos objetos enviados',
+  'uploadDemo.s3.limits':
+    'Um PUT por arquivo, um arquivo por vez. Limite de 16 MiB por arquivo, pois o hash lê todo o arquivo na memória. Sem envio multipartes, hierarquia de pastas ou retomada após recarregar.',
   'uploadDemo.title': 'Enviar arquivos',
   'uploadDemo.confirmFirst': 'Envio com confirmação',
   'uploadDemo.confirmFirstNote': 'Selecione arquivos para prepará-los; nada é enviado até você confirmar.',

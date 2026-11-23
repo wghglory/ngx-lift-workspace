@@ -2975,6 +2975,15 @@ export const koTranslations: Record<string, string> = {
     '비어 있지 않은 두 값이 다르면 그룹에 valuesMismatch 오류를 반환하고, 그 외에는 null을 반환하는 ValidatorFn입니다.',
   'sameValueValidator.minLengthError': '8자 이상 입력하세요.',
   'nav.upload': '파일 업로드',
+  'uploadDemo.s3.title': 'S3 객체 업로드',
+  'uploadDemo.s3.note':
+    'S3 프록시 시뮬레이션: 파일, 버킷, 접두사를 선택한 후 업로드합니다. SHA-256 및 덮어쓰기 방지는 실제 요청 헤더를 사용합니다. 같은 키를 두 번 업로드하면 HTTP 412를 확인할 수 있습니다.',
+  'uploadDemo.s3.bucket': '버킷',
+  'uploadDemo.s3.prefix': '객체 키 접두사',
+  'uploadDemo.s3.overwrite': '기존 객체 덮어쓰기',
+  'uploadDemo.s3.completed': '업로드가 완료된 객체 대상',
+  'uploadDemo.s3.limits':
+    '파일마다 한 번의 PUT을 순서대로 실행합니다. 해시 계산 시 전체 파일을 메모리로 읽으므로 파일당 최대 16 MiB입니다. 멀티파트, 폴더 계층 및 새로고침 후 재개는 지원하지 않습니다.',
   'uploadDemo.title': '파일 업로드',
   'uploadDemo.confirmFirst': '확인 후 업로드',
   'uploadDemo.confirmFirstNote': '파일을 선택하면 준비됩니다. 확인하기 전에는 업로드되지 않습니다.',

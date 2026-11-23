@@ -79,6 +79,69 @@ describe('UploadQueueService', () => {
     TestBed.resetTestingModule();
   });
 
+  it('rejects existing completion immediately while remote cancellation is pending', async () => {
+    const cleanup = deferred<void>();
+    const adapter = {
+      ...stubDebugAdapter(),
+      uploadChunk: () => new Promise<void>(() => undefined),
+      cancel: () => cleanup.promise,
+    };
+    const [item] = queue.enqueue([uploadFile('cancel.zip', 4)], options(adapter));
+    await flush();
+    let outcome = 'pending';
+    void queue.completion(item.id).catch((error: DOMException) => {
+      outcome = error.name;
+    });
+    queue.cancel(item.id);
+    await flush();
+    expect(outcome).toBe('AbortError');
+    expect(queue.items()[0].status).toBe('cancelled');
+    cleanup.resolve();
+    await flush();
+  });
+
+  it.each(['cancel', 'remove'] as const)('cleans up an initiation resolving after %s', async (action) => {
+    const initiation = deferred<{uploadId: string}>();
+    const cancel = vi.fn(async () => undefined);
+    const chunk = vi.fn(async () => undefined);
+    const [item] = queue.enqueue(
+      [uploadFile('late.zip', 4)],
+      options({
+        ...stubDebugAdapter(),
+        initiate: () => initiation.promise,
+        uploadChunk: chunk,
+        cancel,
+      }),
+    );
+    await flush();
+    queue[action](item.id);
+    initiation.resolve({uploadId: 'late-session'});
+    await flush();
+    expect(cancel).toHaveBeenCalledExactlyOnceWith('late-session');
+    expect(chunk).not.toHaveBeenCalled();
+  });
+
+  it.each(['cancel', 'remove'] as const)('owns the session when %s races the initiate continuation', async (action) => {
+    const initiation = deferred<{uploadId: string}>();
+    const cancel = vi.fn(async () => undefined);
+    const chunk = vi.fn(async () => undefined);
+    const [item] = queue.enqueue(
+      [uploadFile('race.zip', 4)],
+      options({
+        ...stubDebugAdapter(),
+        initiate: () => initiation.promise,
+        uploadChunk: chunk,
+        cancel,
+      }),
+    );
+    await flush();
+    initiation.resolve({uploadId: 'racing-session'});
+    queueMicrotask(() => queue[action](item.id));
+    await flush();
+    expect(cancel).toHaveBeenCalledExactlyOnceWith('racing-session');
+    expect(chunk).not.toHaveBeenCalled();
+  });
+
   it('uploads one file through initiate, ordered chunks and combine, then resolves completion', async () => {
     const calls: string[] = [];
     const adapter: UploadAdapter = {

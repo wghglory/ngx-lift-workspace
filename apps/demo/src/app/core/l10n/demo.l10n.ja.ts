@@ -3014,6 +3014,15 @@ export const jaTranslations: Record<string, string> = {
     '空でない 2 つの値が異なる場合にグループへ valuesMismatch エラーを返し、それ以外は null を返す ValidatorFn です。',
   'sameValueValidator.minLengthError': '8 文字以上で入力してください。',
   'nav.upload': 'ファイルのアップロード',
+  'uploadDemo.s3.title': 'S3 オブジェクトのアップロード',
+  'uploadDemo.s3.note':
+    'S3 プロキシのシミュレーション：ファイル、バケット、プレフィックスを選択してアップロードします。SHA-256 と上書き保護には実際のリクエストヘッダーを使用します。同じキーを 2 回アップロードすると HTTP 412 を確認できます。',
+  'uploadDemo.s3.bucket': 'バケット',
+  'uploadDemo.s3.prefix': 'オブジェクトキーのプレフィックス',
+  'uploadDemo.s3.overwrite': '既存のオブジェクトを上書き',
+  'uploadDemo.s3.completed': 'アップロード済みオブジェクトの宛先',
+  'uploadDemo.s3.limits':
+    'ファイルごとに 1 回の PUT を順番に実行します。ハッシュ計算ではファイル全体をメモリに読み込むため、上限は 16 MiB です。マルチパート、フォルダー階層、再読み込み後の再開には対応していません。',
   'uploadDemo.title': 'ファイルのアップロード',
   'uploadDemo.confirmFirst': '確認付きアップロード',
   'uploadDemo.confirmFirstNote': 'ファイルを選択して準備します。確認するまでアップロードは始まりません。',

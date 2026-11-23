@@ -92,7 +92,7 @@
           cds-layout="vertical gap:sm"
         >
           @for (item of activeItems(); track item.id) {
-            <div class="cll-upload-panel__item" [attr.data-status]="item.status">
+            <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
               <div class="cll-upload-panel__row">
                 <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
                 <div class="cll-upload-panel__main">
@@ -138,7 +138,7 @@
             </div>
           }
           @for (item of errorItems(); track item.id) {
-            <div class="cll-upload-panel__item" [attr.data-status]="item.status">
+            <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
               <div class="cll-upload-panel__row">
                 <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
                 <div class="cll-upload-panel__main">
@@ -183,7 +183,7 @@
           }
           @if (expanded()) {
             @for (item of cancelledItems(); track item.id) {
-              <div class="cll-upload-panel__item" [attr.data-status]="item.status">
+              <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
                 <div class="cll-upload-panel__row">
                   <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
                   <div class="cll-upload-panel__main">
