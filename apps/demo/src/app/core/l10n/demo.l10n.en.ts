@@ -3090,7 +3090,7 @@ export const enTranslations = {
     'failing.zip drops its first chunk with a retryable error; retry it from the panel or the footer button.',
   'uploadDemo.panelTab': 'Panel window controls',
   'uploadDemo.panelNote':
-    'Minimize shows the compact upload dock. Show details expands it. Cancel all stops active uploads. Close clears the records when uploads finish.',
+    'Minimize shows the compact upload dock. Select the dock to expand it. Cancel all stops active uploads. Close clears the records when uploads finish.',
   'uploadDemo.addDemoFiles': 'Add demo files',
   'uploadDemo.forms': 'Forms integration',
   'uploadDemo.formsNote': 'The control value is readonly File[]; reset clears the value and its queue items.',

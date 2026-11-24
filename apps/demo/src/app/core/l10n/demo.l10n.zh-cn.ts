@@ -2841,7 +2841,7 @@ export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.failureNote': 'failing.zip 的第一个分块会以可重试错误失败；可在面板行内或页脚按钮重试。',
   'uploadDemo.panelTab': '面板窗口控制',
   'uploadDemo.panelNote':
-    '最小化可显示紧凑上传面板。展开详情可展开面板。全部取消可停止正在进行的上传。上传结束后，关闭可清除记录。',
+    '最小化可显示紧凑上传面板。选择面板即可将其展开。全部取消可停止正在进行的上传。上传结束后，关闭可清除记录。',
   'uploadDemo.addDemoFiles': '添加演示文件',
   'uploadDemo.forms': '表单集成',
   'uploadDemo.formsNote': '控件值为 readonly File[]；重置会清空值及其队列项。',

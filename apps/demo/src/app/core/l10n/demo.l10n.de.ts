@@ -3246,7 +3246,7 @@ export const deTranslations: Record<string, string> = {
     'failing.zip verwirft seinen ersten Chunk mit einem wiederholbaren Fehler; wiederholen Sie ihn über das Panel oder die Fußzeile.',
   'uploadDemo.panelTab': 'Fenstersteuerung des Panels',
   'uploadDemo.panelNote':
-    'Minimieren zeigt die kompakte Upload-Leiste. Mehr anzeigen klappt sie auf. Alle abbrechen stoppt aktive Uploads. Schließen entfernt die Einträge, wenn die Uploads beendet sind.',
+    'Minimieren zeigt die kompakte Upload-Leiste. Wählen Sie die Leiste aus, um sie aufzuklappen. Alle abbrechen stoppt aktive Uploads. Schließen entfernt die Einträge, wenn die Uploads beendet sind.',
   'uploadDemo.addDemoFiles': 'Beispieldateien hinzufügen',
   'uploadDemo.forms': 'Formularintegration',
   'uploadDemo.formsNote':

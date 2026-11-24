@@ -3226,7 +3226,7 @@ export const esTranslations: Record<string, string> = {
     'failing.zip descarta su primer fragmento con un error reintentable; reintléntelo desde el panel o el botón del pie.',
   'uploadDemo.panelTab': 'Controles de ventana del panel',
   'uploadDemo.panelNote':
-    'Minimizar muestra el panel compacto de carga. Mostrar detalles lo expande. Cancelar todo detiene las cargas activas. Cerrar borra los registros cuando terminan las cargas.',
+    'Minimizar muestra el panel compacto de carga. Seleccione el panel para expandirlo. Cancelar todo detiene las cargas activas. Cerrar borra los registros cuando terminan las cargas.',
   'uploadDemo.addDemoFiles': 'Añadir archivos de demostración',
   'uploadDemo.forms': 'Integración con formularios',
   'uploadDemo.formsNote':

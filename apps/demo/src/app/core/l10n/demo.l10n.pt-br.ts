@@ -3173,7 +3173,7 @@ export const ptBRTranslations: Record<string, string> = {
     'failing.zip descarta o primeiro bloco com um erro recuperável; tente novamente no painel ou no botão do rodapé.',
   'uploadDemo.panelTab': 'Controles de janela do painel',
   'uploadDemo.panelNote':
-    'Minimizar mostra o painel compacto de envio. Mostrar detalhes expande o painel. Cancelar tudo interrompe os envios ativos. Fechar limpa os registros quando os envios terminam.',
+    'Minimizar mostra o painel compacto de envio. Selecione o painel para expandi-lo. Cancelar tudo interrompe os envios ativos. Fechar limpa os registros quando os envios terminam.',
   'uploadDemo.addDemoFiles': 'Adicionar arquivos de demonstração',
   'uploadDemo.forms': 'Integração com formulários',
   'uploadDemo.formsNote': 'O valor do controle é readonly File[]; redefinir limpa o valor e seus itens da fila.',

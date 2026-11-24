@@ -3034,7 +3034,7 @@ export const koTranslations: Record<string, string> = {
     'failing.zip은 첫 번째 청크를 재시도 가능한 오류로 실패시킵니다. 패널이나 푸터 버튼에서 재시도하세요.',
   'uploadDemo.panelTab': '패널 창 컨트롤',
   'uploadDemo.panelNote':
-    '최소화하면 간략한 업로드 패널이 표시됩니다. 자세히 보기로 패널을 펼칩니다. 모두 취소하면 진행 중인 업로드가 중지됩니다. 업로드가 끝난 후 닫으면 기록이 지워집니다.',
+    '최소화하면 간략한 업로드 패널이 표시됩니다. 패널을 선택하면 펼쳐집니다. 모두 취소하면 진행 중인 업로드가 중지됩니다. 업로드가 끝난 후 닫으면 기록이 지워집니다.',
   'uploadDemo.addDemoFiles': '데모 파일 추가',
   'uploadDemo.forms': '폼 통합',
   'uploadDemo.formsNote': '컨트롤 값은 readonly File[]입니다. 재설정하면 값과 큐 항목이 지워집니다.',

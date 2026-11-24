@@ -3250,7 +3250,7 @@ export const frTranslations: Record<string, string> = {
     'failing.zip rejette son premier bloc avec une erreur retentable ; réessayez depuis le panneau ou le bouton de pied de page.',
   'uploadDemo.panelTab': 'Contrôles de fenêtre du panneau',
   'uploadDemo.panelNote':
-    'Réduire affiche le panneau compact d’envoi. Afficher les détails le développe. Tout annuler arrête les envois actifs. Fermer efface les entrées lorsque les envois sont terminés.',
+    'Réduire affiche le panneau compact d’envoi. Sélectionnez le panneau pour le développer. Tout annuler arrête les envois actifs. Fermer efface les entrées lorsque les envois sont terminés.',
   'uploadDemo.addDemoFiles': 'Ajouter des fichiers de démonstration',
   'uploadDemo.forms': 'Intégration aux formulaires',
   'uploadDemo.formsNote':

@@ -19,21 +19,21 @@ Use short, neutral sentences in owned alerts and validations. Describe current c
 clear imperatives for recovery actions. Keep state labels such as Uploading, Processing and Uploaded: these name states
 rather than narrative sentences. Do not force another language into English tense rules.
 
-| Owned message                | Approved English copy                                                                                                                           |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Validation summary           | We cannot add these files ({0}).                                                                                                                |
-| Selection count limit        | We cannot add this selection. Choose up to {0} files at a time.                                                                                 |
-| Duplicate selection          | {0} is already selected or in this queue. Check the existing item for details.                                                                  |
-| Remove accessible hint       | Remove {0} from the list. Uploaded files stay saved.                                                                                            |
-| Initiation failure           | The upload cannot start.                                                                                                                        |
-| Transfer failure             | The upload cannot continue.                                                                                                                     |
-| Finalization failure         | The upload cannot finish.                                                                                                                       |
-| Status lookup failure        | The upload status is unavailable.                                                                                                               |
-| Unknown failure              | There is a problem with the upload.                                                                                                             |
-| Cancellation failure         | The upload cannot be cancelled.                                                                                                                 |
-| Automatic-upload information | Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until uploads finish.             |
-| Staged duplicate information | These files are already selected: {0}                                                                                                           |
-| Demo panel guidance          | Minimize shows the compact upload dock. Show details expands it. Cancel all stops active uploads. Close clears the records when uploads finish. |
+| Owned message                | Approved English copy                                                                                                                                |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Validation summary           | We cannot add these files ({0}).                                                                                                                     |
+| Selection count limit        | We cannot add this selection. Choose up to {0} files at a time.                                                                                      |
+| Duplicate selection          | {0} is already selected or in this queue. Check the existing item for details.                                                                       |
+| Remove accessible hint       | Remove {0} from the list. Uploaded files stay saved.                                                                                                 |
+| Initiation failure           | The upload cannot start.                                                                                                                             |
+| Transfer failure             | The upload cannot continue.                                                                                                                          |
+| Finalization failure         | The upload cannot finish.                                                                                                                            |
+| Status lookup failure        | The upload status is unavailable.                                                                                                                    |
+| Unknown failure              | There is a problem with the upload.                                                                                                                  |
+| Cancellation failure         | The upload cannot be cancelled.                                                                                                                      |
+| Automatic-upload information | Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until uploads finish.                  |
+| Staged duplicate information | These files are already selected: {0}                                                                                                                |
+| Demo panel guidance          | Minimize shows the compact upload dock. Select the dock to expand it. Cancel all stops active uploads. Close clears the records when uploads finish. |
 
 The summary must work for one or many rejected files, including when all files are rejected or automatic enqueueing is
 off. It must not promise that other files upload. Keep per-file size/type validations, status labels, action labels,

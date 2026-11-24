@@ -3200,7 +3200,7 @@ export const nlTranslations: Record<string, string> = {
     'failing.zip laat zijn eerste chunk vallen met een herhaalbare fout; probeer het opnieuw vanuit het paneel of de voettekst.',
   'uploadDemo.panelTab': 'Vensterbesturing van het paneel',
   'uploadDemo.panelNote':
-    'Minimaliseren toont het compacte uploadpaneel. Meer tonen vouwt het uit. Alles annuleren stopt actieve uploads. Sluiten wist de vermeldingen wanneer de uploads klaar zijn.',
+    'Minimaliseren toont het compacte uploadpaneel. Selecteer het paneel om het uit te vouwen. Alles annuleren stopt actieve uploads. Sluiten wist de vermeldingen wanneer de uploads klaar zijn.',
   'uploadDemo.addDemoFiles': 'Demobestanden toevoegen',
   'uploadDemo.forms': 'Formulierintegratie',
   'uploadDemo.formsNote': 'De controlwaarde is readonly File[]; reset wist de waarde en zijn wachtrijitems.',

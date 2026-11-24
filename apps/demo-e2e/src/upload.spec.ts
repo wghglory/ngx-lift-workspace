@@ -404,6 +404,7 @@ test('picker validation has an associated live error description', async ({page}
   await expect(input).toHaveAttribute('aria-invalid', 'true');
   const live = picker.locator('[aria-live="polite"]');
   await expect(live).toContainText('bad.txt');
+  await expect(live).toContainText('We cannot add these files (1).');
   const id = await live.getAttribute('id');
   await expect(input).toHaveAttribute('aria-describedby', String(id));
   await expect(picker.getByRole('button', {name: 'Choose files', exact: true})).toHaveAttribute(

@@ -2833,7 +2833,7 @@ export const zhTWTranslations: Record<string, string> = {
   'uploadDemo.failureNote': 'failing.zip 的第一個區塊會以可重試錯誤失敗；可在面板列內或頁尾按鈕重試。',
   'uploadDemo.panelTab': '面板視窗控制',
   'uploadDemo.panelNote':
-    '最小化可顯示精簡上傳面板。展開詳情可展開面板。全部取消可停止進行中的上傳。上傳結束後，關閉可清除記錄。',
+    '最小化可顯示精簡上傳面板。選擇面板即可將其展開。全部取消可停止進行中的上傳。上傳結束後，關閉可清除記錄。',
   'uploadDemo.addDemoFiles': '新增示範檔案',
   'uploadDemo.forms': '表單整合',
   'uploadDemo.formsNote': '控件值為 readonly File[]；重置會清空值及其佇列項目。',
