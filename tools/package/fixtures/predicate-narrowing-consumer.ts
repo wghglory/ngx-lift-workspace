@@ -93,3 +93,17 @@ function filterUnion(source: UnionSource) {
   void [inverse, alias];
 }
 void [optionalPicked, optionalInverse, optionalAlias, filterUnion];
+
+function overloadedPredicate(value: number | string): boolean;
+function overloadedPredicate(value: number): value is 1;
+function overloadedPredicate(value: number | string): boolean {
+  return value === 1 || value === 'ready';
+}
+const mixedSource = {count: 1, label: 'ready'};
+const overloadedResult = pickBy(mixedSource, overloadedPredicate);
+const overloadedLabel: string | undefined = overloadedResult.label;
+// @ts-expect-error A boolean overload retains strings outside the narrow guard's input domain.
+const incorrectlyNumeric: {label?: number} = overloadedResult;
+const overloadedInverse: Partial<typeof mixedSource> = pickBy(mixedSource, overloadedPredicate, {negate: true});
+const overloadedAlias: Partial<typeof mixedSource> = omitBy(mixedSource, overloadedPredicate);
+void [overloadedLabel, incorrectlyNumeric, overloadedInverse, overloadedAlias];

@@ -238,3 +238,31 @@ describe('union and optional source values', () => {
     expect(alias).toEqual({max: null});
   });
 });
+
+describe('overloaded predicate safety', () => {
+  function acceptsOneOrReady(value: number | string): boolean;
+  function acceptsOneOrReady(value: number): value is 1;
+  function acceptsOneOrReady(value: number | string): boolean {
+    return value === 1 || value === 'ready';
+  }
+
+  it('keeps values accepted through a non-guard overload visible in the result type', () => {
+    const source = {count: 1, label: 'ready'};
+    const result = pickBy(source, acceptsOneOrReady);
+    expectTypeOf(result).toEqualTypeOf<Partial<typeof source>>();
+    expect(result).toEqual(source);
+    // @ts-expect-error The string retained by the boolean overload is not a number.
+    const numeric: {label?: number} = result;
+    void numeric;
+  });
+
+  it('uses conservative inverse types when the guard overload cannot classify every value', () => {
+    const source = {count: 1, label: 'ready', other: 'later'};
+    const inverse = pickBy(source, acceptsOneOrReady, {negate: true});
+    const alias = omitBy(source, acceptsOneOrReady);
+    expectTypeOf(inverse).toEqualTypeOf<Partial<typeof source>>();
+    expectTypeOf(alias).toEqualTypeOf<Partial<typeof source>>();
+    expect(inverse).toEqual({other: 'later'});
+    expect(alias).toEqual(inverse);
+  });
+});

@@ -1,9 +1,9 @@
 // Distribute across object unions so callbacks see values from every member.
 type PropertyValue<T> = T extends unknown ? T[keyof T] : never;
 
-// Infer a reusable guard's target independently while requiring it to accept all source values.
+// The signature supplying the guard target must itself accept every source value.
 type ValueGuard<T, V, S extends V> = ((value: V, key: string) => value is S) &
-  ((value: PropertyValue<T>, key: string) => boolean);
+  ([PropertyValue<T>] extends [V] ? unknown : never);
 
 /** Options for {@link pickBy}. */
 export interface PickByOptions {

@@ -432,3 +432,17 @@ focused strict spec compilation and the strict packed-declaration consumer. Inde
 approved the updated implementation with no remaining blockers; the spec reviewer separately checked exact optional
 property types and rejected unsafe callback/union assignments. These are local review approvals, not a GitHub maintainer
 approval, merged state or publication. CI must check the pushed revision.
+
+### Overloaded callback domain safety
+
+Attached review feedback found that intersecting a narrow value guard with a separate all-values boolean signature can
+match different overloads of one callback. The narrow signature could then hide strings retained by the boolean
+signature. The reusable-guard overload now requires `[PropertyValue<T>] extends [V]` for the same signature supplying
+`S`; a separate boolean overload cannot satisfy that domain check. Callbacks with narrower guard domains fall back to
+`Partial<T>`. Compiler and packed-consumer regressions retain a string accepted by an overloaded callback and reject a
+numeric payload assignment; existing union/optional, ordinary boolean and contextual callback checks remain required.
+
+Feedback validation: 1048 ngx-lift tests passed, both libraries passed lint/typecheck/build, both changed specs compiled
+strictly, and the updated packed public-declaration consumer passed strict checks with `skipLibCheck: false`. Both
+independent reviewers approved the fix; the spec reviewer separately verified exact optional-property typing and both
+overload orders. Review and CI state before this fix do not establish approval of the next pushed revision.
