@@ -20,7 +20,7 @@ export const zhTWTranslations: Record<string, string> = {
   'uploadDemo.api.duplicateSelected': '發出現有上傳項目的 ID，供對話框在自身清單中定位重複項目。',
   'uploadDemo.api.suppressed': '應用程式對話框展示相同佇列時隱藏共用 Dock。',
   'uploadDemo.minimizeBackground': '最小化至背景',
-  'uploadDemo.autoInfo': '檔案驗證通過後自動上傳。最小化此對話框可繼續工作；傳輸完成前請保持此瀏覽器分頁開啟。',
+  'uploadDemo.autoInfo': '檔案通過驗證後自動上傳。最小化此對話框即可繼續工作。上傳結束前，請保持此瀏覽器分頁開啟。',
   'uploadDemo.destination': '目標位置',
   'selectionDemo.remove': '移除',
 
@@ -2816,7 +2816,7 @@ export const zhTWTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '在強制回應視窗中上傳',
   'uploadDemo.confirmTitle': '確認要上傳的檔案',
   'uploadDemo.confirmInfo': '請先選擇目標位置，再開始上傳暫存檔案。',
-  'uploadDemo.confirmDuplicates': '已忽略重複檔案：{0}',
+  'uploadDemo.confirmDuplicates': '這些檔案已被選取：{0}',
   'uploadDemo.confirmCancel': '取消',
   'uploadDemo.confirmUpload': '上傳',
   'uploadDemo.modalNote': '在此對話框中選取檔案並確認。背景下傳開始前對話框會先關閉。',
@@ -2833,7 +2833,7 @@ export const zhTWTranslations: Record<string, string> = {
   'uploadDemo.failureNote': 'failing.zip 的第一個區塊會以可重試錯誤失敗；可在面板列內或頁尾按鈕重試。',
   'uploadDemo.panelTab': '面板視窗控制',
   'uploadDemo.panelNote':
-    '最小化將佇列收合為角標；展開/收合切換詳情高度；有進行中項目時關閉會詢問「繼續在後台上傳」或「全部取消」。',
+    '最小化可顯示精簡上傳面板。展開詳情可展開面板。全部取消可停止進行中的上傳。上傳結束後，關閉可清除記錄。',
   'uploadDemo.addDemoFiles': '新增示範檔案',
   'uploadDemo.forms': '表單整合',
   'uploadDemo.formsNote': '控件值為 readonly File[]；重置會清空值及其佇列項目。',

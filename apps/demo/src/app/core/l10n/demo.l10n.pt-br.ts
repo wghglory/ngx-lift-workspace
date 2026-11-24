@@ -22,7 +22,7 @@ export const ptBRTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Oculta o painel compartilhado enquanto uma janela mostra a mesma fila.',
   'uploadDemo.minimizeBackground': 'Minimizar em segundo plano',
   'uploadDemo.autoInfo':
-    'Os arquivos válidos são enviados automaticamente. Minimize esta janela para continuar trabalhando. Mantenha esta aba aberta até a transferência terminar.',
+    'Os arquivos são enviados automaticamente após a validação. Minimize esta janela para continuar trabalhando. Mantenha esta aba aberta até os envios terminarem.',
   'uploadDemo.destination': 'Destino',
   'selectionDemo.remove': 'Remover',
 
@@ -3153,7 +3153,7 @@ export const ptBRTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Enviar em modal',
   'uploadDemo.confirmTitle': 'Confirmar arquivos para envio',
   'uploadDemo.confirmInfo': 'Escolha o destino antes de iniciar os envios preparados.',
-  'uploadDemo.confirmDuplicates': 'Arquivos duplicados foram ignorados: {0}',
+  'uploadDemo.confirmDuplicates': 'Estes arquivos já estão selecionados: {0}',
   'uploadDemo.confirmCancel': 'Cancelar',
   'uploadDemo.confirmUpload': 'Enviar',
   'uploadDemo.modalNote':
@@ -3173,7 +3173,7 @@ export const ptBRTranslations: Record<string, string> = {
     'failing.zip descarta o primeiro bloco com um erro recuperável; tente novamente no painel ou no botão do rodapé.',
   'uploadDemo.panelTab': 'Controles de janela do painel',
   'uploadDemo.panelNote':
-    'Minimizar ancora a fila em um selo; Expandir/Recolher alterna a altura dos detalhes; Fechar com itens ativos oferece continuar em segundo plano ou cancelar tudo.',
+    'Minimizar mostra o painel compacto de envio. Mostrar detalhes expande o painel. Cancelar tudo interrompe os envios ativos. Fechar limpa os registros quando os envios terminam.',
   'uploadDemo.addDemoFiles': 'Adicionar arquivos de demonstração',
   'uploadDemo.forms': 'Integração com formulários',
   'uploadDemo.formsNote': 'O valor do controle é readonly File[]; redefinir limpa o valor e seus itens da fila.',

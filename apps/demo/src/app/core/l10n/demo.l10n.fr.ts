@@ -24,7 +24,7 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Masque le panneau partagé lorsqu’un dialogue présente la même file.',
   'uploadDemo.minimizeBackground': 'Réduire en arrière-plan',
   'uploadDemo.autoInfo':
-    'Les fichiers valides sont transférés automatiquement. Réduisez cette fenêtre pour continuer à travailler. Gardez cet onglet ouvert jusqu’à la fin du transfert.',
+    'Les fichiers sont envoyés automatiquement après validation. Réduisez cette boîte de dialogue pour continuer à travailler. Gardez cet onglet ouvert jusqu’à la fin des envois.',
   'uploadDemo.destination': 'Destination',
   'selectionDemo.remove': 'Supprimer',
 
@@ -3229,7 +3229,7 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Téléverser dans une fenêtre modale',
   'uploadDemo.confirmTitle': 'Confirmer les fichiers à téléverser',
   'uploadDemo.confirmInfo': 'Choisissez la destination avant de lancer les transferts préparés.',
-  'uploadDemo.confirmDuplicates': 'Les fichiers en double ont été ignorés : {0}',
+  'uploadDemo.confirmDuplicates': 'Ces fichiers sont déjà sélectionnés : {0}',
   'uploadDemo.confirmCancel': 'Annuler',
   'uploadDemo.confirmUpload': 'Téléverser',
   'uploadDemo.modalNote':
@@ -3250,7 +3250,7 @@ export const frTranslations: Record<string, string> = {
     'failing.zip rejette son premier bloc avec une erreur retentable ; réessayez depuis le panneau ou le bouton de pied de page.',
   'uploadDemo.panelTab': 'Contrôles de fenêtre du panneau',
   'uploadDemo.panelNote':
-    'Réduire ancre la file dans un badge ; Déplier/Replier bascule la hauteur du détail ; Fermer avec des éléments actifs propose la reprise en arrière-plan ou l’annulation de tout.',
+    'Réduire affiche le panneau compact d’envoi. Afficher les détails le développe. Tout annuler arrête les envois actifs. Fermer efface les entrées lorsque les envois sont terminés.',
   'uploadDemo.addDemoFiles': 'Ajouter des fichiers de démonstration',
   'uploadDemo.forms': 'Intégration aux formulaires',
   'uploadDemo.formsNote':

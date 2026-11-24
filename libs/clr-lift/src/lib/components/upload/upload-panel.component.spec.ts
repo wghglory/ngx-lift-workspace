@@ -250,7 +250,7 @@ describe('UploadPanelComponent', () => {
     const summary = panel().querySelector('.cll-upload-panel__summary')!;
     expect(summary.textContent).toContain('Completed (1)');
     expect(panel().textContent).toContain('broken.zip');
-    expect(panel().textContent).toContain('A chunk could not be uploaded.');
+    expect(panel().textContent).toContain('The upload cannot continue.');
 
     summary.querySelector<HTMLButtonElement>('.cll-upload-panel__summary-toggle')!.click();
     fixture.detectChanges();
@@ -780,10 +780,10 @@ describe('UploadPanelComponent', () => {
     );
     await flush();
     expect(panel().querySelector('.cll-upload-panel__error')!.textContent).toContain(
-      'A chunk could not be uploaded. (412)',
+      'The upload cannot continue. (412)',
     );
     expect(panel().querySelector('.cll-upload-panel__live')!.textContent).toContain(
-      'A chunk could not be uploaded. (412)',
+      'The upload cannot continue. (412)',
     );
   });
 

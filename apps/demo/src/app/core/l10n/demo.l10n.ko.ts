@@ -22,7 +22,7 @@ export const koTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': '앱 대화 상자가 같은 대기열을 표시하는 동안 공유 도크를 숨깁니다.',
   'uploadDemo.minimizeBackground': '백그라운드로 최소화',
   'uploadDemo.autoInfo':
-    '검증 후 파일이 자동 업로드됩니다. 이 대화 상자를 최소화하고 작업을 계속하세요. 전송이 끝날 때까지 브라우저 탭을 열어 두세요.',
+    '검증 후 파일이 자동으로 업로드됩니다. 작업을 계속하려면 이 대화 상자를 최소화하세요. 업로드가 끝날 때까지 이 브라우저 탭을 열어 두세요.',
   'uploadDemo.destination': '대상',
   'selectionDemo.remove': '제거',
 
@@ -3015,7 +3015,7 @@ export const koTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '모달에서 업로드',
   'uploadDemo.confirmTitle': '업로드할 파일 확인',
   'uploadDemo.confirmInfo': '준비된 파일을 업로드하기 전에 대상을 선택하세요.',
-  'uploadDemo.confirmDuplicates': '중복 파일이 무시되었습니다: {0}',
+  'uploadDemo.confirmDuplicates': '이 파일은 이미 선택되어 있습니다: {0}',
   'uploadDemo.confirmCancel': '취소',
   'uploadDemo.confirmUpload': '업로드',
   'uploadDemo.modalNote':
@@ -3034,7 +3034,7 @@ export const koTranslations: Record<string, string> = {
     'failing.zip은 첫 번째 청크를 재시도 가능한 오류로 실패시킵니다. 패널이나 푸터 버튼에서 재시도하세요.',
   'uploadDemo.panelTab': '패널 창 컨트롤',
   'uploadDemo.panelNote':
-    '최소화는 큐를 배지로 줄이고, 펼치기/접기는 상세 높이를 전환하며, 진행 중 항목이 있을 때 닫기는 백그라운드 계속 업로드 또는 모두 취소를 묻습니다.',
+    '최소화하면 간략한 업로드 패널이 표시됩니다. 자세히 보기로 패널을 펼칩니다. 모두 취소하면 진행 중인 업로드가 중지됩니다. 업로드가 끝난 후 닫으면 기록이 지워집니다.',
   'uploadDemo.addDemoFiles': '데모 파일 추가',
   'uploadDemo.forms': '폼 통합',
   'uploadDemo.formsNote': '컨트롤 값은 readonly File[]입니다. 재설정하면 값과 큐 항목이 지워집니다.',

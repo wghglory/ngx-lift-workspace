@@ -24,7 +24,7 @@ export const esTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Oculta el panel compartido mientras un diálogo muestra la misma cola.',
   'uploadDemo.minimizeBackground': 'Minimizar al fondo',
   'uploadDemo.autoInfo':
-    'Los archivos válidos se cargan automáticamente. Minimice este diálogo para seguir trabajando. Mantenga abierta esta pestaña hasta que termine la transferencia.',
+    'Los archivos se cargan automáticamente después de la validación. Minimice este diálogo para seguir trabajando. Mantenga esta pestaña abierta hasta que terminen las cargas.',
   'uploadDemo.destination': 'Destino',
   'selectionDemo.remove': 'Quitar',
 
@@ -3205,7 +3205,7 @@ export const esTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Cargar en un modal',
   'uploadDemo.confirmTitle': 'Confirmar archivos para cargar',
   'uploadDemo.confirmInfo': 'Elija el destino antes de iniciar las cargas preparadas.',
-  'uploadDemo.confirmDuplicates': 'Se ignoraron archivos duplicados: {0}',
+  'uploadDemo.confirmDuplicates': 'Estos archivos ya están seleccionados: {0}',
   'uploadDemo.confirmCancel': 'Cancelar',
   'uploadDemo.confirmUpload': 'Cargar',
   'uploadDemo.modalNote':
@@ -3226,7 +3226,7 @@ export const esTranslations: Record<string, string> = {
     'failing.zip descarta su primer fragmento con un error reintentable; reintléntelo desde el panel o el botón del pie.',
   'uploadDemo.panelTab': 'Controles de ventana del panel',
   'uploadDemo.panelNote':
-    'Minimizar acopla la cola en una insignia; Expandir/Contraer cambia la altura del detalle; Cerrar con elementos activos ofrece continuar en segundo plano o cancelar todo.',
+    'Minimizar muestra el panel compacto de carga. Mostrar detalles lo expande. Cancelar todo detiene las cargas activas. Cerrar borra los registros cuando terminan las cargas.',
   'uploadDemo.addDemoFiles': 'Añadir archivos de demostración',
   'uploadDemo.forms': 'Integración con formularios',
   'uploadDemo.formsNote':

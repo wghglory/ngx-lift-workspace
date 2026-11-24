@@ -25,8 +25,8 @@ test('S3 demo stages files and enforces overwrite protection', async ({page}, te
   await expect(demo.getByTestId('s3-demo-stored')).toContainText('/api/s3/demo-uploads/documents/readme.txt');
   await picker.setInputFiles(file('readme.txt'));
   await start.click();
-  await expect(panel.locator('[data-status="error"]')).toContainText('A chunk could not be uploaded. (412)');
-  await expect(panel.locator('.cll-upload-panel__live')).toContainText('A chunk could not be uploaded. (412)');
+  await expect(panel.locator('[data-status="error"]')).toContainText('The upload cannot continue. (412)');
+  await expect(panel.locator('.cll-upload-panel__live')).toContainText('The upload cannot continue. (412)');
   for (const theme of ['light', 'dark']) {
     await page.evaluate((activeTheme) => document.body.setAttribute('cds-theme', activeTheme), theme);
     await expectAccessible(page, testInfo, '[data-testid="upload-demo-s3"]');

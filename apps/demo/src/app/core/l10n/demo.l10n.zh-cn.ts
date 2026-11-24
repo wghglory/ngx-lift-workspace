@@ -20,7 +20,7 @@ export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.api.duplicateSelected': '发出已有上传条目的 ID，供对话框在自身列表中定位重复项。',
   'uploadDemo.api.suppressed': '应用对话框展示同一队列时隐藏共享 Dock。',
   'uploadDemo.minimizeBackground': '最小化到后台',
-  'uploadDemo.autoInfo': '文件校验通过后自动上传。最小化此对话框可继续工作；传输完成前请保持此浏览器标签页打开。',
+  'uploadDemo.autoInfo': '文件通过验证后自动上传。最小化此对话框即可继续工作。上传结束前，请保持此浏览器标签页打开。',
   'uploadDemo.destination': '目标位置',
   'selectionDemo.remove': '移除',
 
@@ -2824,7 +2824,7 @@ export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '在模态框中上传',
   'uploadDemo.confirmTitle': '确认要上传的文件',
   'uploadDemo.confirmInfo': '请先选择目标位置，再开始上传暂存文件。',
-  'uploadDemo.confirmDuplicates': '已忽略重复文件：{0}',
+  'uploadDemo.confirmDuplicates': '这些文件已被选择：{0}',
   'uploadDemo.confirmCancel': '取消',
   'uploadDemo.confirmUpload': '上传',
   'uploadDemo.modalNote': '在此对话框中选取文件并核对后确认。后台上传开始前对话框会先关闭。',
@@ -2841,7 +2841,7 @@ export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.failureNote': 'failing.zip 的第一个分块会以可重试错误失败；可在面板行内或页脚按钮重试。',
   'uploadDemo.panelTab': '面板窗口控制',
   'uploadDemo.panelNote':
-    '最小化将队列收起为角标；展开/收起切换详情高度；有进行中项目时关闭会询问“后台继续上传”还是“全部取消”。',
+    '最小化可显示紧凑上传面板。展开详情可展开面板。全部取消可停止正在进行的上传。上传结束后，关闭可清除记录。',
   'uploadDemo.addDemoFiles': '添加演示文件',
   'uploadDemo.forms': '表单集成',
   'uploadDemo.formsNote': '控件值为 readonly File[]；重置会清空值及其队列项。',

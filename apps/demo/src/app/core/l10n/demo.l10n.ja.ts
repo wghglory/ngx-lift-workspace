@@ -22,7 +22,7 @@ export const jaTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'アプリのダイアログが同じキューを表示する間、共有ドックを非表示にします。',
   'uploadDemo.minimizeBackground': 'バックグラウンドに最小化',
   'uploadDemo.autoInfo':
-    '検証後、ファイルは自動的にアップロードされます。このダイアログを最小化して作業を続けられます。転送が終わるまでブラウザーのタブを開いたままにしてください。',
+    '検証後、ファイルは自動的にアップロードされます。このダイアログを最小化すると作業を続けられます。アップロードが終わるまで、このブラウザータブを開いたままにしてください。',
   'uploadDemo.destination': '転送先',
   'selectionDemo.remove': '削除',
 
@@ -3054,7 +3054,7 @@ export const jaTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'モーダルでアップロード',
   'uploadDemo.confirmTitle': 'アップロードするファイルの確認',
   'uploadDemo.confirmInfo': '準備したファイルのアップロード前に転送先を選択してください。',
-  'uploadDemo.confirmDuplicates': '重複ファイルを無視しました: {0}',
+  'uploadDemo.confirmDuplicates': 'これらのファイルは選択済みです: {0}',
   'uploadDemo.confirmCancel': 'キャンセル',
   'uploadDemo.confirmUpload': 'アップロード',
   'uploadDemo.modalNote':
@@ -3074,7 +3074,7 @@ export const jaTranslations: Record<string, string> = {
     'failing.zip は最初のチャンクを再試行可能なエラーで失敗させます。パネルまたはフッターのボタンから再試行してください。',
   'uploadDemo.panelTab': 'パネルのウィンドウ操作',
   'uploadDemo.panelNote':
-    '最小化はキューをバッジに格納し、展開/折りたたみは詳細の高さを切り替え、進行中の項目があるときの閉じるは「バックグラウンドで続行」か「すべてキャンセル」を選択できます。',
+    '最小化するとコンパクトなアップロードパネルが表示されます。詳細を表示するとパネルが展開されます。すべてキャンセルすると進行中のアップロードが停止します。アップロード終了後に閉じると記録が消去されます。',
   'uploadDemo.addDemoFiles': 'デモファイルを追加',
   'uploadDemo.forms': 'フォーム統合',
   'uploadDemo.formsNote': 'コントロール値は readonly File[] です。リセットすると値とキュー項目が消去されます。',

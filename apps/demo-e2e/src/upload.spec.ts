@@ -556,7 +556,7 @@ test('count overflow rejects only the new selection once while size failures sta
   const pdf = (name: string, size = 4) => ({name, mimeType: 'application/pdf', buffer: Buffer.alloc(size)});
   await input.setInputFiles([pdf('one.pdf'), pdf('two.pdf'), pdf('three.pdf'), pdf('four.pdf')]);
   await expect(host.locator('.cll-upload__rejection-summary')).toHaveText(
-    'Select at most 3 files at a time. This selection was not added.',
+    'We cannot add this selection. Choose up to 3 files at a time.',
   );
   await expect(host.locator('.cll-upload__error-name')).toHaveCount(0);
   await expect(page.locator('.cll-upload-panel__item')).toHaveCount(0);
