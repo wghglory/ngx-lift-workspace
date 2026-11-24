@@ -1,4 +1,30 @@
 export const esTranslations: Record<string, string> = {
+  'uploadDemo.dialog.panel.title': 'Progreso de la carga',
+  'uploadDemo.dialog.cancel': 'Cancelar',
+  'uploadDemo.dialog.retry': 'Reintentar',
+  'uploadDemo.dialog.remove': 'Eliminar',
+  'uploadDemo.dialog.summary.success': '{0} archivos cargados · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Borrar completados',
+  'uploadDemo.dialog.cancelAll': 'Cancelar todo',
+  'uploadDemo.dialog.cancel.confirm':
+    '¿Cancelar {0} cargas activas de esta cola? Se conservarán los archivos completados.',
+  'uploadDemo.dialog.confirm.background': 'Seguir cargando en segundo plano',
+  'uploadDemo.dialog.close': 'Cerrar',
+  'uploadDemo.dialog.status.queued': 'En cola',
+  'uploadDemo.dialog.status.uploading': 'Cargando',
+  'uploadDemo.dialog.status.processing': 'Procesando',
+  'uploadDemo.dialog.status.success': 'Cargado',
+  'uploadDemo.dialog.status.error': 'Fallido',
+  'uploadDemo.dialog.status.cancelled': 'Cancelado',
+  'uploadDemo.api.scope':
+    'Clave estable de destino para detectar duplicados. Use claves distintas y un adaptador vinculado a cada destino.',
+  'uploadDemo.api.duplicateSelected':
+    'Emite el identificador existente para localizar el duplicado en la lista del diálogo.',
+  'uploadDemo.api.suppressed': 'Oculta el panel compartido mientras un diálogo muestra la misma cola.',
+  'uploadDemo.minimizeBackground': 'Minimizar al fondo',
+  'uploadDemo.autoInfo':
+    'Los archivos válidos se cargan automáticamente. Minimice este diálogo para seguir trabajando. Mantenga abierta esta pestaña hasta que termine la transferencia.',
+  'uploadDemo.destination': 'Destino',
   'selectionDemo.remove': 'Quitar',
 
   'selectionDemo.selectedTitle': 'Organizaciones seleccionadas',
@@ -3173,12 +3199,11 @@ export const esTranslations: Record<string, string> = {
   'uploadDemo.s3.limits':
     'Un PUT por archivo, un archivo a la vez. Límite de 16 MiB por archivo porque el cálculo del hash lee todo el archivo en memoria. Sin carga multiparte, jerarquía de carpetas ni reanudación tras recargar.',
   'uploadDemo.title': 'Subir archivos',
-  'uploadDemo.confirmFirst': 'Carga con confirmación',
-  'uploadDemo.confirmFirstNote': 'Seleccione archivos para prepararlos; nada se carga hasta que lo confirme.',
+  'uploadDemo.confirmFirst': 'Preparación manual (avanzado)',
+  'uploadDemo.confirmFirstNote': 'Use la preparación manual solo si debe indicar un destino antes de cargar.',
   'uploadDemo.modalUpload': 'Cargar en un modal',
   'uploadDemo.confirmTitle': 'Confirmar archivos para cargar',
-  'uploadDemo.confirmInfo':
-    'Confirme para iniciar la carga. Continúa en segundo plano y puede navegar a otras páginas sin problemas.',
+  'uploadDemo.confirmInfo': 'Elija el destino antes de iniciar las cargas preparadas.',
   'uploadDemo.confirmDuplicates': 'Se ignoraron archivos duplicados: {0}',
   'uploadDemo.confirmCancel': 'Cancelar',
   'uploadDemo.confirmUpload': 'Cargar',

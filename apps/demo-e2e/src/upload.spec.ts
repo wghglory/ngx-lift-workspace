@@ -121,41 +121,33 @@ test('cancels an active upload from its row', async ({page}) => {
   await panel.getByRole('button', {name: 'Cancel', exact: true}).first().click();
   await expect(panel).toContainText('Cancelled');
 
-  await panel.locator('.cll-upload-panel__clear-completed').click();
+  await panel.locator('.cll-upload-panel__done').click();
   await expect(panel.locator('.cll-upload-panel__card')).toHaveCount(0);
 });
 
-test('closing with active items keeps uploads running in the background', async ({page}) => {
+test('active work offers collapse rather than Close and continues in the background', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
-
   await page.getByTestId('upload-demo-add-files').click();
   const panel = page.locator('.cll-upload-panel');
   await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
-
-  await panel.locator('.cll-upload-panel__close').click();
-  const confirmation = panel.locator('.cll-upload-panel__confirm');
-  await expect(confirmation).toBeVisible();
-
-  await panel.locator('.cll-upload-panel__confirm-background').click();
+  await expect(panel.locator('.cll-upload-panel__close')).toHaveCount(0);
+  await panel.locator('.cll-upload-panel__minimize').click();
   await expect(panel.locator('.cll-upload-panel__badge')).toBeVisible();
-  await expect(panel).toContainText('background');
-
-  // uploads continue: restore and wait for the summary
   await panel.locator('.cll-upload-panel__badge').click();
   await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 3 files');
 });
 
-test('cancel-all in the confirmation closes the panel and clears the queue', async ({page}) => {
+test('Cancel all confirms first and retains cancelled records until explicit Close', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
-
   await page.getByTestId('upload-demo-add-files').click();
   const panel = page.locator('.cll-upload-panel');
   await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
-
-  await panel.locator('.cll-upload-panel__close').click();
+  await panel.locator('.cll-upload-panel__cancel-all').click();
+  await expect(panel.locator('[role="alertdialog"]')).toBeVisible();
   await panel.locator('.cll-upload-panel__confirm-cancel').click();
+  await expect(panel).toContainText('Cancelled');
+  await panel.locator('.cll-upload-panel__done').click();
   await expect(panel.locator('.cll-upload-panel__card')).toHaveCount(0);
-  await expect(panel.locator('.cll-upload-panel__badge')).toHaveCount(0);
   await expect(page.getByTestId('upload-demo-add-files')).toBeFocused();
 });
 
@@ -166,39 +158,29 @@ const traversalKeys = {
   webkit: {tab: 'Alt+Tab', backTab: 'Alt+Shift+Tab'},
 };
 
-test('the keyboard drives window controls and the confirmation', async ({page, browserName}) => {
+test('the keyboard operates collapse and safe cancellation confirmation', async ({page, browserName}) => {
   const {tab, backTab} = traversalKeys[browserName];
   await page.goto('/clr-lift/components/upload');
-
   await page.getByTestId('upload-demo-add-files').click();
   const panel = page.locator('.cll-upload-panel');
-  await expect(panel.locator('.cll-upload-panel__item').first()).toBeVisible();
-
-  await panel.locator('.cll-upload-panel__expand').focus();
-  await expect(panel.locator('.cll-upload-panel__expand')).toBeFocused();
+  const collapse = panel.locator('.cll-upload-panel__minimize');
+  await collapse.focus();
   await page.keyboard.press('Enter');
-  await expect(panel.locator('.cll-upload-panel__list--compact')).toBeVisible();
+  await expect(panel.locator('.cll-upload-panel__badge')).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(panel.locator('.cll-upload-panel__list--compact')).toHaveCount(0);
-
-  await page.keyboard.press(backTab);
-  await expect(panel.locator('.cll-upload-panel__minimize')).toBeFocused();
+  await expect(collapse).toBeFocused();
   await page.keyboard.press(tab);
-  await expect(panel.locator('.cll-upload-panel__expand')).toBeFocused();
-  await page.keyboard.press(tab);
-  await expect(panel.locator('.cll-upload-panel__close')).toBeFocused();
+  await expect(panel.locator('.cll-upload-panel__cancel-all')).toBeFocused();
   await page.keyboard.press('Enter');
-  await expect(panel.locator('.cll-upload-panel__confirm')).toBeVisible();
-
   const background = panel.locator('.cll-upload-panel__confirm-background');
-  await background.focus();
   await expect(background).toBeFocused();
   await page.keyboard.press(tab);
   await expect(panel.locator('.cll-upload-panel__confirm-cancel')).toBeFocused();
   await page.keyboard.press(backTab);
   await expect(background).toBeFocused();
-  await page.keyboard.press('Space');
-  await expect(panel.locator('.cll-upload-panel__badge')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(panel.locator('.cll-upload-panel__confirm')).toHaveCount(0);
+  await expect(panel.locator('.cll-upload-panel__cancel-all')).toBeFocused();
 });
 
 test('forms binding keeps the control value in sync', async ({page}) => {
@@ -339,7 +321,7 @@ const queuedItemCount = async (page: import('@playwright/test').Page) => {
   );
 };
 
-test('confirm-first staging enqueues only after confirmation @cross-browser-smoke', async ({page}) => {
+test('advanced staging waits for the required destination @cross-browser-smoke', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   const before = await queuedItemCount(page);
 
@@ -348,6 +330,8 @@ test('confirm-first staging enqueues only after confirmation @cross-browser-smok
   await expect(page.getByTestId('upload-demo-confirm')).toBeVisible();
   expect(await queuedItemCount(page)).toBe(before);
 
+  await expect(page.getByTestId('upload-demo-confirm')).toBeDisabled();
+  await page.locator('clr-modal input[clrInput]').fill('archive');
   await page.getByTestId('upload-demo-confirm').click();
   await expect(page.locator('.cll-upload-panel')).toContainText('staged.zip');
   expect(await queuedItemCount(page)).toBe(before + 1);
@@ -422,12 +406,49 @@ test('picker validation has an associated live error description', async ({page}
   await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 });
 
-test('confirmed modal uploads return focus to the persistent modal launcher', async ({page}) => {
+test('modal files upload automatically and only one transfer view stays interactive', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   const launcher = page.getByTestId('upload-demo-modal-open');
   await launcher.click();
-  await page.locator('clr-modal cll-upload input[type="file"]').first().setInputFiles(zipFile('modal.zip'));
-  await page.getByTestId('upload-demo-modal-confirm').click();
-  await page.locator('.cll-upload-panel__done').click();
+  const modal = page.locator('clr-modal').filter({has: page.locator('cll-upload')});
+  await modal.locator('cll-upload input[type="file"]').first().setInputFiles(zipFile('modal.zip'));
+  await expect(modal.locator('details')).toContainText('Uploaded 1 files');
+  await expect(page.locator('.cll-upload-panel__card')).toHaveCount(0);
+  await modal.getByRole('button', {name: 'Close', exact: true}).click();
   await expect(launcher).toBeFocused();
+  await expect.poll(() => queuedItemCount(page)).toBe(0);
+});
+
+test('mixed folder intake keeps valid files and skips a repeated file with an informational notice', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const host = page.getByTestId('upload-demo-basic').locator('cll-upload');
+  const zone = host.locator('.cll-upload__dropzone');
+  const transfer = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['bundle'], 'same.zip', {type: 'application/zip', lastModified: 7}));
+    transfer.items.add(new File(['bundle'], 'same.zip', {type: 'application/zip', lastModified: 7}));
+    transfer.items.add(new File(['notes'], 'notes.txt', {type: 'text/plain', lastModified: 7}));
+    return transfer;
+  });
+  await expect(page.locator('.cll-upload-panel')).toBeAttached();
+  await zone.dispatchEvent('drop', {dataTransfer: transfer});
+  await expect(host.locator('.alert-danger')).toContainText('notes.txt');
+  await expect(host.locator('.alert-info')).toContainText('same.zip');
+  await expect(page.getByTestId('upload-demo-registered')).toContainText('1');
+  await expect.poll(() => queuedItemCount(page)).toBe(1);
+  await host.locator('.alert-info').getByRole('button').click();
+  await expect(page.locator('.cll-upload-panel__summary-list')).toContainText('same.zip');
+});
+
+test('an intended modal minimize cannot turn into destructive Close when the upload settles', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await page.getByTestId('upload-demo-modal-open').click();
+  const modal = page.locator('clr-modal').filter({has: page.locator('cll-upload')});
+  await modal.locator('input[type="file"]').first().setInputFiles(zipFile('activation.zip'));
+  const minimize = modal.getByRole('button', {name: 'Minimize to background', exact: true});
+  await minimize.focus();
+  await page.keyboard.down('Space');
+  await expect(modal.getByRole('button', {name: 'Close', exact: true})).toBeVisible();
+  await page.keyboard.up('Space');
+  await expect.poll(() => queuedItemCount(page)).toBe(1);
 });

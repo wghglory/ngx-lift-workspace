@@ -32,3 +32,16 @@
   color: var(--clr-color-danger-700);
   font-size: 0.6rem;
 }
+
+.upload-dialog-row {
+  padding-block: 0.5rem;
+  border-block-end: 1px solid var(--cds-alias-object-border-color);
+}
+.upload-dialog-summary {
+  display: flex;
+  gap: 0.5rem;
+  align-items: start;
+}
+.upload-dialog-summary details {
+  flex: 1;
+}

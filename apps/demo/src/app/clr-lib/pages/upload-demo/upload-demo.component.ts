@@ -1,6 +1,16 @@
 import {NgTemplateOutlet} from '@angular/common';
 import {HttpClient, HttpEventType} from '@angular/common/http';
-import {ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  afterNextRender,
+  computed,
+  ElementRef,
+  inject,
+  Injector,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
@@ -53,10 +63,11 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
 })
 export class UploadDemoComponent {
   private readonly translation = inject(TranslationService);
-  private readonly queue = inject(UploadQueueService);
+  readonly queue = inject(UploadQueueService);
   private readonly panelManager = inject(UploadPanelManager);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly http = inject(HttpClient);
+  private readonly injector = inject(Injector);
   readonly registeredCount = signal(0);
   readonly cancelledCount = signal(0);
   readonly chunk5Mb = UPLOAD_CHUNK_5MB;
@@ -124,6 +135,15 @@ export class UploadDemoComponent {
   readonly apiCalls = signal<readonly string[]>([]);
   private readonly inlineUpload = viewChild<UploadComponent>('inlineUpload');
   private readonly modalUpload = viewChild<UploadComponent>('modalUpload');
+  readonly destination = new FormControl('', {nonNullable: true});
+  readonly modalCancelling = signal(false);
+  private modalCancelIds: readonly string[] = [];
+  readonly modalCancelCount = signal(0);
+  readonly modalRows = computed(() => this.queue.items().filter((item) => item.status !== 'success'));
+  readonly modalSuccesses = computed(() => this.queue.items().filter((item) => item.status === 'success'));
+  readonly modalActive = computed(() =>
+    this.queue.items().some((item) => ['queued', 'uploading', 'processing'].includes(item.status)),
+  );
 
   /** Adapter that logs simulated REST calls so the transport contract is visible in the demo. */
   readonly apiAdapter: UploadAdapter = {
@@ -177,26 +197,13 @@ export class UploadDemoComponent {
 
   stageFiles(files: readonly File[]): void {
     if (!files.length) return;
-    // De-dupe against the LIVE queue only: a cancelled/cleared item must be selectable again.
-    const queuedKeys = new Set(
-      this.queue
-        .items()
-        .filter((item) => item.status === 'queued' || item.status === 'uploading' || item.status === 'processing')
-        .map((item) => this.fileKey(item.file)),
-    );
-    const staged = new Map(this.stagedFiles().map((file) => [this.fileKey(file), file]));
-    const duplicates = new Set<string>();
-    for (const file of files) {
-      const key = this.fileKey(file);
-      if (staged.has(key) || queuedKeys.has(key)) duplicates.add(file.name);
-      else staged.set(key, file);
-    }
-    this.stagedFiles.set([...staged.values()]);
-    this.duplicateNames.set([...duplicates]);
-    if (staged.size > 0 || files.length > 0) this.confirmOpen.set(true);
+    this.stagedFiles.set(files);
+    this.duplicateNames.set([]);
+    this.confirmOpen.set(true);
   }
 
   confirmUpload(): void {
+    if (!this.destination.value.trim()) return;
     const files = this.stagedFiles();
     if (files.length)
       this.openPanel(
@@ -207,8 +214,19 @@ export class UploadDemoComponent {
     this.confirmOpen.set(false);
     this.modalOpen.set(false);
     if (!files.length) return;
+    const destination = this.destination.value.trim();
+    const adapter: UploadAdapter = {
+      ...this.apiAdapter,
+      initiate: async (file) => {
+        this.logApi(
+          'POST',
+          `/api/destinations/${encodeURIComponent(destination)}/bundles/initiate?name=${encodeURIComponent(file.name)}`,
+        );
+        return {uploadId: `${destination}/${file.name}-${Date.now()}`};
+      },
+    };
     this.queue.enqueue(files, {
-      adapter: this.apiAdapter,
+      adapter,
       chunkSize: this.chunk5Mb,
       concurrency: 2,
       autoRetry: true,
@@ -224,14 +242,93 @@ export class UploadDemoComponent {
   }
 
   cancelModalUpload(): void {
+    if (this.modalActive()) this.queue.minimize();
+    else {
+      this.modalUpload()?.clear();
+      this.queue.clearCompleted();
+    }
     this.modalOpen.set(false);
-    this.clearStaging();
+    this.modalCancelling.set(false);
+    const previous = this.host.nativeElement.ownerDocument.activeElement;
+    afterNextRender(
+      () => {
+        const document = this.host.nativeElement.ownerDocument;
+        if (document.activeElement !== document.body && document.activeElement !== previous) return;
+        this.host.nativeElement.querySelector<HTMLButtonElement>('[data-testid="upload-demo-modal-open"]')?.focus();
+      },
+      {injector: this.injector},
+    );
+  }
+
+  requestModalCancel(): void {
+    this.modalCancelIds = this.queue
+      .items()
+      .filter((item) => ['queued', 'uploading', 'processing'].includes(item.status))
+      .map((item) => item.id);
+    this.modalCancelCount.set(this.modalCancelIds.length);
+    this.modalCancelling.set(true);
+    this.focusModal('.upload-modal-keep');
+  }
+
+  confirmModalCancel(): void {
+    for (const id of this.modalCancelIds) this.queue.cancel(id);
+    this.modalCancelling.set(false);
+    this.focusModal('.upload-modal-action');
+  }
+
+  retryItem(id: string): void {
+    void this.queue.retry(id)?.catch(() => undefined);
+    this.focusModal('.upload-modal-action');
+  }
+
+  cancelModalItem(id: string): void {
+    this.queue.cancel(id);
+    this.focusModal('.upload-modal-action');
+  }
+
+  dismissModalCancel(): void {
+    this.modalCancelling.set(false);
+    this.focusModal('.upload-modal-action');
+  }
+
+  removeModalItem(id: string): void {
+    this.queue.remove(id);
+    this.focusModal('.upload-modal-action');
+  }
+
+  clearModalSuccesses(): void {
+    for (const item of this.modalSuccesses()) this.queue.remove(item.id);
+    this.focusModal('.upload-modal-action');
+  }
+
+  locateModalItem(id: string): void {
+    const row = this.host.nativeElement.querySelector<HTMLElement>(`clr-modal [data-upload-id="${id}"]`);
+    const disclosure = row?.closest('details');
+    if (disclosure) disclosure.open = true;
+    row?.focus();
+  }
+
+  minimizeDialog(): void {
+    this.modalCancelling.set(false);
+    this.queue.minimize();
+    this.modalOpen.set(false);
+  }
+
+  private focusModal(selector: string): void {
+    const previous = this.host.nativeElement.ownerDocument.activeElement;
+    afterNextRender(
+      () => {
+        const document = this.host.nativeElement.ownerDocument;
+        if (document.activeElement !== document.body && document.activeElement !== previous) return;
+        this.host.nativeElement.querySelector<HTMLElement>(`clr-modal ${selector}`)?.focus();
+      },
+      {injector: this.injector},
+    );
   }
 
   /** Clears staged state AND the host's own selection so the next pick starts fresh. */
   private clearStaging(): void {
     this.inlineUpload()?.clear();
-    this.modalUpload()?.clear();
     this.stagedFiles.set([]);
     this.duplicateNames.set([]);
   }
@@ -378,6 +475,7 @@ export class UploadDemoComponent {
     {name: 'concurrency', type: 'number', defaultValue: '2', description: this.api('concurrency')},
     {name: 'multiple', type: 'boolean', defaultValue: 'false', description: this.api('multiple')},
     {name: 'autoRetry', type: 'boolean', defaultValue: 'false', description: this.api('autoRetry')},
+    {name: 'scope', type: 'string | undefined', defaultValue: 'undefined', description: this.api('scope')},
     {name: 'autoEnqueue', type: 'boolean', defaultValue: 'true', description: this.api('autoEnqueue')},
     {name: 'maxRetries', type: 'number', defaultValue: '3', description: this.api('maxRetries')},
     {name: 'pollIntervalMs', type: 'number', defaultValue: '10000', description: this.api('pollIntervalMs')},
@@ -386,11 +484,16 @@ export class UploadDemoComponent {
   ]);
 
   readonly outputs = computed<ApiProperty[]>(() => [
+    {name: 'duplicateSelected', type: 'string', description: this.api('duplicateSelected')},
     {name: 'filesChange', type: 'readonly File[]', description: this.api('filesChange')},
     {name: 'validationErrors', type: 'readonly UploadError[]', description: this.api('validationErrors')},
     {name: 'uploadComplete', type: 'readonly UploadItem[]', description: this.api('uploadComplete')},
     {name: 'uploadError', type: 'readonly UploadItem[]', description: this.api('uploadError')},
     {name: 'uploadCancelled', type: 'readonly UploadItem[]', description: this.api('uploadCancelled')},
+  ]);
+
+  readonly panelInputs = computed<ApiProperty[]>(() => [
+    {name: 'suppressed', type: 'boolean', defaultValue: 'false', description: this.api('suppressed')},
   ]);
 
   readonly methods = computed<ApiProperty[]>(() => [
@@ -451,13 +554,14 @@ export class UploadDemoComponent {
     [
       "import {ChangeDetectionStrategy, Component, inject, signal, viewChild} from '@angular/core';",
       "import {ClarityModule} from '@clr/angular';",
+      "import {FormControl, ReactiveFormsModule} from '@angular/forms';",
       "import {UPLOAD_CHUNK_5MB, type UploadAdapter, UploadQueueService} from 'ngx-lift';",
       "import {TranslatePipe, UploadComponent, UploadPanelComponent} from 'clr-lift';",
       '',
       'const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout(resolve, milliseconds));',
       '',
       '@Component({',
-      '  imports: [ClarityModule, TranslatePipe, UploadComponent, UploadPanelComponent],',
+      '  imports: [ClarityModule, ReactiveFormsModule, TranslatePipe, UploadComponent, UploadPanelComponent],',
       '  template: `',
       '    <!-- Disable automatic enqueue: selection validates files and emits filesChange only. -->',
       '    <cll-upload #picker [adapter]="adapter" [multiple]="true" accept=".zip,.tar"',
@@ -465,6 +569,7 @@ export class UploadDemoComponent {
       '    <clr-modal [(clrModalOpen)]="confirmOpen" [clrModalClosable]="false">',
       '      <h3 class="modal-title">{{ \'uploadDemo.confirmTitle\' | translate }}</h3>',
       '      <div class="modal-body">',
+      '        <clr-input-container><label>{{ \'uploadDemo.destination\' | translate }}</label><input clrInput [formControl]="destination" required /></clr-input-container>',
       '        @for (file of stagedFiles(); track $index) { <p>{{ file.name }}</p> }',
       '      </div>',
       '      <div class="modal-footer">',
@@ -484,6 +589,7 @@ export class UploadDemoComponent {
       '  private readonly queue = inject(UploadQueueService);',
       "  private readonly picker = viewChild<UploadComponent>('picker');",
       '  readonly stagedFiles = signal<readonly File[]>([]);',
+      "  readonly destination = new FormControl('', {nonNullable: true});",
       '  readonly confirmOpen = signal(false);',
       '',
       '  readonly adapter: UploadAdapter = {',
@@ -504,10 +610,11 @@ export class UploadDemoComponent {
       '',
       '  confirmUpload(): void {',
       '    const files = this.stagedFiles();',
-      '    if (!files.length) return;',
-      '    // This is the only place that starts uploading, after explicit confirmation.',
+      '    const destination = this.destination.value.trim();',
+      '    if (!files.length || !destination) return;',
+      '    // Submit only after the application has collected the required destination.',
       '    this.queue.enqueue(files, {',
-      '      adapter: this.adapter,',
+      '      adapter: {...this.adapter, initiate: async (file) => ({uploadId: `${destination}/${file.name}-${Date.now()}`})},',
       '      chunkSize: UPLOAD_CHUNK_5MB,',
       '      concurrency: 2,',
       '      autoRetry: false,',

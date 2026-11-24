@@ -1,4 +1,30 @@
 export const nlTranslations: Record<string, string> = {
+  'uploadDemo.dialog.panel.title': 'Uploadvoortgang',
+  'uploadDemo.dialog.cancel': 'Annuleren',
+  'uploadDemo.dialog.retry': 'Opnieuw proberen',
+  'uploadDemo.dialog.remove': 'Verwijderen',
+  'uploadDemo.dialog.summary.success': '{0} bestanden geüpload · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Voltooide wissen',
+  'uploadDemo.dialog.cancelAll': 'Alles annuleren',
+  'uploadDemo.dialog.cancel.confirm':
+    '{0} actieve uploads in deze wachtrij annuleren? Voltooide bestanden blijven behouden.',
+  'uploadDemo.dialog.confirm.background': 'Op de achtergrond blijven uploaden',
+  'uploadDemo.dialog.close': 'Sluiten',
+  'uploadDemo.dialog.status.queued': 'In wachtrij',
+  'uploadDemo.dialog.status.uploading': 'Uploaden',
+  'uploadDemo.dialog.status.processing': 'Verwerken',
+  'uploadDemo.dialog.status.success': 'Geüpload',
+  'uploadDemo.dialog.status.error': 'Mislukt',
+  'uploadDemo.dialog.status.cancelled': 'Geannuleerd',
+  'uploadDemo.api.scope':
+    'Stabiele bestemmingssleutel voor duplicaatdetectie. Gebruik per doel een aparte sleutel en een daaraan gebonden adapter.',
+  'uploadDemo.api.duplicateSelected':
+    'Geeft het bestaande upload-ID door zodat het dialoogvenster het duplicaat kan vinden.',
+  'uploadDemo.api.suppressed': 'Verbergt het gedeelde paneel terwijl een dialoog dezelfde wachtrij toont.',
+  'uploadDemo.minimizeBackground': 'Minimaliseren naar achtergrond',
+  'uploadDemo.autoInfo':
+    'Geldige bestanden worden automatisch geüpload. Minimaliseer dit venster om verder te werken. Houd dit browsertabblad open tot de overdracht klaar is.',
+  'uploadDemo.destination': 'Bestemming',
   'selectionDemo.remove': 'Verwijderen',
 
   'selectionDemo.selectedTitle': 'Geselecteerde organisaties',
@@ -3148,12 +3174,11 @@ export const nlTranslations: Record<string, string> = {
   'uploadDemo.s3.limits':
     'Eén PUT per bestand, één bestand tegelijk. Maximaal 16 MiB per bestand omdat de hash het hele bestand in het geheugen leest. Geen multipart, mappenhiërarchie of hervatten na herladen.',
   'uploadDemo.title': 'Bestanden uploaden',
-  'uploadDemo.confirmFirst': 'Uploaden met bevestiging',
-  'uploadDemo.confirmFirstNote': 'Selecteer bestanden om ze voor te bereiden; er wordt niets geüpload tot u bevestigt.',
+  'uploadDemo.confirmFirst': 'Handmatig voorbereiden (geavanceerd)',
+  'uploadDemo.confirmFirstNote': 'Gebruik handmatige voorbereiding alleen als vooraf een bestemming nodig is.',
   'uploadDemo.modalUpload': 'Uploaden in een modaal venster',
   'uploadDemo.confirmTitle': 'Bevestig bestanden om te uploaden',
-  'uploadDemo.confirmInfo':
-    'Bevestig om de upload te starten. Deze gaat op de achtergrond door en u kunt veilig naar andere pagina’s navigeren.',
+  'uploadDemo.confirmInfo': 'Kies een bestemming voordat u de voorbereide uploads start.',
   'uploadDemo.confirmDuplicates': 'Dubbele bestanden zijn genegeerd: {0}',
   'uploadDemo.confirmCancel': 'Annuleren',
   'uploadDemo.confirmUpload': 'Uploaden',

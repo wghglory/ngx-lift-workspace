@@ -138,47 +138,46 @@ describe('UploadPanelComponent', () => {
     expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
   });
 
-  it('collapses to compact height with the expand toggle without touching queue state', async () => {
-    enqueueBlocked();
-    await flush();
-
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__expand')!.click();
-    fixture.detectChanges();
-    expect(panel().querySelector('.cll-upload-panel__list--compact')).not.toBeNull();
-    expect(queue.items().length).toBe(1);
-  });
-
-  it('asks for confirmation when closing with active items and keeps uploads in the background', async () => {
+  it('offers only collapse and cancel while active and never a Close control', async () => {
     const blocked = enqueueBlocked();
     await flush();
-
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
-    fixture.detectChanges();
-    expect(panel().querySelector('.cll-upload-panel__confirm')).not.toBeNull();
-
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-background')!.click();
+    expect(panel().querySelector('.cll-upload-panel__close')).toBeNull();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__minimize')!.click();
     fixture.detectChanges();
     expect(queue.minimized()).toBe(true);
-    expect(panel().textContent).toContain('background');
     expect(queue.items()[0].status).toBe('uploading');
-
     blocked.release();
-    await flush();
-    expect(queue.items()[0].status).toBe('success');
   });
 
-  it('cancels every non-terminal item and closes when the confirmation cancel action runs', async () => {
+  it('asks before cancellation and keeps uploading on the safe action', async () => {
     enqueueBlocked();
     await flush();
-
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
     fixture.detectChanges();
+    expect(panel().querySelector('.cll-upload-panel__confirm')).not.toBeNull();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-background')!.click();
+    fixture.detectChanges();
+    expect(queue.items()[0].status).toBe('uploading');
+    expect(queue.minimized()).toBe(true);
+  });
+
+  it('cancels the snapshot only, retains records and requires explicit settled Close', async () => {
+    enqueueBlocked();
+    await flush();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
+    fixture.detectChanges();
+    const later = enqueueBlocked();
+    await flush();
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-cancel')!.click();
     fixture.detectChanges();
-
+    expect(queue.items()[0].status).toBe('cancelled');
+    expect(queue.items()[1].status).not.toBe('cancelled');
+    later.release();
+    await flush();
+    expect(queue.items()).toHaveLength(2);
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__done')!.click();
+    fixture.detectChanges();
     expect(queue.items()).toEqual([]);
-    expect(panel().querySelector('.cll-upload-panel__card')).toBeNull();
-    expect(panel().querySelector('.cll-upload-panel__badge')).toBeNull();
   });
 
   it('closes and clears terminal items when idle through the Done action', async () => {
@@ -387,6 +386,8 @@ describe('UploadPanelComponent', () => {
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
     fixture.detectChanges();
 
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-cancel')!.click();
+    fixture.detectChanges();
     expect(queue.items().every((item) => item.status === 'cancelled')).toBe(true);
     expect(panel().querySelector('.cll-upload-panel__live')!.textContent).toBe('2 uploads cancelled.');
   });
@@ -399,9 +400,11 @@ describe('UploadPanelComponent', () => {
     enqueueBlocked();
     await flush();
 
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
     fixture.detectChanges();
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__confirm-cancel')!.click();
+    fixture.detectChanges();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__done')!.click();
     fixture.detectChanges();
 
     expect(document.activeElement).toBe(trigger);
@@ -453,16 +456,137 @@ describe('UploadPanelComponent', () => {
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__badge')!.click();
     fixture.detectChanges();
 
-    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__cancel-all')!.click();
     fixture.detectChanges();
     panel().dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}));
     fixture.detectChanges();
     expect(panel().querySelector('.cll-upload-panel__confirm')).toBeNull();
-    expect(queue.minimized()).toBe(true);
+    expect(queue.minimized()).toBe(false);
     expect(queue.items()[0].status).toBe('uploading');
 
     blocked.release();
     await flush();
     expect(queue.items()[0].status).toBe('success');
+  });
+  it('clears successful records without losing failures and closes mixed settled records explicitly', async () => {
+    queue.enqueue(
+      [uploadFile('ok.zip'), uploadFile('bad.zip')],
+      options({
+        initiate: async (file) => ({uploadId: file.name}),
+        uploadChunk: async (request) => {
+          if (request.uploadId === 'bad.zip') throw {code: 'invalid', phase: 'chunk', recovery: 'replace'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    await flush();
+    const failure = queue.items().find((item) => item.status === 'error')!;
+    expect(failure.error?.recovery).toBe('replace');
+    expect(panel().querySelector('.cll-upload-panel__retry-failed')).toBeNull();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__clear-completed')!.click();
+    await flush();
+    expect(queue.items().map((item) => item.id)).toEqual([failure.id]);
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__done')!.click();
+    await flush();
+    expect(queue.items()).toEqual([]);
+  });
+
+  it('expands on a new failed attempt without stealing focus or repeatedly overriding collapse', async () => {
+    let reject!: (error: unknown) => void;
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    const [item] = queue.enqueue(
+      [uploadFile('bad.zip')],
+      options({
+        initiate: async () => ({uploadId: 'bad'}),
+        uploadChunk: () =>
+          new Promise<void>((_, fail) => {
+            reject = fail;
+          }),
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    await flush();
+    queue.minimize();
+    await flush();
+    trigger.focus();
+    reject({code: 'network', phase: 'chunk'});
+    await flush();
+    expect(queue.minimized()).toBe(false);
+    expect(document.activeElement).toBe(trigger);
+    queue.minimize();
+    await flush();
+    expect(queue.minimized()).toBe(true);
+    void queue.retry(item.id)?.catch(() => undefined);
+    await flush();
+    reject({code: 'network', phase: 'chunk'});
+    await flush();
+    expect(queue.minimized()).toBe(false);
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
+  it('uses byte-weighted transfer progress and retains cleared-success byte contributions', async () => {
+    const gate = blockedAdapter();
+    const [small] = queue.enqueue(
+      [uploadFile('small.zip', 2)],
+      options({...gate.adapter, uploadChunk: async () => undefined}),
+    );
+    queue.enqueue([uploadFile('large.zip', 18)], options(gate.adapter));
+    await flush();
+    expect(queue.items()[0].status).toBe('success');
+    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__clear-completed')!.click();
+    await flush();
+    expect(queue.items().some((item) => item.id === small.id)).toBe(false);
+    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    gate.release();
+  });
+
+  it('suppresses the dock for a dialog without destroying transfers or the shared owner', async () => {
+    enqueueBlocked();
+    await flush();
+    fixture.componentRef.setInput('suppressed', true);
+    fixture.detectChanges();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__card')).toBeNull();
+    expect(queue.items()[0].status).toBe('uploading');
+    fixture.componentRef.setInput('suppressed', false);
+    fixture.detectChanges();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
+  });
+  it('restores stable focus after batch retry and success-only clearing remove their buttons', async () => {
+    let fail = true;
+    queue.enqueue(
+      [uploadFile('retry.zip')],
+      options({
+        initiate: async () => ({uploadId: 'u'}),
+        uploadChunk: async () => {
+          if (fail) throw {code: 'network', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    await flush();
+    const retry = panel().querySelector<HTMLButtonElement>('.cll-upload-panel__retry-failed')!;
+    retry.focus();
+    fail = false;
+    retry.click();
+    await flush();
+    expect(document.activeElement).toBe(panel().querySelector('.cll-upload-panel__minimize'));
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    TestBed.inject(UploadPanelManager).setTrigger(trigger);
+    const clear = panel().querySelector<HTMLButtonElement>('.cll-upload-panel__clear-completed')!;
+    clear.focus();
+    clear.click();
+    await flush();
+    expect(queue.items()).toEqual([]);
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
   });
 });

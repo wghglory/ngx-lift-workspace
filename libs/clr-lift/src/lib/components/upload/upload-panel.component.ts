@@ -1,5 +1,15 @@
 import {isPlatformBrowser} from '@angular/common';
-import {AfterViewInit, ChangeDetectionStrategy, Component, inject, Injector, PLATFORM_ID} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  effect,
+  inject,
+  input,
+  Injector,
+  PLATFORM_ID,
+} from '@angular/core';
 
 import {UploadPanelManager} from './upload-panel-manager';
 
@@ -19,6 +29,14 @@ export class UploadPanelComponent implements AfterViewInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly manager = inject(UploadPanelManager);
   private readonly injector = inject(Injector);
+
+  /** Suppress the shared dock while an application dialog presents the same queue. */
+  readonly suppressed = input(false);
+
+  constructor() {
+    effect(() => this.manager.setSuppressed(this, this.suppressed()));
+    inject(DestroyRef).onDestroy(() => this.manager.setSuppressed(this, false));
+  }
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) this.manager.ensurePanel();

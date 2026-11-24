@@ -1,4 +1,30 @@
 export const ruTranslations: Record<string, string> = {
+  'uploadDemo.dialog.panel.title': 'Ход загрузки',
+  'uploadDemo.dialog.cancel': 'Отмена',
+  'uploadDemo.dialog.retry': 'Повторить',
+  'uploadDemo.dialog.remove': 'Удалить',
+  'uploadDemo.dialog.summary.success': 'Загружено файлов: {0} · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Очистить завершённые',
+  'uploadDemo.dialog.cancelAll': 'Отменить всё',
+  'uploadDemo.dialog.cancel.confirm':
+    'Отменить активные загрузки ({0}) в этой очереди? Завершённые файлы будут сохранены.',
+  'uploadDemo.dialog.confirm.background': 'Продолжить в фоне',
+  'uploadDemo.dialog.close': 'Закрыть',
+  'uploadDemo.dialog.status.queued': 'В очереди',
+  'uploadDemo.dialog.status.uploading': 'Загрузка',
+  'uploadDemo.dialog.status.processing': 'Обработка',
+  'uploadDemo.dialog.status.success': 'Загружено',
+  'uploadDemo.dialog.status.error': 'Ошибка',
+  'uploadDemo.dialog.status.cancelled': 'Отменено',
+  'uploadDemo.api.scope':
+    'Стабильный ключ назначения для поиска дубликатов. Используйте отдельный ключ и привязанный адаптер для каждого назначения.',
+  'uploadDemo.api.duplicateSelected':
+    'Передаёт существующий идентификатор загрузки для поиска дубликата в списке диалога.',
+  'uploadDemo.api.suppressed': 'Скрывает общую панель, пока диалог показывает ту же очередь.',
+  'uploadDemo.minimizeBackground': 'Свернуть в фон',
+  'uploadDemo.autoInfo':
+    'После проверки файлы загружаются автоматически. Сверните диалог и продолжайте работу. Не закрывайте вкладку до окончания передачи.',
+  'uploadDemo.destination': 'Назначение',
   'selectionDemo.remove': 'Удалить',
 
   'selectionDemo.selectedTitle': 'Выбранные организации',
@@ -3123,12 +3149,11 @@ export const ruTranslations: Record<string, string> = {
   'uploadDemo.s3.limits':
     'Один PUT на файл, файлы загружаются последовательно. Не более 16 MiB на файл: для хеширования весь файл читается в память. Нет составной загрузки, иерархии папок и возобновления после перезагрузки.',
   'uploadDemo.title': 'Загрузка файлов',
-  'uploadDemo.confirmFirst': 'Загрузка с подтверждением',
-  'uploadDemo.confirmFirstNote': 'Выберите файлы для подготовки; загрузка начнётся только после подтверждения.',
+  'uploadDemo.confirmFirst': 'Ручная подготовка (дополнительно)',
+  'uploadDemo.confirmFirstNote': 'Используйте ручную подготовку, только если перед загрузкой нужно указать назначение.',
   'uploadDemo.modalUpload': 'Загрузить в модальном окне',
   'uploadDemo.confirmTitle': 'Подтвердить файлы для загрузки',
-  'uploadDemo.confirmInfo':
-    'Подтвердите начало загрузки. Она продолжится в фоне, и вы сможете безопасно переходить на другие страницы.',
+  'uploadDemo.confirmInfo': 'Выберите назначение перед началом подготовленных загрузок.',
   'uploadDemo.confirmDuplicates': 'Повторяющиеся файлы проигнорированы: {0}',
   'uploadDemo.confirmCancel': 'Отмена',
   'uploadDemo.confirmUpload': 'Загрузить',

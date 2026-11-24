@@ -1,4 +1,30 @@
 export const frTranslations: Record<string, string> = {
+  'uploadDemo.dialog.panel.title': 'Progression du téléchargement',
+  'uploadDemo.dialog.cancel': 'Annuler',
+  'uploadDemo.dialog.retry': 'Réessayer',
+  'uploadDemo.dialog.remove': 'Supprimer',
+  'uploadDemo.dialog.summary.success': '{0} fichiers téléchargés · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Effacer les terminés',
+  'uploadDemo.dialog.cancelAll': 'Tout annuler',
+  'uploadDemo.dialog.cancel.confirm':
+    'Annuler {0} transferts actifs de cette file ? Les fichiers terminés seront conservés.',
+  'uploadDemo.dialog.confirm.background': 'Continuer en arrière-plan',
+  'uploadDemo.dialog.close': 'Fermer',
+  'uploadDemo.dialog.status.queued': 'En attente',
+  'uploadDemo.dialog.status.uploading': 'Téléchargement',
+  'uploadDemo.dialog.status.processing': 'Traitement',
+  'uploadDemo.dialog.status.success': 'Téléchargé',
+  'uploadDemo.dialog.status.error': 'Échec',
+  'uploadDemo.dialog.status.cancelled': 'Annulé',
+  'uploadDemo.api.scope':
+    'Clé de destination stable pour détecter les doublons. Utilisez une clé distincte et un adaptateur lié à chaque destination.',
+  'uploadDemo.api.duplicateSelected':
+    'Émet l’identifiant existant pour retrouver le doublon dans la liste du dialogue.',
+  'uploadDemo.api.suppressed': 'Masque le panneau partagé lorsqu’un dialogue présente la même file.',
+  'uploadDemo.minimizeBackground': 'Réduire en arrière-plan',
+  'uploadDemo.autoInfo':
+    'Les fichiers valides sont transférés automatiquement. Réduisez cette fenêtre pour continuer à travailler. Gardez cet onglet ouvert jusqu’à la fin du transfert.',
+  'uploadDemo.destination': 'Destination',
   'selectionDemo.remove': 'Supprimer',
 
   'selectionDemo.selectedTitle': 'Organisations sélectionnées',
@@ -3196,13 +3222,12 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.s3.limits':
     'Un PUT par fichier, un fichier à la fois. Limite de 16 MiB par fichier, car le hachage lit tout le fichier en mémoire. Sans import multipartie, hiérarchie de dossiers ni reprise après rechargement.',
   'uploadDemo.title': 'Téléverser des fichiers',
-  'uploadDemo.confirmFirst': 'Téléversement avec confirmation',
+  'uploadDemo.confirmFirst': 'Préparation manuelle (avancé)',
   'uploadDemo.confirmFirstNote':
-    'Sélectionnez des fichiers pour les préparer ; rien n’est téléversé avant confirmation.',
+    'Utilisez la préparation manuelle uniquement si une destination est nécessaire avant le transfert.',
   'uploadDemo.modalUpload': 'Téléverser dans une fenêtre modale',
   'uploadDemo.confirmTitle': 'Confirmer les fichiers à téléverser',
-  'uploadDemo.confirmInfo':
-    'Confirmez pour démarrer le téléversement. Il se poursuit en arrière-plan et vous pouvez naviguer vers d’autres pages en toute sécurité.',
+  'uploadDemo.confirmInfo': 'Choisissez la destination avant de lancer les transferts préparés.',
   'uploadDemo.confirmDuplicates': 'Les fichiers en double ont été ignorés : {0}',
   'uploadDemo.confirmCancel': 'Annuler',
   'uploadDemo.confirmUpload': 'Téléverser',

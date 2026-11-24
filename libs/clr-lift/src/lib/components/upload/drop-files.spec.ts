@@ -1,6 +1,6 @@
 import {describe, expect, it} from 'vitest';
 
-import {filesFromDataTransfer, filesFromEntries} from './drop-files';
+import {filesFromDataTransfer, filesFromEntries, relativeFilePath} from './drop-files';
 
 function fakeFile(name: string, body = 'content'): File {
   return new File([body], name);
@@ -12,7 +12,7 @@ function fileEntry(name: string): FileSystemFileEntry {
     isFile: true,
     isDirectory: false,
     name,
-    file: (success) => success(file),
+    file: (success: FileCallback) => success(file),
   } as unknown as FileSystemFileEntry;
 }
 
@@ -21,7 +21,7 @@ function fileEntryFailing(name: string): FileSystemFileEntry {
     isFile: true,
     isDirectory: false,
     name,
-    file: (_success, error) => error(new Error('unavailable')),
+    file: (_success: FileCallback, error: (error: Error) => void) => error(new Error('unavailable')),
   } as unknown as FileSystemFileEntry;
 }
 
@@ -62,6 +62,20 @@ describe('filesFromEntries', () => {
     const files = await filesFromEntries([tree]);
 
     expect(files.map((file) => file.name)).toEqual(['a.zip', 'b.zip', 'c.zip']);
+  });
+
+  it('preserves available dropped-entry paths without changing the File name or bytes', async () => {
+    const original = new File(['payload'], 'bundle.zip');
+    const entry = {
+      ...fileEntry('bundle.zip'),
+      fullPath: '/releases/bundle.zip',
+      file: (success: FileCallback) => success(original),
+    };
+    const [file] = await filesFromEntries([entry]);
+    expect(file).toBe(original);
+    expect(file.name).toBe('bundle.zip');
+    expect(relativeFilePath(file)).toBe('releases/bundle.zip');
+    expect(file.size).toBe(7);
   });
 
   it('collects directory children delivered in multiple readEntries batches', async () => {

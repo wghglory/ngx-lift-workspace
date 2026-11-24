@@ -7,13 +7,12 @@
         [adapter]="adapter"
         [multiple]="true"
         accept=".zip,.tar"
-        [maxSize]="512"
         [chunkSize]="chunk5Mb"
         [concurrency]="2"
         (uploadComplete)="onComplete($event)"
       />
       <p data-testid="upload-demo-registered">{{ 'uploadDemo.registered' | translate }}: {{ registeredCount() }}</p>
-      <cll-upload-panel />
+      <cll-upload-panel [suppressed]="modalOpen() || confirmOpen()" />
     </div>
   </app-demo-playground>
 
@@ -176,6 +175,10 @@
         <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.confirmInfo' | translate">
         </cll-alert>
         <ng-container [ngTemplateOutlet]="stagedFilesList" />
+        <clr-input-container
+          ><label>{{ 'uploadDemo.destination' | translate }}</label
+          ><input clrInput [formControl]="destination" required
+        /></clr-input-container>
         @if (duplicateNames().length) {
           <p class="upload-confirm-duplicate">
             {{ 'uploadDemo.confirmDuplicates' | translate: duplicateNames().join(', ') }}
@@ -187,39 +190,111 @@
       <button type="button" class="btn btn-outline" (click)="cancelUpload()">
         {{ 'uploadDemo.confirmCancel' | translate }}
       </button>
-      <button type="button" class="btn btn-primary" data-testid="upload-demo-confirm" (click)="confirmUpload()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-testid="upload-demo-confirm"
+        [disabled]="!destination.value.trim()"
+        (click)="confirmUpload()"
+      >
         {{ 'uploadDemo.confirmUpload' | translate }}
       </button>
     </div>
   </clr-modal>
 
-  <clr-modal [(clrModalOpen)]="modalOpen">
-    <h3 class="modal-title">{{ 'uploadDemo.modalUpload' | translate }}</h3>
+  <clr-modal [(clrModalOpen)]="modalOpen" [clrModalClosable]="false" (keydown.escape)="minimizeDialog()">
+    <h3 class="modal-title">{{ 'uploadDemo.dialog.panel.title' | translate }}</h3>
     <div class="modal-body">
-      <div cds-layout="vertical gap:sm">
-        <p>{{ 'uploadDemo.modalNote' | translate }}</p>
-        <cll-upload
-          #modalUpload
-          [adapter]="apiAdapter"
-          [multiple]="true"
-          accept=".zip,.tar"
-          [autoEnqueue]="false"
-          [chunkSize]="chunk5Mb"
-          [concurrency]="2"
-          (filesChange)="stageFiles($event)"
-        />
-        @if (stagedFiles().length) {
-          <ng-container [ngTemplateOutlet]="stagedFilesList" />
-        }
-      </div>
+      <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.autoInfo' | translate" />
+      <cll-upload
+        #modalUpload
+        [adapter]="apiAdapter"
+        scope="demo-shared-bundles"
+        (duplicateSelected)="locateModalItem($event)"
+        [multiple]="true"
+        accept=".zip,.tar"
+        [chunkSize]="chunk5Mb"
+        [concurrency]="2"
+      />
+      @for (item of modalRows(); track item.id) {
+        <div class="upload-dialog-row" [attr.data-upload-id]="item.id" tabindex="-1">
+          <strong>{{ item.file.name }}</strong>
+          <span>{{ 'uploadDemo.dialog.status.' + item.status | translate }}</span>
+          @if (item.status === 'uploading') {
+            <clr-progress-bar [clrValue]="item.progress" [attr.aria-label]="item.file.name" />
+          }
+          @if (item.status === 'processing') {
+            <clr-progress-bar
+              [clrLoop]="item.processingProgress === undefined"
+              [clrValue]="item.processingProgress ?? 0"
+              [attr.aria-label]="item.file.name"
+            />
+          }
+          @if (item.status === 'queued' || item.status === 'uploading' || item.status === 'processing') {
+            <button type="button" class="btn btn-link btn-sm" (click)="cancelModalItem(item.id)">
+              {{ 'uploadDemo.dialog.cancel' | translate }}
+            </button>
+          }
+          @if (item.error) {
+            <p class="clr-error">{{ item.error.message }}</p>
+          }
+          @if (item.status === 'error' && item.error?.recovery !== 'replace') {
+            <button type="button" class="btn btn-link btn-sm" (click)="retryItem(item.id)">
+              {{ 'uploadDemo.dialog.retry' | translate }}
+            </button>
+          }
+          @if (item.status === 'error' || item.status === 'cancelled') {
+            <button type="button" class="btn btn-link btn-sm" (click)="removeModalItem(item.id)">
+              {{ 'uploadDemo.dialog.remove' | translate }}
+            </button>
+          }
+        </div>
+      }
+      @if (modalSuccesses().length) {
+        <div class="upload-dialog-summary">
+          <details>
+            <summary>
+              {{
+                'uploadDemo.dialog.summary.success'
+                  | translate
+                    : modalSuccesses().length
+                    : formatFileSize(modalSuccesses().reduce((sum, item) => sum + item.file.size, 0))
+              }}
+            </summary>
+            @for (item of modalSuccesses(); track item.id) {
+              <p [attr.data-upload-id]="item.id" tabindex="-1">{{ item.file.name }}</p>
+            }
+          </details>
+          <button type="button" class="btn btn-link btn-sm" (click)="clearModalSuccesses()">
+            {{ 'uploadDemo.dialog.clearCompleted' | translate }}
+          </button>
+        </div>
+      }
+      @if (modalCancelling()) {
+        <div role="group" [attr.aria-label]="'uploadDemo.dialog.cancelAll' | translate">
+          <p>{{ 'uploadDemo.dialog.cancel.confirm' | translate: modalCancelCount() }}</p>
+          <button type="button" class="btn btn-outline upload-modal-keep" (click)="dismissModalCancel()">
+            {{ 'uploadDemo.dialog.confirm.background' | translate }}
+          </button>
+          <button type="button" class="btn btn-danger" (click)="confirmModalCancel()">
+            {{ 'uploadDemo.dialog.cancelAll' | translate }}
+          </button>
+        </div>
+      }
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline" (click)="cancelModalUpload()">
-        {{ 'uploadDemo.confirmCancel' | translate }}
-      </button>
-      @if (stagedFiles().length) {
-        <button type="button" class="btn btn-primary" data-testid="upload-demo-modal-confirm" (click)="confirmUpload()">
-          {{ 'uploadDemo.confirmUpload' | translate }}
+      @if (modalActive()) {
+        <button type="button" class="btn btn-outline" (click)="requestModalCancel()">
+          {{ 'uploadDemo.dialog.cancelAll' | translate }}
+        </button>
+      }
+      @if (modalActive()) {
+        <button type="button" class="btn btn-primary upload-modal-action" (click)="minimizeDialog()">
+          {{ 'uploadDemo.minimizeBackground' | translate }}
+        </button>
+      } @else {
+        <button type="button" class="btn btn-primary upload-modal-action" (click)="cancelModalUpload()">
+          {{ 'uploadDemo.dialog.close' | translate }}
         </button>
       }
     </div>
@@ -253,5 +328,9 @@
     <app-api-table [properties]="outputs()" />
     <h4>{{ 'common.methods' | translate }}</h4>
     <app-api-table [properties]="methods()" />
+  </section>
+  <section cds-layout="vertical gap:md">
+    <h3>UploadPanelComponent</h3>
+    <app-api-table [properties]="panelInputs()" />
   </section>
 </cll-page-container>

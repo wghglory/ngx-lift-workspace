@@ -21,16 +21,16 @@ import {
   type ValidationErrors,
   type Validator,
 } from '@angular/forms';
-import {ClarityIcons, ClarityModule, uploadCloudIcon} from '@clr/angular';
+import {ClarityIcons, ClarityModule, exclamationTriangleIcon, uploadCloudIcon} from '@clr/angular';
 import {UPLOAD_CHUNK_25MB, type UploadAdapter, type UploadError, type UploadItem, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
-import {filesFromDataTransfer} from './drop-files';
+import {filesFromDataTransfer, relativeFilePath} from './drop-files';
 import {UploadPanelManager} from './upload-panel-manager';
 import {uploadTranslations} from './upload.l10n';
 
-ClarityIcons.addIcons(uploadCloudIcon);
+ClarityIcons.addIcons(uploadCloudIcon, exclamationTriangleIcon);
 
 /** Clarity file-selection host: validates a selection and enqueues it on the shared queue. */
 @Component({
@@ -56,6 +56,8 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   private readonly reportedCancelErrors = new Set<string>();
 
   readonly adapter = input.required<UploadAdapter>();
+  /** Stable destination identity for duplicate detection; otherwise the adapter must be destination-bound. */
+  readonly scope = input<string>();
   readonly multiple = input(false);
   readonly accept = input('');
   readonly maxSize = input(Infinity);
@@ -70,6 +72,8 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   readonly controlId = input('');
   readonly disabled = input(false);
 
+  /** Lets an application dialog locate a duplicate in its own presentation. */
+  readonly duplicateSelected = output<string>();
   readonly filesChange = output<readonly File[]>();
   readonly validationErrors = output<readonly UploadError[]>();
   readonly uploadComplete = output<readonly UploadItem[]>();
@@ -79,6 +83,8 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   readonly disabledState = linkedSignal(() => this.disabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
+  readonly duplicates = signal<readonly {file: File; id?: string}[]>([]);
+  readonly reading = signal(false);
   private readonly retryWatch = signal<readonly {readonly id: string; readonly attempt: number}[]>([]);
   readonly dragOver = signal(false);
   private dragDepth = 0;
@@ -177,10 +183,15 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.dragOver.set(false);
     if (this.disabledState() || !event.dataTransfer) return;
     const selectionVersion = this.selectionVersion;
-    const files = await filesFromDataTransfer(event.dataTransfer);
-    if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
-    this.ingest(files);
-    this.onTouched();
+    this.reading.set(true);
+    try {
+      const files = await filesFromDataTransfer(event.dataTransfer);
+      if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
+      this.ingest(files);
+      this.onTouched();
+    } finally {
+      this.reading.set(false);
+    }
   }
 
   onDragEnter(event: DragEvent): void {
@@ -205,32 +216,43 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   private ingest(selected: readonly File[]): void {
     if (!selected.length || this.disabledState()) return;
 
+    const adapter = this.adapter();
+    const scope = this.scope();
     const rejections: UploadError[] = [];
+    const duplicates: {file: File; id?: string}[] = [];
     const accepted: File[] = [];
     // A single-file host must reject extra dropped files even when maxFiles is unset.
     const limit = this.multiple() ? (this.maxFiles() > 0 ? this.maxFiles() : Infinity) : 1;
     for (const file of selected) {
       if (!this.matchesAccept(file)) {
-        rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: file.name});
+        rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: this.fileLabel(file)});
       } else if (this.maxSize() === 0 || file.size > this.maxSize() * 1024 * 1024) {
         rejections.push({
           code: 'upload.validation.maxSize',
           phase: 'validation',
           message: String(this.maxSize()),
-          fileName: file.name,
-        });
-      } else if (accepted.length >= limit) {
-        rejections.push({
-          code: 'upload.validation.maxFiles',
-          phase: 'validation',
-          message: String(limit),
-          fileName: file.name,
+          fileName: this.fileLabel(file),
         });
       } else {
-        accepted.push(file);
+        const existing = this.autoEnqueue() ? this.panelManager.duplicate(file, adapter, scope) : undefined;
+        if (existing || accepted.some((candidate) => this.panelManager.sameFile(candidate, file))) {
+          duplicates.push({file, id: existing?.id});
+          continue;
+        }
+        if (accepted.length >= limit) {
+          rejections.push({
+            code: 'upload.validation.maxFiles',
+            phase: 'validation',
+            message: String(limit),
+            fileName: this.fileLabel(file),
+          });
+        } else {
+          accepted.push(file);
+        }
       }
     }
-    this.setErrors(rejections);
+    this.setErrors([...this.errors(), ...rejections]);
+    this.duplicates.set(duplicates);
     if (rejections.length) this.validationErrors.emit(rejections);
     if (!accepted.length) return;
 
@@ -244,13 +266,20 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
     this.openPanel();
     const items = this.queue.enqueue(accepted, {
-      adapter: this.adapter(),
+      adapter,
       chunkSize: this.chunkSize(),
       concurrency: this.concurrency(),
       autoRetry: this.autoRetry(),
       maxRetries: this.maxRetries(),
       pollIntervalMs: this.pollIntervalMs(),
     });
+    this.panelManager.track(items, adapter, scope);
+    this.duplicates.update((notices) =>
+      notices.map((notice) => ({
+        ...notice,
+        id: notice.id ?? items.find((item) => this.panelManager.sameFile(item.file, notice.file))?.id,
+      })),
+    );
     for (const item of items) {
       this.tracked.set(item.id, true);
       void this.watch(item.id, item);
@@ -267,12 +296,24 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.filesChange.emit([]);
   }
 
+  showDuplicate(id: string | undefined): void {
+    if (!id) return;
+    this.duplicateSelected.emit(id);
+    if (!this.panelManager.suppressed()) this.panelManager.showItem(id);
+  }
+
+  fileLabel(file: File): string {
+    return relativeFilePath(file) || file.name;
+  }
+
   clearValidationErrors(): void {
     this.setErrors([]);
   }
 
   private clearItems(): void {
     this.selectionVersion++;
+    this.reading.set(false);
+    this.duplicates.set([]);
     for (const id of this.tracked.keys()) this.queue.remove(id);
     this.tracked.clear();
     this.reportedCancelErrors.clear();
@@ -281,6 +322,8 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
   private cancelTracked(): void {
     this.selectionVersion++;
+    this.reading.set(false);
+    this.duplicates.set([]);
     for (const id of this.tracked.keys()) this.queue.cancel(id);
   }
 

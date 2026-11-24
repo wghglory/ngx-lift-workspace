@@ -114,7 +114,7 @@ describe('UploadComponent', () => {
   it('keeps the form value independent from queue state and cancels items when disabled', async () => {
     const pending = new Promise<void>(() => undefined);
     const component = create({adapter: {...stubAdapter(), uploadChunk: async () => pending}});
-    const changes: readonly File[][] = [];
+    const changes: (readonly File[])[] = [];
     component.registerOnChange((value) => changes.push(value));
     await select(component, [file('bundle.zip')]);
 
@@ -246,7 +246,7 @@ describe('UploadComponent', () => {
     fixture.componentRef.setInput('adapter', stubAdapter());
     fixture.componentRef.setInput('autoEnqueue', false);
     fixture.detectChanges();
-    const emitted: readonly File[][] = [];
+    const emitted: (readonly File[])[] = [];
     fixture.componentInstance.filesChange.subscribe((files) => emitted.push(files));
 
     select(fixture.componentInstance, [file('staged.zip')]);
@@ -412,5 +412,57 @@ describe('UploadComponent dropzone', () => {
     component.onDragLeave(dragEvent('leave'));
 
     expect(component.dragOver()).toBe(false);
+  });
+  it('skips suspected repeats in the same adapter scope but accepts same-name different files', async () => {
+    const adapter = stubAdapter();
+    const component = create({adapter, multiple: true}).component;
+    const first = new File(['first'], 'bundle.zip', {lastModified: 7});
+    await select(component, [first, first]);
+    const queue = TestBed.inject(UploadQueueService);
+    expect(queue.items()).toHaveLength(1);
+    expect(component.duplicates()).toHaveLength(1);
+    await select(component, [new File(['first'], 'bundle.zip', {lastModified: 7})]);
+    expect(queue.items()).toHaveLength(1);
+    await select(component, [new File(['different'], 'bundle.zip', {lastModified: 7})]);
+    expect(queue.items()).toHaveLength(2);
+    const otherTarget = create({adapter: stubAdapter(), multiple: true}).component;
+    await select(otherTarget, [first]);
+    expect(queue.items()).toHaveLength(3);
+    queue.clearCompleted();
+    await select(component, [first]);
+    expect(queue.items()).toHaveLength(1);
+  });
+
+  it('keeps rejection details when valid files are appended and does not block valid siblings', async () => {
+    const component = create({multiple: true, accept: '.zip'}).component;
+    await select(component, [file('readme.txt'), file('first.zip')]);
+    expect(component.errors()).toHaveLength(1);
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(1);
+    await select(component, [file('second.zip')]);
+    expect(component.errors()).toHaveLength(1);
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(2);
+    component.clearValidationErrors();
+    expect(component.errors()).toEqual([]);
+  });
+  it('keeps duplicate detection isolated by explicit destination even with a reused adapter', async () => {
+    const adapter = stubAdapter();
+    const source = new File(['bytes'], 'same.zip', {lastModified: 8});
+    const first = create({adapter, multiple: true, scope: 'region-a'}).component;
+    const second = create({adapter, multiple: true, scope: 'region-b'}).component;
+    const third = create({adapter: stubAdapter(), multiple: true, scope: 'region-a'}).component;
+    await select(first, [source]);
+    await select(second, [source]);
+    await select(third, [source]);
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(2);
+    expect(third.duplicates()).toHaveLength(1);
+    expect(second.duplicates()).toEqual([]);
+  });
+  it('does not turn a duplicate into a count-limit rejection', async () => {
+    const {component} = create({multiple: true, maxFiles: 1});
+    const source = new File(['bytes'], 'same.zip', {lastModified: 9});
+    await select(component, [source, source, file('extra.zip')]);
+    expect(component.duplicates()).toHaveLength(1);
+    expect(component.errors().map((error) => error.fileName)).toEqual(['extra.zip']);
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(1);
   });
 });

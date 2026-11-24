@@ -345,3 +345,30 @@
   overflow: hidden;
   clip-path: inset(50%);
 }
+
+.cll-upload-panel__heading {
+  flex: 1;
+  min-inline-size: 0;
+}
+.cll-upload-panel__badge {
+  position: relative;
+  overflow: hidden;
+  min-block-size: 2rem;
+  max-inline-size: calc(100vw - 2rem);
+  flex-wrap: wrap;
+}
+.cll-upload-panel__compact-progress {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline-start: 0;
+  block-size: 3px;
+  background: var(--clr-color-action-600);
+}
+.cll-upload-panel__name-line {
+  flex-wrap: wrap;
+}
+.cll-upload-panel__summary-toggle {
+  flex: 1;
+  min-inline-size: 0;
+  inline-size: auto;
+}

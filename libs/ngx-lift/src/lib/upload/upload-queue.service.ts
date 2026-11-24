@@ -74,6 +74,7 @@ function toUploadError(error: unknown, phase: Phase): UploadError {
         message: candidate.message,
         phase: candidate.phase ?? phase,
         retryable: candidate.retryable,
+        ...(candidate.recovery === 'replace' || candidate.recovery === 'retry' ? {recovery: candidate.recovery} : {}),
         fileName: candidate.fileName,
       };
     }

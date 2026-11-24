@@ -1,4 +1,30 @@
 export const deTranslations: Record<string, string> = {
+  'uploadDemo.dialog.panel.title': 'Upload-Fortschritt',
+  'uploadDemo.dialog.cancel': 'Abbrechen',
+  'uploadDemo.dialog.retry': 'Erneut versuchen',
+  'uploadDemo.dialog.remove': 'Entfernen',
+  'uploadDemo.dialog.summary.success': '{0} Dateien hochgeladen · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Abgeschlossene löschen',
+  'uploadDemo.dialog.cancelAll': 'Alle abbrechen',
+  'uploadDemo.dialog.cancel.confirm':
+    '{0} aktive Uploads dieser Warteschlange abbrechen? Fertige Dateien bleiben erhalten.',
+  'uploadDemo.dialog.confirm.background': 'Im Hintergrund weiter hochladen',
+  'uploadDemo.dialog.close': 'Schließen',
+  'uploadDemo.dialog.status.queued': 'In Warteschlange',
+  'uploadDemo.dialog.status.uploading': 'Wird hochgeladen',
+  'uploadDemo.dialog.status.processing': 'Wird verarbeitet',
+  'uploadDemo.dialog.status.success': 'Hochgeladen',
+  'uploadDemo.dialog.status.error': 'Fehlgeschlagen',
+  'uploadDemo.dialog.status.cancelled': 'Abgebrochen',
+  'uploadDemo.api.scope':
+    'Stabiler Zielschlüssel zur Duplikaterkennung. Verwenden Sie je Ziel einen eigenen Schlüssel und einen zielgebundenen Adapter.',
+  'uploadDemo.api.duplicateSelected':
+    'Gibt die vorhandene Upload-ID aus, damit ein Dialog das Duplikat in seiner Liste finden kann.',
+  'uploadDemo.api.suppressed': 'Blendet das gemeinsame Dock aus, während ein Dialog dieselbe Warteschlange zeigt.',
+  'uploadDemo.minimizeBackground': 'Im Hintergrund fortsetzen',
+  'uploadDemo.autoInfo':
+    'Gültige Dateien werden automatisch hochgeladen. Minimieren Sie den Dialog, um weiterzuarbeiten. Lassen Sie diesen Browser-Tab bis zum Ende der Übertragung geöffnet.',
+  'uploadDemo.destination': 'Ziel',
   'selectionDemo.remove': 'Entfernen',
 
   'selectionDemo.selectedTitle': 'Ausgewählte Organisationen',
@@ -3192,12 +3218,12 @@ export const deTranslations: Record<string, string> = {
   'uploadDemo.s3.limits':
     'Ein PUT pro Datei, eine Datei nach der anderen. Maximal 16 MiB pro Datei, da der Hash die gesamte Datei in den Speicher liest. Kein Multipart, keine Ordnerhierarchie und keine Fortsetzung nach dem Neuladen.',
   'uploadDemo.title': 'Dateien hochladen',
-  'uploadDemo.confirmFirst': 'Upload mit Bestätigung',
-  'uploadDemo.confirmFirstNote': 'Dateien auswählen und prüfen; der Upload startet erst nach der Bestätigung.',
+  'uploadDemo.confirmFirst': 'Manuelle Vorbereitung (erweitert)',
+  'uploadDemo.confirmFirstNote':
+    'Verwenden Sie die manuelle Vorbereitung nur, wenn vor dem Upload ein Ziel erforderlich ist.',
   'uploadDemo.modalUpload': 'In einem Dialog hochladen',
   'uploadDemo.confirmTitle': 'Dateien für den Upload bestätigen',
-  'uploadDemo.confirmInfo':
-    'Bestätigen Sie, um den Upload zu starten. Er läuft im Hintergrund weiter und Sie können sicher zu anderen Seiten navigieren.',
+  'uploadDemo.confirmInfo': 'Wählen Sie zuerst das Ziel für die vorbereiteten Uploads.',
   'uploadDemo.confirmDuplicates': 'Doppelte Dateien wurden ignoriert: {0}',
   'uploadDemo.confirmCancel': 'Abbrechen',
   'uploadDemo.confirmUpload': 'Hochladen',

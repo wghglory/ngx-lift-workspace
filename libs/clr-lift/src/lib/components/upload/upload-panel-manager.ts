@@ -1,8 +1,11 @@
 import {isPlatformBrowser} from '@angular/common';
 import {Overlay, type OverlayRef} from '@angular/cdk/overlay';
 import {ComponentPortal} from '@angular/cdk/portal';
-import {DestroyRef, inject, Injectable, Injector, PLATFORM_ID} from '@angular/core';
+import {DestroyRef, effect, inject, Injectable, Injector, PLATFORM_ID, signal} from '@angular/core';
 
+import {type UploadAdapter, type UploadItem, UploadQueueService} from 'ngx-lift';
+
+import {relativeFilePath} from './drop-files';
 import {UploadPanelWindowComponent} from './upload-panel-window.component';
 
 /**
@@ -20,8 +23,57 @@ export class UploadPanelManager {
   private readonly injector = inject(Injector);
   private overlayRef?: OverlayRef;
   private trigger?: HTMLElement;
+  private readonly queue = inject(UploadQueueService);
+  private readonly scopes = new Map<string, {adapter: UploadAdapter; scope?: string}>();
+  private readonly suppressors = new Set<object>();
+  readonly suppressed = signal(false);
+
+  setSuppressed(owner: object, value: boolean): void {
+    if (value) this.suppressors.add(owner);
+    else this.suppressors.delete(owner);
+    this.suppressed.set(this.suppressors.size > 0);
+  }
+
+  track(items: readonly UploadItem[], adapter: UploadAdapter, scope?: string): void {
+    for (const item of items) this.scopes.set(item.id, {adapter, scope});
+    const liveIds = new Set(this.queue.items().map((item) => item.id));
+    for (const id of this.scopes.keys()) if (!liveIds.has(id)) this.scopes.delete(id);
+  }
+
+  duplicate(file: File, adapter: UploadAdapter, scope?: string): UploadItem | undefined {
+    return this.queue
+      .items()
+      .find(
+        (item) =>
+          item.status !== 'cancelled' &&
+          (scope !== undefined
+            ? this.scopes.get(item.id)?.scope === scope
+            : this.scopes.get(item.id)?.scope === undefined && this.scopes.get(item.id)?.adapter === adapter) &&
+          this.sameFile(item.file, file),
+      );
+  }
+
+  sameFile(left: File, right: File): boolean {
+    return (
+      left.name === right.name &&
+      left.size === right.size &&
+      left.lastModified === right.lastModified &&
+      relativeFilePath(left) === relativeFilePath(right)
+    );
+  }
+
+  showItem(id: string): void {
+    this.ensurePanel();
+    this.window?.showItem(id);
+  }
+
+  private window?: UploadPanelWindowComponent;
 
   constructor() {
+    effect(() => {
+      const ids = new Set(this.queue.items().map((item) => item.id));
+      for (const id of this.scopes.keys()) if (!ids.has(id)) this.scopes.delete(id);
+    });
     inject(DestroyRef).onDestroy(() => this.overlayRef?.dispose());
   }
 
@@ -40,7 +92,7 @@ export class UploadPanelManager {
       positionStrategy: position,
       scrollStrategy: this.overlay.scrollStrategies.noop(),
     });
-    this.overlayRef.attach(new ComponentPortal(UploadPanelWindowComponent, null, this.injector));
+    this.window = this.overlayRef.attach(new ComponentPortal(UploadPanelWindowComponent, null, this.injector)).instance;
   }
 
   /** Records the element that most recently opened or interacted with the panel. */

@@ -1,3 +1,11 @@
+// FileSystemEntry paths are not always copied into File.webkitRelativePath by browsers.
+const droppedPaths = new WeakMap<File, string>();
+
+/** Relative display/identity hint only; never a server storage key. */
+export function relativeFilePath(file: File): string {
+  return file.webkitRelativePath || droppedPaths.get(file) || '';
+}
+
 /**
  * Collects the files behind one drag-and-drop drop, traversing dropped folders.
  *
@@ -29,7 +37,10 @@ async function walkEntry(entry: FileSystemEntry): Promise<readonly File[]> {
   if (entry.isFile) {
     return new Promise((resolve) => {
       (entry as FileSystemFileEntry).file(
-        (file) => resolve([file]),
+        (file) => {
+          if (entry.fullPath) droppedPaths.set(file, entry.fullPath.replace(/^\//, ''));
+          resolve([file]);
+        },
         () => resolve([]),
       );
     });

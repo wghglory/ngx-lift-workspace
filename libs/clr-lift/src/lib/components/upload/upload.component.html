@@ -98,28 +98,58 @@
   }
 </div>
 
+@if (reading()) {
+  <p role="status">{{ 'upload.reading' | translate }}</p>
+}
 <div [id]="inputId + '-errors'" aria-live="polite" aria-atomic="true">
   @if (errors().length) {
+    <div class="alert alert-danger cll-upload__rejections">
+      <div class="alert-items">
+        <div class="alert-item">
+          <cds-icon shape="exclamation-triangle" aria-hidden="true" />
+          <div>
+            <p>{{ 'upload.validation.summary' | translate: errors().length }}</p>
+            <ul class="cll-upload__errors">
+              @for (error of errors(); track $index) {
+                <li>
+                  <strong class="cll-upload__error-name">{{ error.fileName }}</strong
+                  >:
+                  @switch (error.code) {
+                    @case ('upload.validation.accept') {
+                      {{ 'upload.validation.accept' | translate }} {{ 'upload.hint.accept' | translate: accept() }}
+                    }
+                    @case ('upload.validation.maxSize') {
+                      {{ 'upload.validation.maxSize' | translate: error.message }}
+                    }
+                    @case ('upload.validation.maxFiles') {
+                      {{ 'upload.validation.maxFiles' | translate: error.message }}
+                    }
+                  }
+                </li>
+              }
+            </ul>
+            <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
+              {{ 'upload.clearValidationErrors' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+@if (duplicates().length) {
+  <div class="alert alert-info" role="status">
     <ul class="cll-upload__errors">
-      @for (error of errors(); track $index) {
-        <li class="clr-error">
-          <span class="cll-upload__error-name">{{ error.fileName }}</span>
-          @switch (error.code) {
-            @case ('upload.validation.accept') {
-              {{ 'upload.validation.accept' | translate }}
-            }
-            @case ('upload.validation.maxSize') {
-              {{ 'upload.validation.maxSize' | translate: error.message }}
-            }
-            @case ('upload.validation.maxFiles') {
-              {{ 'upload.validation.maxFiles' | translate: error.message }}
-            }
+      @for (duplicate of duplicates(); track $index) {
+        <li>
+          {{ 'upload.duplicate' | translate: fileLabel(duplicate.file) }}
+          @if (duplicate.id) {
+            <button type="button" class="btn btn-link btn-sm" (click)="showDuplicate(duplicate.id)">
+              {{ 'upload.expand' | translate }}
+            </button>
           }
         </li>
       }
     </ul>
-    <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
-      {{ 'upload.clearValidationErrors' | translate }}
-    </button>
-  }
-</div>
+  </div>
+}

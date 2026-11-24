@@ -99,3 +99,16 @@
   margin: 0.25rem 0 0;
   padding-inline-start: 1rem;
 }
+
+.cll-upload__errors {
+  max-block-size: 10rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.cll-upload__rejections {
+  margin-block-start: 0.5rem;
+}
+
+.cll-upload__rejections .btn-link {
+  color: var(--cds-alias-typography-color-500);
+}

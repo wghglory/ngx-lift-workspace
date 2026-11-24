@@ -16,26 +16,18 @@ import {
   checkCircleIcon,
   exclamationTriangleIcon,
   uploadCloudIcon,
-  windowCloseIcon,
-  windowMinIcon,
 } from '@clr/angular';
 import {type UploadItem, type UploadStatus, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
 import {TranslationService} from '../../services/translation.service';
+import {relativeFilePath} from './drop-files';
 import {UploadPanelManager} from './upload-panel-manager';
 import {uploadTranslations} from './upload.l10n';
 
 const ACTIVE_STATUSES: readonly UploadStatus[] = ['queued', 'uploading', 'processing'];
 
-ClarityIcons.addIcons(
-  angleIcon,
-  checkCircleIcon,
-  exclamationTriangleIcon,
-  uploadCloudIcon,
-  windowCloseIcon,
-  windowMinIcon,
-);
+ClarityIcons.addIcons(angleIcon, checkCircleIcon, exclamationTriangleIcon, uploadCloudIcon);
 
 /**
  * The transfer window itself: window controls, batch actions and per-item progress.
@@ -58,20 +50,31 @@ export class UploadPanelWindowComponent {
   readonly queue = inject(UploadQueueService);
   readonly announcement = signal('');
   readonly closed = signal(false);
-  readonly expanded = signal(true);
   readonly summaryExpanded = signal(false);
   readonly confirmingClose = signal(false);
+  private cancelSnapshot: readonly string[] = [];
+  private readonly observedFailures = new Set<string>();
+  private readonly transferHistory = new Map<string, UploadItem>();
+  private readonly transferItems = signal<readonly UploadItem[]>([]);
+  private readonly clock = signal(Date.now());
 
-  readonly visible = computed(() => this.queue.items().length > 0 && !this.closed());
+  readonly visible = computed(() => this.queue.items().length > 0 && !this.closed() && !this.manager.suppressed());
   readonly activeItems = computed(() => this.queue.items().filter((item) => ACTIVE_STATUSES.includes(item.status)));
   readonly errorItems = computed(() => this.queue.items().filter((item) => item.status === 'error'));
   readonly cancelledItems = computed(() => this.queue.items().filter((item) => item.status === 'cancelled'));
   readonly successItems = computed(() => this.queue.items().filter((item) => item.status === 'success'));
-  readonly terminalItems = computed(() => [...this.errorItems(), ...this.cancelledItems(), ...this.successItems()]);
+  readonly retryItems = computed(() => this.errorItems().filter((item) => item.error?.recovery !== 'replace'));
+  readonly uploadingCount = computed(() => this.activeItems().filter((item) => item.status === 'uploading').length);
+  readonly queuedCount = computed(() => this.activeItems().filter((item) => item.status === 'queued').length);
+  readonly processingCount = computed(() => this.activeItems().filter((item) => item.status === 'processing').length);
   readonly hasActive = computed(() => this.activeItems().length > 0);
-  readonly uploadedTotal = computed(() => this.queue.items().reduce((sum, item) => sum + item.uploadedBytes, 0));
-  readonly totalBytes = computed(() => this.queue.items().reduce((sum, item) => sum + item.file.size, 0));
+  readonly uploadedTotal = computed(() => this.transferItems().reduce((sum, item) => sum + item.uploadedBytes, 0));
+  readonly totalBytes = computed(() => this.transferItems().reduce((sum, item) => sum + item.file.size, 0));
+  readonly transferProgress = computed(() =>
+    this.totalBytes() ? Math.min(100, Math.floor((100 * this.uploadedTotal()) / this.totalBytes())) : 0,
+  );
   readonly remainingSeconds = computed(() => {
+    if (!this.uploadingCount() || this.clock() - this.lastProgressAt > 3000) return undefined;
     const remaining = this.totalBytes() - this.uploadedTotal();
     if (this.rateBytesPerSecond <= 0 || remaining <= 0) return undefined;
     return Math.max(1, Math.round(remaining / this.rateBytesPerSecond));
@@ -82,17 +85,42 @@ export class UploadPanelWindowComponent {
   private lastSampleBytes = 0;
   private lastSampleAt = 0;
   private rateBytesPerSecond = 0;
+  private lastProgressAt = 0;
   private readonly itemSamples = new Map<string, {bytes: number; at: number}>();
   private readonly itemSmoothed = new Map<string, number>();
   private readonly itemRates = signal<Readonly<Record<string, number>>>({});
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
+    effect((onCleanup) => {
+      if (!this.uploadingCount()) return;
+      const timer = setInterval(() => this.clock.set(Date.now()), 1000);
+      onCleanup(() => clearInterval(timer));
+    });
+    effect(() => {
+      const items = this.queue.items();
+      const ids = new Set(items.map((item) => item.id));
+      if (!items.length) this.transferHistory.clear();
+      for (const [id, previous] of this.transferHistory) {
+        if (!ids.has(id) && previous.status !== 'success') this.transferHistory.delete(id);
+      }
+      for (const item of items) this.transferHistory.set(item.id, item);
+      this.transferItems.set([...this.transferHistory.values()].filter((item) => item.status !== 'cancelled'));
+      for (const item of items) {
+        if (item.status !== 'error') continue;
+        const key = `${item.id}:${item.attempt}`;
+        if (this.observedFailures.has(key)) continue;
+        this.observedFailures.add(key);
+        if (!this.manager.suppressed()) this.queue.restore();
+      }
+      for (const key of this.observedFailures) {
+        if (!items.some((item) => key === `${item.id}:${item.attempt}`)) this.observedFailures.delete(key);
+      }
+    });
     effect(() => {
       const total = this.queue.aggregate().total;
       if (total > this.seenTotal()) {
         this.closed.set(false);
-        this.confirmingClose.set(false);
       }
       this.seenTotal.set(total);
     });
@@ -102,7 +130,9 @@ export class UploadPanelWindowComponent {
       if (this.lastSampleAt > 0 && bytes > this.lastSampleBytes && now > this.lastSampleAt) {
         const instant = ((bytes - this.lastSampleBytes) / (now - this.lastSampleAt)) * 1000;
         this.rateBytesPerSecond = this.smoothRate(this.rateBytesPerSecond, instant);
+        this.lastProgressAt = Date.now();
       }
+      if (bytes < this.lastSampleBytes || !this.totalBytes()) this.rateBytesPerSecond = 0;
       this.lastSampleBytes = bytes;
       this.lastSampleAt = now;
     });
@@ -149,47 +179,37 @@ export class UploadPanelWindowComponent {
     this.focusAfterRender('.cll-upload-panel__minimize');
   }
 
-  toggleExpanded(): void {
-    this.expanded.update((value) => !value);
-  }
-
   toggleSummary(): void {
     this.summaryExpanded.update((value) => !value);
   }
 
-  /** Close with active items asks first; closing never cancels uploads. */
+  /** Settled Close is explicit; active work only offers collapse and cancellation. */
   requestClose(): void {
-    if (this.hasActive()) {
-      this.confirmingClose.set(true);
-      this.focusAfterRender('.cll-upload-panel__confirm-background');
-      return;
-    }
     this.closeIdle();
   }
 
-  /** "Keep uploading in the background": dismiss to the badge, uploads continue. */
   keepInBackground(): void {
     this.confirmingClose.set(false);
-    if (this.hasActive()) {
-      const message = this.translationService.translate(
-        'upload.announce.background',
-        String(this.activeItems().length),
-      );
-      this.announcement.set(message);
-      this.queue.minimize();
-      this.focusAfterRender('.cll-upload-panel__badge');
-      return;
-    }
-    this.closeIdle();
+    this.minimize();
   }
 
-  /** "Cancel all and close": cancel every non-terminal item, clear terminal items, close. */
-  cancelAllAndClose(): void {
+  confirmCancelAll(): void {
+    const ids = new Set(this.cancelSnapshot);
     this.confirmingClose.set(false);
-    this.cancelActiveAndAnnounce();
-    this.queue.clearCompleted();
-    this.closed.set(true);
-    this.restoreTrigger();
+    this.cancelActiveAndAnnounce(ids);
+    this.focusAfterRender('.cll-upload-panel__minimize');
+  }
+
+  clearSuccesses(): void {
+    this.restoreRowFocus();
+    for (const item of this.successItems()) this.queue.remove(item.id);
+  }
+
+  showItem(id: string): void {
+    this.closed.set(false);
+    this.queue.restore();
+    if (this.successItems().some((item) => item.id === id)) this.summaryExpanded.set(true);
+    this.focusAfterRender(`[data-upload-id="${id}"]`);
   }
 
   closeIdle(): void {
@@ -208,11 +228,10 @@ export class UploadPanelWindowComponent {
     if (event.key !== 'Escape') return;
     event.preventDefault();
     if (this.confirmingClose()) {
-      this.keepInBackground();
-    } else if (this.hasActive()) {
-      this.minimize();
+      this.confirmingClose.set(false);
+      this.focusAfterRender('.cll-upload-panel__cancel-all');
     } else {
-      this.closeIdle();
+      this.minimize();
     }
   }
 
@@ -233,12 +252,16 @@ export class UploadPanelWindowComponent {
   }
 
   cancelAll(): void {
-    this.cancelActiveAndAnnounce();
+    this.cancelSnapshot = this.activeItems().map((item) => item.id);
+    this.confirmingClose.set(true);
+    this.focusAfterRender('.cll-upload-panel__confirm-background');
   }
 
+  readonly cancelCount = computed(() => (this.confirmingClose() ? this.cancelSnapshot.length : 0));
+
   /** Cancels every active item, pre-marking their announcements so one count message is spoken. */
-  private cancelActiveAndAnnounce(): void {
-    const active = this.activeItems();
+  private cancelActiveAndAnnounce(ids: ReadonlySet<string>): void {
+    const active = this.activeItems().filter((item) => ids.has(item.id));
     for (const item of active) {
       this.announced.add(`${item.id}:cancelled:${item.error?.code ?? ''}:${item.attempt}`);
       this.queue.cancel(item.id);
@@ -249,11 +272,16 @@ export class UploadPanelWindowComponent {
   }
 
   retryFailed(): void {
-    for (const item of this.errorItems()) this.retry(item.id);
+    this.restoreRowFocus();
+    for (const item of this.retryItems()) this.retry(item.id);
   }
 
   isIndeterminate(item: UploadItem): boolean {
     return item.status === 'processing' && item.processingProgress === undefined;
+  }
+
+  fileLabel(item: UploadItem): string {
+    return relativeFilePath(item.file) || item.file.name;
   }
 
   fileExtension(item: UploadItem): string {
@@ -294,6 +322,7 @@ export class UploadPanelWindowComponent {
 
   /** Smoothed transfer rate for an uploading item; undefined while no byte progress is observed. */
   rateOf(item: UploadItem): number | undefined {
+    if (this.clock() - this.lastProgressAt > 3000) return undefined;
     return this.itemRates()[item.id];
   }
 
@@ -305,11 +334,11 @@ export class UploadPanelWindowComponent {
     return Math.max(1, Math.round(remainingBytes / rate));
   }
 
-  private restoreRowFocus(id: string): void {
+  private restoreRowFocus(id?: string): void {
     const active = this.host.nativeElement.ownerDocument.activeElement;
     if (!(active instanceof HTMLElement) || !this.host.nativeElement.contains(active)) return;
     const row = active.closest<HTMLElement>('[data-upload-id]');
-    if (row?.dataset['uploadId'] !== id) return;
+    if (id && row?.dataset['uploadId'] !== id) return;
     afterNextRender(
       () => {
         const document = this.host.nativeElement.ownerDocument;
@@ -320,7 +349,8 @@ export class UploadPanelWindowComponent {
         const target = this.host.nativeElement.querySelector<HTMLButtonElement>(
           '.cll-upload-panel__minimize, .cll-upload-panel__badge',
         );
-        target?.focus();
+        if (target) target.focus();
+        else this.restoreTrigger();
       },
       {injector: this.injector},
     );

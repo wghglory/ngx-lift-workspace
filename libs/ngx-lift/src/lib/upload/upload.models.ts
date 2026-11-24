@@ -7,6 +7,8 @@ export interface UploadError {
   readonly message?: string;
   readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean;
+  /** Application recovery guidance; replace hides manual Retry for invalid content. */
+  readonly recovery?: 'retry' | 'replace';
   readonly fileName?: string;
 }
 

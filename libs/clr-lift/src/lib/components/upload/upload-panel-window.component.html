@@ -7,31 +7,32 @@
   @if (visible()) {
     @if (queue.minimized()) {
       <button
-        #badge
         type="button"
         class="btn btn-sm btn-outline cll-upload-panel__badge"
         (click)="restore()"
-        [attr.aria-label]="
-          'upload.progress.aggregate' | translate: queue.aggregate().progress : queue.aggregate().active
-        "
+        [attr.aria-label]="'upload.progress.counts' | translate: activeItems().length : errorItems().length"
       >
-        <cds-icon shape="upload-cloud" aria-hidden="true"></cds-icon>
-        <span aria-hidden="true">{{ queue.aggregate().active }} · {{ queue.aggregate().progress }}%</span>
+        <cds-icon shape="angle" direction="up" aria-hidden="true" />
+        <span>{{ 'upload.progress.counts' | translate: activeItems().length : errorItems().length }}</span>
+        @if (processingCount()) {
+          <span>{{ 'upload.status.processing' | translate }}</span>
+        } @else if (hasActive()) {
+          <span>{{ transferProgress() }}%</span>
+        }
+        <span class="cll-upload-panel__compact-progress" aria-hidden="true" [style.width.%]="transferProgress()"></span>
       </button>
     } @else if (confirmingClose()) {
       <div
         class="card cll-upload-panel__confirm"
         role="alertdialog"
-        [attr.aria-label]="'upload.confirm.title' | translate"
-        [attr.aria-describedby]="'cll-upload-panel-confirm-body'"
+        [attr.aria-label]="'upload.cancelAll' | translate"
+        aria-describedby="cll-upload-panel-confirm-body"
       >
         <div class="card-header">
-          <h3 class="card-title">{{ 'upload.confirm.title' | translate }}</h3>
+          <h3 class="card-title">{{ 'upload.cancelAll' | translate }}</h3>
         </div>
-        <div class="card-block" cds-layout="vertical gap:sm">
-          <p id="cll-upload-panel-confirm-body" class="cll-upload-panel__confirm-body" cds-layout="m:0">
-            {{ 'upload.progress.aggregate' | translate: queue.aggregate().progress : queue.aggregate().active }}
-          </p>
+        <div class="card-block">
+          <p id="cll-upload-panel-confirm-body">{{ 'upload.cancel.confirm' | translate: cancelCount() }}</p>
         </div>
         <div class="card-footer" cds-layout="horizontal gap:sm align:right">
           <button
@@ -44,63 +45,65 @@
           <button
             type="button"
             class="btn btn-outline-danger cll-upload-panel__confirm-cancel"
-            (click)="cancelAllAndClose()"
+            (click)="confirmCancelAll()"
           >
-            {{ 'upload.confirm.cancelAll' | translate }}
+            {{ 'upload.cancelAll' | translate }}
           </button>
         </div>
       </div>
     } @else {
       <div class="card cll-upload-panel__card">
         <div class="card-header cll-upload-panel__header">
-          <h3 class="card-title">{{ 'upload.panel.title' | translate }}</h3>
-          <div class="cll-upload-panel__controls">
-            <button
-              #minimizeButton
-              type="button"
-              class="btn btn-icon cll-upload-panel__control cll-upload-panel__minimize"
-              [attr.aria-label]="'upload.minimize' | translate"
-              [title]="'upload.minimize' | translate"
-              (click)="minimize()"
-            >
-              <cds-icon shape="window-min" aria-hidden="true"></cds-icon>
-            </button>
-            <button
-              type="button"
-              class="btn btn-icon cll-upload-panel__control cll-upload-panel__expand"
-              [attr.aria-label]="(expanded() ? 'upload.collapse' : 'upload.expand') | translate"
-              [attr.aria-expanded]="expanded()"
-              [attr.title]="(expanded() ? 'upload.collapse' : 'upload.expand') | translate"
-              (click)="toggleExpanded()"
-            >
-              <cds-icon shape="angle" [attr.direction]="expanded() ? 'up' : 'down'" aria-hidden="true"></cds-icon>
-            </button>
-            <button
-              type="button"
-              class="btn btn-icon cll-upload-panel__control cll-upload-panel__close"
-              [attr.aria-label]="'upload.close.hint' | translate"
-              [title]="'upload.close.hint' | translate"
-              (click)="requestClose()"
-            >
-              <cds-icon shape="window-close" aria-hidden="true"></cds-icon>
-            </button>
+          <button
+            type="button"
+            class="btn btn-icon cll-upload-panel__control cll-upload-panel__minimize"
+            [attr.aria-label]="'upload.minimize' | translate"
+            aria-expanded="true"
+            (click)="minimize()"
+          >
+            <cds-icon shape="angle" direction="down" aria-hidden="true" />
+          </button>
+          <div class="cll-upload-panel__heading">
+            <h3 class="card-title">
+              {{ 'upload.progress.counts' | translate: activeItems().length : errorItems().length }}
+            </h3>
+            @if (hasActive()) {
+              <div class="cll-upload-panel__meta">
+                {{ 'upload.progress.phases' | translate: uploadingCount() : queuedCount() : processingCount() }}
+              </div>
+            }
           </div>
+          @if (hasActive()) {
+            <button type="button" class="btn btn-sm btn-outline cll-upload-panel__cancel-all" (click)="cancelAll()">
+              {{ 'upload.cancelAll' | translate }}
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="btn btn-sm btn-outline cll-upload-panel__done cll-upload-panel__close"
+              [attr.title]="'upload.close.hint' | translate"
+              (click)="closeIdle()"
+            >
+              {{ 'upload.close' | translate }}
+            </button>
+          }
         </div>
-        <div
-          class="card-block cll-upload-panel__list"
-          [class.cll-upload-panel__list--compact]="!expanded()"
-          cds-layout="vertical gap:sm"
-        >
+        <div class="card-block cll-upload-panel__list">
           @for (item of activeItems(); track item.id) {
-            <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
+            <div
+              class="cll-upload-panel__item"
+              [attr.data-status]="item.status"
+              [attr.data-upload-id]="item.id"
+              tabindex="-1"
+            >
               <div class="cll-upload-panel__row">
                 <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
                 <div class="cll-upload-panel__main">
                   <div class="cll-upload-panel__name-line">
-                    <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
+                    <span class="cll-upload-panel__name" [title]="fileLabel(item)">{{ fileLabel(item) }}</span>
                     <span class="cll-upload-panel__spacer"></span>
-                    @if (!isIndeterminate(item)) {
-                      <span class="cll-upload-panel__percent" aria-hidden="true">{{ item.progress }}%</span>
+                    @if (item.status === 'uploading') {
+                      <span class="cll-upload-panel__percent">{{ item.progress }}%</span>
                     }
                     <button type="button" class="btn btn-sm btn-link" (click)="cancel(item.id)">
                       {{ 'upload.cancel' | translate }}
@@ -111,26 +114,25 @@
                     [class.cll-upload-panel__bar--indeterminate]="isIndeterminate(item)"
                     role="progressbar"
                     [attr.aria-label]="item.file.name"
-                    [attr.aria-valuemin]="0"
-                    [attr.aria-valuemax]="100"
-                    [attr.aria-valuenow]="isIndeterminate(item) ? null : item.progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    [attr.aria-valuenow]="isIndeterminate(item) ? null : (item.processingProgress ?? item.progress)"
                   >
-                    <div class="cll-upload-panel__bar-fill" [style.width.%]="item.progress"></div>
+                    <div
+                      class="cll-upload-panel__bar-fill"
+                      [style.width.%]="item.processingProgress ?? item.progress"
+                    ></div>
                   </div>
                   <div class="cll-upload-panel__meta">
-                    @if (item.status === 'queued') {
-                      <span>{{ 'upload.status.queued' | translate }}</span>
-                    }
-                    <span class="cll-upload-panel__bytes" aria-hidden="true"
+                    <span>{{ 'upload.status.' + item.status | translate }}</span>
+                    <span class="cll-upload-panel__bytes"
                       >{{ formatBytes(item.uploadedBytes) }} / {{ formatBytes(item.file.size) }}</span
                     >
                     @if (rateOf(item); as rate) {
-                      <span class="cll-upload-panel__rate" aria-hidden="true">{{
-                        'upload.rate' | translate: formatBytes(rate)
-                      }}</span>
+                      <span>{{ 'upload.rate' | translate: formatBytes(rate) }}</span>
                     }
                     @if (remainingFor(item); as seconds) {
-                      <span class="cll-upload-panel__remaining" aria-hidden="true">{{ formatRemaining(seconds) }}</span>
+                      <span>{{ 'upload.transfer.remaining' | translate: formatRemaining(seconds) }}</span>
                     }
                   </div>
                 </div>
@@ -138,159 +140,106 @@
             </div>
           }
           @for (item of errorItems(); track item.id) {
-            <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
-              <div class="cll-upload-panel__row">
-                <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
-                <div class="cll-upload-panel__main">
-                  <div class="cll-upload-panel__name-line">
-                    <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
-                    <span class="cll-upload-panel__spacer"></span>
-                    <button type="button" class="btn btn-sm btn-link" (click)="retry(item.id)">
-                      {{ 'upload.retry' | translate }}
-                    </button>
-                    <button
-                      type="button"
-                      class="btn btn-sm btn-link"
-                      (click)="remove(item.id)"
-                      [attr.aria-label]="'upload.remove.hint' | translate: item.file.name"
-                    >
-                      {{ 'upload.remove' | translate }}
-                    </button>
-                  </div>
-                  <div
-                    class="cll-upload-panel__bar"
-                    role="progressbar"
-                    [attr.aria-label]="item.file.name"
-                    [attr.aria-valuemin]="0"
-                    [attr.aria-valuemax]="100"
-                    [attr.aria-valuenow]="item.progress"
-                  >
-                    <div
-                      class="cll-upload-panel__bar-fill cll-upload-panel__bar-fill--error"
-                      [style.width.%]="item.progress"
-                    ></div>
-                  </div>
-                  <div class="cll-upload-panel__meta">
-                    <span class="clr-error">{{ 'upload.status.error' | translate }}</span>
-                  </div>
-                  <div class="cll-upload-panel__error">{{ errorText(item) }}</div>
-                  @if (hasErrorDetail(item)) {
-                    <div class="cll-upload-panel__error-detail">{{ item.error?.message }}</div>
-                  }
-                </div>
+            <div class="cll-upload-panel__item" data-status="error" [attr.data-upload-id]="item.id" tabindex="-1">
+              <div class="cll-upload-panel__name-line">
+                <span class="cll-upload-panel__name" [title]="fileLabel(item)">{{ fileLabel(item) }}</span>
+                @if (item.error?.recovery !== 'replace') {
+                  <button type="button" class="btn btn-sm btn-link" (click)="retry(item.id)">
+                    {{ 'upload.retry' | translate }}
+                  </button>
+                }
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link"
+                  [attr.aria-label]="'upload.remove.hint' | translate: item.file.name"
+                  (click)="remove(item.id)"
+                >
+                  {{ 'upload.remove' | translate }}
+                </button>
               </div>
+              <div class="cll-upload-panel__error">{{ errorText(item) }}</div>
+              @if (hasErrorDetail(item)) {
+                <div class="cll-upload-panel__error-detail">{{ item.error?.message }}</div>
+              }
+              @if (item.error?.recovery === 'replace') {
+                <p>{{ 'upload.replace' | translate }}</p>
+              }
             </div>
           }
-          @if (expanded()) {
-            @for (item of cancelledItems(); track item.id) {
-              <div class="cll-upload-panel__item" [attr.data-status]="item.status" [attr.data-upload-id]="item.id">
-                <div class="cll-upload-panel__row">
-                  <span class="cll-upload-panel__badge-type" aria-hidden="true">{{ fileExtension(item) }}</span>
-                  <div class="cll-upload-panel__main">
-                    <div class="cll-upload-panel__name-line">
-                      <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
-                    </div>
-                    <div class="cll-upload-panel__meta">
-                      <span>{{ 'upload.status.cancelled' | translate }}</span>
-                    </div>
-                  </div>
-                </div>
+          @for (item of cancelledItems(); track item.id) {
+            <div class="cll-upload-panel__item" data-status="cancelled" [attr.data-upload-id]="item.id" tabindex="-1">
+              <div class="cll-upload-panel__name-line">
+                <span class="cll-upload-panel__name">{{ item.file.name }}</span
+                ><span>{{ 'upload.status.cancelled' | translate }}</span>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link"
+                  [attr.aria-label]="'upload.remove.hint' | translate: item.file.name"
+                  (click)="remove(item.id)"
+                >
+                  {{ 'upload.remove' | translate }}
+                </button>
               </div>
-            }
-            @if (successItems().length) {
-              <div class="cll-upload-panel__summary">
+              @if (item.error) {
+                <div class="cll-upload-panel__error">{{ errorText(item) }} {{ item.error.message }}</div>
+              }
+            </div>
+          }
+          @if (successItems().length) {
+            <div class="cll-upload-panel__summary">
+              <div class="cll-upload-panel__name-line">
                 <button
                   type="button"
                   class="cll-upload-panel__summary-toggle"
                   [attr.aria-expanded]="summaryExpanded()"
                   (click)="toggleSummary()"
                 >
-                  <cds-icon shape="check-circle" status="success" aria-hidden="true"></cds-icon>
-                  <span>
-                    {{
-                      'upload.summary.success'
-                        | translate
-                          : successItems().length
-                          : formatBytes(successItems().reduce((sum, item) => sum + item.file.size, 0))
-                    }}
-                  </span>
-                  <span class="cll-upload-panel__summary-label" aria-hidden="true">
-                    {{ (summaryExpanded() ? 'upload.summary.hide' : 'upload.summary.show') | translate }}
-                  </span>
-                  <cds-icon
-                    shape="angle"
-                    [attr.direction]="summaryExpanded() ? 'up' : 'down'"
-                    aria-hidden="true"
-                  ></cds-icon>
+                  <cds-icon shape="angle" [attr.direction]="summaryExpanded() ? 'up' : 'down'" aria-hidden="true" />
+                  <span>{{
+                    'upload.summary.success'
+                      | translate
+                        : successItems().length
+                        : formatBytes(successItems().reduce((sum, item) => sum + item.file.size, 0))
+                  }}</span>
                 </button>
-                @if (summaryExpanded()) {
-                  <ul class="cll-upload-panel__summary-list" [attr.aria-label]="'upload.summary.show' | translate">
-                    @for (item of successItems(); track item.id) {
-                      <li class="cll-upload-panel__summary-item">
-                        <span class="cll-upload-panel__name" [title]="item.file.name">{{ item.file.name }}</span>
-                        <span class="cll-upload-panel__spacer"></span>
-                        <span aria-hidden="true">{{ formatBytes(item.file.size) }}</span>
-                      </li>
-                    }
-                  </ul>
-                }
+                <button
+                  type="button"
+                  class="btn btn-sm btn-link cll-upload-panel__clear-completed"
+                  (click)="clearSuccesses()"
+                >
+                  {{ 'upload.clearCompleted' | translate }}
+                </button>
               </div>
-            }
+              @if (summaryExpanded()) {
+                <ul class="cll-upload-panel__summary-list" [attr.aria-label]="'upload.summary.show' | translate">
+                  @for (item of successItems(); track item.id) {
+                    <li class="cll-upload-panel__summary-item" [attr.data-upload-id]="item.id" tabindex="-1">
+                      <span class="cll-upload-panel__name">{{ fileLabel(item) }}</span
+                      ><span>{{ formatBytes(item.file.size) }}</span>
+                    </li>
+                  }
+                </ul>
+              }
+            </div>
           }
         </div>
         <div class="card-footer cll-upload-panel__footer">
-          <div class="cll-upload-panel__aggregate">
-            <span aria-hidden="true">
-              @if (formatRemaining(remainingSeconds()); as remaining) {
-                {{
-                  'upload.progress.details'
-                    | translate
-                      : queue.aggregate().progress
-                      : formatBytes(uploadedTotal())
-                      : formatBytes(totalBytes())
-                      : remaining
-                }}
-              } @else {
-                {{
-                  'upload.progress.detailsBytes'
-                    | translate: queue.aggregate().progress : formatBytes(uploadedTotal()) : formatBytes(totalBytes())
-                }}
+          @if (hasActive()) {
+            <div class="cll-upload-panel__aggregate">
+              {{
+                'upload.progress.detailsBytes'
+                  | translate: transferProgress() : formatBytes(uploadedTotal()) : formatBytes(totalBytes())
+              }}
+              @if (remainingSeconds(); as seconds) {
+                <span> · {{ 'upload.transfer.remaining' | translate: formatRemaining(seconds) }}</span>
               }
-            </span>
-            <span class="clr-sr-only">{{
-              'upload.progress.aggregate' | translate: queue.aggregate().progress : queue.aggregate().active
-            }}</span>
-          </div>
-          <div class="cll-upload-panel__actions" cds-layout="horizontal gap:sm align:center">
-            @if (hasActive()) {
-              <button type="button" class="btn btn-sm btn-outline cll-upload-panel__cancel-all" (click)="cancelAll()">
-                {{ 'upload.cancelAll' | translate }}
-              </button>
-            }
-            @if (errorItems().length) {
-              <button
-                type="button"
-                class="btn btn-sm btn-primary cll-upload-panel__retry-failed"
-                (click)="retryFailed()"
-              >
-                {{ 'upload.retryFailed' | translate: errorItems().length }}
-              </button>
-            }
-            @if (terminalItems().length) {
-              <button
-                type="button"
-                class="btn btn-sm btn-link cll-upload-panel__clear-completed"
-                (click)="queue.clearCompleted()"
-              >
-                {{ 'upload.clearCompleted' | translate }}
-              </button>
-            }
-            @if (!hasActive()) {
-              <button type="button" class="btn btn-sm btn-outline cll-upload-panel__done" (click)="closeIdle()">
-                {{ 'upload.done' | translate }}
-              </button>
-            }
-          </div>
+            </div>
+          }
+          @if (retryItems().length) {
+            <button type="button" class="btn btn-sm btn-primary cll-upload-panel__retry-failed" (click)="retryFailed()">
+              {{ 'upload.retryFailed' | translate: retryItems().length }}
+            </button>
+          }
         </div>
       </div>
     }

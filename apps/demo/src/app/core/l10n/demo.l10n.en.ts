@@ -1,4 +1,29 @@
 export const enTranslations = {
+  'uploadDemo.dialog.panel.title': 'Upload progress',
+  'uploadDemo.dialog.cancel': 'Cancel',
+  'uploadDemo.dialog.retry': 'Retry',
+  'uploadDemo.dialog.remove': 'Remove',
+  'uploadDemo.dialog.summary.success': 'Uploaded {0} files · {1}',
+  'uploadDemo.dialog.clearCompleted': 'Clear completed',
+  'uploadDemo.dialog.cancelAll': 'Cancel all',
+  'uploadDemo.dialog.cancel.confirm': 'Cancel {0} active uploads in this queue? Completed files will be kept.',
+  'uploadDemo.dialog.confirm.background': 'Keep uploading in the background',
+  'uploadDemo.dialog.close': 'Close',
+  'uploadDemo.dialog.status.queued': 'Queued',
+  'uploadDemo.dialog.status.uploading': 'Uploading',
+  'uploadDemo.dialog.status.processing': 'Processing',
+  'uploadDemo.dialog.status.success': 'Uploaded',
+  'uploadDemo.dialog.status.error': 'Failed',
+  'uploadDemo.dialog.status.cancelled': 'Cancelled',
+  'uploadDemo.api.scope':
+    'Stable destination key for duplicate detection. Bind a distinct key for each target and keep the adapter bound to its captured destination.',
+  'uploadDemo.api.duplicateSelected':
+    'Emits the existing upload id so a dialog can locate the duplicate in its own list.',
+  'uploadDemo.api.suppressed': 'Hide the shared dock while an application dialog presents the same queue.',
+  'uploadDemo.minimizeBackground': 'Minimize to background',
+  'uploadDemo.autoInfo':
+    'Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until transfer finishes.',
+  'uploadDemo.destination': 'Destination',
   'selectionDemo.remove': 'Remove',
 
   'selectionDemo.selectedTitle': 'Selected organizations',
@@ -3038,12 +3063,12 @@ export const enTranslations = {
   'uploadDemo.s3.limits':
     'One PUT per file, one file at a time. Files are limited to 16 MiB because hashing reads the whole file into memory. No multipart, folder hierarchy, or resume after reload.',
   'uploadDemo.title': 'Upload files',
-  'uploadDemo.confirmFirst': 'Confirm-first upload',
-  'uploadDemo.confirmFirstNote': 'Select files to stage them; nothing uploads until you confirm.',
+  'uploadDemo.confirmFirst': 'Manual staging (advanced)',
+  'uploadDemo.confirmFirstNote':
+    'Use manual staging only when the application needs a destination before starting uploads.',
   'uploadDemo.modalUpload': 'Upload in a modal',
   'uploadDemo.confirmTitle': 'Confirm files to upload',
-  'uploadDemo.confirmInfo':
-    'Confirm to start the upload. The upload continues in the background and you can safely navigate to other pages.',
+  'uploadDemo.confirmInfo': 'Choose the destination before starting these staged uploads.',
   'uploadDemo.confirmDuplicates': 'Duplicate files were ignored: {0}',
   'uploadDemo.confirmCancel': 'Cancel',
   'uploadDemo.confirmUpload': 'Upload',
