@@ -470,7 +470,7 @@ export const uploadTranslations: Record<string, Record<string, string>> = {
     'error.chunk': 'Il caricamento non può continuare.',
     'error.combine': 'Il caricamento non può essere completato.',
     'error.status': 'Lo stato del caricamento non è disponibile.',
-    'error.unknown': 'Si è verificato un problema con il caricamento.',
+    'error.unknown': 'C’è un problema con il caricamento.',
     'error.cancel': 'Il caricamento non può essere annullato.',
     'progress.aggregate': '{0}% caricato ({1} attivi)',
     'progress.details': '{0}% · {1} di {2} · {3} rimanenti',
