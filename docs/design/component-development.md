@@ -1,8 +1,9 @@
 # Component and utility development workflow
 
-This policy applies to new public tools/components and changes to existing public behavior in ngx-lift and clr-lift. It
-records the maintainer's October 15, 2026 direction and the November 16, 2026 decision to gate new APIs on admission
-evidence. Formatting-only work uses the existing spec without inventing a new one.
+The design/admission sequence applies to new public APIs and material contract changes in ngx-lift and clr-lift. Routine
+fixes, refactors, tests and documentation within an approved contract use the existing spec and user-approved scope;
+they do not need a new proposal, competitor comparison or approval cycle. Validate the affected behavior and update its
+contract when necessary. Existing explicit approval remains valid for its stated scope.
 
 ## Design before implementation
 
@@ -59,8 +60,8 @@ the spec.
   placeholders/plurals and verify runtime switching. Translation checks and native-speaker acceptance are different
   gates.
 - Unit tests cover meaningful transitions, races, identity, forms, errors, and cleanup. Add type tests for
-  generic/public contracts. Meet the thresholds in the three `vite.config.mts` files (statements 80%, branches 75%,
-  functions 50%, lines 80%) and prioritize critical branches over coverage-only assertions.
+  generic/public contracts. Meet the thresholds in the affected projects' test configuration and prioritize critical
+  branches over coverage-only assertions.
 - Browser E2E covers practical journeys in Chromium, Firefox, and WebKit, with stable role-based selectors, controlled
   network fixtures, and no timing sleeps. Assert projected content and actual user-visible results.
 - Verify accessibility semantics and keyboard/focus behavior with automated scans and explicit interaction tests. Check

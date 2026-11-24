@@ -1,0 +1,129 @@
+:host {
+  display: block;
+}
+
+.cll-upload {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+// Visually hidden file inputs; keep native pick, focus and label association. Positioned relative
+// to this host so their absolute boxes cannot leak into the document scroll area.
+.cll-upload__file {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.cll-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 1.25rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  border: 1px dashed var(--cds-alias-object-border-color, var(--clr-color-neutral-400, #c4c4c4));
+  border-radius: var(--cds-alias-object-border-radius-100, 4px);
+  background: var(--cds-alias-object-app-background, transparent);
+  transition:
+    border-color 0.15s ease-in-out,
+    background-color 0.15s ease-in-out;
+
+  &:hover,
+  &:focus-within {
+    border-color: var(--clr-color-action-600, #0072a3);
+  }
+
+  &--over {
+    border-color: var(--clr-color-action-600, #0072a3);
+    background: var(--cds-alias-object-hover-background, rgba(0, 114, 163, 0.06));
+  }
+
+  &--disabled {
+    cursor: default;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.cll-upload__dropzone-icon {
+  color: var(--clr-color-action-600, #0072a3);
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+}
+
+.cll-upload__dropzone-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2rem;
+  color: var(--cds-alias-typography-color-500, inherit);
+}
+
+.cll-upload__dropzone-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  font-size: 0.6rem;
+  line-height: 0.8rem;
+  color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
+}
+
+.cll-upload__dropzone-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  .btn {
+    margin: 0;
+    max-inline-size: 100%;
+    block-size: auto;
+    min-block-size: 1.2rem;
+    white-space: normal;
+  }
+}
+
+.cll-upload__count {
+  align-self: flex-end;
+  font-size: var(--cds-alias-typography-fontsize-0, 0.5rem);
+  color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
+}
+
+.cll-upload__names-row {
+  max-inline-size: 100%;
+}
+
+.cll-upload__names {
+  color: var(--cds-alias-typography-color-300, inherit);
+  overflow-wrap: anywhere;
+}
+
+.cll-upload__errors {
+  margin: 0.25rem 0 0;
+  padding-inline-start: 1rem;
+}
+
+.cll-upload__errors {
+  max-block-size: 10rem;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.cll-upload__rejections {
+  display: block;
+  margin-block-start: 0.75rem;
+}
+
+.cll-upload__rejection-summary {
+  margin: 0;
+}

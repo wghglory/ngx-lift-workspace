@@ -12,7 +12,7 @@ const names = readdirSync(canonical)
   .map((name) => name.slice(0, -3));
 
 test('canonical coding rules are non-empty and keep client frontmatter', () => {
-  assert.ok(names.length >= 7, 'expected the shared rule set');
+  assert.ok(names.includes('general'), 'expected the shared library-boundary guidance');
   for (const name of names) {
     const file = join(canonical, `${name}.md`);
     const contents = readFileSync(file, 'utf8');
