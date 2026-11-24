@@ -2816,7 +2816,6 @@ export const zhTWTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '在強制回應視窗中上傳',
   'uploadDemo.confirmTitle': '確認要上傳的檔案',
   'uploadDemo.confirmInfo': '請先選擇目標位置，再開始上傳暫存檔案。',
-  'uploadDemo.confirmDuplicates': '這些檔案已被選取：{0}',
   'uploadDemo.confirmCancel': '取消',
   'uploadDemo.confirmUpload': '上傳',
   'uploadDemo.modalNote': '在此對話框中選取檔案並確認。背景下傳開始前對話框會先關閉。',

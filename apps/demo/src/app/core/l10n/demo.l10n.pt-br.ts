@@ -3153,7 +3153,6 @@ export const ptBRTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Enviar em modal',
   'uploadDemo.confirmTitle': 'Confirmar arquivos para envio',
   'uploadDemo.confirmInfo': 'Escolha o destino antes de iniciar os envios preparados.',
-  'uploadDemo.confirmDuplicates': 'Estes arquivos já estão selecionados: {0}',
   'uploadDemo.confirmCancel': 'Cancelar',
   'uploadDemo.confirmUpload': 'Enviar',
   'uploadDemo.modalNote':

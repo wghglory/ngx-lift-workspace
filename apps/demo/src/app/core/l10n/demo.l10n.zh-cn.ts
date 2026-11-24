@@ -2824,7 +2824,6 @@ export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '在模态框中上传',
   'uploadDemo.confirmTitle': '确认要上传的文件',
   'uploadDemo.confirmInfo': '请先选择目标位置，再开始上传暂存文件。',
-  'uploadDemo.confirmDuplicates': '这些文件已被选择：{0}',
   'uploadDemo.confirmCancel': '取消',
   'uploadDemo.confirmUpload': '上传',
   'uploadDemo.modalNote': '在此对话框中选取文件并核对后确认。后台上传开始前对话框会先关闭。',

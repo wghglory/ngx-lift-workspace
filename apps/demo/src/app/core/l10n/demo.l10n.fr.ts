@@ -3229,7 +3229,6 @@ export const frTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Téléverser dans une fenêtre modale',
   'uploadDemo.confirmTitle': 'Confirmer les fichiers à téléverser',
   'uploadDemo.confirmInfo': 'Choisissez la destination avant de lancer les transferts préparés.',
-  'uploadDemo.confirmDuplicates': 'Ces fichiers sont déjà sélectionnés : {0}',
   'uploadDemo.confirmCancel': 'Annuler',
   'uploadDemo.confirmUpload': 'Téléverser',
   'uploadDemo.modalNote':

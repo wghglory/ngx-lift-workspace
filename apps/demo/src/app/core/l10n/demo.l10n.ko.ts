@@ -3015,7 +3015,6 @@ export const koTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': '모달에서 업로드',
   'uploadDemo.confirmTitle': '업로드할 파일 확인',
   'uploadDemo.confirmInfo': '준비된 파일을 업로드하기 전에 대상을 선택하세요.',
-  'uploadDemo.confirmDuplicates': '이 파일은 이미 선택되어 있습니다: {0}',
   'uploadDemo.confirmCancel': '취소',
   'uploadDemo.confirmUpload': '업로드',
   'uploadDemo.modalNote':

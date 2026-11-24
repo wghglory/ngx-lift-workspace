@@ -3225,7 +3225,6 @@ export const deTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'In einem Dialog hochladen',
   'uploadDemo.confirmTitle': 'Dateien für den Upload bestätigen',
   'uploadDemo.confirmInfo': 'Wählen Sie zuerst das Ziel für die vorbereiteten Uploads.',
-  'uploadDemo.confirmDuplicates': 'Diese Dateien sind bereits ausgewählt: {0}',
   'uploadDemo.confirmCancel': 'Abbrechen',
   'uploadDemo.confirmUpload': 'Hochladen',
   'uploadDemo.modalNote':

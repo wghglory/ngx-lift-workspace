@@ -179,11 +179,6 @@
           ><label>{{ 'uploadDemo.destination' | translate }}</label
           ><input clrInput [formControl]="destination" required
         /></clr-input-container>
-        @if (duplicateNames().length) {
-          <p class="upload-confirm-duplicate">
-            {{ 'uploadDemo.confirmDuplicates' | translate: duplicateNames().join(', ') }}
-          </p>
-        }
       </div>
     </div>
     <div class="modal-footer">

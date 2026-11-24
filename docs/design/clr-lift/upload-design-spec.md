@@ -32,18 +32,20 @@ rather than narrative sentences. Do not force another language into English tens
 | Unknown failure              | There is a problem with the upload.                                                                                                                  |
 | Cancellation failure         | The upload cannot be cancelled.                                                                                                                      |
 | Automatic-upload information | Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until uploads finish.                  |
-| Staged duplicate information | These files are already selected: {0}                                                                                                                |
 | Demo panel guidance          | Minimize shows the compact upload dock. Select the dock to expand it. Cancel all stops active uploads. Close clears the records when uploads finish. |
 
 The summary must work for one or many rejected files, including when all files are rejected or automatic enqueueing is
 off. It must not promise that other files upload. Keep per-file size/type validations, status labels, action labels,
-translation keys and interpolation placeholders unchanged. Apply equivalent meaning across all existing locales and
-aliases. Simplify owned fallback errors without exposing chunk assembly details. Preserve meaningful application/server
-errors and the existing numeric diagnostic suffix; do not add unconditional retry advice to permanent failures.
+translation keys and interpolation placeholders unchanged for retained messages. Apply equivalent meaning across all
+existing locales and aliases. Simplify owned fallback errors without exposing chunk assembly details. Preserve
+meaningful application/server errors and the existing numeric diagnostic suffix; do not add unconditional retry advice
+to permanent failures.
 
 This is a copy-only refinement. Queue behavior, public APIs and dependencies stay unchanged. The maintainer accepts AI
 review without Gemini. Automated checks and AI language review do not establish independent human language acceptance.
-The dated implementation checks below describe earlier revisions, not validation of this copy refinement.
+The unreachable staged-duplicate demo notice and its translation key were removed during review; the picker's own
+duplicate notice remains the live path. The dated implementation checks below describe earlier revisions, not validation
+of this copy refinement.
 
 ## Transport guidance and review hardening: 2026-11-24
 

@@ -3054,7 +3054,6 @@ export const jaTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'モーダルでアップロード',
   'uploadDemo.confirmTitle': 'アップロードするファイルの確認',
   'uploadDemo.confirmInfo': '準備したファイルのアップロード前に転送先を選択してください。',
-  'uploadDemo.confirmDuplicates': 'これらのファイルは選択済みです: {0}',
   'uploadDemo.confirmCancel': 'キャンセル',
   'uploadDemo.confirmUpload': 'アップロード',
   'uploadDemo.modalNote':

@@ -3205,7 +3205,6 @@ export const esTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Cargar en un modal',
   'uploadDemo.confirmTitle': 'Confirmar archivos para cargar',
   'uploadDemo.confirmInfo': 'Elija el destino antes de iniciar las cargas preparadas.',
-  'uploadDemo.confirmDuplicates': 'Estos archivos ya están seleccionados: {0}',
   'uploadDemo.confirmCancel': 'Cancelar',
   'uploadDemo.confirmUpload': 'Cargar',
   'uploadDemo.modalNote':

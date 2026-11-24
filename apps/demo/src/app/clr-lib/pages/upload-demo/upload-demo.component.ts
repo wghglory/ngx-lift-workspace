@@ -129,7 +129,6 @@ export class UploadDemoComponent {
 
   /** Confirm-first upload: select -> inspect file metadata -> confirm -> chunked upload. */
   readonly stagedFiles = signal<readonly File[]>([]);
-  readonly duplicateNames = signal<readonly string[]>([]);
   readonly confirmOpen = signal(false);
   readonly modalOpen = signal(false);
   readonly apiCalls = signal<readonly string[]>([]);
@@ -194,7 +193,6 @@ export class UploadDemoComponent {
   stageFiles(files: readonly File[]): void {
     if (!files.length) return;
     this.stagedFiles.set(files);
-    this.duplicateNames.set([]);
     this.confirmOpen.set(true);
   }
 
@@ -289,7 +287,6 @@ export class UploadDemoComponent {
   private clearStaging(): void {
     this.inlineUpload()?.clear();
     this.stagedFiles.set([]);
-    this.duplicateNames.set([]);
   }
 
   fileTrackKey(file: File): string {

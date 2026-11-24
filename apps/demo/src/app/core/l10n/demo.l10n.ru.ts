@@ -3155,7 +3155,6 @@ export const ruTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Загрузить в модальном окне',
   'uploadDemo.confirmTitle': 'Подтвердить файлы для загрузки',
   'uploadDemo.confirmInfo': 'Выберите назначение перед началом подготовленных загрузок.',
-  'uploadDemo.confirmDuplicates': 'Эти файлы уже выбраны: {0}',
   'uploadDemo.confirmCancel': 'Отмена',
   'uploadDemo.confirmUpload': 'Загрузить',
   'uploadDemo.modalNote':

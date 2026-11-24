@@ -3180,7 +3180,6 @@ export const nlTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Uploaden in een modaal venster',
   'uploadDemo.confirmTitle': 'Bevestig bestanden om te uploaden',
   'uploadDemo.confirmInfo': 'Kies een bestemming voordat u de voorbereide uploads start.',
-  'uploadDemo.confirmDuplicates': 'Deze bestanden zijn al geselecteerd: {0}',
   'uploadDemo.confirmCancel': 'Annuleren',
   'uploadDemo.confirmUpload': 'Uploaden',
   'uploadDemo.modalNote':

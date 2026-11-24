@@ -3070,7 +3070,6 @@ export const enTranslations = {
   'uploadDemo.modalUpload': 'Upload in a modal',
   'uploadDemo.confirmTitle': 'Confirm files to upload',
   'uploadDemo.confirmInfo': 'Choose the destination before starting these staged uploads.',
-  'uploadDemo.confirmDuplicates': 'These files are already selected: {0}',
   'uploadDemo.confirmCancel': 'Cancel',
   'uploadDemo.confirmUpload': 'Upload',
   'uploadDemo.modalNote':
