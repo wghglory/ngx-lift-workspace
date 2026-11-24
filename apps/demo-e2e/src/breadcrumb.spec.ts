@@ -4,7 +4,7 @@ import {expectAccessible} from './support/accessibility';
 
 const route = '/clr-lift/components/breadcrumb';
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.route('**/breadcrumb-server.json', (request) =>
     request.fulfill({json: {id: 'api-42', name: 'API server 42'}}),
   );

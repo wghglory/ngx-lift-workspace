@@ -24,7 +24,7 @@ for (const theme of ['light', 'dark']) {
   test.describe(`accessibility ${theme}`, () => {
     test.beforeEach(async ({page}) => {
       await page.addInitScript((activeTheme) => {
-        localStorage.setItem('clr-lift-lang', 'en');
+        localStorage.setItem('demo-lang', 'en');
         localStorage.setItem('cds-theme', activeTheme);
       }, theme);
     });

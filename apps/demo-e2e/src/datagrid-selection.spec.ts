@@ -24,7 +24,7 @@ async function makeOrganizationUnavailable(page: Page) {
 test.beforeEach(async ({page}) => {
   errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto(route);
   await expect(
     page.getByTestId('selection-multiple').getByRole('checkbox', {name: 'Select Organization 1', exact: true}),

@@ -13,7 +13,7 @@ async function open(page: Page, url = route) {
   await expect(page.getByTestId('storage-browser')).toBeVisible();
 }
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.route('**/breadcrumb-server.json', (request) => request.fulfill({json: {id: 'sql-1', name: 'Server'}}));
 });
 

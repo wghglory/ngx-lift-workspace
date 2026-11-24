@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.route('https://randomuser.me/api**', (route) => {
     if (route.request().url().includes('invalid-endpoint'))
       return route.fulfill({status: 503, json: {message: 'Unavailable'}});

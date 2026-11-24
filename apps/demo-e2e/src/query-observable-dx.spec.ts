@@ -39,7 +39,7 @@ function readTranslations(locale: string) {
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
-    if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
+    if (!localStorage.getItem('demo-lang')) localStorage.setItem('demo-lang', 'en');
   });
   await page.goto('/ngx-lift/query/queryResource');
 });
@@ -60,7 +60,7 @@ test('dynamic collection adds, reorders, and removes rows', async ({page}) => {
 test('new query examples are localized in every supported language', async ({page}) => {
   test.setTimeout(60_000);
   for (const locale of ['en', 'zh-CN', 'zh-TW', 'de', 'es', 'fr', 'ja', 'ko', 'nl', 'pt-BR', 'ru']) {
-    await page.evaluate((locale) => localStorage.setItem('clr-lift-lang', locale), locale);
+    await page.evaluate((locale) => localStorage.setItem('demo-lang', locale), locale);
     await page.reload();
     const translated = readTranslations(locale);
     const demo = page.getByTestId('query-placement-architecture');

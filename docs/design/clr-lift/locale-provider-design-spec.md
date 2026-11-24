@@ -228,7 +228,7 @@ Applied all [review aspects](../../../.agents/skills/spec-review/references/revi
 | Consumer evidence     | Pass             | Named use cases for applications with a preference source or Angular locale, outside the demo.                                                                                                                             |
 | Industry comparison   | Pass             | Clarity, Angular Material, Angular core, NG-ZORRO and MUI rows with 2026-11-24 URLs.                                                                                                                                       |
 | API design            | Pass             | One provider, one option; no dual-mode parameter.                                                                                                                                                                          |
-| Contracts             | Pass             | Typed signature, no-op on empty option, additive compatibility.                                                                                                                                                            |
+| Contracts             | Pass             | Typed signature, no-op on empty option; additive provider with breaking i18n changes recorded in Compatibility.                                                                                                            |
 | Form applicability    | Pass             | Explicit no-value/no-CVA statement.                                                                                                                                                                                        |
 | Accessibility         | Pass             | No new UI; existing `html[lang]`/`[dir]` effect retained.                                                                                                                                                                  |
 | Language              | Pass             | No new string or dictionary change.                                                                                                                                                                                        |
@@ -269,6 +269,8 @@ self-review does not grant merge or publication approval.
 - Final review: fixed the approval record, CHANGELOG migration entry, incomplete code examples, release wording, the
   untested "absent `navigator`" SSR branch, duplicated locale resolution, and local names that did not match their
   class. Shared resolution now lives in `locale-resolution.ts`; both the provider and the service call it.
+- Follow-up bot comments: E2E locale seeding now uses `demo-lang` instead of the retired library key, the demo
+  preference helpers have `@returns`/`@param` tags, and the spec no longer calls the whole change additive.
 
 ## Evidence
 

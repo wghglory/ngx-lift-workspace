@@ -65,7 +65,7 @@ function demoRoutes(): string[] {
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
-    if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
+    if (!localStorage.getItem('demo-lang')) localStorage.setItem('demo-lang', 'en');
   });
   await page.goto('/ngx-lift/query/queryResource');
 });
@@ -679,7 +679,7 @@ for (const viewport of [
 }
 
 test('Chinese labels stay concise and Pattern C works on a narrow screen', async ({page}, testInfo) => {
-  await page.evaluate(() => localStorage.setItem('clr-lift-lang', 'zh-CN'));
+  await page.evaluate(() => localStorage.setItem('demo-lang', 'zh-CN'));
   await page.setViewportSize({width: 390, height: 844});
   await page.reload();
   const placement = page.getByTestId('query-placement-architecture');

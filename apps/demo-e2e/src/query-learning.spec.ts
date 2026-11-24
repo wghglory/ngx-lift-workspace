@@ -3,7 +3,7 @@ import {expect, test} from '@playwright/test';
 const base = '/ngx-lift/query/';
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
-    if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
+    if (!localStorage.getItem('demo-lang')) localStorage.setItem('demo-lang', 'en');
   });
 });
 
@@ -155,7 +155,7 @@ test('query learning guides switch language across all supported dictionaries', 
     ru: 'Обзор',
   };
   for (const [locale, title] of Object.entries(titles)) {
-    await page.evaluate((language) => localStorage.setItem('clr-lift-lang', language), locale);
+    await page.evaluate((language) => localStorage.setItem('demo-lang', language), locale);
     await page.reload();
     await expect(page.locator('h1')).toHaveText(title);
     for (const route of ['cache', 'keys', 'organization', 'choosing', 'reference', 'overview']) {

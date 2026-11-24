@@ -19,7 +19,7 @@ function controls(page: Page, messages: Record<string, string>) {
 }
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto(route);
 });
 
@@ -56,7 +56,7 @@ test('uses the edited file name and content', async ({page}) => {
 });
 
 test('renders Chinese labels without missing keys', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'zh-CN'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'zh-CN'));
   await page.reload();
 
   const ui = controls(page, chinese);
@@ -68,7 +68,7 @@ test('renders Chinese labels without missing keys', async ({page}) => {
 
 for (const theme of ['light', 'dark']) {
   test(`compact RTL stays readable at 390px with long labels in ${theme}`, async ({page}, testInfo) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'de'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'de'));
     await page.reload();
     await page.evaluate((value) => {
       document.body.setAttribute('cds-theme', value);
