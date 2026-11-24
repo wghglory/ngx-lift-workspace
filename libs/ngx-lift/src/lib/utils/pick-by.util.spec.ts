@@ -202,3 +202,39 @@ describe('review regressions', () => {
     expect(reads).toBe(1);
   });
 });
+
+describe('union and optional source values', () => {
+  const isNumber = (value: unknown): value is number => typeof value === 'number';
+
+  it('includes values from every object-union member in inline guard inference', () => {
+    type Source = {kind: 'a'; a: number | null} | {kind: 'b'; b: string | null};
+    const filterSource = (source: Source) => pickBy(source, (value) => typeof value === 'number');
+    const result = filterSource({kind: 'a', a: 42});
+    expectTypeOf(result).toEqualTypeOf<Partial<{kind: never; a: number} | {kind: never; b: never}>>();
+    expect(result).toEqual({a: 42});
+  });
+
+  it('narrows negated object-union filtering and the alias', () => {
+    type Source = {kind: 'a'; a: number | null} | {kind: 'b'; b: string | null};
+    const filterSource = (source: Source) => pickBy(source, (value) => typeof value === 'number', {negate: true});
+    const omitSource = (source: Source) => omitBy(source, (value) => typeof value === 'number');
+    expectTypeOf<ReturnType<typeof filterSource>>().toEqualTypeOf<
+      Partial<{kind: 'a'; a: null} | {kind: 'b'; b: string | null}>
+    >();
+    expectTypeOf<ReturnType<typeof omitSource>>().toEqualTypeOf<ReturnType<typeof filterSource>>();
+    expect(filterSource({kind: 'a', a: 42})).toEqual({kind: 'a'});
+    expect(omitSource({kind: 'b', b: 'ready'})).toEqual({kind: 'b', b: 'ready'});
+  });
+
+  it('supports reusable guards with optional literal-valued properties', () => {
+    const source: {readonly min?: 0 | null; max?: 1 | null} = {min: 0, max: null};
+    const picked = pickBy(source, isNumber);
+    const inverse = pickBy(source, isNumber, {negate: true});
+    const alias = omitBy(source, isNumber);
+    expectTypeOf(picked).toEqualTypeOf<{readonly min?: 0; max?: 1}>();
+    expectTypeOf(inverse).toEqualTypeOf<{readonly min?: null; max?: null}>();
+    expectTypeOf(alias).toEqualTypeOf<typeof inverse>();
+    expect(picked).toEqual({min: 0});
+    expect(alias).toEqual({max: null});
+  });
+});

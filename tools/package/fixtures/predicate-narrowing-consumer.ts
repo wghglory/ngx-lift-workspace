@@ -68,3 +68,28 @@ function equalityPipeline(enabled: boolean): UnaryFunction<Observable<number | n
   );
 }
 void equalityPipeline;
+
+const optionalBounds: {readonly min?: 0 | null; max?: 1 | null} = {min: 0, max: null};
+const optionalPicked: {readonly min?: 0; max?: 1} = pickBy(optionalBounds, isNumber);
+const optionalInverse: {readonly min?: null; max?: null} = pickBy(optionalBounds, isNumber, {negate: true});
+const optionalAlias: {readonly min?: null; max?: null} = omitBy(optionalBounds, isNumber);
+type UnionSource = {kind: 'a'; a: number | null} | {kind: 'b'; b: string | null};
+function filterUnion(source: UnionSource) {
+  const picked = pickBy(source, (value) => typeof value === 'number');
+  const inverse: Partial<{kind: 'a'; a: null} | {kind: 'b'; b: string | null}> = pickBy(
+    source,
+    (value) => typeof value === 'number',
+    {negate: true},
+  );
+  const alias: typeof inverse = omitBy(source, (value) => typeof value === 'number');
+  if ('a' in picked) {
+    const value: number | undefined = picked.a;
+    // @ts-expect-error A number can survive filtering even though it belongs to a union-only key.
+    const absent: undefined = picked.a;
+    void [value, absent];
+  }
+  // @ts-expect-error A callback must accept values of union-only properties, not only common keys.
+  pickBy(source, (value: 'a' | 'b'): value is 'a' => value === 'a');
+  void [inverse, alias];
+}
+void [optionalPicked, optionalInverse, optionalAlias, filterUnion];

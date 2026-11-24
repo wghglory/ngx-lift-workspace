@@ -416,3 +416,19 @@ Merged-main validation: ngx-lift 65 files / 1043 tests and clr-lift 42 files / 5
 production typecheck and builds passed. Focused strict spec compilation and the packed-declaration consumer, including
 the RxJS factory and existing explicit-source-type filtering calls, passed. Browser and full package-verification suites
 were not rerun locally; CI applies to the pushed merge revision.
+
+### Second review: union sources and optional properties
+
+Review found two blockers: `T[keyof T]` only described shared keys of union sources and could infer a `never` guard
+while retaining a number at runtime; required `Record` constraints also dropped broad-guard narrowing for optional
+literal properties. The callback value type now distributes over every source member. Reusable-guard inference is
+separate from an intersected callback constraint that accepts all source values, without requiring optional properties
+to exist. Own-value access is asserted to the distributive value union at the implementation boundary; enumeration
+cannot produce a different declared property-value type. Focused compiler/runtime regressions and the packed-consumer
+fixture cover positive, inverse and alias filtering, and reject a callback accepting common discriminants only.
+
+Second-round validation: all 65 ngx-lift files / 1046 tests passed, as did both libraries' lint, typecheck/build,
+focused strict spec compilation and the strict packed-declaration consumer. Independent standards and spec reviewers
+approved the updated implementation with no remaining blockers; the spec reviewer separately checked exact optional
+property types and rejected unsafe callback/union assignments. These are local review approvals, not a GitHub maintainer
+approval, merged state or publication. CI must check the pushed revision.

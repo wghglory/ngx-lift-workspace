@@ -1,3 +1,10 @@
+// Distribute across object unions so callbacks see values from every member.
+type PropertyValue<T> = T extends unknown ? T[keyof T] : never;
+
+// Infer a reusable guard's target independently while requiring it to accept all source values.
+type ValueGuard<T, V, S extends V> = ((value: V, key: string) => value is S) &
+  ((value: PropertyValue<T>, key: string) => boolean);
+
 /** Options for {@link pickBy}. */
 export interface PickByOptions {
   /** When true, keep properties the predicate rejects instead of those it accepts. */
@@ -9,38 +16,38 @@ export interface PickByOptions {
  * Value type guards narrow each retained property; literal negation excludes the guarded type.
  * Keys remain optional. Boolean predicates or dynamic negation retain `Partial<T>`.
  * @param {T} source - The object to pick properties from.
- * @param {(value: T[keyof T], key: string) => boolean} predicate - The function invoked per property.
+ * @param {(value: PropertyValue<T>, key: string) => boolean} predicate - The function invoked per property.
  * @param {PickByOptions} options - Optional behavior; `negate` inverts the predicate.
  * @returns A new object containing only matching own enumerable string properties.
  */
-export function pickBy<T, S extends T[keyof T]>(
+export function pickBy<T, S extends PropertyValue<T>>(
   source: T,
-  predicate: (value: T[keyof T], key: string) => value is S,
+  predicate: (value: PropertyValue<T>, key: string) => value is S,
   options?: PickByOptions & {readonly negate: false},
 ): Partial<{[K in keyof T]: T[K] & S}>;
-export function pickBy<T, S extends T[keyof T]>(
+export function pickBy<T, S extends PropertyValue<T>>(
   source: T,
-  predicate: (value: T[keyof T], key: string) => value is S,
+  predicate: (value: PropertyValue<T>, key: string) => value is S,
   options: PickByOptions & {readonly negate: true},
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 export function pickBy<T, V, S extends V>(
-  source: T & Record<keyof T, V>,
-  predicate: (value: V, key: string) => value is S,
+  source: T,
+  predicate: ValueGuard<T, V, S>,
   options?: PickByOptions & {readonly negate: false},
 ): Partial<{[K in keyof T]: T[K] & S}>;
 export function pickBy<T, V, S extends V>(
-  source: T & Record<keyof T, V>,
-  predicate: (value: V, key: string) => value is S,
+  source: T,
+  predicate: ValueGuard<T, V, S>,
   options: PickByOptions & {readonly negate: true},
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 export function pickBy<T>(
   source: T,
-  predicate: (value: T[keyof T], key: string) => boolean,
+  predicate: (value: PropertyValue<T>, key: string) => boolean,
   options?: PickByOptions,
 ): Partial<T>;
 export function pickBy<T>(
   source: T,
-  predicate: (value: T[keyof T], key: string) => boolean,
+  predicate: (value: PropertyValue<T>, key: string) => boolean,
   options?: PickByOptions,
 ): Partial<T> {
   const result: Partial<T> = {};
@@ -48,7 +55,7 @@ export function pickBy<T>(
 
   for (const key in source) {
     if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
-    const value = source[key];
+    const value = source[key] as PropertyValue<T>;
     if (predicate(value, key) !== negate) {
       Object.defineProperty(result, key, {value, enumerable: true, configurable: true, writable: true});
     }
@@ -61,17 +68,17 @@ export function pickBy<T>(
  * Create an object composed of properties the predicate rejects.
  * @deprecated Use `pickBy(source, predicate, {negate: true})`; this alias is kept for source compatibility.
  */
-export function omitBy<T, S extends T[keyof T]>(
+export function omitBy<T, S extends PropertyValue<T>>(
   source: T,
-  predicate: (value: T[keyof T], key: string) => value is S,
+  predicate: (value: PropertyValue<T>, key: string) => value is S,
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 /** @deprecated Use `pickBy(source, predicate, {negate: true})` instead. */
 export function omitBy<T, V, S extends V>(
-  source: T & Record<keyof T, V>,
-  predicate: (value: V, key: string) => value is S,
+  source: T,
+  predicate: ValueGuard<T, V, S>,
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 /** @deprecated Use `pickBy(source, predicate, {negate: true})` instead. */
-export function omitBy<T>(source: T, predicate: (value: T[keyof T], key: string) => boolean): Partial<T>;
-export function omitBy<T>(source: T, predicate: (value: T[keyof T], key: string) => boolean): Partial<T> {
+export function omitBy<T>(source: T, predicate: (value: PropertyValue<T>, key: string) => boolean): Partial<T>;
+export function omitBy<T>(source: T, predicate: (value: PropertyValue<T>, key: string) => boolean): Partial<T> {
   return pickBy(source, predicate, {negate: true});
 }
