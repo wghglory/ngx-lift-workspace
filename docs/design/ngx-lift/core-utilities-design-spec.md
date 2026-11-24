@@ -298,3 +298,73 @@ with `--skipNxCache`, so these results are local and uncached.
 Independent human language approval for the 33 new demo strings remains open and must be recorded separately in the PR.
 The 2026-11-10 manual AT waiver is a maintainer decision, not an open assessment or a passed one, and does not waive any
 automated scan. Automated checks never replace the human language gate.
+
+## Predicate narrowing increment (2026-11-24)
+
+Scope authorized by the maintainer request to enhance `pickBy` and `omitBy` and open a PR. This increment adds value
+type-guard overloads to existing exports; runtime filtering, own enumerable string keys, prototype safety, and the
+`omitBy` deprecation remain unchanged. No new export or dependency is introduced. It is suitable for the next minor
+release; this PR does not publish a package or change peer ranges.
+
+### Admission and comparison
+
+The motivating consumer is typed policy retention-bound serialization in DSM UI: filtering
+`{min: number | null, max: number | null}` must produce optional numeric bounds without casts. The deprecated inverse
+helper needs equivalent narrowing for existing consumers; new code uses negated `pickBy`.
+
+| Symbol             | Consumer / native / existing export                                                         | Domain / private APIs / effects / timing            | Accessibility / language / dependency / fit                                 | Verdict         |
+| ------------------ | ------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------- | --------------- |
+| `pickBy` overloads | Real form payload; native entries/fromEntries lose key/value types; enhance existing export | Generic, public TypeScript types, pure, synchronous | No rendered changes, messages or dependencies; existing utility entry point | Proceed to spec |
+| `omitBy` overload  | Compatibility counterpart to the same consumer; no new export                               | Same pure implementation and public types           | Alias remains deprecated; no new adoption encouraged                        | Proceed to spec |
+
+Checked 2026-11-24:
+[TypeScript predicates](https://www.typescriptlang.org/docs/handbook/2/narrowing.html#using-type-predicates) and
+[inferred predicates](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-5.html) establish the
+value-guard model. [Remeda pickBy/omitBy](https://remedajs.com/docs/#pickBy) supports value narrowing: adopt the idea,
+without adding a dependency or adopting its different symbol-key semantics. Clarity, Angular Material, NG-ZORRO and
+React UI components are outside this headless compile-time contract; no rendering integration is proposed.
+
+### Contract, use cases and examples
+
+- A value guard returning `value is S` yields `Partial<{[K in keyof T]: T[K] & S}>` in positive mode.
+- Literal `{negate: true}` and the legacy alias yield `Partial<{[K in keyof T]: Exclude<T[K], S>}>`.
+- Boolean predicates and runtime boolean negation retain `Partial<T>`; the runtime option cannot guarantee a direction.
+- Properties stay optional, including known numeric properties. A guard may select a subset of a value type, and key
+  callbacks may reject individual properties. No required-key preservation or key-predicate inference is promised.
+- Type predicates are trusted like TypeScript's native filtering; dishonest guards are not validated at runtime.
+- Readonly modifiers, literal types, heterogeneous objects and unknown dictionaries retain appropriate property types.
+- Empty matches produce `{}`; input remains unchanged; predicate errors propagate. Existing SSR and O(n) behavior stay
+  unchanged, with no timers, DOM, lifecycle or state ownership.
+
+```typescript
+import {pickBy} from 'ngx-lift';
+
+const bounds: {min: number | null; max: number | null} = {min: 0, max: null};
+const numeric = pickBy(bounds, (value): value is number => typeof value === 'number');
+// {min?: number; max?: number}; runtime {min: 0}
+const nonNull = pickBy(bounds, (value): value is null => value === null, {negate: true});
+// {min?: number; max?: number}; runtime {min: 0}
+```
+
+The learning path is existing boolean filtering, then explicit/inferred guards, then inverse filtering. The existing
+pick-by demo continues to demonstrate unchanged runtime behavior. This type-only increment is demonstrated through
+compiler-checked examples and unit tests rather than a new rendered demo. No form control/CVA, browser interaction,
+localization, accessibility assessment or human language acceptance is affected.
+
+### Pre-implementation review and acceptance
+
+Reviewed scope: this section, before implementation; maintainer authorization is the current enhancement request.
+Admission, consumer evidence, industry comparison, API design, contracts, form applicability, accessibility, language,
+dependency/bundle, lifecycle/safety, tests/demos, evidence separation, codebase gaps and fit/sequence: Pass for the
+limited value-narrowing scope above. No new barrel, platform, roadmap sequence or runtime behavior is needed. No
+blocking findings. Required evidence: type assertions and rejected assignments, runtime guard/inverse/empty/zero cases,
+unchanged source and prototype tests, library lint/typecheck/build, and a strict consumer against packed declarations.
+Automated evidence, CI, maintainer review, merge and package publication remain separate gates.
+
+Validation for this increment: all 63 ngx-lift spec files / 991 tests passed, including 14 filter tests. Library lint,
+production typecheck and production package build passed. Focused spec compilation under strict TypeScript passed. The
+consumer fixture fails against baseline declarations (nullable bounds) and passes against the packed public package with
+`strict: true` and `skipLibCheck: false`. It is also wired into the existing fresh-consumer package gate. The whole
+spec-project TypeScript command reports unrelated diagnostics in existing pagination, logger, range, file-download and
+object-path specs; this increment does not change those files. The full multi-package/browser gate was not run locally
+for this compile-time increment. CI, maintainer review, merge and publication are pending.

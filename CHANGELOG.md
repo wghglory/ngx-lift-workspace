@@ -8,6 +8,11 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Added
+
+- `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated
+  `omitBy` alias exclude the guarded value type. Keys remain optional; boolean predicates retain `Partial<T>`.
+
 ## [21.6.0] (ngx-lift) / [21.5.0] (clr-lift) - 2026-11-20
 
 **Release decision — November 20, 2026 (approved):** both packages remain on 21.x while the supported platform remains

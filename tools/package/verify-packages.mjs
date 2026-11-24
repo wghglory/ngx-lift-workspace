@@ -224,6 +224,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
     'breadcrumb-hosts.ts',
     'breadcrumb-browser.mjs',
     'object-path-consumer-harness.ts',
+    'predicate-narrowing-consumer.ts',
     'datagrid-selection-hosts.ts',
     'datagrid-selection-browser.mjs',
   ]) {
@@ -248,6 +249,7 @@ void [valid, client, spinner, tooltip, format, form, translations, emptiness, em
         'key-value-hosts.ts',
         'breadcrumb-hosts.ts',
         'object-path-consumer-harness.ts',
+        'predicate-narrowing-consumer.ts',
         'datagrid-selection-hosts.ts',
       ],
     }),
