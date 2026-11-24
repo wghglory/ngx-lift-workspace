@@ -264,11 +264,13 @@ describe('UploadComponent', () => {
     expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
   });
 
-  it('uses Browse as the restore target when the clipped input has focus', async () => {
+  it('uses the visible picker button as the restore target when the clipped input has focus', async () => {
     const fixture = TestBed.createComponent(UploadComponent);
     fixture.componentRef.setInput('adapter', stubAdapter());
     fixture.detectChanges();
     const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    expect(input.getAttribute('aria-label')).toBe('Select file');
+    expect(fixture.nativeElement.querySelector('.cll-upload__browse').textContent.trim()).toBe('Choose file');
     input.focus();
     expect(document.activeElement).toBe(input);
 
@@ -382,8 +384,8 @@ describe('UploadComponent dropzone', () => {
     const {element} = create({multiple: true, maxFiles: 20, accept: '.zip', maxSize: 20});
 
     expect(element.querySelector('.cll-upload__dropzone')).toBeTruthy();
-    expect(element.querySelector('.cll-upload__browse')).toBeTruthy();
-    expect(element.querySelector('.cll-upload__folder')).toBeTruthy();
+    expect(element.querySelector('.cll-upload__browse')!.textContent!.trim()).toBe('Choose files');
+    expect(element.querySelector('.cll-upload__folder')!.textContent!.trim()).toBe('Choose folder');
     expect(element.textContent).toContain('20');
     expect(element.querySelector('input[webkitdirectory]')).toBeTruthy();
   });

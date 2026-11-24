@@ -56,11 +56,15 @@
 
 .cll-upload__dropzone-icon {
   color: var(--clr-color-action-600, #0072a3);
-  font-size: 1.5rem;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
 }
 
 .cll-upload__dropzone-title {
   margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2rem;
   color: var(--cds-alias-typography-color-500, inherit);
 }
 
@@ -70,14 +74,24 @@
   justify-content: center;
   gap: 0.25rem 0.75rem;
   margin: 0;
-  font-size: var(--cds-alias-typography-fontsize-0, 0.5rem);
+  font-size: 0.6rem;
+  line-height: 0.8rem;
   color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
 }
 
 .cll-upload__dropzone-actions {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 0.5rem;
   margin-top: 0.25rem;
+  .btn {
+    margin: 0;
+    max-inline-size: 100%;
+    block-size: auto;
+    min-block-size: 1.2rem;
+    white-space: normal;
+  }
 }
 
 .cll-upload__count {

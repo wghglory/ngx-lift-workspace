@@ -41,7 +41,7 @@ test('uploads a bundle, registers it, and minimizes the shared panel @cross-brow
   await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
 });
 
-test('restores visible Browse focus after selection from the dropzone label', async ({page}) => {
+test('restores visible Choose files focus after selection from the dropzone label', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   const host = page.getByTestId('upload-demo-basic');
   const chooserPromise = page.waitForEvent('filechooser');
@@ -205,7 +205,7 @@ test('composition transfers, registers and refreshes the query list', async ({pa
 test('a keyboard-only journey opens the file chooser and restores the panel @cross-browser-smoke', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
 
-  const browse = page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse'});
+  const browse = page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Choose files'});
   await browse.focus();
   await expect(browse).toBeFocused();
   const chooser = page.waitForEvent('filechooser');
@@ -260,7 +260,9 @@ test('ngModel and signal-form facade bindings reflect the selected files', async
 
 test('the upload playground and an active panel pass accessibility checks', async ({page}, testInfo) => {
   await page.goto('/clr-lift/components/upload');
-  await expect(page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true})).toBeVisible();
+  await expect(
+    page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Choose files', exact: true}),
+  ).toBeVisible();
   await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 
   await selectFiles(page, 'upload-demo-basic', [zipFile('a11y.zip')]);
@@ -335,7 +337,7 @@ test('advanced staging waits for the required destination @cross-browser-smoke',
   expect(await queuedItemCount(page)).toBe(before + 1);
   await page.locator('.cll-upload-panel__done').click();
   await expect(
-    page.getByTestId('upload-demo-confirm-first').getByRole('button', {name: 'Browse', exact: true}),
+    page.getByTestId('upload-demo-confirm-first').getByRole('button', {name: 'Choose files', exact: true}),
   ).toBeFocused();
 });
 
@@ -396,11 +398,13 @@ test('picker validation has an associated live error description', async ({page}
   await expect(live).toContainText('bad.txt');
   const id = await live.getAttribute('id');
   await expect(input).toHaveAttribute('aria-describedby', String(id));
-  await expect(picker.getByRole('button', {name: 'Browse', exact: true})).toHaveAttribute(
+  await expect(picker.getByRole('button', {name: 'Choose files', exact: true})).toHaveAttribute(
     'aria-describedby',
     String(id),
   );
-  await expect(page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true})).toBeVisible();
+  await expect(
+    page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Choose files', exact: true}),
+  ).toBeVisible();
   await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 });
 
@@ -457,6 +461,22 @@ test('an intended modal minimize cannot turn into destructive Close when the upl
 test('validation alert and compact dock preserve the Clarity and Figma visual contracts', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   const config = page.getByTestId('upload-demo-configuration');
+  const typography = await config.evaluate((element) => {
+    const icon = element.querySelector('.cll-upload__dropzone-icon')!;
+    const title = getComputedStyle(element.querySelector('.cll-upload__dropzone-title')!);
+    const hint = getComputedStyle(element.querySelector('.cll-upload__dropzone-hint')!);
+    return {
+      icon: icon.getBoundingClientRect().width,
+      title: title.fontSize,
+      weight: title.fontWeight,
+      hint: hint.fontSize,
+    };
+  });
+  expect(typography).toEqual({icon: 32, title: '16px', weight: '500', hint: '12px'});
+  await expect(config.locator('.cll-upload__dropzone-title')).toHaveText('Drag and drop files here');
+  await expect(config.getByRole('button', {name: 'Choose files', exact: true})).toBeVisible();
+  await expect(config.locator('input[type=file]').first()).toHaveAttribute('aria-label', 'Select files');
+  await expect(config.getByRole('button', {name: 'Choose folder', exact: true})).toBeVisible();
   await config.locator('input[type=file]').first().setInputFiles(zipFile('unsupported.txt'));
   const summary = config.locator('.cll-upload__rejection-summary');
   await expect(summary).toBeVisible();
@@ -517,7 +537,7 @@ test('clearing the final completed item in the shared modal renderer keeps focus
   await expect(modal.locator('.cll-upload-panel--inline')).toBeFocused();
   await expect(modal.getByRole('button', {name: 'Close', exact: true})).toBeVisible();
   await expect(
-    page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Browse', exact: true}),
+    page.getByTestId('upload-demo-basic').getByRole('button', {name: 'Choose files', exact: true}),
   ).not.toBeFocused();
 });
 

@@ -13,6 +13,29 @@ demo-default recommendations. Historical review and validation records below app
 maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
 validation record below distinguishes implemented changes from checks still in progress.
 
+## Dropzone presentation refinement: accepted 2026-11-24
+
+- Increase the upload-cloud icon to 1.6rem square (32px at the supported Clarity 20px root). Set actual icon dimensions,
+  not only font size. Keep the icon decorative. Use a 0.8rem/1.2rem (16px/24px) medium-weight drag instruction and
+  0.6rem/0.8rem (12px/16px) helper text. Inherit the consuming application's font family and semantic theme colors.
+- Use Drag and drop files here without the redundant or browse suffix. Label picker actions Choose files and Choose
+  folder; a single-file host says Choose file. These describe opening the picker accurately in automatic and staged
+  workflows. Preserve the native file input names Select file/Select files, distinguishing them from the visible Choose
+  file/Choose files buttons. Reuse browse, folderAdd and dropzone keys; add browse.single for the single-file button,
+  preserving the existing selectFile/selectFiles messages. Supply all supported library locales/aliases.
+- Preserve native Clarity small primary/outline button hierarchy. The action group centers and wraps at narrow widths
+  and with longer translations; each action allows text wrapping without clipping. Keep modal task title, queue
+  behavior, Cancel all, Minimize to background and settled Close unchanged. No new public API, dependency or
+  consumer-specific branding is introduced.
+
+Verification for the dropzone refinement: 68 upload unit tests, 111 upload/S3 browser regressions across Chromium,
+Firefox and WebKit, and 6 light/dark upload-route accessibility checks passed. The browser visual contract checks actual
+32px icon, 16px medium instruction, 12px helper text and the distinct native/visible picker labels. Narrow layouts in
+English, German, French, Russian, Japanese and Chinese, including doubled root text size, showed no clipped buttons.
+Light/dark dialog inspection, configured lint/typecheck, translations, formatting, development demo build and production
+library build passed. Standards and spec reviews are clear. CI at the pushed revision, independent human acceptance and
+package publication remain separate outcomes; prior full-suite evidence retains its original revision scope.
+
 ## Error cues and dialog naming: accepted 2026-11-24
 
 - A failed file's single error message includes Clarity's danger `error-standard` icon, aligned with its first text
@@ -90,7 +113,7 @@ design references, not claims of pixel-identical web interfaces or an industry-m
 
 The folder input uses `webkitdirectory`. A browser may display its own folder-sharing authorization before returning
 files to the component. This is browser-owned UI, not a library/application upload confirmation; neither can suppress
-that security prompt. Browse and folder selection otherwise share the default automatic validation/enqueue path. Any
+that security prompt. File and folder selection otherwise share the default automatic validation/enqueue path. Any
 additional business review dialog belongs to the application, using `autoEnqueue=false` when staging is required.
 
 ## Validation alert spacing: 2026-11-24
@@ -297,7 +320,7 @@ the library never parses a vendor response format.
 | UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                        | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected             | Invalid selection sets a validation error on the control                                                | Planned form demo + type test                                   |
 | UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                   | Named progress, status changes and errors announced once per transition                                                                      | Repeated renders do not re-announce identical state                                                     | Planned interaction test; manual AT decision tracked separately |
 | UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                          | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                    | Planned headless unit test + Composition demo tab               |
-| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Add folder"            | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, per-selection limit hints  | Invalid files are rejected with the same localized validation errors and never enqueue                  | Planned unit + E2E drop fixture                                 |
+| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Choose folder"         | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, per-selection limit hints  | Invalid files are rejected with the same localized validation errors and never enqueue                  | Planned unit + E2E drop fixture                                 |
 
 ## Industry evidence and current gaps
 
@@ -797,9 +820,9 @@ error      -> retry (action) -> the failed phase
 - The `cll-upload` dropzone is the primary selection surface: it opens the native input on click, reacts to drag-over
   with a highlighted state, and ingests dropped files through the same validation and enqueue path as the native input.
   Dropped folders are traversed through `webkitGetAsEntry()` entries captured synchronously during the drop event and
-  read in repeated `readEntries` batches until exhausted. The "Add folder" action uses a hidden `webkitdirectory` input
-  and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files never
-  create queue items. Hint segments and the used count are omitted without data.
+  read in repeated `readEntries` batches until exhausted. The "Choose folder" action uses a hidden `webkitdirectory`
+  input and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files
+  never create queue items. Hint segments and the used count are omitted without data.
 - The root-scoped panel manager owns one CDK overlay per root queue with `hasBackdrop: false`; it never locks page
   scroll or makes the background inert. An individual declaration anchor or picker can be destroyed without destroying
   that overlay. Dispose the overlay at its root owner teardown; do not mutate global styles.
@@ -1059,10 +1082,11 @@ acceptance remains separate.
 | --------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
 | `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                                    | Trigger label by `multiple`                 |
 | `upload.selectedCount`                        | {0} files selected                                            | Manual staging summary with `multiple`      |
-| `upload.browse`                               | Browse                                                        | Input affordance                            |
-| `upload.dropzone`                             | Drag and drop files here, or browse                           | Dropzone title                              |
+| `upload.browse`                               | Choose files                                                  | Input affordance                            |
+| `upload.browse.single`                        | Choose file                                                   | Visible single-file picker button           |
+| `upload.dropzone`                             | Drag and drop files here                                      | Dropzone title                              |
 | `upload.dropzone.dragOver`                    | Drop files to add them                                        | Dropzone drag-over state                    |
-| `upload.folderAdd`                            | Add folder                                                    | Folder selection, shown with `multiple`     |
+| `upload.folderAdd`                            | Choose folder                                                 | Folder selection, shown with `multiple`     |
 | `upload.usedFiles`                            | {0} of {1} files used                                         | Legacy, not rendered                        |
 | `upload.hint.accept`                          | Allowed types: {0}                                            | Dropzone hint segment with `accept`         |
 | `upload.hint.maxSize`                         | Up to {0} MiB per file                                        | Dropzone hint segment with finite `maxSize` |
@@ -1383,9 +1407,9 @@ Spec revision, 2026-11-21, dropzone selection (maintainer request; no new servic
 
 - Drag-and-drop moves out of "Not now" into scope: `cll-upload` renders a dashed dropzone as the primary selection
   surface with a drag-over state, hint segments (allowed types, per-file size, file count; omitted without data), a
-  used-files count with `maxFiles`, and an "Add folder" action (`webkitdirectory`, shown with `multiple`). Dropped
+  used-files count with `maxFiles`, and an "Choose folder" action (`webkitdirectory`, shown with `multiple`). Dropped
   folders are traversed through `webkitGetAsEntry()` entries; drops run the same validation path as the native input,
-  and rejected files never enqueue. The per-file label trigger is replaced by the dropzone's Browse action;
+  and rejected files never enqueue. The per-file label trigger is replaced by the dropzone's file picker action;
   `upload.selectFile` / `upload.selectFiles` remain available dictionary keys.
 - Uploading rows show the per-row transfer rate and estimated remaining time, sampled from published byte progress and
   omitted without data, matching the Uppy meta-line pattern at row scope.
@@ -1470,7 +1494,7 @@ main. The S3 adapter remains application code with no new library export or runt
 
 - CVA change precedes touch for selection/drop, including updateOn: 'blur'. NG_VALIDATORS exposes selection errors as
   {upload: readonly UploadError[]} and notifies Angular when errors clear, reset or change. Rejections are announced in
-  a persistent polite region and associated with the picker and Browse button through unique descriptions.
+  a persistent polite region and associated with the picker and file picker button through unique descriptions.
 - Cancellation rejects existing completion awaiters immediately; server cleanup runs independently and can report a
   cancel-phase error. A session ID arriving after cancellation/removal is cancelled best-effort, never uploaded.
 - UploadItem.processingProgress is optional and present only after numeric server task progress is reported. The panel

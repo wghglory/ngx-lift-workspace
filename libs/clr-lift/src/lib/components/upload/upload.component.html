@@ -47,7 +47,7 @@
         [disabled]="disabledState()"
         (click)="file.click(); $event.stopPropagation()"
       >
-        {{ 'upload.browse' | translate }}
+        {{ (multiple() ? 'upload.browse' : 'upload.browse.single') | translate }}
       </button>
       @if (multiple()) {
         <input

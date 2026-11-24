@@ -201,7 +201,7 @@ test('S3 preserves leading and repeated prefix slashes as distinct object keys',
   await expect(page.locator('.cll-upload-panel [data-status="error"]')).toHaveCount(0);
 });
 
-test('S3 Close returns keyboard focus to its Browse control', async ({page}) => {
+test('S3 Close returns keyboard focus to its Choose files control', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   const demo = page.getByTestId('upload-demo-s3');
   await demo.locator('input[type="file"]').first().setInputFiles(file('focus.txt'));
@@ -210,5 +210,5 @@ test('S3 Close returns keyboard focus to its Browse control', async ({page}) => 
   await expect(done).toBeVisible();
   await done.focus();
   await page.keyboard.press('Enter');
-  await expect(demo.getByRole('button', {name: 'Browse', exact: true})).toBeFocused();
+  await expect(demo.getByRole('button', {name: 'Choose files', exact: true})).toBeFocused();
 });
