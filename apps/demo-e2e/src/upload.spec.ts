@@ -249,7 +249,7 @@ test('error rows expose keyboard-operable Retry and Remove actions', async ({pag
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
   const nextError = panel.locator('.cll-upload-panel__item[data-status="error"]');
   await expect(nextError).toBeVisible();
-  const remove = nextError.getByRole('button', {name: /Dismiss failing\.zip/});
+  const remove = nextError.getByRole('button', {name: /Remove failing\.zip/});
   await remove.focus();
   await expect(remove).toBeFocused();
   await remove.press('Enter');
@@ -382,7 +382,7 @@ test('row retry, remove and cancel preserve keyboard focus on a stable window co
   await expect(header).toBeFocused();
 
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
-  const remove = panel.locator('[data-status="error"]').getByRole('button', {name: /Dismiss failing/});
+  const remove = panel.locator('[data-status="error"]').getByRole('button', {name: /Remove failing/});
   await remove.focus();
   await remove.press('Enter');
   await expect(header).toBeFocused();
