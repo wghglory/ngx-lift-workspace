@@ -23,7 +23,7 @@ export const enTranslations = {
   'uploadDemo.api.suppressed': 'Hide the shared dock while an application dialog presents the same queue.',
   'uploadDemo.minimizeBackground': 'Minimize to background',
   'uploadDemo.autoInfo':
-    'Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until transfer finishes.',
+    'Files upload automatically after validation. Minimize this dialog to keep working. Keep this browser tab open until uploads finish.',
   'uploadDemo.destination': 'Destination',
   'selectionDemo.remove': 'Remove',
 
@@ -3070,7 +3070,6 @@ export const enTranslations = {
   'uploadDemo.modalUpload': 'Upload in a modal',
   'uploadDemo.confirmTitle': 'Confirm files to upload',
   'uploadDemo.confirmInfo': 'Choose the destination before starting these staged uploads.',
-  'uploadDemo.confirmDuplicates': 'Duplicate files were ignored: {0}',
   'uploadDemo.confirmCancel': 'Cancel',
   'uploadDemo.confirmUpload': 'Upload',
   'uploadDemo.modalNote':
@@ -3090,7 +3089,7 @@ export const enTranslations = {
     'failing.zip drops its first chunk with a retryable error; retry it from the panel or the footer button.',
   'uploadDemo.panelTab': 'Panel window controls',
   'uploadDemo.panelNote':
-    'Minimize docks the queue to a badge; Expand/Collapse toggles the detail height; Close with active items offers background upload or cancel all.',
+    'Minimize shows the compact upload dock. Select the dock to expand it. Cancel all stops active uploads. Close clears the records when uploads finish.',
   'uploadDemo.addDemoFiles': 'Add demo files',
   'uploadDemo.forms': 'Forms integration',
   'uploadDemo.formsNote': 'The control value is readonly File[]; reset clears the value and its queue items.',

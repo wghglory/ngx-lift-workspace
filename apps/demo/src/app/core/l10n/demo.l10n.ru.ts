@@ -24,7 +24,7 @@ export const ruTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Скрывает общую панель, пока диалог показывает ту же очередь.',
   'uploadDemo.minimizeBackground': 'Свернуть в фон',
   'uploadDemo.autoInfo':
-    'После проверки файлы загружаются автоматически. Сверните диалог и продолжайте работу. Не закрывайте вкладку до окончания передачи.',
+    'Файлы загружаются автоматически после проверки. Сверните это окно, чтобы продолжить работу. Оставьте эту вкладку браузера открытой до завершения загрузок.',
   'uploadDemo.destination': 'Назначение',
   'selectionDemo.remove': 'Удалить',
 
@@ -3155,7 +3155,6 @@ export const ruTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Загрузить в модальном окне',
   'uploadDemo.confirmTitle': 'Подтвердить файлы для загрузки',
   'uploadDemo.confirmInfo': 'Выберите назначение перед началом подготовленных загрузок.',
-  'uploadDemo.confirmDuplicates': 'Повторяющиеся файлы проигнорированы: {0}',
   'uploadDemo.confirmCancel': 'Отмена',
   'uploadDemo.confirmUpload': 'Загрузить',
   'uploadDemo.modalNote':
@@ -3176,7 +3175,7 @@ export const ruTranslations: Record<string, string> = {
     'failing.zip теряет первый фрагмент с повторяемой ошибкой; повторите из панели или кнопки в подвале.',
   'uploadDemo.panelTab': 'Элементы управления окном панели',
   'uploadDemo.panelNote':
-    '«Свернуть» прикрепляет очередь как бейдж; «Развернуть/Свернуть» меняет высоту списка; закрытие с активными элементами предлагает продолжить в фоне или отменить всё.',
+    'Свернуть показывает компактную панель загрузки. Выберите панель, чтобы развернуть её. Отменить всё останавливает активные загрузки. Закрыть удаляет записи после завершения загрузок.',
   'uploadDemo.addDemoFiles': 'Добавить демо-файлы',
   'uploadDemo.forms': 'Интеграция с формами',
   'uploadDemo.formsNote':

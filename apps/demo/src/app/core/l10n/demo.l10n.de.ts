@@ -24,7 +24,7 @@ export const deTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Blendet das gemeinsame Dock aus, während ein Dialog dieselbe Warteschlange zeigt.',
   'uploadDemo.minimizeBackground': 'Im Hintergrund fortsetzen',
   'uploadDemo.autoInfo':
-    'Gültige Dateien werden automatisch hochgeladen. Minimieren Sie den Dialog, um weiterzuarbeiten. Lassen Sie diesen Browser-Tab bis zum Ende der Übertragung geöffnet.',
+    'Dateien werden nach der Prüfung automatisch hochgeladen. Minimieren Sie diesen Dialog, um weiterzuarbeiten. Lassen Sie diesen Browser-Tab geöffnet, bis die Uploads abgeschlossen sind.',
   'uploadDemo.destination': 'Ziel',
   'selectionDemo.remove': 'Entfernen',
 
@@ -3225,7 +3225,6 @@ export const deTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'In einem Dialog hochladen',
   'uploadDemo.confirmTitle': 'Dateien für den Upload bestätigen',
   'uploadDemo.confirmInfo': 'Wählen Sie zuerst das Ziel für die vorbereiteten Uploads.',
-  'uploadDemo.confirmDuplicates': 'Doppelte Dateien wurden ignoriert: {0}',
   'uploadDemo.confirmCancel': 'Abbrechen',
   'uploadDemo.confirmUpload': 'Hochladen',
   'uploadDemo.modalNote':
@@ -3246,7 +3245,7 @@ export const deTranslations: Record<string, string> = {
     'failing.zip verwirft seinen ersten Chunk mit einem wiederholbaren Fehler; wiederholen Sie ihn über das Panel oder die Fußzeile.',
   'uploadDemo.panelTab': 'Fenstersteuerung des Panels',
   'uploadDemo.panelNote':
-    'Minimieren dockt die Warteschlange als Badge an; Ein-/Ausklappen schaltet die Detailhöhe um; Schließen mit aktiven Elementen fragt zwischen Hintergrund-Upload und „Alles abbrechen“.',
+    'Minimieren zeigt die kompakte Upload-Leiste. Wählen Sie die Leiste aus, um sie aufzuklappen. Alle abbrechen stoppt aktive Uploads. Schließen entfernt die Einträge, wenn die Uploads beendet sind.',
   'uploadDemo.addDemoFiles': 'Beispieldateien hinzufügen',
   'uploadDemo.forms': 'Formularintegration',
   'uploadDemo.formsNote':

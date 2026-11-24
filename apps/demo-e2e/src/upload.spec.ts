@@ -249,7 +249,7 @@ test('error rows expose keyboard-operable Retry and Remove actions', async ({pag
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
   const nextError = panel.locator('.cll-upload-panel__item[data-status="error"]');
   await expect(nextError).toBeVisible();
-  const remove = nextError.getByRole('button', {name: /Dismiss failing\.zip/});
+  const remove = nextError.getByRole('button', {name: /Remove failing\.zip/});
   await remove.focus();
   await expect(remove).toBeFocused();
   await remove.press('Enter');
@@ -382,7 +382,7 @@ test('row retry, remove and cancel preserve keyboard focus on a stable window co
   await expect(header).toBeFocused();
 
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
-  const remove = panel.locator('[data-status="error"]').getByRole('button', {name: /Dismiss failing/});
+  const remove = panel.locator('[data-status="error"]').getByRole('button', {name: /Remove failing/});
   await remove.focus();
   await remove.press('Enter');
   await expect(header).toBeFocused();
@@ -404,6 +404,7 @@ test('picker validation has an associated live error description', async ({page}
   await expect(input).toHaveAttribute('aria-invalid', 'true');
   const live = picker.locator('[aria-live="polite"]');
   await expect(live).toContainText('bad.txt');
+  await expect(live).toContainText('We cannot add these files (1).');
   const id = await live.getAttribute('id');
   await expect(input).toHaveAttribute('aria-describedby', String(id));
   await expect(picker.getByRole('button', {name: 'Choose files', exact: true})).toHaveAttribute(
@@ -556,7 +557,7 @@ test('count overflow rejects only the new selection once while size failures sta
   const pdf = (name: string, size = 4) => ({name, mimeType: 'application/pdf', buffer: Buffer.alloc(size)});
   await input.setInputFiles([pdf('one.pdf'), pdf('two.pdf'), pdf('three.pdf'), pdf('four.pdf')]);
   await expect(host.locator('.cll-upload__rejection-summary')).toHaveText(
-    'Select at most 3 files at a time. This selection was not added.',
+    'We cannot add this selection. Choose up to 3 files at a time.',
   );
   await expect(host.locator('.cll-upload__error-name')).toHaveCount(0);
   await expect(page.locator('.cll-upload-panel__item')).toHaveCount(0);

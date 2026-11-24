@@ -24,7 +24,7 @@ export const nlTranslations: Record<string, string> = {
   'uploadDemo.api.suppressed': 'Verbergt het gedeelde paneel terwijl een dialoog dezelfde wachtrij toont.',
   'uploadDemo.minimizeBackground': 'Minimaliseren naar achtergrond',
   'uploadDemo.autoInfo':
-    'Geldige bestanden worden automatisch geüpload. Minimaliseer dit venster om verder te werken. Houd dit browsertabblad open tot de overdracht klaar is.',
+    'Bestanden worden na validatie automatisch geüpload. Minimaliseer dit dialoogvenster om verder te werken. Houd dit browsertabblad open totdat de uploads klaar zijn.',
   'uploadDemo.destination': 'Bestemming',
   'selectionDemo.remove': 'Verwijderen',
 
@@ -3180,7 +3180,6 @@ export const nlTranslations: Record<string, string> = {
   'uploadDemo.modalUpload': 'Uploaden in een modaal venster',
   'uploadDemo.confirmTitle': 'Bevestig bestanden om te uploaden',
   'uploadDemo.confirmInfo': 'Kies een bestemming voordat u de voorbereide uploads start.',
-  'uploadDemo.confirmDuplicates': 'Dubbele bestanden zijn genegeerd: {0}',
   'uploadDemo.confirmCancel': 'Annuleren',
   'uploadDemo.confirmUpload': 'Uploaden',
   'uploadDemo.modalNote':
@@ -3200,7 +3199,7 @@ export const nlTranslations: Record<string, string> = {
     'failing.zip laat zijn eerste chunk vallen met een herhaalbare fout; probeer het opnieuw vanuit het paneel of de voettekst.',
   'uploadDemo.panelTab': 'Vensterbesturing van het paneel',
   'uploadDemo.panelNote':
-    'Minimaliseren dokt de wachtrij als badge; Uitklappen/Inklappen wisselt de detailhoogte; Sluiten met actieve items biedt achtergrondupload of alles annuleren.',
+    'Minimaliseren toont het compacte uploadpaneel. Selecteer het paneel om het uit te vouwen. Alles annuleren stopt actieve uploads. Sluiten wist de vermeldingen wanneer de uploads klaar zijn.',
   'uploadDemo.addDemoFiles': 'Demobestanden toevoegen',
   'uploadDemo.forms': 'Formulierintegratie',
   'uploadDemo.formsNote': 'De controlwaarde is readonly File[]; reset wist de waarde en zijn wachtrijitems.',
