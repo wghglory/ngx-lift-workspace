@@ -3,7 +3,9 @@ const droppedPaths = new WeakMap<File, string>();
 
 /** Relative display/identity hint only; never a server storage key. */
 export function relativeFilePath(file: File): string {
-  return file.webkitRelativePath || droppedPaths.get(file) || '';
+  const path = (file.webkitRelativePath || droppedPaths.get(file) || '').replace(/^\/+/, '');
+  // Root-level dropped entries have a basename path; native file selection has no relative path.
+  return path.includes('/') ? path : '';
 }
 
 /**

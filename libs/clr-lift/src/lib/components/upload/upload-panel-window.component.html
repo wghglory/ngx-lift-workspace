@@ -254,8 +254,13 @@
         }
       </div>
     }
-    <div class="cll-upload-panel__live" role="status" aria-live="polite">{{ announcement() }}</div>
   }
+  <div
+    class="cll-upload-panel__live"
+    role="status"
+    aria-live="polite"
+    [textContent]="announcementsReady() && ownsPresentation() ? announcement() : ''"
+  ></div>
 </div>
 
 <ng-template #telemetry>

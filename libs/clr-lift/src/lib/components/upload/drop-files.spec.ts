@@ -78,6 +78,20 @@ describe('filesFromEntries', () => {
     expect(file.size).toBe(7);
   });
 
+  it('normalizes a root-level mixed-drop path to match native selection identity', async () => {
+    const original = new File(['payload'], 'bundle.zip', {lastModified: 7});
+    const dropped = new File(['payload'], 'bundle.zip', {lastModified: 7});
+    const [file] = await filesFromEntries([
+      {
+        ...fileEntry('bundle.zip'),
+        fullPath: '/bundle.zip',
+        file: (success: FileCallback) => success(dropped),
+      },
+    ]);
+    expect(relativeFilePath(file)).toBe(relativeFilePath(original));
+    expect(relativeFilePath(file)).toBe('');
+  });
+
   it('collects directory children delivered in multiple readEntries batches', async () => {
     const tree = directoryEntry('root', [[fileEntry('first.zip')], [fileEntry('second.zip')], []]);
 

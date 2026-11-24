@@ -377,6 +377,7 @@ export class UploadDemoComponent {
   }
 
   transferDemo(): void {
+    this.openPanel('[data-testid="upload-demo-transfer"]');
     void this.addAndAwait();
   }
 

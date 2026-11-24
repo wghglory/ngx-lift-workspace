@@ -44,13 +44,15 @@ export class UploadPanelWindowComponent {
   private readonly injector = inject(Injector);
   readonly queue = inject(UploadQueueService);
   readonly announcement = signal('');
+  readonly announcementsReady = signal(false);
+  readonly ownsPresentation = computed(() => this.embedded() || !this.manager.suppressed());
   readonly summaryExpanded = signal(false);
   readonly embedded = input(false);
   private readonly observedFailures = new Set<string>();
   private readonly transferItems = this.manager.transferItems;
   private readonly clock = signal(Date.now());
 
-  readonly visible = computed(() => this.queue.items().length > 0 && (this.embedded() || !this.manager.suppressed()));
+  readonly visible = computed(() => this.queue.items().length > 0 && this.ownsPresentation());
   readonly activeItems = computed(() => this.queue.items().filter((item) => ACTIVE_STATUSES.includes(item.status)));
   readonly errorItems = computed(() => this.queue.items().filter((item) => item.status === 'error'));
   readonly cancelledItems = computed(() => this.queue.items().filter((item) => item.status === 'cancelled'));
@@ -115,6 +117,8 @@ export class UploadPanelWindowComponent {
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
+    // Mount an empty live region before its first message, including dynamically created inline views.
+    afterNextRender(() => this.announcementsReady.set(true), {injector: this.injector});
     effect((onCleanup) => {
       if (!this.uploadingCount()) return;
       const timer = setInterval(() => this.clock.set(Date.now()), 1000);
@@ -127,7 +131,7 @@ export class UploadPanelWindowComponent {
         const key = `${item.id}:${item.attempt}`;
         if (this.observedFailures.has(key)) continue;
         this.observedFailures.add(key);
-        if (!this.embedded() && !this.manager.suppressed()) this.queue.restore();
+        if (!this.embedded() && !this.manager.suppressed()) this.expandForFailure();
       }
       for (const key of this.observedFailures) {
         if (!items.some((item) => key === `${item.id}:${item.attempt}`)) this.observedFailures.delete(key);
@@ -161,7 +165,12 @@ export class UploadPanelWindowComponent {
     });
     effect(() => {
       const items = this.queue.items();
-      if (!items.length || typeof document === 'undefined') return;
+      if (!items.length) {
+        this.announced.clear();
+        this.announcement.set('');
+        return;
+      }
+      if (typeof document === 'undefined') return;
       for (const key of [...this.announced]) {
         if (!items.some((item) => key.startsWith(`${item.id}:`))) this.announced.delete(key);
       }
@@ -268,10 +277,12 @@ export class UploadPanelWindowComponent {
   }
 
   errorText(item: UploadItem): string {
-    const message = item.error?.message?.trim();
-    if (message && !message.startsWith('upload.')) return message.replace(/\s+/g, ' ');
+    const message = item.error?.message?.trim().replace(/\s+/g, ' ');
+    if (message && !message.startsWith('upload.') && !/^\d+$/.test(message)) return message;
     const phase = item.error?.phase ?? 'unknown';
-    return this.translationService.translate(`upload.error.${phase === 'validation' ? 'unknown' : phase}`);
+    const fallback = this.translationService.translate(`upload.error.${phase === 'validation' ? 'unknown' : phase}`);
+    // Numeric transport diagnostics supplement a readable localized explanation; they cannot replace it.
+    return message && /^\d+$/.test(message) ? `${fallback} (${message})` : fallback;
   }
 
   formatBytes(bytes: number): string {
@@ -291,6 +302,22 @@ export class UploadPanelWindowComponent {
     const minutes = Math.floor(seconds / 60);
     const rest = seconds % 60;
     return minutes > 0 ? `${minutes}m ${rest}s` : `${seconds}s`;
+  }
+
+  private expandForFailure(): void {
+    const document = this.host.nativeElement.ownerDocument;
+    const badge = this.host.nativeElement.querySelector<HTMLElement>('.cll-upload-panel__badge');
+    const preserveFocus = badge !== null && document?.activeElement === badge;
+    this.queue.restore();
+    if (!preserveFocus) return;
+    afterNextRender(
+      () => {
+        // Only hand off focus lost with the disappearing badge; preserve a deliberate move elsewhere.
+        if (document.activeElement !== document.body && document.activeElement !== badge) return;
+        this.host.nativeElement.querySelector<HTMLElement>('.cll-upload-panel__minimize')?.focus();
+      },
+      {injector: this.injector},
+    );
   }
 
   private restoreRowFocus(id?: string): void {

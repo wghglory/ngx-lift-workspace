@@ -810,4 +810,95 @@ describe('UploadQueueService', () => {
     expect((await queue.completion(item.id)).status).toBe('success');
     expect([initiates, chunks, combines]).toEqual([1, 1, 2]);
   });
+  it.each([
+    {chunkSize: 10, succeeds: false},
+    {chunkSize: 2, succeeds: true},
+  ])(
+    'respects a per-request proxy deadline with chunk size $chunkSize (success: $succeeds)',
+    async ({chunkSize, succeeds}) => {
+      const requests: {size: number; number: number; total: number}[] = [];
+      let inFlight = 0;
+      let peak = 0;
+      const deadlineMs = 6000;
+      const startedAt = Date.now();
+      const combine = vi.fn(async () => undefined);
+      const [item] = queue.enqueue(
+        [uploadFile('payload.zip', 21)],
+        options(
+          {
+            initiate: async () => ({uploadId: 'proxy'}),
+            uploadChunk: (request) =>
+              new Promise<void>((resolve, reject) => {
+                requests.push({size: request.chunk.size, number: request.chunkNumber, total: request.totalChunks});
+                peak = Math.max(peak, ++inFlight);
+                // Deterministic fixture: two workers share a 2-byte/s link; this is not a throughput benchmark.
+                const transferMs = request.chunk.size * 1000;
+                setTimeout(
+                  () => {
+                    inFlight -= 1;
+                    if (transferMs >= deadlineMs)
+                      reject({code: 'proxy.deadline', phase: 'chunk', retryable: true, message: '504'});
+                    else resolve();
+                  },
+                  Math.min(transferMs, deadlineMs),
+                );
+              }),
+            combine,
+          },
+          {chunkSize, concurrency: 2, autoRetry: true, maxRetries: 1},
+        ),
+      );
+      const completion = queue.completion(item.id);
+      const outcome = succeeds
+        ? expect(completion).resolves.toMatchObject({status: 'success', uploadedBytes: 21})
+        : expect(completion).rejects.toMatchObject({code: 'proxy.deadline', phase: 'chunk'});
+      await vi.runAllTimersAsync();
+      await outcome;
+      expect(peak).toBe(2);
+      if (succeeds) {
+        expect(Date.now() - startedAt).toBeGreaterThan(deadlineMs);
+        expect(requests.map((request) => request.size)).toEqual([...Array<number>(10).fill(2), 1]);
+        expect(requests.map((request) => request.number)).toEqual(Array.from({length: 11}, (_, index) => index + 1));
+        expect(requests.every((request) => request.total === 11)).toBe(true);
+        expect(combine).toHaveBeenCalledOnce();
+      } else {
+        expect(requests.map((request) => request.number)).toEqual([1, 2, 1, 2]);
+        expect(combine).not.toHaveBeenCalled();
+      }
+    },
+  );
+
+  it('snapshots chunk boundaries and concurrency when enqueuing, including subsequent retry', async () => {
+    const requests: {size: number; number: number; total: number}[] = [];
+    let fail = true;
+    const configuration = options(
+      {
+        initiate: async () => ({uploadId: 'fixed-policy'}),
+        uploadChunk: async (request) => {
+          requests.push({size: request.chunk.size, number: request.chunkNumber, total: request.totalChunks});
+          if (request.chunkNumber === 2 && fail) {
+            fail = false;
+            throw {code: 'network', phase: 'chunk'};
+          }
+        },
+        combine: async () => undefined,
+      },
+      {chunkSize: 2, concurrency: 1},
+    );
+    const [item] = queue.enqueue([uploadFile('fixed.zip', 5)], configuration);
+    configuration.chunkSize = 100;
+    configuration.concurrency = 4;
+    const rejected = expect(queue.completion(item.id)).rejects.toMatchObject({code: 'network'});
+    await flush();
+    await rejected;
+    const retried = queue.retry(item.id)!;
+    await flush();
+    await retried;
+    expect(requests).toEqual([
+      {size: 2, number: 1, total: 3},
+      {size: 2, number: 2, total: 3},
+      {size: 2, number: 2, total: 3},
+      {size: 1, number: 3, total: 3},
+    ]);
+  });
 });

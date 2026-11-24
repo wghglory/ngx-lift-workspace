@@ -172,6 +172,10 @@
 .cll-upload-panel__meta {
   display: flex;
   gap: 0.25rem;
+  flex-wrap: nowrap;
+  min-block-size: 0.85rem;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .cll-upload-panel__error {
@@ -318,12 +322,6 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.cll-upload-panel__meta {
-  flex-wrap: nowrap;
-  min-block-size: 0.85rem;
-  overflow: hidden;
-  white-space: nowrap;
 }
 .cll-upload-panel__compact-title,
 .cll-upload-panel__title {

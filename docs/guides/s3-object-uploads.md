@@ -31,6 +31,9 @@ S3 service. The completed-destinations list is local to this demo component; it 
 | `cancel()`             | Release local state. Aborting a PUT is not proof that the server did not commit it; do not delete an object as rollback. |
 | `getStatus()`          | Omit when a successful PUT response is the final acknowledgement.                                                        |
 
+For generic gateway-aware chunk policy and its verification limits, see
+[upload transport configuration](./upload-transport-configuration.md).
+
 **A whole-object PUT must use exactly one chunk per file.** The demo sets `chunkSize: Number.MAX_SAFE_INTEGER` and
 rejects multi-chunk calls in the adapter. Sending each generic queue chunk to the same object URL would repeatedly
 replace the object, not assemble it.
@@ -41,7 +44,7 @@ with overwrite disabled, `If-None-Match: *`. Authentication and S3 signing belon
 endpoint is an example API contract; a real application must map it to its own authenticated server. Path-based proxies
 also need an explicit policy for dot-only key segments and other URL-normalized keys; use an opaque key parameter if
 arbitrary S3 keys must be preserved. The adapter retains only URL and MIME metadata for retries; the queue owns the file
-data. On submission, the application records the picker's Browse button as the stable focus target for closing the
+data. On submission, the application records the picker's Choose files button as the stable focus target for closing the
 transfer window.
 
 Hashing reads the entire file into memory, so the demo restricts each file to **16 MiB**. This is an example limit, not

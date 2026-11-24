@@ -13,6 +13,33 @@ demo-default recommendations. Historical review and validation records below app
 maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
 validation record below distinguishes implemented changes from checks still in progress.
 
+## Transport guidance and review hardening: 2026-11-24
+
+- Applications select chunk size/concurrency for their gateway and backend before enqueueing. Preserve existing defaults
+  and APIs; see [upload transport configuration](../../guides/upload-transport-configuration.md) for deadline headroom,
+  immutable retry boundaries, controlled verification and whole-object PUT limitations. No consumer branding is added.
+- Composition examples register their own opener before enqueueing so shared-window dismissal restores correct focus.
+- A basename-only dropped path normalizes to no relative path, matching native file selection for duplicate detection;
+  folder-relative paths remain significant. A mixed file/folder drop must not upload a previously selected root file
+  again.
+- Automatic failure expansion hands focus from a focused disappearing compact badge to the expanded disclosure, while
+  preserving external focus and any intervening deliberate focus move.
+- Numeric-only error diagnostics supplement the existing localized phase explanation in one error block and the same
+  live announcement. Meaningful client/server messages remain the primary text; no protocol-specific parser is added.
+- Each renderer retains an empty polite status region before queue visibility. Enable its text only after its initial
+  render and while it owns the presentation. Suppressed docks retain an empty region, leaving the inline renderer as the
+  sole announcement owner. Clear stale announcements when the queue empties. DOM and ownership regressions do not
+  establish that a specific screen reader speaks the initial update; independent assistive-technology acceptance
+  remains.
+
+Verification for this hardening: all 1,944 unit tests passed with coverage gates (1,030 ngx-lift, 568 clr-lift, 346
+demo). Upload/S3 browser regressions passed 117 cases across Chromium, Firefox and WebKit; upload-route light/dark
+accessibility passed 6 cases. Configured lint/typecheck, translations, formatting, relative guide links and production
+builds passed. Duplicate metadata CSS declarations were consolidated without changing values, removing the panel style
+budget warning. Both standards and spec reviews are clear. Automated live-region tests establish mounting, updates and
+single ownership, not actual screen-reader speech. Production proxy/network interoperability, independent human language
+and assistive-technology acceptance, fresh installed-consumer validation and package publication remain separate gates.
+
 ## Dropzone presentation refinement: accepted 2026-11-24
 
 - Increase the upload-cloud icon to 1.6rem square (32px at the supported Clarity 20px root). Set actual icon dimensions,

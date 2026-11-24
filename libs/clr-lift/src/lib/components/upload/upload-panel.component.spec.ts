@@ -575,7 +575,7 @@ describe('UploadPanelComponent', () => {
     expect(inline.querySelector('.cll-upload-panel__minimize')).toBeNull();
     expect(inline.querySelector('.cll-upload-panel__cancel-all')).toBeNull();
     expect(panel().querySelector('.cll-upload-panel__card')).toBeNull();
-    expect(panel().querySelector('.cll-upload-panel__live')).toBeNull();
+    expect(panel().querySelector('.cll-upload-panel__live')!.textContent!.trim()).toBe('');
   });
   it('keeps byte accounting stable when a fresh inline renderer replaces the dock', async () => {
     const gate = blockedAdapter();
@@ -742,5 +742,71 @@ describe('UploadPanelComponent', () => {
     expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('0 B of 4 B uploaded');
     expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('0%');
     gate.release();
+  });
+  it('hands focus from the compact badge to the expanded disclosure when a transfer fails', async () => {
+    let reject: (error: unknown) => void = () => undefined;
+    queue.enqueue(
+      [uploadFile('bad.zip')],
+      options({
+        initiate: async () => ({uploadId: 'bad'}),
+        uploadChunk: () =>
+          new Promise<void>((_, fail) => {
+            reject = fail;
+          }),
+        combine: async () => undefined,
+      }),
+    );
+    await flush();
+    queue.minimize();
+    await flush();
+    const badge = panel().querySelector<HTMLButtonElement>('.cll-upload-panel__badge')!;
+    badge.focus();
+    reject({code: 'network', phase: 'chunk'});
+    await flush();
+    expect(queue.minimized()).toBe(false);
+    expect(document.activeElement).toBe(panel().querySelector('.cll-upload-panel__minimize'));
+  });
+
+  it('keeps numeric diagnostics supplemental to localized error text and announcements', async () => {
+    queue.enqueue(
+      [uploadFile('conflict.zip')],
+      options({
+        initiate: async () => ({uploadId: 'conflict'}),
+        uploadChunk: async () => {
+          throw {code: 'conflict', phase: 'chunk', message: '412'};
+        },
+        combine: async () => undefined,
+      }),
+    );
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__error')!.textContent).toContain(
+      'A chunk could not be uploaded. (412)',
+    );
+    expect(panel().querySelector('.cll-upload-panel__live')!.textContent).toContain(
+      'A chunk could not be uploaded. (412)',
+    );
+  });
+
+  it('mounts an empty live region before the first upload and preserves it through ownership handoff', async () => {
+    const live = panel().querySelector('.cll-upload-panel__live')!;
+    expect(live).not.toBeNull();
+    expect(live.textContent!.trim()).toBe('');
+    enqueueBlocked();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__live')).toBe(live);
+    expect(live.textContent).toContain('Uploading bundle.zip.');
+    fixture.componentRef.setInput('inline', true);
+    fixture.detectChanges();
+    await flush();
+    const inlineLive = fixture.nativeElement.querySelector(
+      '.cll-upload-panel--inline .cll-upload-panel__live',
+    ) as HTMLElement;
+    expect(live.textContent!.trim()).toBe('');
+    expect(inlineLive.textContent).toContain('Uploading bundle.zip.');
+    fixture.componentRef.setInput('inline', false);
+    fixture.detectChanges();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__live')).toBe(live);
+    expect(live.textContent).toContain('Uploading bundle.zip.');
   });
 });
