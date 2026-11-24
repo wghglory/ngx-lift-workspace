@@ -1,9 +1,240 @@
 # Upload files design specification
 
-Status: API reviewed and approved in PR #243 (merged 2026-11-20); panel interaction revised 2026-11-21 after a UI
-review. Owner: Maintainer. Updated: 2026-11-21 (panel window controls, footer batch actions, row anatomy and completion
-collapse; no public API change). Package: `ngx-lift` (headless queue lifecycle) and `clr-lift` (rendered Clarity UI).
-All proposed symbols and examples are provisional and unavailable until implemented and verified.
+Status: UX feedback finalized 2026-11-24; D1-D4 and the discussed refinements accepted by maintainer. No further UX
+preference confirmations are pending. Designer alignment and engineering verification remain; implementation is
+authorized by the maintainer and implemented; validation results and limits are recorded below. The original API was
+approved in [PR #243](https://github.com/wghglory/ngx-lift-workspace/pull/243) (merged 2026-11-20); implementation work
+continues in [PR #252](https://github.com/wghglory/ngx-lift-workspace/pull/252) (open when checked 2026-11-24). Owner:
+Maintainer. Updated: 2026-11-24. Package: `ngx-lift` (headless lifecycle) and `clr-lift` (rendered UI).
+
+This document records the agreed behavior and its implementation contract; the dated validation section identifies what
+has actually been verified. The 2026-11-24 revision supersedes earlier window-control, close-confirmation and
+demo-default recommendations. Historical review and validation records below apply only to their dated revisions. The
+maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
+validation record below distinguishes implemented changes from checks still in progress.
+
+## Transport guidance and review hardening: 2026-11-24
+
+- Applications select chunk size/concurrency for their gateway and backend before enqueueing. Preserve existing defaults
+  and APIs; see [upload transport configuration](../../guides/upload-transport-configuration.md) for deadline headroom,
+  immutable retry boundaries, controlled verification and whole-object PUT limitations. No consumer branding is added.
+- Composition examples register their own opener before enqueueing so shared-window dismissal restores correct focus.
+- A basename-only dropped path normalizes to no relative path, matching native file selection for duplicate detection;
+  folder-relative paths remain significant. A mixed file/folder drop must not upload a previously selected root file
+  again.
+- Automatic failure expansion hands focus from a focused disappearing compact badge to the expanded disclosure, while
+  preserving external focus and any intervening deliberate focus move.
+- Numeric-only error diagnostics supplement the existing localized phase explanation in one error block and the same
+  live announcement. Meaningful client/server messages remain the primary text; no protocol-specific parser is added.
+- Each renderer retains an empty polite status region before queue visibility. Enable its text only after its initial
+  render and while it owns the presentation. Suppressed docks retain an empty region, leaving the inline renderer as the
+  sole announcement owner. Clear stale announcements when the queue empties. DOM and ownership regressions do not
+  establish that a specific screen reader speaks the initial update; independent assistive-technology acceptance
+  remains.
+
+Verification for this hardening: all 1,944 unit tests passed with coverage gates (1,030 ngx-lift, 568 clr-lift, 346
+demo). Upload/S3 browser regressions passed 117 cases across Chromium, Firefox and WebKit; upload-route light/dark
+accessibility passed 6 cases. Configured lint/typecheck, translations, formatting, relative guide links and production
+builds passed. Duplicate metadata CSS declarations were consolidated without changing values, removing the panel style
+budget warning. Both standards and spec reviews are clear. Automated live-region tests establish mounting, updates and
+single ownership, not actual screen-reader speech. Production proxy/network interoperability, independent human language
+and assistive-technology acceptance, fresh installed-consumer validation and package publication remain separate gates.
+
+## Dropzone presentation refinement: accepted 2026-11-24
+
+- Increase the upload-cloud icon to 1.6rem square (32px at the supported Clarity 20px root). Set actual icon dimensions,
+  not only font size. Keep the icon decorative. Use a 0.8rem/1.2rem (16px/24px) medium-weight drag instruction and
+  0.6rem/0.8rem (12px/16px) helper text. Inherit the consuming application's font family and semantic theme colors.
+- Use Drag and drop files here without the redundant or browse suffix. Label picker actions Choose files and Choose
+  folder; a single-file host says Choose file. These describe opening the picker accurately in automatic and staged
+  workflows. Preserve the native file input names Select file/Select files, distinguishing them from the visible Choose
+  file/Choose files buttons. Reuse browse, folderAdd and dropzone keys; add browse.single for the single-file button,
+  preserving the existing selectFile/selectFiles messages. Supply all supported library locales/aliases.
+- Preserve native Clarity small primary/outline button hierarchy. The action group centers and wraps at narrow widths
+  and with longer translations; each action allows text wrapping without clipping. Keep modal task title, queue
+  behavior, Cancel all, Minimize to background and settled Close unchanged. No new public API, dependency or
+  consumer-specific branding is introduced.
+
+Verification for the dropzone refinement: 68 upload unit tests, 111 upload/S3 browser regressions across Chromium,
+Firefox and WebKit, and 6 light/dark upload-route accessibility checks passed. The browser visual contract checks actual
+32px icon, 16px medium instruction, 12px helper text and the distinct native/visible picker labels. Narrow layouts in
+English, German, French, Russian, Japanese and Chinese, including doubled root text size, showed no clipped buttons.
+Light/dark dialog inspection, configured lint/typecheck, translations, formatting, development demo build and production
+library build passed. Standards and spec reviews are clear. CI at the pushed revision, independent human acceptance and
+package publication remain separate outcomes; prior full-suite evidence retains its original revision scope.
+
+## Error cues and dialog naming: accepted 2026-11-24
+
+- A failed file's single error message includes Clarity's danger `error-standard` icon, aligned with its first text
+  line. The icon is decorative (`aria-hidden=true`): the visible error and existing transition announcement convey
+  meaning. Use lightweight row feedback, not a separate full alert banner for every failure. Error text can wrap at
+  narrow widths. Cancel-cleanup errors use the same inline error treatment. Retry/Remove and file type badges remain
+  unchanged.
+- The demo's upload dialog has a stable Upload files title in empty, uploading, processing and settled states. It
+  supports both file selection and progress/recovery. The application owns this title and may choose a generic
+  resource-specific task label; the library transfer region retains Upload progress as its accessible name. Dock state
+  titles stay dynamic.
+- The existing `uploadDemo.dialog.panel.title` key is updated in all demo locales. No library message, API or runtime
+  dependency is added. Shared source, demos and documentation use generic examples without consumer product names.
+
+Verification for this refinement: 68 upload unit tests, 15 targeted upload browser regressions across Chromium, Firefox
+and WebKit (including error/retry, automatic modal title and open/close journeys), and 6 light/dark upload-route
+accessibility checks passed. Configured lint/typecheck, translation completeness, development demo build and production
+library build passed. Standards and spec reviews are clear. The tracked source/demo/documentation scan found no
+consumer-specific product names. CI at the pushed revision and independent human language/visual acceptance remain
+separate; this targeted rerun does not replace the previously dated full-suite evidence.
+
+## Information hierarchy refinement: accepted 2026-11-24
+
+This revision supersedes earlier separator chains, per-file rate/ETA, and count-based completed window titles.
+
+- Use layout and whitespace instead of middle-dot-separated telemetry. The selection hints wrap as independent labels.
+- The window title describes the batch state: Uploading X files (singular for one), Processing X files, Upload complete
+  for all-success, Uploads finished for mixed outcomes, and Uploads cancelled for cancellation-only outcomes. Failures
+  appear in a separate Clarity danger label with a localized count; compact controls include it in their accessible
+  name.
+- During transfer, show byte totals on the left and a meaningful estimated transfer time on the right. Put the aggregate
+  percentage beside the transfer progress bar. Once only server processing remains, remove the aggregate transfer bar
+  and show Processing with each file's real processing progress or an indeterminate indicator. Compact processing-only
+  state also hides the transfer strip while retaining the uploaded byte summary.
+- Show only aggregate ETA, not per-file ETA or rate. Require at least two positive progress samples over at least two
+  seconds; hide estimates below three seconds, after three seconds without byte progress, and when no uploading work
+  remains. Use a localized explicit label such as About {0} left, with an Estimated transfer time tooltip. It estimates
+  transfer only, not server completion. Keep row/compact line counts stable as estimates appear or disappear; shrink and
+  ellipsize long metadata, with the full estimate available in its tooltip and essential actions remaining visible.
+- Uploading rows show a type badge, filename, percentage, Cancel, progress bar and {0} of {1} uploaded. Queued rows show
+  Queued and processing rows show Processing instead of repeating byte counts. Failures keep their existing row anatomy
+  and a single meaningful error message. Cancellation/recovery/record-clearing contracts do not change.
+- The success disclosure says Completed ({0}), with total size and Clear completed in distinct adjacent positions. Dock
+  and embedded dialog continue to share this renderer. Compact docks retain a two-line summary and bottom progress.
+- Settled Close clears the old batch; new items reopen the dock even when a smaller new batch is added before the next
+  render. Visibility derives directly from queue records and application suppression, not previous item counts. Shared
+  byte history resets when the queue has no item IDs in common with its recorded batch; cleared-success contributions
+  remain only while a retained item connects the continuing batch, including across dock/dialog handoffs.
+- New/changed owned messages: title.complete, title.finished, title.uploadingOne, title.processingOne, summary.success,
+  transfer.bytes and transfer.estimate. All existing locales and aliases receive matching translations. No public API or
+  dependency is added. Existing status announcements and keyboard/focus contracts remain unchanged.
+
+The adopted information hierarchy is informed by
+[Google Drive's mobile upload status design](https://workspaceupdates.googleblog.com/2025/06/release-notes-06-20-2025.html),
+[OneDrive's per-file progress list](https://support.microsoft.com/en-us/onedrive/how-to-cancel-or-stop-sync-in-onedrive),
+and [Fluent progress guidance](https://fluent2.microsoft.design/components/web/react/core/progressbar/usage/). These are
+design references, not claims of pixel-identical web interfaces or an industry-mandated separator.
+
+## Verification of information hierarchy (2026-11-24)
+
+- Full clr-lift suite: 42 files / 564 tests passed; coverage 91.88% statements and 82.24% branches, above configured
+  gates. New regressions cover meaningful versus burst/idle ETA, stale estimates, queued metadata, failure/complete
+  hierarchy, compact processing state, same-turn settled Close/new enqueue, and fresh batch byte totals.
+- Upload/S3 regressions: 111 passed across Chromium, Firefox and WebKit. Upload route light/dark accessibility: 6
+  passed.
+- Configured lint/typecheck for clr-lift, demo and demo-e2e, all translation dictionaries, formatting, development demo
+  build and production library build passed. Existing lint warnings and unavailable Nx Cloud remote cache remain.
+- Additional browser inspection at 360px and 1280px covered complete/failed views in light and dark themes. German,
+  French, Russian, Japanese and Chinese narrow layouts retained visible Close controls and resolved translated headings.
+- Independent standards and spec reviews are clear after the sampling-span, compact processing and batch-reopen fixes.
+  These checks do not replace independent human visual/language acceptance, fresh installed-consumer package checks, CI
+  at the pushed revision, or package publication. The earlier npm-connectivity limitation is not reclassified as a pass.
+
+## Native folder authorization and application confirmation
+
+The folder input uses `webkitdirectory`. A browser may display its own folder-sharing authorization before returning
+files to the component. This is browser-owned UI, not a library/application upload confirmation; neither can suppress
+that security prompt. File and folder selection otherwise share the default automatic validation/enqueue path. Any
+additional business review dialog belongs to the application, using `autoEnqueue=false` when staging is required.
+
+## Validation alert spacing: 2026-11-24
+
+Keep visible external spacing between the selection dropzone and the validation alert (0.75rem). The Clarity alert host
+must participate as a block for this margin to apply; the summary paragraph inside the alert retains zero top margin.
+
+## Selection and telemetry refinement: 2026-11-24
+
+- Apply the file-count limit to each new selection after duplicate filtering, for both files and folders. If it exceeds
+  the limit, reject that entire selection with one aggregate error. Preserve the existing queue and running requests.
+  Never silently accept the first N files. Hints explicitly describe the limit as per selection.
+- Within the count limit, reject unsupported types and oversized files individually; valid siblings continue uploading.
+- Hide the selected-count/clear-X summary in automatic upload mode. Keep it for manual staging only; the shared transfer
+  list already describes automatically queued files. Do not show a cumulative used/limit ratio for a per-selection
+  limit.
+- Failed files retain the same type badge, filename, progress and action alignment as uploading files. Show one
+  meaningful server/client error, falling back to the localized phase error when no meaningful detail exists.
+  Replacement guidance remains available for application-classified non-retryable errors.
+- Keep telemetry on one line and compact docks on two lines as estimates appear or disappear; use the information
+  hierarchy refinement above for the current byte/ETA arrangement.
+
+## Latest verification: screenshot refinements (2026-11-24)
+
+- Upload component/renderer/drop helpers: 63 unit tests passed, including atomic count rejection preserving existing
+  work, individual size rejection, duplicate feedback, shared modal rendering and focus restoration.
+- Upload and S3 browser regressions: 108 passed across Chromium, Firefox and WebKit, including compact height stability
+  with/without estimates, native Clarity colors, shared modal rows, count overflow and per-file size errors.
+- Upload route light/dark accessibility checks: 6 passed across the three browsers.
+- Configured lint/typecheck for clr-lift, demo and demo-e2e, translation completeness, formatting, development demo
+  build and production library build passed. Existing lint warnings remain; Nx Cloud remote cache was unavailable.
+- Both independent standards and spec reviews are clear after fixing misleading duplicate notices for rejected batches.
+- Earlier full-suite/coverage results remain dated evidence. This refinement does not claim a fresh full validation or
+  fresh installed-consumer package check: the previously recorded npm connectivity limitation remains. Human visual and
+  language acceptance, CI at the pushed revision and package publication remain separate gates.
+
+## Current recommendation and decisions
+
+- Make validated selection start uploading automatically in the primary workflow. Remove routine pre-upload review and
+  confirmation dialogs from that workflow. Preserve `autoEnqueue=false` as an advanced application-controlled staging
+  capability for required metadata or a real business decision; do not require it merely to repeat file names.
+- Keep one root queue and one transfer surface with expanded and compact presentations. Active work has a collapse
+  action and an explicit Cancel all action, without an X/Close action or a close-to-background confirmation dialog.
+- Place Clear completed beside the successful-items disclosure and remove only successful records. Preserve failure
+  details and retry actions. Explicit Close on a settled batch ends that displayed session and clears its records;
+  minimizing never does.
+- Show queued, uploading, processing, failed and successful states truthfully. Byte transfer percentage and estimated
+  transfer time must not imply that server processing has finished.
+- Keep application-specific dialogs, file limits, folder affordances, cross-feature scope and browser departure
+  protection in the consuming application. No new runtime dependency is proposed.
+
+The maintainer accepted D1, revised D2, D3 and D4 on 2026-11-24, including per-file folder rejection feedback and
+incremental additions during upload. The maintainer subsequently authorized implementation, review until green, commit
+and push. No further preference decision is needed for the defaults recorded below. The maintainer accepts the design
+frames as illustrations of the idea; placeholder counts and dimensions are not additional approval gates. Replace the
+illustrative 512 MiB label with the actual application-supported limit once verified, without inventing a new limit.
+
+| Decision                       | Recommended option                                                                                                         | Alternatives                                                                      | Approval state                     |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | ---------------------------------- |
+| D1: Start behavior             | Automatic upload in the primary product/demo flow; retain optional manual staging                                          | Remove staging entirely; retain confirmation as the primary workflow              | Accepted by maintainer, 2026-11-24 |
+| D2: Settled Close              | Explicit Close ends the displayed settled batch and clears its terminal records; no permanent Uploads/history entry        | Clear successes only and keep failures in a compact dock until explicitly removed | Accepted by maintainer, 2026-11-24 |
+| D3: Background failure         | Expand once for a newly observed failed attempt, without moving focus; respect subsequent manual collapse for that failure | Badge/count and announcement only; expand on every failure event                  | Accepted by maintainer, 2026-11-24 |
+| D4: Suspected duplicate intake | Skip a metadata-matching file in the same destination scope; explain and locate its row, or offer Retry for an error       | Accept every valid selection; ask on every suspected duplicate                    | Accepted by maintainer, 2026-11-24 |
+
+Product integration facts remain with the application/backend and UX owners: actual maximum bundle size and formats,
+server support for independent upload sessions and name/version conflicts, destination identity, and the final
+responsive dimensions. Folder selection and partial acceptance are part of the accepted UX; this does not imply archive
+creation or server-side folder hierarchy. Verify these integration facts rather than asking the maintainer to guess
+numeric limits. The concise designer feedback was finalized separately in the review conversation.
+
+## Visual feedback revision: 2026-11-24
+
+The maintainer's rendered review supersedes the earlier cancellation-confirmation and separate modal-list choices:
+
+- Cancel all immediately cancels the current active snapshot. Do not display any confirmation in the dock or dialog.
+- Use the design's Uploading {count} files headline for unfinished transfer work; show a separate failure label only
+  when failures exist. Processing-only and terminal queues receive accurate status titles, never 0 active / 0 failed.
+- The compact dock is a neutral two-line card with a disclosure caret, status title, byte/percentage telemetry and a
+  bottom-edge progress track. It is not an outlined primary-action button. Carets inherit the same neutral text color in
+  expanded, compact and success-disclosure states; keyboard focus remains visibly outlined.
+- Reuse the existing upload panel renderer inside the application dialog. Add optional `UploadPanelComponent.inline`
+  (boolean, default false): render the same list/progress/success UI in place, without floating chrome or dock controls,
+  and suppress the floating presentation while this inline owner exists. Root queue/network ownership is unchanged. This
+  member is admitted for the real dialog composition: it removes duplicated product markup without adding a domain
+  protocol, dependency, root export or modal API. A modal does not maintain a second file-list implementation.
+- Validation alert summaries start at the top without paragraph top margin. Clear validation errors is the standard
+  Clarity `btn-link` action, with no custom text color. Place this action immediately below the tinted alert so default
+  action color and contrast remain valid. Use standard Clarity alert markup, bounded details and explicit spacing.
+- Application dialog content uses explicit vertical gaps between banner, picker and the shared inline panel. The shared
+  list has a bounded scroll height; the native dialog body can also scroll on constrained screens. Successful rows use
+  the same compact anatomy as the dock.
+
+Earlier 2026-11-24 passing results below establish the preceding revision only. This rendered-feedback revision must
+receive new focused unit/browser/visual validation and code review before it is reported as green.
 
 ## Applicable contracts
 
@@ -45,8 +276,9 @@ No proposed symbol is rejected. The admission gate result is **Proceed to spec**
 The downstream release/update flow lets an operator select a bundle, shows upload progress, allows cancellation, reports
 errors, and surfaces completion through an application-level alert. The same application uploads container image
 tarballs with the same four-step protocol. A newer signals-based service reimplements the flow instead of sharing it.
-Chunk size is 25 MB by default, 5 MB in proxy mode, with concurrency 2. No implementation supports retry, byte-offset
-resume, or a minimizable progress window; cancellation is a confirmation modal followed by a server-side delete.
+Chunk size is 25 MB by default, 5 MB in proxy mode, with concurrency 2. At the original consumer review, those
+downstream implementations supported neither retry, byte-offset resume, nor a minimizable progress window; cancellation
+is a confirmation modal followed by a server-side delete.
 
 Clarity supplies the visual pieces (file input container, progress bar, alerts, modals) but not the lifecycle.
 `cll-file-reader` documents uploads and progress reporting as non-goals. The smallest useful delivery is therefore a
@@ -62,20 +294,21 @@ transport-agnostic lifecycle in `ngx-lift` plus a non-modal Clarity panel in `cl
 - **Queue item**: an `UploadItem` with identity, value (`File`), status, progress and optional error.
 - **Processing**: the post-upload server phase (`combine` plus optional `getStatus` polling). Byte progress is no longer
   derived from chunks; optional task progress is reported by `getStatus`.
-- **Panel**: the single non-modal floating progress surface for a root queue; **minimized badge** is its compact
-  restored-state entry point.
-- **Window controls**: the three panel-header buttons following desktop window conventions — **Minimize**, **Expand /
-  Collapse** (panel size toggle) and **Close**. Restore is the badge action that un-minimizes.
-- **Close confirmation**: the inline panel-header prompt shown when Close is activated while items are active; it offers
-  "keep uploading in the background" versus "cancel all".
+- **Panel / dock**: one non-modal transfer surface for the root queue, with expanded details and a compact bar. Restore
+  expands the same queue; it never starts or duplicates transfers.
+- **Presentation actions**: collapse/minimize preserves records and transfers; restore expands the compact dock. No
+  active-state Close/X is offered. Explicit settled Close ends the displayed batch and clears its terminal records; it
+  neither deletes uploaded artifacts nor requires a permanent history/reopening entry.
+- **Batch cancellation**: an immediate action over the active snapshot in the displayed scope. No confirmation is shown;
+  successful records and existing failures remain available until explicit clearing or settled Close.
 - **Success summary row**: the collapsed representation of all `success` items ("Uploaded {0} files · {1}") with an
   expand toggle; failed items are never collapsed into it.
 
 ## Goals
 
 - G1: An operator can select one or many files, watch per-file and aggregate progress, cancel (per item or in bulk),
-  retry failures, collapse finished uploads, and drive the panel with the standard window controls (minimize, expand,
-  close) without leaving the current page. Closing never silently cancels active uploads.
+  retry failures, collapse finished uploads, and switch between expanded details and a compact dock without leaving the
+  current page. Presentation actions never cancel transfers or silently remove failure records.
 - G2: An application developer can integrate any backend protocol through a typed adapter and reuse one lifecycle
   instead of reimplementing chunking, progress, cancellation and error state.
 - G3: The API fits Angular 21 forms, all 11 supported locales, and the existing Clarity token and overlay conventions
@@ -90,8 +323,8 @@ transport-agnostic lifecycle in `ngx-lift` plus a non-modal Clarity panel in `cl
   documented presets.
 - Built-in `tus`, S3 multipart or object-storage clients. Consumers can implement them behind `UploadAdapter`; they add
   protocol dependencies this increment does not justify.
-- Drag-and-drop selection. Version 1 uses the native file input behind a Clarity-styled trigger; dropzone behavior can
-  be a later additive input.
+- Paste-to-upload (clipboard `paste` intake). The dropzone and the native input cover selection; clipboard intake can be
+  a later additive listener.
 - A library-installed `beforeunload` guard. Global side effects stay opt-in at the application layer.
 - Virus scanning, authorization, storage lifecycle, checksum verification and server-side deduplication.
 
@@ -102,18 +335,19 @@ the library never parses a vendor response format.
 
 ## Use cases and acceptance
 
-| ID   | Actor and task                                    | Initial data/state                              | Action                                                                                               | Observable outcome                                                                                                                                                                                                           | Failure/recovery                                                                                                   | Demo/test                                                       |
-| ---- | ------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
-| UC1  | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose `.zip`, start upload                                                                          | Item moves `queued -> uploading -> processing -> success`, success mark shown, `uploadComplete` emits                                                                                                                        | Invalid extension appears as visible error; adapter error keeps item in `error` with Retry                         | Planned playground + unit transition test                       |
-| UC2  | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                                                                        | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                                                                                                       | `maxFiles` or `maxSize` rejection is visible and does not start a request                                          | Planned playground + E2E multi-file fixture                     |
-| UC3  | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                                                                         | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                                                                                                   | Failed abort still marks local cancellation and reports an error event                                             | Planned unit race test + E2E                                    |
-| UC4  | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                                                                          | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                                                                                                  | Exhausted retries remain `error` with visible message                                                              | Planned unit test with stub adapter                             |
-| UC5  | Operator keeps working during upload              | Panel active with progress                      | Click Minimize, navigate in-app, click Restore badge; activate Close and choose "keep in background" | Page remains interactive; shared panel restores same per-file progress and history; Close with active items docks to the badge and uploads continue, announced via the live region                                           | "Cancel all" in the confirmation cancels every non-terminal item, clears terminal items and closes panel and badge | Planned E2E keyboard/focus journey                              |
-| UC10 | Operator cleans up a mixed queue in bulk          | Panel shows finished uploads plus failures      | Use footer actions and the success summary row                                                       | "Cancel all" cancels every non-terminal item; "Retry failed ({n})" retries every `error` item; "Clear completed" removes terminal items; success items collapse into one summary row while failures stay pinned and expanded | Batch actions apply the same per-item rules as the row actions, including retry of exhausted errors                | Planned unit + E2E batch-action fixture                         |
-| UC6  | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                                                                 | Rejected files listed with localized validation error; accepted files still enqueue                                                                                                                                          | Clear validation errors removes rejections without changing form value or queue                                    | Planned unit + i18n check                                       |
-| UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                                               | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected                                                                                             | Invalid selection sets a validation error on the control                                                           | Planned form demo + type test                                   |
-| UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                                          | Named progress, status changes and errors announced once per transition                                                                                                                                                      | Repeated renders do not re-announce identical state                                                                | Planned interaction test; manual AT decision tracked separately |
-| UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                                                 | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success                                                                                 | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                               | Planned headless unit test + Composition demo tab               |
+| ID   | Actor and task                                    | Initial data/state                              | Action                                                                        | Observable outcome                                                                                                                           | Failure/recovery                                                                                        | Demo/test                                                       |
+| ---- | ------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| UC1  | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose an allowed file                                                        | Accepted selection automatically enqueues; item moves queued -> uploading -> processing -> success; no routine confirmation                  | Invalid files never enqueue; failures retain details and Retry                                          | Planned primary demo + transition test                          |
+| UC2  | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                                                 | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                       | `maxFiles` or `maxSize` rejection is visible and does not start a request                               | Planned playground + E2E multi-file fixture                     |
+| UC3  | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                                                  | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                   | Failed abort still marks local cancellation and reports an error event                                  | Planned unit race test + E2E                                    |
+| UC4  | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                                                   | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                  | Exhausted retries remain `error` with visible message                                                   | Planned unit test with stub adapter                             |
+| UC5  | Operator keeps working during upload              | Active panel                                    | Collapse, navigate in-app, restore                                            | Same queue continues; compact bar retains active and failed counts; no Close/X prompt                                                        | Focus returns safely; application-shell ownership survives host teardown                                | Planned keyboard/focus E2E                                      |
+| UC10 | Operator manages a mixed queue                    | Active, successful and failed items             | Cancel all, Retry failed, Clear completed, then explicitly Close when settled | Cancel affects explicit active scope; Clear completed removes successes only; settled Close dismisses the displayed terminal batch           | Failures remain available for retry until explicit Remove or Close; no automatic clearing on settlement | Planned mixed-state unit + E2E                                  |
+| UC6  | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                                          | Count overflow rejects the new selection once; otherwise type/size errors reject individual files and valid siblings enqueue                 | Clear validation errors removes rejections without changing form value or queue                         | Planned unit + i18n check                                       |
+| UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                        | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected             | Invalid selection sets a validation error on the control                                                | Planned form demo + type test                                   |
+| UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                   | Named progress, status changes and errors announced once per transition                                                                      | Repeated renders do not re-announce identical state                                                     | Planned interaction test; manual AT decision tracked separately |
+| UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                          | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                    | Planned headless unit test + Composition demo tab               |
+| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Choose folder"         | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, per-selection limit hints  | Invalid files are rejected with the same localized validation errors and never enqueue                  | Planned unit + E2E drop fixture                                 |
 
 ## Industry evidence and current gaps
 
@@ -128,12 +362,30 @@ All sources checked on 2026-11-20, except the Uppy row checked on 2026-11-21.
 | tus resumable upload protocol 1.0: https://tus.io/protocols/resumable-upload                                                                                                             | `PATCH` with `Upload-Offset`, `HEAD` for resume, `DELETE` termination, feature discovery via `OPTIONS`; chunk size is client-chosen and not negotiated.                                                                                                                                                                 | Reject as built-in; adapt concepts | No new protocol dependency; keep adapter-agnostic lifecycle without byte-offset resume in v1.                                                                                        |
 | MDN `XMLHttpRequest.upload`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/upload and `abort()`: https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/abort | Widely available upload `progress`, error, abort and timeout events; listeners must be attached before send.                                                                                                                                                                                                            | Adopt in adapter examples only     | Adapter authors feed progress events into `onProgress` and cancellation into `signal`.                                                                                               |
 | Uppy React integration and tus plugin: https://uppy.io/docs/react/ and https://uppy.io/docs/tus/                                                                                         | Full resumable dashboard with crash recovery and large-upload support through a React wrapper.                                                                                                                                                                                                                          | Reject as built-in                 | Heavyweight optional stack; a consumer may wrap it in `UploadAdapter` if needed.                                                                                                     |
-| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                                                                                                                                                    | Adapt                              | Confirms selection is solved elsewhere; v1 uses the native input and drop remains deferred.                                                                                          |
+| React Dropzone, current docs: https://react-dropzone.js.org/                                                                                                                             | Drag-and-drop and file selection hooks only; no chunk lifecycle, queue, progress panel or retry API.                                                                                                                                                                                                                    | Adapt                              | Adopts the dropzone interaction pattern (drag-over state, folder traversal via entries); the queue, progress panel and retry API remain our own.                                     |
 | Uppy Dashboard, current docs: https://uppy.io/docs/dashboard                                                                                                                             | Status bar shows "Uploading: 45% - 43 MB of 101 MB - 8s left" with `showProgressDetails`; per-file retry/cancel plus `retryAll()`/`cancelAll()`; a Done button replaces pause/resume/cancel after finishing; `closeAfterFinish` auto-closes only when every upload succeeded, otherwise the panel stays open for retry. | Adapt                              | Adopt the progress meta line (bytes, speed, remaining time), footer batch actions and the failures-keep-the-panel-open ordering; keep our own non-modal panel and adapter lifecycle. |
 
-Closing a transfer surface without cancelling the transfers is the established desktop-browser pattern (the Chrome
-download bubble and Drive-style upload panels keep transfers running behind a progress indicator), so this spec defines
-Close as background-dismiss with an explicit cancel choice rather than silent cancellation.
+The current recommendation separates presentation from cancellation: active work offers collapse/minimize, while
+explicit Cancel actions stop work. It does not use a desktop-window analogy to justify ambiguous active-state X buttons.
+
+### UX revision evidence (checked 2026-11-24)
+
+- [Uppy core](https://uppy.io/docs/uppy/#autoproceed) supports both automatic starts and explicit starts. Adapt the
+  separation of capability from product default; Uppy defaults to manual start, which is not a requirement for this
+  consumer's automatic-upload workflow.
+- [NG-ZORRO Upload](https://ng.ant.design/components/upload/en) documents manual upload through `nzBeforeUpload`. Retain
+  optional staging for genuine application decisions, without imposing a second confirmation on all uploads.
+- [Uppy Dashboard](https://uppy.io/docs/dashboard/#closeafterfinish) keeps unsuccessful batches open when automatic
+  close is enabled. Adapt visible failure recovery; do not automatically discard failures or prohibit a deliberate
+  explicit settled Close that dismisses its records.
+- [MDN beforeunload](https://developer.mozilla.org/en-US/docs/Web/API/Window/beforeunload_event) documents unreliable
+  delivery and recommends installing listeners only while needed. The application opts into a departure guard; it does
+  not guarantee background transfer or reload recovery.
+- Maintainer-supplied design frames were inspected through authenticated design API export on 2026-11-24. Findings:
+  empty-state disabled Cancel all differs from the hide rule; expanded dock is nearly modal width; completed summary and
+  visible success-row counts are illustrative. The maintainer accepts these as examples, not blockers. Implement the
+  agreed empty/queued/processing/settled behavior and responsive layout; update the 512 MiB placeholder to a verified
+  limit. Product-specific source links and credentials are deliberately excluded from this public specification.
 
 The industry gap is not file selection or progress display; it is a small, transport-agnostic lifecycle plus a
 non-blocking progress surface with cancellation and retry.
@@ -145,11 +397,11 @@ non-blocking progress surface with cancellation and retry.
 | Angular forms and a backend upload endpoint     | Integrate a minimal single-file upload                                | `cll-upload` demo, Basic tab | Copyable TS/HTML with a stub adapter; one success row                                     | Focused unit + browser check          |
 | Need multiple bundles and chunk-size control    | Configure `multiple`, `accept`, `maxSize`, `chunkSize`                | Demo, Configuration tab      | 25 MB default and 5 MB proxy preset; visible validation errors                            | Unit + E2E fixture                    |
 | Need cancellation and retry                     | Explain lifecycle states and recovery                                 | Demo, Failure handling tab   | Fail a stub chunk, observe error, retry, cancel another item                              | Unit race test + E2E                  |
-| Need progress while using the page              | Minimize and restore the panel                                        | Demo, Panel tab              | Minimize, navigate, restore, Done/Clear                                                   | Keyboard/focus E2E                    |
+| Need progress while using the page              | Minimize and restore the panel                                        | Demo, Panel tab              | Collapse, navigate, restore, explicit settled Close                                       | Keyboard/focus E2E                    |
 | Using typed Reactive Forms                      | Bind `readonly File[]` through CVA and `toSignalForm`                 | Demo, Forms tab              | ngModel, typed `FormGroup`, `toSignalForm` examples                                       | Form type test + browser check        |
 | Awaiting a transfer and refreshing related data | Use `completion(id)`, promise adapters and query/mutation composition | Demo, Composition tab        | `await completion(id)` then `mutateResource.mutate()`, with a `queryResource`-backed list | Headless promise test + browser check |
 
-Destinations are proposed routes under the demo app and are not delivered evidence until implemented.
+The upload route and examples are implemented; the current verification record below describes tested states.
 
 ## Public API and examples
 
@@ -165,6 +417,8 @@ export interface UploadError {
   readonly message?: string;
   readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean; // default false; only `chunk` errors with true are auto-retried
+  readonly recovery?: 'retry' | 'replace'; // manual recovery guidance, independent from auto-retry
+  readonly fileName?: string; // rejected file name for phase `validation`
 }
 
 export interface UploadStatusResult {
@@ -179,6 +433,7 @@ export interface UploadItem {
   readonly progress: number; // 0..100 aggregate across upload and processing
   readonly uploadedBytes: number; // acknowledged bytes plus reported in-flight bytes
   readonly attempt: number; // 1-based attempt for the current phase; increments on retry
+  readonly processingProgress?: number; // present after numeric server processing progress is reported
   uploadId?: string;
   error?: UploadError;
 }
@@ -293,24 +548,26 @@ export class UploadPanelComponent {
 
 `cll-upload` inputs and outputs:
 
-| Name               | Kind            | Default             | Meaning                                                                                                   |
-| ------------------ | --------------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| `adapter`          | input, required | -                   | Transport implementation; passed to each `enqueue` call.                                                  |
-| `multiple`         | input           | `false`             | Allow multi-selection.                                                                                    |
-| `accept`           | input           | `''`                | Native `accept` expression passed to the file input.                                                      |
-| `maxSize`          | input           | `Infinity`          | MiB per file; `Infinity` means unlimited, matching `cll-file-reader`; `0` rejects all files.              |
-| `maxFiles`         | input           | `0`                 | Maximum accepted files per selection/batch; `0` means unlimited.                                          |
-| `chunkSize`        | input           | `UPLOAD_CHUNK_25MB` | Bytes per chunk.                                                                                          |
-| `concurrency`      | input           | `2`                 | In-flight chunk requests for the active file, clamped to 1..4; values above 1 require independent chunks. |
-| `autoRetry`        | input           | `false`             | Retry `chunk` errors marked `retryable: true` automatically.                                              |
-| `maxRetries`       | input           | `3`                 | Automatic attempts per failing chunk.                                                                     |
-| `disabled`         | input           | `false`             | Disable selection and queue actions; CVA disabling also cancels this control's in-flight items.           |
-| `controlId`        | input           | `''`                | Stable id for label/input association.                                                                    |
-| `filesChange`      | output          | -                   | Emits the current `readonly File[]` value.                                                                |
-| `validationErrors` | output          | -                   | Emits rejected files as `UploadError[]` with phase `validation`.                                          |
-| `uploadComplete`   | output          | -                   | Emits items that reached `success`.                                                                       |
-| `uploadError`      | output          | -                   | Emits items that reached `error`.                                                                         |
-| `uploadCancelled`  | output          | -                   | Emits items that reached `cancelled`.                                                                     |
+| Name               | Kind            | Default             | Meaning                                                                                                        |
+| ------------------ | --------------- | ------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `adapter`          | input, required | -                   | Transport implementation; passed to each `enqueue` call.                                                       |
+| `multiple`         | input           | `false`             | Allow multi-selection.                                                                                         |
+| `accept`           | input           | `''`                | Native `accept` expression passed to the file input.                                                           |
+| `maxSize`          | input           | `Infinity`          | MiB per file; `Infinity` means unlimited, matching `cll-file-reader`; `0` rejects all files.                   |
+| `maxFiles`         | input           | `0`                 | Maximum accepted files per selection/batch; `0` means unlimited.                                               |
+| `chunkSize`        | input           | `UPLOAD_CHUNK_25MB` | Bytes per chunk.                                                                                               |
+| `concurrency`      | input           | `2`                 | In-flight chunk requests for the active file, clamped to 1..4; values above 1 require independent chunks.      |
+| `autoRetry`        | input           | `false`             | Retry `chunk` errors marked `retryable: true` automatically.                                                   |
+| `autoEnqueue`      | input           | `true`              | `false` validates and emits `filesChange` only; advanced application staging, not the primary upload workflow. |
+| `maxRetries`       | input           | `3`                 | Automatic attempts per failing chunk.                                                                          |
+| `pollIntervalMs`   | input           | `10000`             | Server status poll interval for adapters that implement `getStatus`.                                           |
+| `disabled`         | input           | `false`             | Disable selection and queue actions; CVA disabling also cancels this control's in-flight items.                |
+| `controlId`        | input           | `''`                | Stable id for label/input association.                                                                         |
+| `filesChange`      | output          | -                   | Emits the current `readonly File[]` value.                                                                     |
+| `validationErrors` | output          | -                   | Emits rejected files as `UploadError[]` with phase `validation`.                                               |
+| `uploadComplete`   | output          | -                   | Emits items that reached `success`.                                                                            |
+| `uploadError`      | output          | -                   | Emits items that reached `error`.                                                                              |
+| `uploadCancelled`  | output          | -                   | Emits items that reached `cancelled`.                                                                          |
 
 ### Minimal example (proposed)
 
@@ -587,8 +844,15 @@ error      -> retry (action) -> the failed phase
   service owns no DOM or overlay.
 - `UploadComponent` owns selection, validation, CVA state and the call to `enqueue`, passing its `adapter` input in
   `UploadQueueOptions`. It attaches to the single shared `cll-upload-panel` for that root queue on first enqueue.
-- `UploadPanelComponent` renders one CDK overlay per root queue with `hasBackdrop: false`; it never locks page scroll or
-  makes the background inert. It disposes its overlay on teardown and does not mutate global styles.
+- The `cll-upload` dropzone is the primary selection surface: it opens the native input on click, reacts to drag-over
+  with a highlighted state, and ingests dropped files through the same validation and enqueue path as the native input.
+  Dropped folders are traversed through `webkitGetAsEntry()` entries captured synchronously during the drop event and
+  read in repeated `readEntries` batches until exhausted. The "Choose folder" action uses a hidden `webkitdirectory`
+  input and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files
+  never create queue items. Hint segments and the used count are omitted without data.
+- The root-scoped panel manager owns one CDK overlay per root queue with `hasBackdrop: false`; it never locks page
+  scroll or makes the background inert. An individual declaration anchor or picker can be destroyed without destroying
+  that overlay. Dispose the overlay at its root owner teardown; do not mutate global styles.
 - Each `uploadChunk` receives an `AbortSignal` from a per-item `AbortController`. Cancel aborts the signal, calls
   adapter `cancel(uploadId)` when an `uploadId` exists, and marks the item cancelled; adapter failures are reported but
   the item still ends `cancelled`.
@@ -602,41 +866,222 @@ error      -> retry (action) -> the failed phase
 - SSR: no `document` or overlay access during server rendering; the panel is created only in a browser after the host
   view initializes.
 
-### Panel and minimize behavior
+### Panel, dock and application dialog behavior
 
-- One `cll-upload-panel` overlay exists per root queue; all `cll-upload` hosts append their items to it. The panel is
-  created automatically on the first enqueue and is not visible before any item exists; an application may declare
-  `<cll-upload-panel>` once itself, in which case hosts attach to that instance instead of creating a new overlay. The
-  panel survives host teardown while the queue still has items, so uploads started by a destroyed host remain visible
-  and controllable; the last host to interact owns focus restoration.
-- Panel anatomy follows desktop transfer-window conventions: a header row with the localized title and the three window
-  controls (Minimize, Expand/Collapse, Close), the item list, and a footer row with the aggregate progress line and the
-  batch actions. Minimize docks a compact badge showing active count and aggregate progress for the shared queue;
-  Restore (on the badge) reopens that same panel, not a per-host panel. Expand/Collapse toggles the item list between
-  full height and a compact height showing only the active and failed items; it never changes queue state. Close behaves
-  like the Chrome download bubble: closing never cancels uploads.
-- Close confirmation: activating Close while any item is active (queued, uploading, processing) swaps the item list for
-  an inline prompt with two actions — "keep uploading in the background" (dismisses to the minimized badge and uploads
-  continue, announced via the live region) and "cancel all" (cancels every non-terminal item, clears terminal items and
-  closes panel and badge). The prompt is a warning dialog (`role="alertdialog"`) with the two actions and no third
-  dismissal path; activating it again with no active items performs the idle close directly.
-- Idle close: when no item is active, Close (header button, badge action or Escape) clears terminal items (success,
-  cancelled, exhausted error) and hides the panel; no in-flight item can remain in that state. Escape is handled only
-  while focus is inside the panel or badge; it never intercepts Escape elsewhere on the page.
-- Row ordering is success-collapse, failure-pinned: successful items collapse into one summary row ("Uploaded {0} files
-  · {1}") with an expand/collapse toggle for the detail list; failed items stay expanded and pinned below the active
-  rows; queued and uploading rows follow enqueue order. The panel never grows unbounded: the item list scrolls at a
-  bounded height instead of pushing the footer out of view.
-- The footer shows the aggregate progress line (percent plus uploaded and total bytes, matching the Uppy
-  `showProgressDetails` pattern) and the batch actions: "Cancel all" when non-terminal items exist, "Retry failed ({n})"
-  when `error` items exist, and "Clear completed" when terminal items exist. Batch actions apply the same rules as the
-  row actions, including retry of exhausted errors; a batch action that changes no item is not rendered. Meta segments
-  without data (speed, remaining time) are omitted rather than rendered as placeholders; remaining time is estimated
-  from acknowledged-byte rate and never blocks rendering.
-- Overlay position uses a direction-aware strategy (inline-end/bottom rather than physical right) so RTL mirrors the
-  panel placement. Focus returns to the `cll-upload` host that most recently opened or interacted with the panel. The
-  panel has its own focusable controls but is not a focus trap: Tab moves out into the page while the panel remains open
-  and non-modal.
+This section records the 2026-11-24 recommendation: D1-D4 are accepted. Implementation is complete for this library/demo
+increment; see the verification record below.
+
+- One root-scoped queue and application-owned overlay survive host teardown and in-app navigation. The first enqueue
+  creates the surface; an application may declare the existing `cll-upload-panel` anchor once. No duplicate transport,
+  polling loop or queue is created by switching views. There is no backdrop or page-scroll lock for the dock.
+- The primary picker validates and automatically enqueues accepted files (`autoEnqueue=true`, the existing default).
+  Invalid files remain local validation errors. No generic inspection/confirmation dialog is inserted. The advanced
+  `autoEnqueue=false` mode remains for applications that need metadata, destination selection or an explicit business
+  decision before starting I/O. Remote-URL credentials are such a form and still need an explicit submission action.
+  Upload is not installation, deployment, rollout approval or an overwrite decision; those retain their own controls.
+- The dock has two presentations, expanded and compact, with one disclosure action. Remove the separate size-toggle,
+  minimize and active-state Close control set and its close-confirmation prompt. Collapse/minimize never cancels work.
+  The compact card shows the design title, a second-line transfer summary and a bottom-edge progress indicator.
+- An application may compose a richer upload dialog around the same queue. While the modal is open, suppress the
+  interactive dock and avoid leaving it above the modal or exposing duplicate controls. Minimizing the dialog transfers
+  presentation to the dock without stopping work. Dialog state and queue scope remain application-owned; a static info
+  message explains automatic start and that the browser tab must remain open. The library does not acquire a modal API.
+- In a genuinely empty dialog, show Close only and hide Cancel all. With queued/uploading/processing work in that
+  dialog's scope, show Cancel all and Minimize to background, without X. Once settled, show Close; failures retain Retry
+  and Remove until the user explicitly dismisses the batch. Closing an empty picker dismisses only that dialog;
+  minimizing an active dialog preserves transfers and records in the dock; explicitly closing a settled batch clears
+  that displayed scope under D2. Escape hides/minimizes to the dock without clearing records or cancelling tasks. Modal
+  focus trapping, Escape and restoration belong to the application dialog; the non-modal dock does not trap focus.
+- Header status includes the real state counts: uploading, queued, processing and failed as applicable. Only `queued`,
+  `uploading` and `processing` contribute to active work. All-settled means none of these remain; zero network upload
+  streams alone is insufficient. A mixed settled batch says completed/failed/cancelled, never All complete.
+- Preserve active rows in enqueue order, failed rows with readable errors and recovery actions, and a separate success
+  disclosure below them. Keep the active/error section reachable through bounded scrolling. Completed count and byte
+  totals derive from the same successful item set. Default the success disclosure to collapsed while work or failures
+  remain; do not automatically override a user's explicit expand/collapse choice at a count threshold.
+- Clear completed is a separate button beside the success disclosure, never nested inside its toggle button. It removes
+  successful records from the UI/queue only and never deletes uploaded artifacts. Implement it using existing
+  `remove(id)` over a snapshot of successes. Keep the public `clearCompleted()` terminal-purge contract unchanged for
+  compatibility; do not bind this broader method to the success-only Clear completed action. Explicit settled Close may
+  use it only when dismissing the complete root queue; scoped dismissal must remove only that scope's terminal ids.
+  Failed and cancelled records remain independently removable. Clearing records does not change the file-selection form
+  value; form reset remains a separate owner-authorized operation with its existing semantics.
+- Keep per-row Retry/Remove and batch Retry failed. An upload failure has actionable phase/error text. Distinguish
+  failure to query status from a confirmed server processing failure; do not promise that retry can repair every
+  validation or business rejection. Removing a failed row dismisses its record without deleting a server artifact.
+- Cancel all immediately snapshots and cancels queued/uploading/processing items in its explicit scope, without a
+  confirmation step. Successful records and existing failures are not cleared. Items added after the click are not
+  silently included. The global dock covers the root queue; feature-specific dialogs must identify their own scope. A
+  failed server cancellation remains visible: local stopped/cancelled does not prove server termination succeeded.
+- Accepted D2: Close is available only when the displayed scope has no queued/uploading/processing work. Clicking it
+  explicitly ends that displayed batch, clears its success/error/cancelled records and hides its surface. It does not
+  delete uploaded files or cancel any other scope's work. Do not auto-close or auto-clear when a batch settles: failures
+  remain visible with Retry/Remove until the user chooses Close. Explain the loss of retry records in the settled Close
+  description; no extra routine confirmation dialog is proposed. A feature dialog's Close affects only its displayed
+  scope; the global dock's Close covers the root queue only once that queue is settled.
+- No permanent Uploads entry, upload-history feature or extension to `UploadQueueService.restore()` is proposed. Restore
+  continues to expand the compact dock while records exist. After explicit settled Close, those dismissed records cannot
+  be reopened; adding new files begins another visible batch. Application logout/reset retains its existing cleanup
+  responsibilities.
+- Under D3, a newly observed transition to error can expand a compact dock once per item attempt, without moving focus
+  or recreating explicitly dismissed records. Acknowledged existing failures do not repeatedly expand after manual
+  collapse. A new failed retry attempt may alert again. While a modal is open, update its visible error and announce it
+  without opening a second interactive surface. Failure counts and polite announcements remain available when collapsed.
+- The header right-hand action is Cancel all while active and Close when settled. Keep the action away from the
+  disclosure/restore hit target; a transition must not cause an in-progress click or held key to activate a newly
+  substituted action. The compact bar may reserve batch actions for its expanded view.
+- Keep responsive card styling, direction-aware inline-end placement and design-system spacing tokens. Expanded dock
+  width must leave the application usable rather than copy modal width; final widths are UX review items, not fixed
+  754px or 320-by-48px requirements. Bound both height and width for narrow screens, zoom and long translations.
+- Focus stays predictable: explicit collapse targets the compact disclosure; explicit expansion targets the matching
+  control; user-requested Close restores a connected application trigger or a safe shell target. Automatic expansion
+  never moves focus. Tab can leave the dock; Escape is handled only inside the relevant surface.
+
+### Incremental intake, validation and duplicate names
+
+Implementation evidence: `UploadComponent.ingest` validates independently, skips suspected duplicates within its
+captured destination scope, appends accepted files to the value and enqueues them. `UploadQueueService.enqueue` still
+assigns a fresh id on every call without duplicate filtering. The intake policy belongs to the picker, not the headless
+append contract. The additive integration members below support destination identity and application-owned location.
+
+- Keep selection/drop available during queued/uploading/processing work when the host is enabled, `multiple=true` and
+  configured limits allow it. New accepted files append to the tail without aborting, restarting or replacing existing
+  work. Files remain serial at file level, with configured chunk concurrency within the current file.
+- Validate each folder entry independently. Unsupported extensions and oversize files are local selection rejections,
+  never transport failures or queue items. Valid siblings continue enqueueing/uploading; an invalid entry does not
+  reject the whole folder or disable further additions. All picker and drop intake paths use the same validation.
+- In the main dialog, show a bounded Clarity danger-style rejection section beside/below the picker: an error icon, a
+  clear summary such as “3 files were not added. Other valid files will continue uploading,” and per-file relative
+  name/path plus reason and allowed formats. Do not rely on red alone or claim that the entire upload failed. Large
+  folders use a disclosure/scrollable detail list, a dismiss/Clear validation errors action and one summary live
+  announcement. Do not render an alert or announce each progress update for every rejected entry. No Retry is offered
+  for an unsupported file: choose a supported file instead. Rejections remain separate from failed transfers and
+  completed/active counts; new additions must not silently erase unresolved rejection feedback.
+- Accepted D4: detect only suspected repeat selections within the same application destination/feature scope, using
+  original filename, byte size, last-modified time and a relative path when consistently available. Compare both
+  existing retained items and earlier accepted candidates in the same drop. Metadata matching is a heuristic, not a
+  content hash; different metadata does not prove different content and equal metadata does not prove equal content. Do
+  not read/hash multi-gigabyte files just to populate the queue. When destination identity or path information is
+  insufficient, do not make a cross-scope or definitive content-identity assertion.
+- For a suspected match in queued/uploading/processing state, skip the new candidate and show a non-danger notice (“This
+  file is already in the queue”) with a way to locate its row. For an existing error, point to Retry rather than
+  creating another copy or starting an automatic retry. For a retained success, say already uploaded in this batch.
+  Cancelled/dismissed records do not block a fresh selection. Clearing or explicitly closing a batch releases this
+  in-memory detection history; there is no persistent server-wide duplicate index. Deliberate repeat upload can follow
+  removal of the terminal record and reselection; an active item must be cancelled before replacing it.
+- A shared basename alone never proves a duplicate. When metadata/path differs, allow independent items under distinct
+  queue ids; disambiguate visible rows using relative directory, size and modification time when useful. Relative paths
+  are labels/detection hints, not an implicit promise to create folders or storage keys on the server. Preserve original
+  names and do not silently rename to “(1)” or overwrite remote artifacts. A backend name/version conflict is a separate
+  explicit application error/business decision; accepted enqueue does not promise backend acceptance.
+- Duplicate notices do not stop valid sibling files, alter existing progress or count as failed uploads. In particular,
+  processing an extra drop cannot reset a current transfer. Backend identity/idempotency remains adapter-owned.
+
+Evidence checked 2026-11-24: [Uppy addFiles](https://uppy.io/docs/uppy/#addfilesfiles) keeps valid members of a batch
+when others fail restrictions; [Uppy addFile](https://uppy.io/docs/uppy/#addfilefile) distinguishes repeated entries and
+relative paths. Adapt the per-file validation and scoped-identity principles, not its identity implementation.
+[MDN File](https://developer.mozilla.org/en-US/docs/Web/API/File) documents the metadata available to the browser;
+metadata-based suspicion cannot establish content equality.
+
+### Application preflight and content rejection
+
+Automatic upload removes the routine human confirmation, not required automated validation. A consuming bundle-upload
+application may inspect archive entries and required manifest content locally before enqueueing. Keep archive parsers,
+manifest filenames/schema and bundle-kind rules application-owned; the generic picker/queue does not acquire domain
+validation or a ZIP dependency. Existing advanced staging can support asynchronous application preflight without
+introducing a confirmation dialog or issuing upload requests before validation succeeds.
+
+- Selection validation has two layers: generic extension/size/count checks and application-specific asynchronous
+  archive/content preflight. Show Checking file while local inspection runs, keep other valid files progressing, and
+  reject invalid archives beside their filename with a Clarity danger-style reason. A local rejection never creates a
+  transport failure, request or upload session. Track the pending preflight as unfinished intake so the UI cannot claim
+  all work has finished or clear/close the scope while a late accepted result may still enqueue.
+- Required manifest names and paths depend on the application contract; do not hardcode a generic `manifest.json` rule.
+  A syntactically valid ZIP may still be an invalid application bundle. Missing required entries, corrupt or unparseable
+  manifests and incompatible bundle types need specific readable errors and selection of a corrected file.
+- A server may also reject content after transmission or during processing. Keep that item visible as a failed transfer
+  lifecycle, preserve the application-provided reason, and do not render it as successful just because all bytes
+  arrived. Backend error origin must come from the failed request/task evidence, not from the wording of its message.
+- Separate record removal from meaningful recovery: Remove dismisses the record and does not delete the server artifact.
+  An unchanged file that deterministically lacks a required manifest is not repaired by retransmission: show Remove and
+  Choose another file/corrective guidance rather than a misleading Retry action. Local preflight rejections have no
+  queue Retry. Retry is appropriate for recoverable network/request failures; a status-query failure retries monitoring
+  rather than uploading the entire file again. Do not silently auto-retry a content/business rejection.
+- Preserve the existing public manual `queue.retry(id)` contract for error items. The optional `recovery` member
+  supplies context-aware UI recovery classification; `UploadError.retryable=false` currently controls automatic chunk
+  retry and alone does not prove manual retry is meaningless. Applications set `recovery: 'replace'` for a known
+  permanent content rejection; the library does not infer it. Do not guess recovery from substring matching or leak
+  product-specific rules into the headless queue.
+- Cover mixed valid/invalid archives, cancellation or logout during asynchronous preflight, no requests on local
+  rejection, late scan/preflight results, server rejection after 100% transfer, same-file re-selection after correction,
+  recoverable transport Retry, permanent-content corrective guidance and Remove without artifact deletion.
+
+### Integration safeguards and remaining evidence
+
+These are engineering and product-integration checks, not additional UX preference questions:
+
+- **Close versus form teardown:** hiding/minimizing the application dialog must not call `reset()`, `clear()`, write an
+  empty File-array value or disable the picker as a side effect. The existing form contract intentionally cancels or
+  removes owned items for those operations. Test real modal destruction and recreation, not only visibility toggling, so
+  accepted background uploads and duplicate tracking remain under their intended root/application owner.
+- **Fixed destination:** each enqueue captures its destination, region, repository, credentials context and adapter
+  configuration as appropriate. Changing the page's selected target later must not redirect already queued requests.
+  Global dock rows identify their originating target; duplicate checks never suppress work in another target.
+- **Safe selection scope:** folder traversal and any asynchronous local inspection need cancellation/generation
+  ownership. Cancelling an intake/session, closing an empty picker during traversal, or logout must not allow late scan
+  callbacks to add files after dismissal. Show a Reading files state and count while traversal is incomplete; do not
+  label it upload failure or all-complete. Folder enumeration is not atomic transfer of an archive.
+- **Backend truth:** verify server upload-session constraints, task readiness and name/version-conflict behavior before
+  integrating multi-file intake. The UI queue can accept many files while sending one file at a time, but this alone
+  does not establish backend multi-session or multi-user support. Browser accept/size checks are convenience validation;
+  server validation remains authoritative. Do not invent numeric size limits from a design placeholder.
+- **Cancellation and monitoring:** retain the distinction between locally stopped work, confirmed server cancellation, a
+  failed status request and a confirmed failed processing task. Keep unresolved cancellation warnings visible; do not
+  imply that clearing records deleted an artifact or terminated remote processing.
+- **Control scope and cleanup:** feature-dialog actions affect their displayed ids; root-dock actions explicitly name
+  their root scope. Snapshot destructive-action scope. Keep existing `maxFiles` per-selection/batch semantics and
+  document any separate product-wide capacity; do not silently reinterpret it as a total queue cap. Session logout and
+  identity changes release local files, metadata and callbacks. No persistent history or full-reload resume is promised.
+
+### Additive integration members
+
+The authorized implementation uses these minimal, optional members; no new root export, dependency or vendor protocol is
+added. Existing consumers keep their signatures and the headless queue's unconditional append behavior.
+
+| Member                              | Contract                                                                                                                                                                                    | Admission and consumer evidence                                                                                                                                    |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `UploadComponent.scope`             | Optional string input. Stable destination key for duplicate detection. If absent, use a stable destination-bound adapter instance. Scope changes affect new selections only.                | A file can be sent to different targets. Optional member on the existing picker; native File identity cannot express destination.                                  |
+| `UploadComponent.duplicateSelected` | String output containing the retained item id when Show details is activated. Applications locate their own modal row; an unsuppressed dock locates its own row.                            | Application-owned modal markup must not be reached through private DOM traversal.                                                                                  |
+| `UploadPanelComponent.suppressed`   | Boolean input, default false. Hide the shared dock while a dialog presents its queue. All live suppression owners must release suppression; anchor destruction releases only that owner.    | Actual modal/dock handoff; overlay lifetime differs from dialog lifetime. No queue work is cancelled.                                                              |
+| `UploadPanelComponent.inline`       | Boolean input, default false. Render the shared file/progress/success presentation in place and suppress the floating dock. The application retains its modal/footer.                       | Replaces the actual duplicate modal list identified during rendered review; no protocol or modal API is added.                                                     |
+| `UploadPanelComponent.showItem(id)` | Reveal/focus a retained item in this anchor's inline renderer, or the floating renderer for a default anchor. Unknown ids are no-ops.                                                       | The duplicate notice must be able to locate a collapsed successful row without reaching into private renderer DOM.                                                 |
+| `UploadError.recovery`              | Optional manual-recovery classification. The value `replace` hides Retry and shows corrected-file guidance; `retry` or absence preserves manual Retry. Normalize this field with the error. | Distinguishes permanent application-content rejection from transient request failure without vendor-text matching. Independent of automatic `retryable` semantics. |
+
+Adapter authors must capture target/configuration when constructing an adapter; a scope string cannot freeze a closure
+that reads mutable application fields later. The advanced demo captures the required destination when submitting its
+staged selection. The upload dialog in the demo deliberately displays the entire shared queue, labels cancellation as
+queue-wide, and uses the same root scope for Close; feature-scoped product dialogs must instead filter their own ids.
+
+### Transfer telemetry and browser departure
+
+- Display transfer percentage from a byte-weighted numerator and denominator over the same explicitly defined batch, not
+  the mean of file percentages beside a byte total. Keep batch membership stable while it is displayed: clearing
+  historical successes must not reset active progress; newly appended work may change the total, with an appropriate
+  status update. Cancelled items leave the active transfer denominator; failed items retain their transferred-byte
+  contribution until retried or explicitly removed and are always identified as failures. Do not show an all-success
+  percentage or completion statement for a failed/partially cancelled batch.
+- Preserve the existing public `aggregate().progress` mean calculation in this revision for compatibility. It is not the
+  byte-transfer metric for the revised dock. Derive rendered telemetry from immutable item byte snapshots and maintain
+  view batch membership as necessary; a future change to public aggregation needs its own contract approval.
+- At 100% byte transfer, show Processing while combine/polling remains active. Server task progress is a separate
+  measure or an indeterminate indicator, never a claim that byte transfer percentage predicts readiness. A settled
+  failure summary replaces an obsolete remaining-time estimate.
+- Estimated time is labelled as transfer time, based on meaningful recent transfer samples, and omitted when unknown,
+  stalled, failed/settled or only processing remains. Do not promise an end-to-end processing completion time.
+- The application may install one `beforeunload` listener while tab departure would lose pending client work or
+  unrecoverable progress/retry state, including queued work. Remove it when the condition ends. Server-owned processing
+  with recoverable status alone need not trigger it. Use the browser's native confirmation; it is best effort, cannot
+  guarantee a prompt on every platform and does not implement reload recovery. The library installs no global guard.
 
 ### Security and resource limits
 
@@ -655,49 +1100,101 @@ narrow layouts, large text and RTL must be exercised in the demo. Owned messages
 `en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`, plus any alias already present in a
 dictionary. Runtime English fallback is not delivery.
 
-| Key                                           | English source                              | Use                                                  |
-| --------------------------------------------- | ------------------------------------------- | ---------------------------------------------------- |
-| `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                  | Trigger label by `multiple`                          |
-| `upload.browse`                               | Browse                                      | Input affordance                                     |
-| `upload.remove`                               | Remove                                      | Remove item                                          |
-| `upload.cancel`                               | Cancel                                      | Cancel active item                                   |
-| `upload.retry`                                | Retry                                       | Retry error item                                     |
-| `upload.panel.title`                          | Upload progress                             | Panel header title                                   |
-| `upload.minimize`                             | Minimize                                    | Panel window control                                 |
-| `upload.expand` / `upload.collapse`           | Show details / Show fewer                   | Panel size toggle                                    |
-| `upload.close`                                | Close                                       | Panel window control                                 |
-| `upload.restore`                              | Restore upload progress                     | Minimized badge                                      |
-| `upload.confirm.title`                        | Uploading in progress                       | Close-confirmation dialog title                      |
-| `upload.confirm.background`                   | Keep uploading in the background            | Confirmation action, dismiss to badge                |
-| `upload.confirm.cancelAll`                    | Cancel all and close                        | Confirmation action                                  |
-| `upload.done`                                 | Done                                        | Close idle panel                                     |
-| `upload.cancelAll`                            | Cancel all                                  | Footer batch action                                  |
-| `upload.retryFailed`                          | Retry failed ({0})                          | Footer batch action                                  |
-| `upload.clearCompleted`                       | Clear completed                             | Clear terminal items                                 |
-| `upload.status.queued`                        | Queued                                      | Item status                                          |
-| `upload.status.uploading`                     | Uploading                                   | Item status                                          |
-| `upload.status.processing`                    | Processing                                  | Item status, indeterminate                           |
-| `upload.status.success`                       | Uploaded                                    | Item status and success mark label                   |
-| `upload.status.error`                         | Failed                                      | Item status                                          |
-| `upload.status.cancelled`                     | Cancelled                                   | Item status                                          |
-| `upload.validation.accept`                    | This file type is not allowed.              | Validation error                                     |
-| `upload.validation.maxSize`                   | The file is larger than {0} MiB.            | Validation error with placeholder                    |
-| `upload.validation.maxFiles`                  | You can select at most {0} files.           | Validation error with placeholder                    |
-| `upload.error.initiate`                       | The upload could not be started.            | Phase error                                          |
-| `upload.error.chunk`                          | A chunk could not be uploaded.              | Phase error                                          |
-| `upload.error.combine`                        | The uploaded chunks could not be finalized. | Phase error                                          |
-| `upload.error.status`                         | The upload status could not be checked.     | Phase error                                          |
-| `upload.error.unknown`                        | The upload failed.                          | Fallback                                             |
-| `upload.error.cancel`                         | The upload could not be cancelled.          | Cancel-failure error                                 |
-| `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                  | Aggregate accessible value                           |
-| `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                | Footer meta line with byte totals and remaining time |
-| `upload.progress.detailsBytes`                | {0}% · {1} of {2}                           | Footer meta line when remaining time is unknown      |
-| `upload.summary.success`                      | Uploaded {0} files · {1}                    | Success summary row                                  |
-| `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files   | Summary expand/collapse toggle                       |
-| `upload.announce.success`                     | {0} uploaded.                               | Live announcement                                    |
-| `upload.announce.error`                       | {0} failed: {1}                             | Live announcement                                    |
-| `upload.announce.cancelled`                   | {0} upload cancelled.                       | Live announcement                                    |
-| `upload.announce.background`                  | {0} uploads continue in the background.     | Background-dismiss announcement                      |
+The table below is the existing message baseline. `upload.confirm.*` and the old size-toggle presentation are retained
+for compatibility/history, not used as the new active-close flow. `upload.clearCompleted` now describes the UI action on
+successful records only. The additional message inventory below reflects the implementation; independent human
+acceptance remains separate.
+
+| Key                                           | English source                                                | Use                                         |
+| --------------------------------------------- | ------------------------------------------------------------- | ------------------------------------------- |
+| `upload.selectFile` / `upload.selectFiles`    | Select file / Select files                                    | Trigger label by `multiple`                 |
+| `upload.selectedCount`                        | {0} files selected                                            | Manual staging summary with `multiple`      |
+| `upload.browse`                               | Choose files                                                  | Input affordance                            |
+| `upload.browse.single`                        | Choose file                                                   | Visible single-file picker button           |
+| `upload.dropzone`                             | Drag and drop files here                                      | Dropzone title                              |
+| `upload.dropzone.dragOver`                    | Drop files to add them                                        | Dropzone drag-over state                    |
+| `upload.folderAdd`                            | Choose folder                                                 | Folder selection, shown with `multiple`     |
+| `upload.usedFiles`                            | {0} of {1} files used                                         | Legacy, not rendered                        |
+| `upload.hint.accept`                          | Allowed types: {0}                                            | Dropzone hint segment with `accept`         |
+| `upload.hint.maxSize`                         | Up to {0} MiB per file                                        | Dropzone hint segment with finite `maxSize` |
+| `upload.hint.maxFiles`                        | Up to {0} files per selection                                 | Dropzone hint segment with `maxFiles`       |
+| `upload.rate`                                 | {0}/s                                                         | Legacy, not rendered                        |
+| `upload.remove`                               | Remove                                                        | Remove item                                 |
+| `upload.remove.hint`                          | Dismiss {0} from the list (does not delete any uploaded file) | Accessible name for Remove                  |
+| `upload.clearAll`                             | Clear all files                                               | Clear the selection                         |
+| `upload.clearValidationErrors`                | Clear validation errors                                       | Dismiss rejected-file messages              |
+| `upload.cancel`                               | Cancel                                                        | Cancel active item                          |
+| `upload.retry`                                | Retry                                                         | Retry error item                            |
+| `upload.panel.title`                          | Upload progress                                               | Transfer region accessible name             |
+| `upload.minimize`                             | Minimize                                                      | Panel window control                        |
+| `upload.expand` / `upload.collapse`           | Show details / Show fewer                                     | Panel size toggle                           |
+| `upload.close`                                | Close                                                         | Panel window control label                  |
+| `upload.close.hint`                           | Close upload progress                                         | Accessible name of the panel Close button   |
+| `upload.restore`                              | Restore upload progress                                       | Minimized badge                             |
+| `upload.confirm.title`                        | Uploading in progress                                         | Legacy, not rendered                        |
+| `upload.confirm.background`                   | Keep uploading in the background                              | Legacy, not rendered                        |
+| `upload.confirm.cancelAll`                    | Cancel all and close                                          | Legacy, not rendered                        |
+| `upload.done`                                 | Done                                                          | Close idle panel                            |
+| `upload.cancelAll`                            | Cancel all                                                    | Footer batch action                         |
+| `upload.retryFailed`                          | Retry failed ({0})                                            | Footer batch action                         |
+| `upload.clearCompleted`                       | Clear completed                                               | Clear successful records only               |
+| `upload.status.queued`                        | Queued                                                        | Item status                                 |
+| `upload.status.uploading`                     | Uploading                                                     | Item status                                 |
+| `upload.status.processing`                    | Processing                                                    | Item status, indeterminate                  |
+| `upload.status.success`                       | Uploaded                                                      | Item status and success mark label          |
+| `upload.status.error`                         | Failed                                                        | Item status                                 |
+| `upload.status.cancelled`                     | Cancelled                                                     | Item status                                 |
+| `upload.validation.accept`                    | This file type is not allowed.                                | Validation error                            |
+| `upload.validation.maxSize`                   | The file is larger than {0} MiB.                              | Validation error with placeholder           |
+| `upload.validation.maxFiles`                  | You can select at most {0} files.                             | Validation error with placeholder           |
+| `upload.error.initiate`                       | The upload could not be started.                              | Phase error                                 |
+| `upload.error.chunk`                          | A chunk could not be uploaded.                                | Phase error                                 |
+| `upload.error.combine`                        | The uploaded chunks could not be finalized.                   | Phase error                                 |
+| `upload.error.status`                         | The upload status could not be checked.                       | Phase error                                 |
+| `upload.error.unknown`                        | The upload failed.                                            | Fallback                                    |
+| `upload.error.cancel`                         | The upload could not be cancelled.                            | Cancel-failure error                        |
+| `upload.progress.aggregate`                   | {0}% uploaded ({1} active)                                    | Aggregate accessible value                  |
+| `upload.progress.details`                     | {0}% · {1} of {2} · {3} left                                  | Legacy, not rendered                        |
+| `upload.progress.detailsBytes`                | {0}% · {1} of {2}                                             | Legacy, not rendered                        |
+| `upload.summary.success`                      | Completed ({0})                                               | Success disclosure count                    |
+| `upload.summary.show` / `upload.summary.hide` | View uploaded files / Hide uploaded files                     | Summary expand/collapse toggle              |
+| `upload.announce.success`                     | {0} uploaded.                                                 | Live announcement                           |
+| `upload.announce.error`                       | {0} failed: {1}                                               | Live announcement                           |
+| `upload.announce.cancelled`                   | {0} upload cancelled.                                         | Live announcement                           |
+| `upload.announce.uploading`                   | Uploading {0}.                                                | Live announcement on transfer start         |
+| `upload.announce.processing`                  | Processing {0}.                                               | Live announcement on processing start       |
+| `upload.announce.cancelledAll`                | {0} uploads cancelled.                                        | Count announcement for batch cancel         |
+| `upload.announce.background`                  | {0} uploads continue in the background.                       | Background-dismiss announcement             |
+
+Current hierarchy messages (all library locales and aliases):
+
+| Key                          | English source      | Use                                    |
+| ---------------------------- | ------------------- | -------------------------------------- |
+| `upload.title.complete`      | Upload complete     | All-success batch heading              |
+| `upload.title.finished`      | Uploads finished    | Mixed/failed batch heading             |
+| `upload.title.uploadingOne`  | Uploading 1 file    | Singular transfer heading              |
+| `upload.title.processingOne` | Processing 1 file   | Singular processing heading            |
+| `upload.transfer.bytes`      | {0} of {1} uploaded | Aggregate and uploading-row bytes      |
+| `upload.transfer.estimate`   | About {0} left      | Meaningful aggregate transfer estimate |
+
+Implemented additional library messages (all library locales and aliases):
+
+| Key                         | English source                                                                           | Use                                |
+| --------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------- |
+| `upload.progress.counts`    | {0} active · {1} failed                                                                  | Legacy, not the visible title      |
+| `upload.progress.phases`    | {0} uploading · {1} queued · {2} processing                                              | Legacy; phases remain per row      |
+| `upload.cancel.confirm`     | Cancel {0} active uploads in this queue? Completed files will be kept.                   | Legacy, not rendered               |
+| `upload.transfer.remaining` | Estimated transfer time: {0}                                                             | Transfer-only estimate             |
+| `upload.replace`            | Choose a corrected file.                                                                 | Permanent content failure guidance |
+| `upload.reading`            | Reading files…                                                                           | Local folder enumeration           |
+| `upload.validation.summary` | {0} files were not added. Other valid files will continue uploading.                     | Local rejection summary            |
+| `upload.duplicate`          | {0} is already selected or in this queue. View the existing item for status or recovery. | Non-danger duplicate notice        |
+
+The application demo owns its banner, destination form, minimize action, API explanations and dialog labels in all
+eleven demo locales. Library dictionary aliases are preserved. Reuse existing Close, Cancel all, Retry failed and
+success summary messages where their meaning matches. The legacy `upload.confirm.*` close-prompt keys remain compatible;
+all cancellation-confirmation keys are legacy aliases and are not rendered. These translated implementations and
+automated dictionary checks do not constitute independent human language acceptance.
 
 Accessibility contract:
 
@@ -706,56 +1203,78 @@ Accessibility contract:
   color-only.
 - Progress updates are announced through a single polite live region with deduplication by item id and status; repeated
   renders do not re-announce identical values.
-- Window controls (Minimize, Expand/Collapse, Close) are real buttons with accessible names and visible focus; the size
-  toggle exposes its expanded state (`aria-expanded` plus a changed accessible name) and the Close button announces what
-  it does, never just "close". Dismissing to the background announces that uploads continue; cancelling all announces
-  how many items were cancelled.
-- The close-confirmation prompt is an `role="alertdialog"` with a title, the two actions and initial focus on the safe
-  action ("keep uploading in the background"); Escape inside the prompt chooses the safe action; focus stays in the
-  prompt until it resolves.
-- The success summary row is a disclosure with `aria-expanded` and an accessible name carrying the count and size; the
-  detail list is labelled so screen readers can skip it. Failed rows are never hidden by the summary toggle.
-- Minimize/Restore are real buttons with accessible names and visible focus; the minimized badge exposes the aggregate
-  value ("{0}% uploaded ({1} active)") as its name. Focus returns to the trigger on close; page interaction remains
-  available while the panel is open.
-- Keyboard journeys cover Add, Cancel, Retry, Cancel all, Retry failed, Clear completed, Minimize, Restore, Expand,
-  Collapse, Close, the confirmation actions and Escape in both themes and RTL. The panel has no essential animation;
-  non-essential transitions honor `prefers-reduced-motion`, with all actions still available when motion is reduced.
+- Collapse/restore, settled Close, Retry and removal controls are real buttons with meaningful names and visible focus.
+  The disclosure exposes `aria-expanded`. Compact status includes failure counts as well as active work.
+- There is no active-state close or cancel-all confirmation dialog. Cancel all runs immediately. Modal focus stays
+  inside the dialog, including when its final success/error is removed; the non-modal dock does not trap focus.
+- The success disclosure has `aria-expanded`, count and size; its Clear completed action is a sibling button, not a
+  nested interactive element. Failed rows never disappear into the success disclosure.
+- Explicit settled Close restores focus safely and dismisses the displayed terminal records. Automatic failure expansion
+  uses a deduplicated polite announcement without moving focus. Announce phase changes, not every progress tick.
+- Keyboard/browser journeys cover selection, immediate cancellation, retry, success-only clearing, collapse, restore,
+  settled Close, Escape, in-app navigation and modal/dock handoff in both themes and RTL. Honor reduced motion,
+  zoom/reflow and long labels. Reuse the existing semantic progress implementation or Clarity where it fits; replacing a
+  progress element purely for its tag name is not an acceptance criterion.
 - Automated scans and explicit interaction tests are engineering evidence. Independent human language approval and the
   manual assistive-technology decision remain separate records per the acceptance contract; the 2026-11-10 AT waiver is
   not a passed assessment.
 
+## Whole-object S3 demonstration
+
+The existing demo page also composes the queue with an application-owned whole-object PUT adapter; see the
+[S3 integration guide](../../guides/s3-object-uploads.md). This adds no public library API. The demo stages files,
+freezes bucket/prefix/overwrite context at enqueue, hashes file bytes, sends one PUT per object, and uses the shared
+panel for progress, cancellation and retry. Its endpoint is a local simulation, not backend acceptance evidence.
+
+Visible messages and accessible names are owned by the demo dictionaries in all eleven demo locales: S3 object uploads,
+simulation explanation, Bucket, Object key prefix, Overwrite existing objects, Completed object destinations, and the
+size/concurrency/multipart limitations. The Upload action reuses the existing translated confirmation label; file
+selection and panel actions reuse library messages. HTTP status numbers are transport diagnostics under the localized
+phase error. Standard Clarity fields and semantic form submission provide keyboard operation and labels; no new overlay
+or focus owner is introduced.
+
+The example limits files to 16 MiB because Web Crypto hashing reads the whole file into memory. It uploads files
+serially, preserves no folder hierarchy, implements no real multipart protocol, and cannot resume after reload. These
+limitations must remain visible alongside the example. Browser tests cover exact request bytes/headers, conditional
+overwrite, queued destination isolation, zero-byte files, retry and cancellation during hashing/transfer. Independent
+language acceptance remains separate from automated dictionary and accessibility checks.
+
 ## Demo and validation plan
 
-Planned work, not yet evidence:
+The following checks define the acceptance plan. The 2026-11-24 verification record reports which checks have run;
+historical passing results apply only to their earlier revisions.
 
-- Add a `cll-upload` demo route and navigation entry using `cll-page-container`, `app-demo-playground` copyable
-  TS/HTML/SCSS, and API tables through `ApiTableComponent`.
-- Cover UC1-UC10 in demo panels: basic, configuration, failure/retry, panel/minimize (window controls, close
-  confirmation, success summary row, footer batch actions), forms and Composition. The Composition tab must show a live
-  promise adapter, an `HttpClient` adapter with progress, `await completion(id)`, `mutateResource.mutate()` and a
-  `queryResource`-backed list; every snippet is copyable from `app-demo-playground`.
-- Unit/state tests: validation rejection, enqueue order, chunk numbering, out-of-order acknowledgement, `onProgress`
-  byte clamping and failure reset, progress aggregation, combine/processing transition, cancellation from queued,
-  uploading and processing, retry of each failed phase (initiate, unacknowledged chunks, combine, poll), auto-retry of
-  retryable errors and exhaustion, stale callback identity, remove/clear including exhausted errors, owner reset/disable
-  cancellation, shared-panel minimize/restore, repeated mount/disposal, and CVA write/reset/disabled/touched.
-- Panel behavior tests: close with active items shows the confirmation, "keep in background" preserves progress and
-  closes to the badge, "cancel all" cancels every non-terminal item, idle close clears terminal items, batch actions
-  match their per-item rules, success summary collapses and re-expands without hiding failed rows, and the panel
-  survives host teardown while the queue holds items.
-- Completion tests: resolve with the terminal snapshot on success, reject with `UploadError` or `AbortError`, unknown
-  id, removal while pending, one shared outcome for multiple awaiters, and a fresh promise after `retry(id)`.
-- Type tests for `UploadAdapter`, `UploadChunkRequest`, `UploadStatusResult`, `UploadItem` and the `readonly File[]`
-  control value.
-- Browser E2E with controlled network fixtures: multi-file selection, failure then success, cancel during upload,
-  minimize/navigate/restore, close-to-background with active items, batch retry and cancel-all, keyboard-only operation
-  in Chromium, Firefox and WebKit.
-- Localization: complete all dictionaries, run `pnpm run i18n:check`, verify runtime switching and long-label layouts;
-  record human language approval separately.
-- Validation commands after implementation: `pnpm run test:clr`, `pnpm run test:ngx`, `pnpm run build:clr`,
-  `pnpm run build:demo`, `pnpm run i18n:check`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run verify:packages`,
-  `pnpm run bundle:check`, `pnpm run e2e`, and finally `pnpm run validate`. No suite has been run for this draft.
+- Make automatic upload the Basic and modal-composition learning path. Remove routine confirm-first walkthroughs from
+  the primary demo; retain one concise advanced manual-staging example with a real metadata/destination requirement.
+  Preserve CVA/ngModel/Reactive Forms/`toSignalForm`, promise, `HttpClient`, completion and S3 composition coverage.
+- Exercise accepted/rejected selection, no request before deliberate submission in advanced staging, enqueue ordering,
+  queued/uploading/processing cancellation, unacknowledged-chunk retry, stale callbacks and completion-promise behavior.
+- Test one shared surface through modal/dock handoff and route teardown, two-state collapse/restore and no duplicate
+  I/O/listeners. Empty picker Close changes no queue state; active minimize preserves all records; explicit settled
+  Close clears only the displayed scope and hides its surface. Failures remain until explicit dismissal, with no
+  automatic clearing on settlement. No fixed history entry or reopen-after-dismiss behavior is required. Success-only
+  clearing leaves errors, cancelled items, completion state and form value untouched. Retain the headless
+  `clearCompleted()` terminal-purge regression and existing `restore()` semantics.
+- Test immediate Cancel all with no confirmation, its active snapshot, subsequent additions, cancellation failure and
+  transition to settled Close without accidental action substitution. Validate feature-dialog versus global scope.
+- Test byte-weighted telemetry with one tiny and one large file; no false completion during processing; stable batch
+  bookkeeping when successful records clear; appended/removed/retried/failed/cancelled files; unavailable ETA.
+- Test modal unmount without form reset, immutable destinations, late folder-scan callbacks after cancellation/logout,
+  and server cancellation/status uncertainty.
+- Test mixed valid/invalid folder drops, repeated additions during transfer, one-drop and cross-drop suspected
+  duplicates, same basename with differing metadata/path, different destinations, error-to-Retry guidance and re-add
+  after cancellation/clearing. Confirm rejection and duplicate feedback never resets or blocks valid transfers.
+- Test D3 once-per-attempt expansion, manual recollapse, failed retry, focus preservation, modal suppression and live
+  announcement deduplication. Include empty, queued, active, processing-only, mixed-failure, all-success, all-failure,
+  all-cancelled and mixed-terminal states with consistent visible counts.
+- Run focused unit/type/browser regressions on Chromium, Firefox and WebKit. Verify dark/light, RTL, narrow screens,
+  zoom, long file names, long translations, keyboard focus, screen-reader names and practical 50-file layouts.
+- Complete revised messages in all supported dictionaries and run translation, formatting, lint/type, package and
+  relevant build checks. Discover resolved Nx targets at implementation time; use repository release validation only for
+  that approved increment. Record automated results, independent language acceptance and the manual AT decision
+  separately; earlier acceptance does not approve changed strings or interactions.
+- Record focused unit, browser, localization, static, build and package verification for the implementation; run
+  formatting and `git diff --check` for the final diff.
 
 ## Compatibility, rollout, and risks
 
@@ -773,6 +1292,74 @@ Planned work, not yet evidence:
 - Rollback: keep the spec Draft and remove the new barrel exports; no persisted data or migration is introduced.
 
 ## Review decisions and delivery
+
+### Current recommendation review: 2026-11-24
+
+Disposition: **Standards and spec-conformance code reviews green; UX decisions D1-D4 accepted**. The library/demo
+increment is implemented. Remaining external evidence is independent human acceptance and application/backend
+integration; the fresh-install check is environment-blocked as described below. The maintainer authorized code changes
+and push; merge and package publication are outside this request. No new root export or history feature is proposed; the
+additive integration members below cover the required seams. Existing `restore()`, `clearCompleted()` and public
+aggregate semantics remain compatible.
+
+| Review aspect         | Verdict            | Evidence and required action                                                                                                       |
+| --------------------- | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Admission             | Pass               | Reuses the admitted queue, components, `remove` and `restore`; no wrapper, dependency or new export                                |
+| Consumer evidence     | Pass               | Original downstream chunked services and newly inspected design frames; keep product rules application-owned                       |
+| Industry comparison   | Pass               | Dated Uppy, NG-ZORRO and MDN evidence above; earlier Clarity/Material rows retain their original check dates                       |
+| API design            | Pass               | No new history entry, export or restore behavior; existing terminal-purge and restore APIs remain compatible                       |
+| Contracts             | Pass               | D1-D4 implemented; success-only UI clearing, scoped intake and explicit settled Close retain headless contracts                    |
+| Form applicability    | Pass               | Existing File-array CVA remains; record clearing and visibility do not reset the owner form                                        |
+| Accessibility         | Pass (automated)   | Keyboard/focus regressions and light/dark upload-page scans passed; independent AT acceptance remains separate                     |
+| Language              | Pass (engineering) | All supported dictionaries/aliases and API descriptions updated; independent acceptance of revised copy remains pending            |
+| Dependency and bundle | Pass               | Existing Angular/CDK/Clarity/native APIs; no added runtime dependency or entry point                                               |
+| Lifecycle and safety  | Pass               | Guarded focus, cancel snapshots, modal suppression and late-drop regressions passed; backend integration remains application-owned |
+| Tests and demos       | Pass               | 99 upload/S3 browser cases and 6 theme accessibility cases passed across Chromium, Firefox and WebKit                              |
+| Evidence separation   | Pass               | Current automated results and independent acceptance are recorded separately; historical results do not validate new UX            |
+| Codebase gaps         | Pass               | Source, current UX contracts and demos aligned; dated historical records are explicitly separated                                  |
+| Fit and sequence      | Pass               | Maintainer authorized this upload increment and push; no new runtime dependency or root export                                     |
+
+### Implementation verification: 2026-11-24
+
+Validation was performed against this implementation before commit/push:
+
+- Two independent, read-only code-review axes (standards and spec conformance) reported green after iterative fixes.
+  Fixes include focus after disappearing actions, explicit destination identity, cancel snapshot counts, duplicate
+  location, and separate Minimize/Close nodes so an in-progress activation cannot become destructive on settlement.
+- Full unit coverage run: `ngx-lift` 65 files / 1,027 tests; `clr-lift` 42 files / 554 tests; demo 91 files / 346 tests.
+  Coverage thresholds passed: statement/branch coverage 93.91%/90.25%, 91.31%/81.14%, and 89.82%/75.20%, respectively.
+- Upload and S3 browser suite: **99/99 passed** on a standalone development build served statically, across Chromium,
+  Firefox and WebKit. Includes automatic modal upload, no duplicate interactive dock, invalid/duplicate mixed intake,
+  manual destination staging, processing, cancellation, focus and activation-race regression coverage.
+- Upload route light/dark accessibility inventory: **6/6 passed** across the same three browsers. The browser suite also
+  exercises active and validation-error accessibility states. These are automated checks, not manual AT acceptance.
+- Repository formatting, tooling tests, translation completeness, lint/typecheck, production builds and bundle checks
+  passed. The upload panel stylesheet emits a 7.27 kB warning against the 6 kB warning budget, below its error budget.
+  Nx Cloud remote cache is unavailable because of the organization's plan; local task results are still valid.
+- `pnpm run validate` reached the final package verification stage. Its linked tarball consumer passed exports/imports
+  and strict type checks, but the fresh isolated peer install timed out accessing `registry.npmjs.org`. Retrying with
+  the installed repository-pinned pnpm 12.16.1 confirmed the network problem; offline retry failed because cached
+  metadata for `@angular/router` was unavailable. **Fresh consumer installation remains unverified**; no linked or unit
+  result is substituted for it, and the full validation command is not reported as passed.
+- An extra standalone test-source TypeScript check reports pre-existing missing DOM iterable support in unrelated
+  breadcrumb/datagrid-selection specs. Touched upload fixture types were tightened; configured project typechecks pass.
+- A dedicated build under a temporary directory was used for the final browser run, avoiding live-reload interference.
+  Earlier browser failures were corrected or rerun against the stable build; they are not counted as passing evidence.
+- No source change was made to a consuming product. Archive manifest parsing, real file limits, backend cancellation,
+  session/target configuration and a native browser-departure guard remain application integration responsibilities.
+
+### Independent human acceptance
+
+The maintainer approved D1-D4 and the discussed UX refinements on 2026-11-24. Revised strings and rendered interactions
+have not received new independent human language acceptance; historical acceptance below does not approve this revision.
+The documented manual AT waiver remains a waiver, not a passed assessment. Merge, backend deployment and package
+publication have not been performed or authorized by this implementation request.
+
+### Historical decisions and evidence
+
+The entries below preserve earlier decisions and validation for auditability. Earlier Close, confirm-first-primary,
+Clear completed UI and three-window-control wording is superseded by the current recommendation; it does not describe
+the recommended target. Historical acceptance cannot be reused as acceptance of the revised UI.
 
 Decisions confirmed in the 2026-11-20 design interview:
 
@@ -814,7 +1401,7 @@ Decisions confirmed by the maintainer on 2026-11-20:
 
 - Escape minimizes during active uploads and closes when idle; Escape is handled only inside the panel or badge.
 - `getStatus` is optional; processing progress stays indeterminate when it is absent.
-- Drag-and-drop remains a later additive feature.
+- Drag-and-drop was deferred on 2026-11-20; the 2026-11-21 revision below brings the dropzone into scope.
 - No library-level `beforeunload` guard; applications opt in.
 
 Additions approved with the spec in PR #243:
@@ -840,13 +1427,112 @@ UI-review revision, 2026-11-21, pending maintainer confirmation (no public API c
   row (checked 2026-11-21); Chrome download bubble and Drive-style panel behavior are cited as the widely observed
   pattern for background-dismiss close.
 
-Implementation is tracked in PR #250 and its follow-up; the revised panel behavior in this section supersedes the PR
-#243 wording above wherever they differ.
+Historical implementation work used PR #250 (closed without merge); its follow-up PR #252 remains open as checked
+2026-11-24. These historical panel decisions are superseded by the current recommendation above.
+
+Spec revision, 2026-11-21, dropzone selection (maintainer request; no new service API):
+
+- Drag-and-drop moves out of "Not now" into scope: `cll-upload` renders a dashed dropzone as the primary selection
+  surface with a drag-over state, hint segments (allowed types, per-file size, file count; omitted without data), a
+  used-files count with `maxFiles`, and an "Choose folder" action (`webkitdirectory`, shown with `multiple`). Dropped
+  folders are traversed through `webkitGetAsEntry()` entries; drops run the same validation path as the native input,
+  and rejected files never enqueue. The per-file label trigger is replaced by the dropzone's file picker action;
+  `upload.selectFile` / `upload.selectFiles` remain available dictionary keys.
+- Uploading rows show the per-row transfer rate and estimated remaining time, sampled from published byte progress and
+  omitted without data, matching the Uppy meta-line pattern at row scope.
+- Rejected-file rows inside the transfer panel (as seen in some reference designs) stay out of scope: validation
+  failures never create queue items, per the PR #243 decision; the host renders rejections beside the dropzone.
+- New owned localization keys: `upload.dropzone`, `upload.dropzone.dragOver`, `upload.folderAdd`, `upload.usedFiles`,
+  `upload.hint.accept`, `upload.hint.maxSize`, `upload.hint.maxFiles`, `upload.rate`.
+
+Spec revision, 2026-11-22, staging and debugging:
+
+- `autoEnqueue=false` adds the "select → inspect → confirm → upload" second segment used by release-bundle style flows:
+  the host still validates and emits `filesChange`, but does not enqueue or open the panel. The caller enqueues with its
+  own adapter options after confirmation; the shared queue and global panel remain the single transport/view.
+- Dev-only: `window.__uploadQueue` is installed when `isDevMode()` is true in a browser. `snapshot()` returns plain
+  queue/runtime state (phases, acknowledged chunks, retries, normalized options) for console and Angular DevTools
+  inspection; production and SSR do not expose it.
 
 ## Evidence
 
-This document records planning, spec-review revisions and primary-source research only. No component tests, builds,
-browser scans, translation checks or installed-consumer checks have been run for this draft. Sources are the public URLs
-in the industry table, the project workflow documents, the accessibility and language acceptance contract, and
-maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in the PR. Acceptance
-evidence must be added with revision, scope and result before status can advance beyond Draft.
+Sources are the public URLs in the industry table, the project workflow documents, the accessibility and language
+acceptance contract, and maintainer-supplied consumer observations recorded on 2026-11-20; named consumer details are in
+the PR.
+
+Verification run on 2026-11-22 (revision: confirm-first staging, dev queue snapshot, panel UX, form integrations,
+`HttpClient` transport demo and release gates):
+
+- `nx test clr-lift`: 42 files / 527 tests passed, covering the panel, `autoEnqueue` staging, CVA id/label/disabled
+  contract and owner reset.
+- `nx test ngx-lift`: 65 files / 1008 tests passed, covering the headless lifecycle, retry/cancel/completion and inline
+  `expectTypeOf` contract assertions, including a regression test that a chunk retry keeps the item `uploading` with its
+  acknowledged progress. Inline `expectTypeOf` is this repository's accepted type-test convention; there is no
+  `*.test-d.ts` target.
+- `nx run @ngx-lift-workspace/source:i18n-check`: 0 errors, all 11 locale dictionaries complete.
+- `nx typecheck demo`, `nx typecheck clr-lift`, `nx typecheck ngx-lift`, `nx typecheck demo-e2e`: passed.
+- `nx lint demo`, `nx lint clr-lift`, `nx lint demo-e2e`: 0 errors.
+- Coverage: 91.62% statements and 93.04% lines overall; all projects passed.
+- `nx build` for demo, clr-lift and ngx-lift, `bundle:check` and `verify:packages`: passed. `verify:packages` installs
+  the packed libraries into a fresh strict-TypeScript consumer, covering the installed-consumer integration check.
+- `nx serve demo` compilation: passed.
+- Upload E2E (Chromium): 20/20 passed, covering selection and validation, window controls, cancel/retry/per-row Remove,
+  confirm-first staging (queue empty until confirmation), reactive/ngModel/signal-form bindings, a keyboard-only
+  journey, minimize/navigate/restore survival and an axe WCAG 2.0/2.1/2.2 A/AA scan of the playground and active panel.
+- Cross-browser smoke (Chromium, Firefox, WebKit): 18/18 passed across six tagged upload journeys, including the
+  keyboard-only journey, confirm-first staging, minimize/navigate/restore and the stubbed `HttpClient` success path.
+- Controlled network fixtures: `page.route` stubs cover `HttpClient` chunk success, HTTP 500 failure and abort-timeout
+  cancellation; `completion(id)` is asserted to reject with the abort error.
+- Manual browser verification (Playwright): 50-file layout and list max-height, bottom-right minimized badge,
+  confirm-first enqueue timing, cancel/clear staging, repeated folder upload after cancel/close and duplicate
+  suppression.
+
+Automated accessibility scanning found two WCAG AA color-contrast failures in dense panel labels
+(`.cll-upload-panel__bytes` and `.cll-upload-panel__summary-label`). Both were corrected to `gray-700` and the scan now
+passes. The production build reports a pre-existing `anyComponentStyle` warning of 6.59 kB against a 6 kB warning
+budget; the stylesheet's byte size is unchanged by this revision and the value is below the 10 kB error budget.
+
+Human language acceptance and the manual assistive-technology decision are reported separately from these automated
+results: the maintainer reviewed both and approved them on 2026-11-22.
+
+### PR #252 follow-up review (2026-11-22)
+
+The follow-up covers visible focus restoration after activating the dropzone label, publishing every new message from
+one announcement pass, handling repeated batch-retry failures, retaining the failed phase during retry, ignoring
+progress callbacks from settled chunk requests, and settling completion when a cancelled row is removed before server
+cancellation finishes. The form example binds the actual `FormGroup`, with `toSignalForm` observing it.
+
+- Upload browser suite: 63/63 passed across Chromium, Firefox and WebKit, including the new label-selection/focus
+  regression and the existing active-panel accessibility scan. The synthetic drop waits for the shared panel to attach;
+  WebKit keyboard traversal uses Option+Tab to include buttons under Safari's default keyboard-access setting.
+- `pnpm run validate` passed (format, tooling, translations, lint/typecheck, coverage, all builds, bundle and installed
+  package checks). Final headless coverage rerun: 65 files / 1014 tests, 94.12% statements and 90.45% branches;
+  component suite: 42 files / 537 tests, 91.14% statements and 80.73% branches. Final static checks passed with lint
+  warnings; Nx Cloud remote-cache uploads were unavailable because the organization exceeded its plan.
+- Unit regressions cover coalesced completion/start announcements, repeated batch failure, cancellation followed by
+  synchronous removal, status-retry state, and stale callbacks after manual and automatic retry.
+- No new public API, runtime dependency, or owned translation message is introduced. The human language acceptance and
+  assistive-technology decision recorded above are unchanged.
+
+## Review hardening and S3 composition (2026-11-23)
+
+Maintainer-approved scope: address the review findings and deliver the whole-object S3 demo together in PR #252, against
+main. The S3 adapter remains application code with no new library export or runtime dependency.
+
+- CVA change precedes touch for selection/drop, including updateOn: 'blur'. NG_VALIDATORS exposes selection errors as
+  {upload: readonly UploadError[]} and notifies Angular when errors clear, reset or change. Rejections are announced in
+  a persistent polite region and associated with the picker and file picker button through unique descriptions.
+- Cancellation rejects existing completion awaiters immediately; server cleanup runs independently and can report a
+  cancel-phase error. A session ID arriving after cancellation/removal is cancelled best-effort, never uploaded.
+- UploadItem.processingProgress is optional and present only after numeric server task progress is reported. The panel
+  shows determinate processing then, and indeterminate processing while progress is unknown. Retrying status keeps known
+  processing progress; a fresh initiation clears it.
+- Keyboard Retry, Cancel and Remove restore focus to an available action for that item or a persistent panel control
+  when the row disappears; they do not move focus if another control already owns it. Error text uses semantic theme
+  tokens. Existing translated phase/error labels remain unchanged.
+
+Spec review: admission/consumer evidence/industry comparison retain the approved upload seam; this increment adds no
+public tool or dependency. Contracts, forms, lifecycle, keyboard/error semantics and test races are specified above; S3
+messages and limitations are listed in the whole-object demonstration section. The optional progress field is additive.
+Unit and browser regressions plus installed package checks provide engineering evidence; human language acceptance
+remains separate. Release/publication is outside this PR's readiness claim.

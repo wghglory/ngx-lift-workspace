@@ -484,6 +484,11 @@ export const routes: Routes = [
               ),
           },
           {
+            path: 'upload',
+            loadComponent: () =>
+              import('./clr-lib/pages/upload-demo/upload-demo.component').then((module) => module.UploadDemoComponent),
+          },
+          {
             path: 'idle-detection',
             loadComponent: () =>
               import('./clr-lib/pages/idle-detection-demo/idle-detection-demo.component').then(

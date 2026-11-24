@@ -1,100 +1,35 @@
 <!-- nx configuration start-->
 <!-- Leave the start & end comments to automatically receive updates. -->
 
-## General Guidelines for working with Nx
-
-- For navigating/exploring the workspace, invoke the `nx-workspace` skill first - it has patterns for querying projects,
-  targets, and dependencies
-- When running tasks (for example build, lint, test, e2e, etc.), always prefer running the task through `nx` (i.e.
-  `nx run`, `nx run-many`, `nx affected`) instead of using the underlying tooling directly
-- Prefix nx commands with the workspace's package manager (e.g., `pnpm nx build`, `npm exec nx test`) - avoids using
-  globally installed CLI
-- You have access to the Nx MCP server and its tools, use them to help the user
-- For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed
-  without it if unavailable.
-- NEVER guess CLI flags - always check nx_docs or `--help` first when unsure
-
-## Scaffolding & Generators
-
-- For scaffolding tasks (creating apps, libs, project structure, setup), ALWAYS invoke the `nx-generate` skill FIRST
-  before exploring or calling MCP tools
-
-## When to use nx_docs
-
-- USE for: advanced config options, unfamiliar flags, migration guides, plugin configuration, edge cases
-- DON'T USE for: basic generator syntax (`nx g @nx/react:app`), standard commands, things you already know
-- The `nx-generate` skill handles generator discovery internally - don't call nx_docs just to look up generator syntax
+Use the repository-pinned Nx CLI and resolved project configuration. For project/target discovery, task execution or
+scaffolding, use the corresponding Nx skill in .agents/skills. Prefer local CLI/help and configured scripts; use an
+available integration when it adds a capability the CLI does not provide.
 
 <!-- nx configuration end-->
 
-# Library and component design
+# Repository guidance
 
-For a new or changed public component, utility, operator, directive, pipe, validator, service, form integration, or
-entry point, read [the component development workflow](docs/design/component-development.md) and use
-[the lift-design skill](.agents/skills/lift-design/SKILL.md). Follow its admission gate and
-[spec-review](.agents/skills/spec-review/SKILL.md) sequence; spec and implementation may share one PR as defined by the
-workflow; implement only within an explicitly approved scope, and existing approval remains valid for its scope. The
-workflow owns industry comparisons, form applicability, Clarity demos, localization and validation; see
-[admission criteria](.agents/skills/lift-design/references/admission-criteria.md) and
-[review aspects](.agents/skills/spec-review/references/review-aspects.md) for the two gates. Use the
-[component roadmap](docs/component-roadmap.md) for the Angular 21 delivery sequence and deferred platform work.
+Build modern, robust code for the current supported platform. Existing patterns are context, not constraints against a
+better implementation. Start with [library boundaries](.agents/rules/general.md), then read only the task-relevant
+[guidance](.agents/rules/README.md). Configuration owns compiler/lint/coverage settings and available commands.
 
-## Documentation language and examples
+For new public APIs or material contract changes, use the
+[component development workflow](docs/design/component-development.md) and
+[lift-design skill](.agents/skills/lift-design/SKILL.md). Routine fixes within an approved contract use the existing
+spec and approval; they do not need a new design cycle. The [roadmap](docs/component-roadmap.md) and
+[form compatibility contract](docs/design/clr-lift/forms-compatibility-design-spec.md) retain their platform decisions.
 
-For every new or changed UI in either library or the demo app, follow the
-[accessibility and language acceptance contract](docs/guides/accessibility-and-localization.md) during generation and
-review. Deliver keyboard/focus behavior, semantic names/state, and every owned visible/announced message in all
-supported locales together with the implementation and demo. Run the applicable accessibility, translation, and browser
-checks. Report independent human language and assistive-technology acceptance separately from automated checks.
+For rendered library/demo changes, follow the
+[accessibility and localization contract](docs/guides/accessibility-and-localization.md). Keep project documentation in
+English with generic examples. Keep automated validation, independent human acceptance and package publication distinct.
 
-Maintain repository documentation in English. Chinese explanations are temporary review aids for the maintainer; provide
-them in chat unless a temporary file is explicitly requested, and keep them out of committed project documentation.
-Preserve supported product translations. Use ngx-lift/clr-lift names and generic application examples; omit internal
-company and product identifiers from project documentation, examples, and agent guidance.
+Prefer native APIs and existing dependencies. Justify new runtime dependencies and verify their installation/bundle
+cost.
 
-## Dependency policy
+Shared skills live in .agents/skills; client directories link there. Before publishing issues, read
+[issue-tracker guidance](docs/agents/issue-tracker.md); before domain exploration, read
+[domain guidance](docs/agents/domain.md). For spec review or a docs/codebase drift sweep, use the corresponding
+spec-review or find-repo-gaps skill. monitor-ci is explicitly invoked by the user.
 
-Prefer browser APIs and existing supported dependencies. Add a runtime dependency only when important, approved use
-cases justify its maintenance, installation, bundle, and integration costs. Optional heavyweight features must not
-require an engine installation for ordinary consumers; lazy loading alone does not establish dependency isolation.
-Record the alternatives and consumer evidence in the feature spec before adding a dependency.
-
-## Agent skills
-
-Shared project and Nx skills have one physical source in `.agents/skills/`. The Nx entries in `.github/skills/` and
-`.opencode/skills/` are relative directory symlinks to that source for client discovery; keep each skill's scripts and
-references with its canonical directory. `.cursor/skills/` holds Cursor-specific workflows. Edit the canonical files,
-then verify every client link resolves before committing. `monitor-ci` is explicitly user-invoked as `/monitor-ci`; its
-prompt-file migration keeps the helper scripts and the deploy/publish verification boundary.
-
-### Issue tracker
-
-Before reading or publishing issues and specs, read `docs/agents/issue-tracker.md`.
-
-### Triage labels
-
-Before triaging issues, read `docs/agents/triage-labels.md`.
-
-### Domain docs
-
-Use the single-context layout. Before domain exploration, read `docs/agents/domain.md`.
-
-### Gap scanning
-
-Before a periodic docs/codebase gap sweep, post-release status refresh, or documentation drift check, read
-`.agents/skills/find-repo-gaps/SKILL.md`. Report findings in chat and track outstanding work in GitHub issues;
-`docs/design/` specifications and `docs/guides/accessibility-and-localization.md` are the durable contracts.
-
-### Review aspects
-
-Before approving a public API spec, read `.agents/skills/spec-review/SKILL.md`. Code review covers an implementation
-diff; spec review covers admission, specification quality, contracts, language, evidence, and codebase gaps before code
-exists. Report evidence using the sections defined by the
-[acceptance contract](docs/guides/accessibility-and-localization.md).
-
-## Coding rules
-
-Detailed coding standards have one physical source in `.agents/rules/`. Cursor reads them through relative `.mdc` links
-in `.cursor/rules/`, and Claude through `.md` links in `.claude/rules/`; other agents read this file and follow the
-canonical directory. Edit only `.agents/rules/*.md`, then run `pnpm run test:tools` to verify every client link
-resolves. Client links require a symlink-capable checkout (`core.symlinks=true`; Windows needs Developer Mode).
+Edit shared guidance only in .agents/rules and preserve the client symlinks. Run pnpm run test:tools after changing
+them.

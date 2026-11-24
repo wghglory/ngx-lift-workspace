@@ -1,36 +1,21 @@
-# Agent coding rules
+# Agent guidance
 
-Canonical source for this repository's detailed coding standards. All rules are always applied. Edit these files only;
-client-specific directories link here.
+Keep this guidance small and repository-specific. The compiler, tooling configuration and public feature contracts are
+authoritative; these files record integration pitfalls and boundaries that are easy to miss. Prefer engineering judgment
+over blanket implementation prescriptions. Improve stale guidance rather than reproducing an obsolete pattern.
 
-## Rule files
+Read the files relevant to the task:
 
-- **`general.md`** — Core standards, technologies, code quality, Definition of Done
-- **`angular.md`** — Modern Angular patterns: standalone components, signals, control flow, routing
-- **`clarity.md`** — Clarity Design System: components, SASS variables, styling, accessibility
-- **`testing.md`** — Vitest & Playwright: unit tests, E2E tests, coverage, test patterns
-- **`rxjs.md`** — RxJS patterns: observables, operators, async state, subscriptions
-- **`nx.md`** — Nx workspace: project structure, boundaries, commands, dependencies
-- **`component-development.md`** — Required workflow for new or changed public components
+| Task                                         | Guidance                                 |
+| -------------------------------------------- | ---------------------------------------- |
+| Any implementation or review                 | [Library boundaries](general.md)         |
+| Angular components, templates or forms       | [Angular integration](angular.md)        |
+| Clarity/library/demo UI                      | [Rendered behavior](clarity.md)          |
+| Async state, transport or streams            | [Async ownership](rxjs.md)               |
+| Tests                                        | [Testing evidence](testing.md)           |
+| Targets, dependencies or packaging           | [Workspace and packages](nx.md)          |
+| New public APIs or material contract changes | [Design scope](component-development.md) |
 
-## Client links
-
-- Cursor reads `.cursor/rules/*.mdc`, which are relative symlinks to these files. The `.mdc` extension and frontmatter
-  stay intact through the link so Cursor's discovery still works.
-- Claude reads `.claude/rules/*.md`, also relative symlinks to these files.
-- Other agents read `AGENTS.md`, which points here.
-
-A symlink-capable checkout is required. With `core.symlinks=false`, Git writes the target path as plain file content instead;
-set `core.symlinks=true` before cloning (on Windows, enable Developer Mode). `pnpm run test:tools` verifies every link
-resolves and each canonical rule is non-empty, with an actionable checkout diagnostic when links are missing.
-
-## Key principles
-
-1. **Standalone components** — All components must be standalone (`standalone: true` is implicit in Angular 19+).
-2. **Signals first** — Use signals for state, `computed()` for derived values, and `input()`/`output()` for I/O.
-3. **Modern control flow** — Use `@if`, `@for`, `@switch` instead of structural directives.
-4. **Strict typing** — No `any`, no non-null assertions (`!`). Use type guards or optional chaining.
-5. **OnPush change detection** — All components use `ChangeDetectionStrategy.OnPush`.
-6. **Accessibility** — ARIA attributes, keyboard navigation, and focus management where needed.
-7. **Clarity tokens** — Use Clarity SASS variables, never hard-coded colors.
-8. **Test coverage** — Unit tests for logic, E2E tests for user flows, 80% minimum coverage.
+These files have one physical source. Cursor's .mdc entries and Claude's .md entries are relative symlinks here; edit
+the canonical files and run the tooling checks. Scope metadata assists client discovery; other agents use the task
+routing above. A symlink-capable checkout is required (Windows needs Developer Mode or equivalent support).

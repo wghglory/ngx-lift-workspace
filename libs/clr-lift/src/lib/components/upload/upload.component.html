@@ -1,0 +1,156 @@
+<div class="cll-upload">
+  <input
+    #file
+    class="clr-file cll-upload__file"
+    type="file"
+    [id]="controlId() || inputId"
+    [accept]="accept()"
+    [attr.aria-invalid]="errors().length ? true : null"
+    [attr.aria-describedby]="errors().length ? inputId + '-errors' : null"
+    [multiple]="multiple()"
+    [disabled]="disabledState()"
+    [attr.aria-label]="(multiple() ? 'upload.selectFiles' : 'upload.selectFile') | translate"
+    (change)="onSelected($event)"
+  />
+  <label
+    class="cll-upload__dropzone"
+    [for]="controlId() || inputId"
+    [class.cll-upload__dropzone--over]="dragOver()"
+    [class.cll-upload__dropzone--disabled]="disabledState()"
+    (drop)="onDrop($event)"
+    (dragover)="onDragOver($event)"
+    (dragenter)="onDragEnter($event)"
+    (dragleave)="onDragLeave($event)"
+  >
+    <cds-icon class="cll-upload__dropzone-icon" shape="upload-cloud" aria-hidden="true"></cds-icon>
+    <p class="cll-upload__dropzone-title">
+      {{ (dragOver() ? 'upload.dropzone.dragOver' : 'upload.dropzone') | translate }}
+    </p>
+    @if (showDropzoneHint()) {
+      <p class="cll-upload__dropzone-hint">
+        @if (showAcceptHint()) {
+          <span>{{ 'upload.hint.accept' | translate: accept() }}</span>
+        }
+        @if (showMaxSizeHint()) {
+          <span>{{ 'upload.hint.maxSize' | translate: maxSize() }}</span>
+        }
+        @if (showMaxFilesHint()) {
+          <span>{{ 'upload.hint.maxFiles' | translate: maxFiles() }}</span>
+        }
+      </p>
+    }
+    <div class="cll-upload__dropzone-actions">
+      <button
+        type="button"
+        class="btn btn-sm btn-primary cll-upload__browse"
+        [attr.aria-describedby]="errors().length ? inputId + '-errors' : null"
+        [disabled]="disabledState()"
+        (click)="file.click(); $event.stopPropagation()"
+      >
+        {{ (multiple() ? 'upload.browse' : 'upload.browse.single') | translate }}
+      </button>
+      @if (multiple()) {
+        <input
+          #folder
+          class="cll-upload__file"
+          type="file"
+          multiple
+          webkitdirectory
+          aria-hidden="true"
+          tabindex="-1"
+          [attr.aria-label]="'upload.folderAdd' | translate"
+          [disabled]="disabledState()"
+          (change)="onSelected($event)"
+        />
+        <button
+          type="button"
+          class="btn btn-sm btn-outline cll-upload__folder"
+          [disabled]="disabledState()"
+          (click)="folder.click(); $event.stopPropagation()"
+        >
+          {{ 'upload.folderAdd' | translate }}
+        </button>
+      }
+    </div>
+  </label>
+  @if (value().length && !autoEnqueue()) {
+    <div class="cll-upload__names-row" cds-layout="horizontal gap:sm align:center">
+      <span class="cll-upload__names">
+        @if (value().length === 1) {
+          {{ value()[0].name }}
+        } @else {
+          {{ 'upload.selectedCount' | translate: value().length }}
+        }
+      </span>
+      <button
+        type="button"
+        class="btn btn-sm btn-icon btn-link btn-close"
+        [disabled]="disabledState()"
+        (click)="clear()"
+        [attr.aria-label]="'upload.clearAll' | translate"
+      >
+        <clr-icon shape="times" />
+      </button>
+    </div>
+  }
+</div>
+
+@if (reading()) {
+  <p role="status">{{ 'upload.reading' | translate }}</p>
+}
+<div [id]="inputId + '-errors'" aria-live="polite" aria-atomic="true">
+  @if (errors().length) {
+    <clr-alert class="cll-upload__rejections" [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item
+        ><div class="alert-text">
+          @if (countError(); as error) {
+            <p class="cll-upload__rejection-summary">{{ 'upload.validation.maxFiles' | translate: error.message }}</p>
+          }
+          @if (fileErrors().length) {
+            <p class="cll-upload__rejection-summary">
+              {{ 'upload.validation.summary' | translate: fileErrors().length }}
+            </p>
+            <ul class="cll-upload__errors">
+              @for (error of fileErrors(); track $index) {
+                <li>
+                  <strong class="cll-upload__error-name">{{ error.fileName }}</strong
+                  >:
+                  @switch (error.code) {
+                    @case ('upload.validation.accept') {
+                      {{ 'upload.validation.accept' | translate }} {{ 'upload.hint.accept' | translate: accept() }}
+                    }
+                    @case ('upload.validation.maxSize') {
+                      {{ 'upload.validation.maxSize' | translate: error.message }}
+                    }
+                    @case ('upload.validation.maxFiles') {
+                      {{ 'upload.validation.maxFiles' | translate: error.message }}
+                    }
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div></clr-alert-item
+      ></clr-alert
+    >
+    <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
+      {{ 'upload.clearValidationErrors' | translate }}
+    </button>
+  }
+</div>
+@if (duplicates().length) {
+  <div class="alert alert-info" role="status">
+    <ul class="cll-upload__errors">
+      @for (duplicate of duplicates(); track $index) {
+        <li>
+          {{ 'upload.duplicate' | translate: fileLabel(duplicate.file) }}
+          @if (duplicate.id) {
+            <button type="button" class="btn btn-link btn-sm" (click)="showDuplicate(duplicate.id)">
+              {{ 'upload.expand' | translate }}
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  </div>
+}

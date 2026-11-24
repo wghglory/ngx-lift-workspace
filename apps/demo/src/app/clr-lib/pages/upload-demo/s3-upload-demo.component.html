@@ -1,0 +1,49 @@
+<div cds-layout="vertical gap:sm" data-testid="upload-demo-s3">
+  <p>{{ 'uploadDemo.s3.note' | translate }}</p>
+  <form clrForm clrLayout="vertical" (ngSubmit)="upload()">
+    <clr-input-container>
+      <label for="s3-demo-bucket">{{ 'uploadDemo.s3.bucket' | translate }}</label>
+      <input
+        clrInput
+        id="s3-demo-bucket"
+        name="bucket"
+        [ngModel]="bucket()"
+        (ngModelChange)="bucket.set($event)"
+        required
+      />
+    </clr-input-container>
+    <clr-input-container>
+      <label for="s3-demo-prefix">{{ 'uploadDemo.s3.prefix' | translate }}</label>
+      <input clrInput id="s3-demo-prefix" name="prefix" [ngModel]="prefix()" (ngModelChange)="prefix.set($event)" />
+    </clr-input-container>
+    <clr-checkbox-wrapper>
+      <input
+        clrCheckbox
+        type="checkbox"
+        name="overwrite"
+        [ngModel]="overwrite()"
+        (ngModelChange)="overwrite.set($event)"
+      />
+      <label>{{ 'uploadDemo.s3.overwrite' | translate }}</label>
+    </clr-checkbox-wrapper>
+    <cll-upload
+      [adapter]="stagingAdapter"
+      [autoEnqueue]="false"
+      [multiple]="true"
+      [maxSize]="16"
+      (filesChange)="files.set($event)"
+    />
+    <button type="submit" class="btn btn-primary" [disabled]="disabled()">
+      {{ 'uploadDemo.confirmUpload' | translate }}
+    </button>
+  </form>
+  <p>{{ 'uploadDemo.s3.limits' | translate }}</p>
+  <h3>{{ 'uploadDemo.s3.completed' | translate }}</h3>
+  <ul data-testid="s3-demo-stored">
+    @for (path of stored(); track path) {
+      <li>
+        <code>{{ path }}</code>
+      </li>
+    }
+  </ul>
+</div>

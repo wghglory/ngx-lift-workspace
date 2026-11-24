@@ -1,3 +1,4 @@
+import {distinctUntilChanged, map, type Observable, pairwise, pipe, startWith, type UnaryFunction} from 'rxjs';
 import {isEqual, omitBy, pickBy} from 'ngx-lift';
 
 const bounds: {min: number | null; max: number | null} = {min: 0, max: null};
@@ -43,3 +44,27 @@ void [
   differentPrimitives,
   explicitGeneric,
 ];
+
+// Explicit source type arguments preserve the original broad return contract.
+const legacyPicked = pickBy<typeof bounds>(bounds, isNumber);
+const legacyOmitted = omitBy<typeof bounds>(bounds, isNull);
+legacyPicked.min = null;
+legacyOmitted.max = null;
+const booleanCallback = pickBy(bounds, (value): boolean => value !== null);
+booleanCallback.min = null;
+// Narrowed inference deliberately rejects reintroducing excluded values.
+// @ts-expect-error Guard-filtered numeric results cannot subsequently contain null.
+numeric.min = null;
+const numericComparator: (left: number, right: number) => boolean = isEqual;
+void [legacyPicked, legacyOmitted, booleanCallback, numericComparator];
+
+// Preserve contextual inference when used as an RxJS comparator in an operator factory.
+function equalityPipeline(enabled: boolean): UnaryFunction<Observable<number | null>, Observable<number | null>> {
+  return pipe(
+    startWith(null),
+    pairwise(),
+    map(([, current]) => current),
+    enabled ? distinctUntilChanged(isEqual) : map((current) => current),
+  );
+}
+void equalityPipeline;

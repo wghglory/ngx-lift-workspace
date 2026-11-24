@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
 language: en-US
 tone_instructions: >-
-  Be concise and actionable. Prioritize correctness, security, public API contracts, accessibility, i18n, and Nx/build
-  correctness. Prefer simpler repo-consistent patterns; say when existing code is correct.
+  Be concise and actionable. Prioritize correctness, security, public API contracts, accessibility, i18n and Nx/build
+  correctness. Prefer simple repo-consistent fixes; acknowledge correct existing patterns.
 reviews:
   profile: chill
   auto_review:

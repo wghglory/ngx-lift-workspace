@@ -303,8 +303,8 @@ automated scan. Automated checks never replace the human language gate.
 
 Scope authorized by the maintainer request to enhance `pickBy` and `omitBy` and open a PR. This increment adds value
 type-guard overloads to existing exports; own enumerable string keys, prototype safety, and the `omitBy` deprecation
-remain unchanged. No new export or dependency is introduced. It is suitable for the next minor release; this PR does not
-publish a package or change peer ranges.
+remain unchanged. No new export or dependency is introduced. Release classification must account for the
+source-compatibility caveat below. This PR does not publish a package or change peer ranges.
 
 ### Admission and comparison
 
@@ -374,12 +374,13 @@ for this compile-time increment. CI, maintainer review, merge and publication ar
 
 ### Review follow-up: broad guards, options, getters and equality
 
-The maintainer requested `isEqual` cleanup and review fixes. `isEqual` now accepts two `unknown` values without generic
-arguments; a compatibility overload retains explicit generic calls. Deep-comparison runtime behavior is unchanged. The
-motivating consumer compares computed assignment data with a stored view model of a different structural type. This is a
-generic comparison contract, with no dependency, rendering, lifecycle or form-control changes. Admission and API review:
-enhance the existing export; no new helper is warranted. Existing equality runtime tests and strict packed consumer
-calls cover heterogeneous object/primitive inputs and explicit-generic compatibility.
+The maintainer requested `isEqual` cleanup and review fixes. `isEqual` accepts independently inferred input types
+through `isEqual<T, U = T>(left: T, right: U)` without call-site generic arguments; defaulting the second type preserves
+explicit one-type-argument calls. Deep-comparison runtime behavior is unchanged. The motivating consumer compares
+computed assignment data with a stored view model of a different structural type. This is a generic comparison contract,
+with no dependency, rendering, lifecycle or form-control changes. Admission and API review: enhance the existing export;
+no new helper is warranted. Existing equality runtime tests and strict packed consumer calls cover heterogeneous
+object/primitive inputs and explicit-generic compatibility.
 
 Review fixes require `negate: false` when a supplied options object opts into positive narrowing; empty/widened options
 fall back conservatively. Reusable guards can classify a supertype of the source's literal values while the callback
@@ -392,3 +393,26 @@ Follow-up validation: 63 files / 998 tests passed, including the new getter, hid
 heterogeneous equality cases. Strict compilation of both changed specs, library lint, production typecheck/build and
 strict packed-declaration consumer compilation passed. CodeRabbit tone text is below 250 characters. Remote CI must
 validate the pushed revision separately.
+
+### Compatibility assessment after merging current main
+
+No exports, explicit generic signatures or boolean-callback forms are removed. `isEqual` retains its existing explicit
+one-type-argument form and widens ordinary calls, with unchanged comparison behavior. However, stronger inferred return
+types can break source that writes an excluded value into a filtered result, for example assigning `null` to a numeric
+bound after filtering. This is intentional type tightening, not a claim of universal source compatibility. Callers
+needing a wider mutable result can annotate a wider result type, use the existing explicit source type argument, or use
+a boolean-returning predicate. The strict package consumer checks both old forms and the new rejected write. Reading
+each property once also changes observable behavior for stateful getters or callbacks that mutate the source; the copied
+value is now the validated value. Plain-data filtering is unchanged. Strict SemVer consumers should treat these
+source/edge-behavior changes as requiring a major release unless maintainers explicitly approve a documented
+compatibility exception. No release authorization or version bump is implied by this PR.
+
+The merge-time cross-library build caught an inference regression from the earlier `unknown` equality overload:
+clr-lift's `dgState` RxJS operator factory inferred `Observable<unknown>`. The final single signature uses independent
+generics with `U = T`, preserving heterogeneous comparisons, explicit one-type-argument calls, and contextual RxJS
+operator inference. The packed-consumer fixture includes the operator-factory pattern; both library builds must pass.
+
+Merged-main validation: ngx-lift 65 files / 1043 tests and clr-lift 42 files / 568 tests passed. Both libraries' lint,
+production typecheck and builds passed. Focused strict spec compilation and the packed-declaration consumer, including
+the RxJS factory and existing explicit-source-type filtering calls, passed. Browser and full package-verification suites
+were not rerun locally; CI applies to the pushed merge revision.
