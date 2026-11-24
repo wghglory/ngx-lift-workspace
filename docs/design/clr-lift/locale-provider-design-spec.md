@@ -270,7 +270,10 @@ self-review does not grant merge or publication approval.
   untested "absent `navigator`" SSR branch, duplicated locale resolution, and local names that did not match their
   class. Shared resolution now lives in `locale-resolution.ts`; both the provider and the service call it.
 - Follow-up bot comments: E2E locale seeding now uses `demo-lang` instead of the retired library key, the demo
-  preference helpers have `@returns`/`@param` tags, and the spec no longer calls the whole change additive.
+  preference helpers have `@returns`/`@param` tags, and the spec no longer calls the whole change additive. The
+  file-download E2E spec now sets one locale via `page.evaluate` before reloading instead of stacking competing
+  `addInitScript` writes, and the preference helpers guard the `localStorage` getter inside `try`/`catch` to match their
+  documented behavior.
 
 ## Evidence
 
@@ -278,7 +281,7 @@ Recorded on 2026-11-24 after the rebase onto `main`. Local automated verificatio
 acceptance, CI, or publication:
 
 - `pnpm nx test clr-lift --skip-nx-cache`: 43 files, 581 tests passed; `i18n-providers.spec.ts` 13/13 passed.
-- `pnpm nx test demo --skip-nx-cache`: 92 files, 349 tests passed.
+- `pnpm nx test demo --skip-nx-cache`: 92 files, 350 tests passed.
 - `pnpm run build:clr`, `pnpm run verify:packages` (including the installed-provider smoke test), `pnpm run test:tools`,
   `pnpm run i18n:check`, `pnpm run lint`, `pnpm run typecheck`, `pnpm run format:check`, and `git diff --check HEAD`:
   all passed.

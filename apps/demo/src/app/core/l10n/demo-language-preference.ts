@@ -8,8 +8,8 @@ const LEGACY_STORAGE_KEY = 'clr-lift-lang';
  * @returns The stored language, or undefined when neither key is present or storage is unavailable.
  */
 export function readDemoLanguagePreference(): string | undefined {
-  if (typeof localStorage === 'undefined') return undefined;
   try {
+    if (typeof localStorage === 'undefined') return undefined;
     return localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY) ?? undefined;
   } catch {
     return undefined;
@@ -22,8 +22,8 @@ export function readDemoLanguagePreference(): string | undefined {
  * @param language - Language tag to remember for the next visit.
  */
 export function storeDemoLanguagePreference(language: string): void {
-  if (typeof localStorage === 'undefined') return;
   try {
+    if (typeof localStorage === 'undefined') return;
     localStorage.setItem(STORAGE_KEY, language);
   } catch {
     // ignore storage errors

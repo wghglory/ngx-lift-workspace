@@ -1,4 +1,4 @@
-import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {readDemoLanguagePreference, storeDemoLanguagePreference} from './demo-language-preference';
 
@@ -28,5 +28,17 @@ describe('demo language preference', () => {
 
   it('returns undefined without a stored preference', () => {
     expect(readDemoLanguagePreference()).toBeUndefined();
+  });
+
+  it('returns undefined when the storage getter throws', () => {
+    const getter = vi.spyOn(window, 'localStorage', 'get').mockImplementation(() => {
+      throw new Error('storage unavailable');
+    });
+    try {
+      expect(readDemoLanguagePreference()).toBeUndefined();
+      expect(() => storeDemoLanguagePreference('fr')).not.toThrow();
+    } finally {
+      getter.mockRestore();
+    }
   });
 });
