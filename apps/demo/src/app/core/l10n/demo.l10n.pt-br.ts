@@ -1,6 +1,6 @@
 export const ptBRTranslations: Record<string, string> = {
   'uploadDemo.api.inline': 'Mostra o painel compartilhado na janela e oculta o painel flutuante.',
-  'uploadDemo.dialog.panel.title': 'Progresso do envio',
+  'uploadDemo.dialog.panel.title': 'Enviar arquivos',
   'uploadDemo.dialog.cancel': 'Cancelar',
   'uploadDemo.dialog.retry': 'Tentar novamente',
   'uploadDemo.dialog.remove': 'Remover',

@@ -172,7 +172,10 @@
                   >
                     <div class="cll-upload-panel__bar-fill" [style.width.%]="item.progress"></div>
                   </div>
-                  <div class="cll-upload-panel__error">{{ errorText(item) }}</div>
+                  <div class="cll-upload-panel__error">
+                    <cds-icon shape="error-standard" status="danger" aria-hidden="true" />
+                    <span>{{ errorText(item) }}</span>
+                  </div>
                   @if (item.error?.recovery === 'replace') {
                     <p>{{ 'upload.replace' | translate }}</p>
                   }
@@ -195,7 +198,10 @@
                 </button>
               </div>
               @if (item.error) {
-                <div class="cll-upload-panel__error">{{ errorText(item) }}</div>
+                <div class="cll-upload-panel__error">
+                  <cds-icon shape="error-standard" status="danger" aria-hidden="true" />
+                  <span>{{ errorText(item) }}</span>
+                </div>
               }
             </div>
           }

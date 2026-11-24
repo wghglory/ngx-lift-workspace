@@ -106,6 +106,10 @@ test('retries a failed item from the footer until it succeeds @cross-browser-smo
   await expect(panel).toContainText('Simulated transient chunk failure');
   await expect(panel.locator('[data-status="error"] .cll-upload-panel__badge-type')).toHaveText('ZIP');
   await expect(panel.locator('[data-status="error"] .cll-upload-panel__error')).toHaveCount(1);
+  const errorIcon = panel.locator('[data-status="error"] .cll-upload-panel__error cds-icon');
+  await expect(errorIcon).toHaveAttribute('shape', 'error-standard');
+  await expect(errorIcon).toHaveAttribute('status', 'danger');
+  await expect(errorIcon).toHaveAttribute('aria-hidden', 'true');
 
   await retryFailed.click();
   await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (2)');
@@ -405,8 +409,10 @@ test('modal files upload automatically and only one transfer view stays interact
   const launcher = page.getByTestId('upload-demo-modal-open');
   await launcher.click();
   const modal = page.locator('clr-modal').filter({has: page.locator('cll-upload')});
+  await expect(modal.locator('.modal-title')).toHaveText('Upload files');
   await modal.locator('cll-upload input[type="file"]').first().setInputFiles(zipFile('modal.zip'));
   await expect(modal.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
+  await expect(modal.locator('.modal-title')).toHaveText('Upload files');
   await expect(page.locator('.cdk-overlay-container .cll-upload-panel__card')).toHaveCount(0);
   await expect(modal.locator('.cll-upload-panel__list')).toBeVisible();
   await modal.getByRole('button', {name: 'Close', exact: true}).click();

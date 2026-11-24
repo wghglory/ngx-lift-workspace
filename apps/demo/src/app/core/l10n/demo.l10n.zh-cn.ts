@@ -1,6 +1,6 @@
 export const zhCNTranslations: Record<string, string> = {
   'uploadDemo.api.inline': '在对话框内复用共享上传面板，并隐藏浮动 Dock。',
-  'uploadDemo.dialog.panel.title': '上传进度',
+  'uploadDemo.dialog.panel.title': '上传文件',
   'uploadDemo.dialog.cancel': '取消',
   'uploadDemo.dialog.retry': '重试',
   'uploadDemo.dialog.remove': '移除',

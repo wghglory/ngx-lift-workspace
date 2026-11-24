@@ -13,6 +13,27 @@ demo-default recommendations. Historical review and validation records below app
 maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
 validation record below distinguishes implemented changes from checks still in progress.
 
+## Error cues and dialog naming: accepted 2026-11-24
+
+- A failed file's single error message includes Clarity's danger `error-standard` icon, aligned with its first text
+  line. The icon is decorative (`aria-hidden=true`): the visible error and existing transition announcement convey
+  meaning. Use lightweight row feedback, not a separate full alert banner for every failure. Error text can wrap at
+  narrow widths. Cancel-cleanup errors use the same inline error treatment. Retry/Remove and file type badges remain
+  unchanged.
+- The demo's upload dialog has a stable Upload files title in empty, uploading, processing and settled states. It
+  supports both file selection and progress/recovery. The application owns this title and may choose a generic
+  resource-specific task label; the library transfer region retains Upload progress as its accessible name. Dock state
+  titles stay dynamic.
+- The existing `uploadDemo.dialog.panel.title` key is updated in all demo locales. No library message, API or runtime
+  dependency is added. Shared source, demos and documentation use generic examples without consumer product names.
+
+Verification for this refinement: 68 upload unit tests, 15 targeted upload browser regressions across Chromium, Firefox
+and WebKit (including error/retry, automatic modal title and open/close journeys), and 6 light/dark upload-route
+accessibility checks passed. Configured lint/typecheck, translation completeness, development demo build and production
+library build passed. Standards and spec reviews are clear. The tracked source/demo/documentation scan found no
+consumer-specific product names. CI at the pushed revision and independent human language/visual acceptance remain
+separate; this targeted rerun does not replace the previously dated full-suite evidence.
+
 ## Information hierarchy refinement: accepted 2026-11-24
 
 This revision supersedes earlier separator chains, per-file rate/ETA, and count-based completed window titles.

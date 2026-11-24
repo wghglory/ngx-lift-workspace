@@ -1,6 +1,6 @@
 export const enTranslations = {
   'uploadDemo.api.inline': 'Render the shared upload panel inside a dialog and suppress the floating dock.',
-  'uploadDemo.dialog.panel.title': 'Upload progress',
+  'uploadDemo.dialog.panel.title': 'Upload files',
   'uploadDemo.dialog.cancel': 'Cancel',
   'uploadDemo.dialog.retry': 'Retry',
   'uploadDemo.dialog.remove': 'Remove',

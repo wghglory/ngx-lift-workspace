@@ -175,6 +175,20 @@
 }
 
 .cll-upload-panel__error {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.25rem;
+  line-height: 0.9rem;
+  cds-icon {
+    flex-shrink: 0;
+    inline-size: 0.7rem;
+    block-size: 0.7rem;
+    margin-block-start: 0.1rem;
+  }
+  span {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
   color: var(--cds-alias-status-danger);
   font-size: 0.6rem;
 }

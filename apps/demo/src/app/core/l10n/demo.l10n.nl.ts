@@ -1,6 +1,6 @@
 export const nlTranslations: Record<string, string> = {
   'uploadDemo.api.inline': 'Toon het gedeelde uploadpaneel in het dialoogvenster en verberg het zwevende paneel.',
-  'uploadDemo.dialog.panel.title': 'Uploadvoortgang',
+  'uploadDemo.dialog.panel.title': 'Bestanden uploaden',
   'uploadDemo.dialog.cancel': 'Annuleren',
   'uploadDemo.dialog.retry': 'Opnieuw proberen',
   'uploadDemo.dialog.remove': 'Verwijderen',

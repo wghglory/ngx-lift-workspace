@@ -1,6 +1,6 @@
 export const esTranslations: Record<string, string> = {
   'uploadDemo.api.inline': 'Muestra el panel compartido dentro del diálogo y oculta el panel flotante.',
-  'uploadDemo.dialog.panel.title': 'Progreso de la carga',
+  'uploadDemo.dialog.panel.title': 'Cargar archivos',
   'uploadDemo.dialog.cancel': 'Cancelar',
   'uploadDemo.dialog.retry': 'Reintentar',
   'uploadDemo.dialog.remove': 'Eliminar',

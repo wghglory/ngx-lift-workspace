@@ -11,14 +11,7 @@ import {
   Injector,
   signal,
 } from '@angular/core';
-import {
-  ClarityModule,
-  ClarityIcons,
-  angleIcon,
-  checkCircleIcon,
-  exclamationTriangleIcon,
-  uploadCloudIcon,
-} from '@clr/angular';
+import {ClarityModule, ClarityIcons, angleIcon, errorStandardIcon} from '@clr/angular';
 import {type UploadItem, type UploadStatus, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
@@ -29,7 +22,7 @@ import {uploadTranslations} from './upload.l10n';
 
 const ACTIVE_STATUSES: readonly UploadStatus[] = ['queued', 'uploading', 'processing'];
 
-ClarityIcons.addIcons(angleIcon, checkCircleIcon, exclamationTriangleIcon, uploadCloudIcon);
+ClarityIcons.addIcons(angleIcon, errorStandardIcon);
 
 /**
  * The transfer window itself: window controls, batch actions and per-item progress.

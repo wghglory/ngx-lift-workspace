@@ -1,6 +1,6 @@
 export const jaTranslations: Record<string, string> = {
   'uploadDemo.api.inline': '共有アップロードパネルをダイアログ内に表示し、フローティングパネルを非表示にします。',
-  'uploadDemo.dialog.panel.title': 'アップロードの進行状況',
+  'uploadDemo.dialog.panel.title': 'ファイルをアップロード',
   'uploadDemo.dialog.cancel': 'キャンセル',
   'uploadDemo.dialog.retry': '再試行',
   'uploadDemo.dialog.remove': '削除',
