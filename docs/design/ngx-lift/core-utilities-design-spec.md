@@ -302,9 +302,9 @@ automated scan. Automated checks never replace the human language gate.
 ## Predicate narrowing increment (2026-11-24)
 
 Scope authorized by the maintainer request to enhance `pickBy` and `omitBy` and open a PR. This increment adds value
-type-guard overloads to existing exports; runtime filtering, own enumerable string keys, prototype safety, and the
-`omitBy` deprecation remain unchanged. No new export or dependency is introduced. It is suitable for the next minor
-release; this PR does not publish a package or change peer ranges.
+type-guard overloads to existing exports; own enumerable string keys, prototype safety, and the `omitBy` deprecation
+remain unchanged. No new export or dependency is introduced. It is suitable for the next minor release; this PR does not
+publish a package or change peer ranges.
 
 ### Admission and comparison
 
@@ -328,13 +328,16 @@ React UI components are outside this headless compile-time contract; no renderin
 
 - A value guard returning `value is S` yields `Partial<{[K in keyof T]: T[K] & S}>` in positive mode.
 - Literal `{negate: true}` and the legacy alias yield `Partial<{[K in keyof T]: Exclude<T[K], S>}>`.
-- Boolean predicates and runtime boolean negation retain `Partial<T>`; the runtime option cannot guarantee a direction.
+- Positive narrowing accepts omitted options or explicit `negate: false`; widened/empty options do not guarantee
+  direction. Boolean predicates and runtime boolean negation retain `Partial<T>`; the runtime option cannot guarantee a
+  direction.
 - Properties stay optional, including known numeric properties. A guard may select a subset of a value type, and key
   callbacks may reject individual properties. No required-key preservation or key-predicate inference is promised.
 - Type predicates are trusted like TypeScript's native filtering; dishonest guards are not validated at runtime.
 - Readonly modifiers, literal types, heterogeneous objects and unknown dictionaries retain appropriate property types.
-- Empty matches produce `{}`; input remains unchanged; predicate errors propagate. Existing SSR and O(n) behavior stay
-  unchanged, with no timers, DOM, lifecycle or state ownership.
+- Empty matches produce `{}`; input remains unchanged; predicate errors propagate. Each own property is read once, and
+  the exact value inspected by the guard is copied, including for getters or callback mutations. Existing SSR and O(n)
+  behavior stay unchanged, with no timers, DOM, lifecycle or state ownership.
 
 ```typescript
 import {pickBy} from 'ngx-lift';
@@ -368,3 +371,24 @@ consumer fixture fails against baseline declarations (nullable bounds) and passe
 spec-project TypeScript command reports unrelated diagnostics in existing pagination, logger, range, file-download and
 object-path specs; this increment does not change those files. The full multi-package/browser gate was not run locally
 for this compile-time increment. CI, maintainer review, merge and publication are pending.
+
+### Review follow-up: broad guards, options, getters and equality
+
+The maintainer requested `isEqual` cleanup and review fixes. `isEqual` now accepts two `unknown` values without generic
+arguments; a compatibility overload retains explicit generic calls. Deep-comparison runtime behavior is unchanged. The
+motivating consumer compares computed assignment data with a stored view model of a different structural type. This is a
+generic comparison contract, with no dependency, rendering, lifecycle or form-control changes. Admission and API review:
+enhance the existing export; no new helper is warranted. Existing equality runtime tests and strict packed consumer
+calls cover heterogeneous object/primitive inputs and explicit-generic compatibility.
+
+Review fixes require `negate: false` when a supplied options object opts into positive narrowing; empty/widened options
+fall back conservatively. Reusable guards can classify a supertype of the source's literal values while the callback
+must still accept every source value. Source-aware overloads retain contextual typing for inline callbacks. The loop
+snapshots each own value once so getters or callback mutation cannot replace a validated value before copying it. These
+fixes supersede the earlier runtime-unchanged statement only for repeated property reads. CodeRabbit's reported
+configuration warning is addressed by keeping the tone instructions within its stated 250-character limit.
+
+Follow-up validation: 63 files / 998 tests passed, including the new getter, hidden-options, literal reusable-guard and
+heterogeneous equality cases. Strict compilation of both changed specs, library lint, production typecheck/build and
+strict packed-declaration consumer compilation passed. CodeRabbit tone text is below 250 characters. Remote CI must
+validate the pushed revision separately.

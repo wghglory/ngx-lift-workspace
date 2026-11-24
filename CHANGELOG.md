@@ -8,6 +8,12 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- Object filtering reads each own value once, preserving the exact value checked by a type guard. Widened options cannot
+  incorrectly select positive narrowing, and reusable guards support literal-valued sources.
+- `isEqual` accepts unrelated value shapes without explicit generic arguments, retaining explicit-generic compatibility.
+
 ### Added
 
 - `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated

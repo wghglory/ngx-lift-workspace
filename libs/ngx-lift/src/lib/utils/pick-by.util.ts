@@ -16,11 +16,21 @@ export interface PickByOptions {
 export function pickBy<T, S extends T[keyof T]>(
   source: T,
   predicate: (value: T[keyof T], key: string) => value is S,
-  options?: PickByOptions & {readonly negate?: false},
+  options?: PickByOptions & {readonly negate: false},
 ): Partial<{[K in keyof T]: T[K] & S}>;
 export function pickBy<T, S extends T[keyof T]>(
   source: T,
   predicate: (value: T[keyof T], key: string) => value is S,
+  options: PickByOptions & {readonly negate: true},
+): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
+export function pickBy<T, V, S extends V>(
+  source: T & Record<keyof T, V>,
+  predicate: (value: V, key: string) => value is S,
+  options?: PickByOptions & {readonly negate: false},
+): Partial<{[K in keyof T]: T[K] & S}>;
+export function pickBy<T, V, S extends V>(
+  source: T & Record<keyof T, V>,
+  predicate: (value: V, key: string) => value is S,
   options: PickByOptions & {readonly negate: true},
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 export function pickBy<T>(
@@ -37,8 +47,10 @@ export function pickBy<T>(
   const negate = options?.negate === true;
 
   for (const key in source) {
-    if (Object.prototype.hasOwnProperty.call(source, key) && predicate(source[key], key) !== negate) {
-      Object.defineProperty(result, key, {value: source[key], enumerable: true, configurable: true, writable: true});
+    if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+    const value = source[key];
+    if (predicate(value, key) !== negate) {
+      Object.defineProperty(result, key, {value, enumerable: true, configurable: true, writable: true});
     }
   }
 
@@ -52,6 +64,11 @@ export function pickBy<T>(
 export function omitBy<T, S extends T[keyof T]>(
   source: T,
   predicate: (value: T[keyof T], key: string) => value is S,
+): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
+/** @deprecated Use `pickBy(source, predicate, {negate: true})` instead. */
+export function omitBy<T, V, S extends V>(
+  source: T & Record<keyof T, V>,
+  predicate: (value: V, key: string) => value is S,
 ): Partial<{[K in keyof T]: Exclude<T[K], S>}>;
 /** @deprecated Use `pickBy(source, predicate, {negate: true})` instead. */
 export function omitBy<T>(source: T, predicate: (value: T[keyof T], key: string) => boolean): Partial<T>;

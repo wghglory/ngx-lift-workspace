@@ -118,3 +118,10 @@ describe('isEqual function', () => {
     expect(isEqual(new File(['first'], 'file'), new File(['second'], 'file'))).toBe(false);
   });
 });
+
+it('compares unrelated value shapes without explicit type arguments', () => {
+  expect(isEqual({name: 'Ada'}, {id: 1})).toBe(false);
+  expect(isEqual(1, '1')).toBe(false);
+  expect(isEqual({value: 1}, undefined)).toBe(false);
+  expect(isEqual<{value: number}>({value: 1}, {value: 1})).toBe(true);
+});

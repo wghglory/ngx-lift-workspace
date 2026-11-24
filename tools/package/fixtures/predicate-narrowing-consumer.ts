@@ -1,4 +1,4 @@
-import {omitBy, pickBy} from 'ngx-lift';
+import {isEqual, omitBy, pickBy} from 'ngx-lift';
 
 const bounds: {min: number | null; max: number | null} = {min: 0, max: null};
 const isNumber = (value: unknown): value is number => typeof value === 'number';
@@ -20,3 +20,26 @@ const dynamic = pickBy(bounds, isNumber, dynamicOptions);
 const uncertain: {min?: number; max?: number} = dynamic;
 
 void [payloads, required, nullOnly, uncertain];
+
+const literalBounds: {min: 0 | null; max: 1 | null} = {min: 0, max: null};
+const literalPicked: {min?: 0; max?: 1} = pickBy(literalBounds, isNumber);
+const literalInverse: {min?: null; max?: null} = pickBy(literalBounds, isNumber, {negate: true});
+const literalAlias: {min?: null; max?: null} = omitBy(literalBounds, isNumber);
+const hiddenOptions: object = {negate: true};
+const hidden = pickBy(bounds, isNumber, hiddenOptions);
+// @ts-expect-error Structurally hidden negation cannot promise numeric values.
+const hiddenNumeric: {min?: number; max?: number} = hidden;
+// @ts-expect-error A predicate accepting only strings cannot inspect number/null values.
+pickBy(bounds, (value: string): value is 'ready' => value === 'ready');
+const differentShapes: boolean = isEqual({name: 'Ada'}, {id: 1});
+const differentPrimitives: boolean = isEqual(1, '1');
+const explicitGeneric: boolean = isEqual<number>(1, 1);
+void [
+  literalPicked,
+  literalInverse,
+  literalAlias,
+  hiddenNumeric,
+  differentShapes,
+  differentPrimitives,
+  explicitGeneric,
+];

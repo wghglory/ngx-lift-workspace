@@ -1,10 +1,13 @@
 /**
  * Check if two values are deeply equal.
- * @param {T} value1 - The first value to compare.
- * @param {T} value2 - The second value to compare.
+ * @param {unknown} value1 - The first value to compare.
+ * @param {unknown} value2 - The second value to compare.
  * @returns {boolean} - Returns true if the values are deeply equal, otherwise false.
  */
-export function isEqual<T>(value1: T, value2: T): boolean {
+export function isEqual(value1: unknown, value2: unknown): boolean;
+/** Compatibility overload for callers that explicitly supply a type argument. */
+export function isEqual<T>(value1: T, value2: T): boolean;
+export function isEqual(value1: unknown, value2: unknown): boolean {
   return compare(value1, value2, {leftToRight: new WeakMap(), rightToLeft: new WeakMap()});
 }
 

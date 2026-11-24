@@ -153,3 +153,52 @@ describe('predicate value narrowing', () => {
     expect(numeric).toEqual({count: 0});
   });
 });
+
+describe('review regressions', () => {
+  const isNumber = (value: unknown): value is number => typeof value === 'number';
+
+  it('does not narrow options whose negation is hidden by structural widening', () => {
+    const hidden: object = {negate: true};
+    const result = pickBy({min: 0, max: null} as {min: number | null; max: number | null}, isNumber, hidden);
+    expectTypeOf(result).toEqualTypeOf<{min?: number | null; max?: number | null}>();
+    expect(result).toEqual({max: null});
+  });
+
+  it('retains contextual typing for inline numeric callbacks in every mode', () => {
+    const source = {a: 1, b: 2};
+    expect(pickBy(source, (value) => value % 2 === 0)).toEqual({b: 2});
+    expect(pickBy(source, (value) => value % 2 === 0, {negate: true})).toEqual({a: 1});
+    expect(omitBy(source, (value) => value % 2 === 0)).toEqual({a: 1});
+  });
+
+  it('supports reusable guards broader than literal source values', () => {
+    const source: {min: 0 | null; max: 1 | null} = {min: 0, max: null};
+    const picked = pickBy(source, isNumber);
+    const inverse = pickBy(source, isNumber, {negate: true});
+    const alias = omitBy(source, isNumber);
+    expectTypeOf(picked).toEqualTypeOf<{min?: 0; max?: 1}>();
+    expectTypeOf(inverse).toEqualTypeOf<{min?: null; max?: null}>();
+    expectTypeOf(alias).toEqualTypeOf<typeof inverse>();
+    expect(picked).toEqual({min: 0});
+    expect(inverse).toEqual({max: null});
+    expect(alias).toEqual(inverse);
+  });
+
+  it.each(['pick', 'negate', 'alias'] as const)('copies the tested getter value in %s mode', (mode) => {
+    let reads = 0;
+    const source = {
+      get min(): number | null {
+        return ++reads === 1 ? 1 : null;
+      },
+    };
+    const isNull = (value: unknown): value is null => value === null;
+    const result =
+      mode === 'pick'
+        ? pickBy(source, isNumber)
+        : mode === 'negate'
+          ? pickBy(source, isNull, {negate: true})
+          : omitBy(source, isNull);
+    expect(result).toEqual({min: 1});
+    expect(reads).toBe(1);
+  });
+});
