@@ -1,14 +1,13 @@
-// The docked badge must shrink to its content so the overlay's right-edge position
-// really docks it in the bottom-right corner. Fixed width lives on the window surfaces.
 .cll-upload-panel {
   inline-size: fit-content;
+  color: var(--cds-alias-typography-color-400, var(--clr-color-neutral-900));
 }
 
 .cll-upload-panel__card,
-.cll-upload-panel__confirm {
+.cll-upload-panel__badge {
   inline-size: min(24rem, calc(100vw - 2rem));
   margin: 0;
-  border: none;
+  border: 1px solid var(--cds-alias-object-border-color);
   border-radius: var(--cds-alias-object-border-radius-100, 6px);
   background: var(--cds-alias-object-container-background);
   box-shadow: var(--cds-alias-object-shadow-200);
@@ -17,71 +16,68 @@
 .cll-upload-panel__header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 0.5rem;
-  border-block-end: none;
-  padding: 0.4rem 0.6rem;
+  padding: 0.6rem;
+  border: 0;
 
   .card-title {
     margin: 0;
     font-size: 0.7rem;
-    line-height: 1.1rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 1rem;
+    color: inherit;
+  }
+
+  .btn {
+    margin: 0;
+    flex-shrink: 0;
   }
 }
 
-.cll-upload-panel__controls {
+.cll-upload-panel__heading {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.cll-upload-panel__control,
+.cll-upload-panel__summary-toggle {
   display: flex;
-  gap: 0.125rem;
+  align-items: center;
+  gap: 0.35rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+
+.cll-upload-panel__control {
+  padding: 0.25rem;
   flex-shrink: 0;
 }
 
-// Quiet ghost icon buttons in the header row, matching desktop transfer-window conventions.
-.cll-upload-panel__control {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  inline-size: 1.5rem;
-  block-size: 1.5rem;
-  padding: 0;
-  margin: 0;
-  background: transparent;
-  border: none;
-  border-radius: 3px;
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
-  cursor: pointer;
-
-  cds-icon {
-    font-size: 0.7rem;
-  }
-
-  &:hover {
-    color: var(--cds-alias-typography-color-500, var(--cds-global-color-gray-900, #313131));
-    background: var(--cds-alias-object-hover-background, rgba(0, 0, 0, 0.06));
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--cds-alias-status-info, var(--clr-color-action-600, #0072a3));
-    outline-offset: 1px;
-  }
+.cll-upload-panel__control:focus-visible,
+.cll-upload-panel__summary-toggle:focus-visible,
+.cll-upload-panel__badge:focus-visible,
+.cll-upload-panel--inline:focus-visible {
+  outline: 2px solid var(--cds-alias-status-info, #0072a3);
+  outline-offset: 2px;
 }
 
 .cll-upload-panel__list {
-  max-block-size: 20rem;
-  overflow-block: auto;
+  max-block-size: min(20rem, 60vh);
+  overflow: auto;
   margin: 0;
-  border: none;
-  padding: 0.25rem 0.6rem;
-
-  &--compact {
-    max-block-size: 9rem;
-  }
+  border: 0;
+  padding: 0 0.6rem 0.5rem;
 }
 
 .cll-upload-panel__item {
-  padding-block: 0.2rem;
+  padding-block: 0.45rem;
+  border-block-end: 1px solid var(--cds-alias-object-border-color);
+  p {
+    margin: 0.2rem 0 0;
+  }
 }
 
 .cll-upload-panel__row {
@@ -89,104 +85,76 @@
   grid-template-columns: auto minmax(0, 1fr);
   gap: 0.5rem;
   align-items: start;
-  min-inline-size: 0;
 }
 
 .cll-upload-panel__badge-type {
+  display: grid;
+  place-items: center;
   inline-size: 1.5rem;
   block-size: 1.5rem;
-  display: inline-grid;
-  place-items: center;
-  border-radius: 3px;
-  background: var(--cds-global-color-gray-50, #fafafa);
   border: 1px solid var(--cds-alias-object-border-color);
-  color: var(--cds-global-color-gray-700, #666666);
+  border-radius: 3px;
   font-size: 0.4rem;
-  font-weight: 600;
-  flex-shrink: 0;
-  margin-block-start: 0.1rem;
-
-  [data-status='success'] & {
-    border-color: var(--clr-color-success-400, #61b510);
-    color: var(--clr-color-success-700, #266900);
-  }
-
-  [data-status='error'] & {
-    border-color: var(--clr-color-danger-400, #c21d00);
-    color: var(--clr-color-danger-700, #a22100);
-  }
 }
 
 .cll-upload-panel__main {
-  min-inline-size: 0;
   display: flex;
   flex-direction: column;
+  min-inline-size: 0;
   gap: 0.2rem;
 }
 
 .cll-upload-panel__name-line {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   min-inline-size: 0;
+  .btn {
+    margin: 0;
+  }
 }
 
 .cll-upload-panel__name {
-  font-size: 0.65rem;
-  font-weight: 600;
+  flex: 1;
+  min-inline-size: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  min-inline-size: 0;
+  font-size: 0.65rem;
 }
 
 .cll-upload-panel__percent {
   font-size: 0.6rem;
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  min-inline-size: 2.25rem;
-  text-align: end;
 }
 
-.cll-upload-panel__bar {
+.cll-upload-panel__bar,
+.cll-upload-panel__compact-track {
   block-size: 4px;
   border-radius: 2px;
   background: var(--cds-global-color-gray-100, #e3e3e3);
   overflow: hidden;
 }
 
-.cll-upload-panel__bar-fill {
+.cll-upload-panel__bar-fill,
+.cll-upload-panel__compact-progress {
+  display: block;
   block-size: 100%;
   background: var(--clr-color-action-600, #0072a3);
-  transition: inline-size 200ms linear;
-
-  [data-status='success'] & {
-    background: var(--clr-color-success-600, #3cab33);
-  }
-
-  [data-status='error'] &,
-  &--error {
-    background: var(--clr-color-danger-600, #c21d00);
-  }
 }
 
-// Indeterminate processing bar: honors prefers-reduced-motion.
 .cll-upload-panel__bar--indeterminate .cll-upload-panel__bar-fill {
   inline-size: 40%;
-
+  animation: cll-upload-panel-loop 1.2s ease-in-out infinite;
   @keyframes cll-upload-panel-loop {
     from {
       translate: -100% 0;
     }
-
     to {
       translate: 300% 0;
     }
   }
-
-  animation: cll-upload-panel-loop 1.2s ease-in-out infinite;
-
   @media (prefers-reduced-motion: reduce) {
     animation: none;
     inline-size: 100%;
@@ -194,44 +162,27 @@
   }
 }
 
+.cll-upload-panel__meta,
+.cll-upload-panel__aggregate,
+.cll-upload-panel__error-detail {
+  font-size: 0.55rem;
+  line-height: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
 .cll-upload-panel__meta {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 0.25rem;
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
-  font-size: 0.55rem;
-  min-inline-size: 0;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  overflow: hidden;
-
-  span + span::before {
+  > span + span:not(:empty)::before {
     content: '·';
     margin-inline-end: 0.25rem;
-  }
-
-  // Reserved widths keep the meta segments from shifting while values tick.
-  .cll-upload-panel__bytes {
-    min-inline-size: 5.5rem;
-  }
-
-  .cll-upload-panel__rate {
-    min-inline-size: 3.25rem;
-  }
-
-  .cll-upload-panel__remaining {
-    min-inline-size: 2.5rem;
   }
 }
 
 .cll-upload-panel__error {
   color: var(--cds-alias-status-danger);
-  font-size: 0.55rem;
-}
-
-.cll-upload-panel__error-detail {
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
-  font-size: 0.55rem;
+  font-size: 0.6rem;
 }
 
 .cll-upload-panel__spacer {
@@ -239,103 +190,72 @@
 }
 
 .cll-upload-panel__summary {
+  margin-block-start: 0.4rem;
   border-radius: 3px;
-  background: var(--cds-alias-object-interaction-background, rgba(0, 0, 0, 0.06));
-  padding: 0.25rem 0.5rem;
-  font-size: 0.65rem;
+  background: var(--cds-alias-object-interaction-background);
+  padding: 0.25rem 0.4rem;
 }
 
 .cll-upload-panel__summary-toggle {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  inline-size: 100%;
-  background: none;
-  border: none;
+  flex: 1;
+  min-inline-size: 0;
   padding: 0.15rem 0;
-  font: inherit;
-  cursor: pointer;
-  text-align: start;
-
-  &:focus-visible {
-    outline: 2px solid var(--cds-alias-status-info, var(--clr-color-action-600, #0072a3));
-    outline-offset: 1px;
-  }
-}
-
-.cll-upload-panel__summary-label {
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
-  font-size: 0.55rem;
-  margin-inline-start: auto;
+  font-size: 0.6rem;
 }
 
 .cll-upload-panel__summary-list {
   list-style: none;
   margin: 0.25rem 0 0;
   padding: 0;
+}
 
-  .cll-upload-panel__summary-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding-block: 0.2rem;
-    min-inline-size: 0;
-    font-size: 0.6rem;
-
-    > span:not(.cll-upload-panel__spacer) {
-      white-space: nowrap;
-    }
-  }
+.cll-upload-panel__summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding-block: 0.25rem;
+  font-size: 0.6rem;
 }
 
 .cll-upload-panel__footer {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  border-block-start: none;
-  padding: 0.35rem 0.6rem;
-}
-
-.cll-upload-panel__aggregate {
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
-  font-size: 0.55rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.cll-upload-panel__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.35rem;
-}
-
-.cll-upload-panel__confirm {
-  margin: 0;
-  border: 1px solid var(--cds-alias-object-border-color);
-  box-shadow: var(--cds-alias-object-shadow-200);
-}
-
-.cll-upload-panel__confirm-body {
-  color: var(--cds-alias-typography-color-300, var(--cds-global-color-gray-600, #737373));
+  padding: 0.4rem 0.6rem;
+  border: 0;
+  .btn {
+    margin: 0;
+  }
 }
 
 .cll-upload-panel__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  // Keep an opaque dock background: Clarity's .btn:active sets a transparent background,
-  // which would let page content bleed through the docked badge.
-  background-color: var(--cds-alias-object-container-background, var(--clr-global-app-background, #ffffff));
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  inline-size: min(16rem, calc(100vw - 2rem));
+  min-block-size: 2.4rem;
+  padding: 0.45rem 0.6rem 0.6rem;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  overflow: hidden;
+}
 
-  &:hover,
-  &:active {
-    background-color: var(--cds-alias-object-container-background, var(--clr-global-app-background, #ffffff));
-  }
+.cll-upload-panel__compact-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-inline-size: 0;
+}
 
-  &:focus-visible {
-    outline: 2px solid var(--cds-alias-status-info, var(--clr-color-action-600, #0072a3));
-    outline-offset: 1px;
-  }
+.cll-upload-panel__compact-title {
+  font-size: 0.7rem;
+  line-height: 1rem;
+}
+
+.cll-upload-panel__compact-track {
+  position: absolute;
+  inset-block-end: 0;
+  inset-inline: 0;
 }
 
 .cll-upload-panel__live {
@@ -346,29 +266,74 @@
   clip-path: inset(50%);
 }
 
-.cll-upload-panel__heading {
-  flex: 1;
-  min-inline-size: 0;
+.cll-upload-panel--inline {
+  inline-size: 100%;
+  min-block-size: 1rem;
+  .cll-upload-panel__card {
+    inline-size: 100%;
+    border: 0;
+    box-shadow: none;
+  }
+  .cll-upload-panel__header {
+    padding: 0 0 0.5rem;
+  }
+  .cll-upload-panel__list {
+    padding-inline: 0;
+    max-block-size: min(16rem, 40vh);
+  }
+  .cll-upload-panel__footer {
+    padding-inline: 0;
+  }
 }
-.cll-upload-panel__badge {
-  position: relative;
+
+// Progress samples must not change line count or panel height as estimates appear/disappear.
+.cll-upload-panel__card {
+  container-type: inline-size;
+}
+.cll-upload-panel__aggregate {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  min-block-size: 0.85rem;
+  white-space: nowrap;
   overflow: hidden;
-  min-block-size: 2rem;
-  max-inline-size: calc(100vw - 2rem);
-  flex-wrap: wrap;
 }
-.cll-upload-panel__compact-progress {
-  position: absolute;
-  inset-block-end: 0;
-  inset-inline-start: 0;
-  block-size: 3px;
-  background: var(--clr-color-action-600);
-}
-.cll-upload-panel__name-line {
-  flex-wrap: wrap;
-}
-.cll-upload-panel__summary-toggle {
+.cll-upload-panel__transfer-text,
+.cll-upload-panel__bytes {
   flex: 1;
   min-inline-size: 0;
-  inline-size: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cll-upload-panel__remaining {
+  flex: 0 0 3rem;
+  inline-size: 3rem;
+  text-align: end;
+  white-space: nowrap;
+}
+.cll-upload-panel__rate {
+  flex: 0 0 3.5rem;
+  inline-size: 3.5rem;
+  white-space: nowrap;
+}
+.cll-upload-panel__meta {
+  flex-wrap: nowrap;
+  min-block-size: 0.85rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.cll-upload-panel__compact-title,
+.cll-upload-panel__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cll-upload-panel__item[data-status='error'] .cll-upload-panel__bar-fill {
+  background: var(--clr-color-danger-600, #c21d00);
+}
+@container (max-width: 20rem) {
+  .cll-upload-panel__rate {
+    display: none;
+  }
 }

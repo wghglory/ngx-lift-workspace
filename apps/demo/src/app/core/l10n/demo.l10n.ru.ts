@@ -1,4 +1,5 @@
 export const ruTranslations: Record<string, string> = {
+  'uploadDemo.api.inline': 'Показывает общую панель загрузок в диалоге и скрывает плавающую панель.',
   'uploadDemo.dialog.panel.title': 'Ход загрузки',
   'uploadDemo.dialog.cancel': 'Отмена',
   'uploadDemo.dialog.retry': 'Повторить',

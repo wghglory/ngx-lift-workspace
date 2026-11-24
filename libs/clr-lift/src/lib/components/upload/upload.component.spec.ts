@@ -96,7 +96,7 @@ describe('UploadComponent', () => {
   });
 
   it('reports rejected files without enqueueing them while accepted files still upload', async () => {
-    const component = create({accept: '.zip'});
+    const component = create({accept: '.zip', multiple: true});
     const errors: unknown[] = [];
     const completed: unknown[] = [];
     component.validationErrors.subscribe((value) => errors.push(value));
@@ -171,18 +171,26 @@ describe('UploadComponent', () => {
     expect(touches).toBe(0);
   });
 
-  it('reports size and count violations with the rejected file names', async () => {
-    const component = create({maxSize: 1, maxFiles: 1});
-    const errors: {code: string; fileName?: string}[][] = [];
-    component.validationErrors.subscribe((value) => errors.push([...value]));
+  it('rejects an oversized selection once without changing the existing queue', async () => {
+    const component = create({multiple: true, maxFiles: 1});
+    await select(component, [file('existing.zip')]);
+    const original = TestBed.inject(UploadQueueService).items()[0];
+    await select(component, [file('first.zip'), file('extra.zip')]);
+    expect(component.errors()).toEqual([{code: 'upload.validation.maxFiles', phase: 'validation', message: '1'}]);
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([original]);
+  });
 
-    await select(component, [file('large.zip', 2 * 1024 * 1024 + 1), file('first.zip'), file('extra.zip')]);
+  it('reports each oversized file while accepting valid siblings within the count limit', async () => {
+    const component = create({multiple: true, maxSize: 1, maxFiles: 3});
+    await select(component, [
+      file('large.pdf', 2 * 1024 * 1024),
+      file('large.png', 2 * 1024 * 1024),
+      file('valid.zip'),
+    ]);
     TestBed.inject(ApplicationRef).tick();
-
-    expect(errors[0].map((error) => error.code)).toEqual(['upload.validation.maxSize', 'upload.validation.maxFiles']);
-    expect(errors[0].map((error) => error.fileName)).toEqual(['large.zip', 'extra.zip']);
+    expect(component.errors().map((error) => error.fileName)).toEqual(['large.pdf', 'large.png']);
     expect(document.querySelectorAll('.cll-upload__error-name')).toHaveLength(2);
-    expect(document.body.textContent).toContain('large.zip');
+    expect(TestBed.inject(UploadQueueService).items()).toHaveLength(1);
   });
 
   it('emits an error event when adapter cancellation fails', async () => {
@@ -370,7 +378,7 @@ describe('UploadComponent dropzone', () => {
     },
   );
 
-  it('renders the dropzone with browse and folder actions plus the used count', () => {
+  it('renders the dropzone with browse and folder actions and the per-selection limit', () => {
     const {element} = create({multiple: true, maxFiles: 20, accept: '.zip', maxSize: 20});
 
     expect(element.querySelector('.cll-upload__dropzone')).toBeTruthy();
@@ -460,9 +468,20 @@ describe('UploadComponent dropzone', () => {
   it('does not turn a duplicate into a count-limit rejection', async () => {
     const {component} = create({multiple: true, maxFiles: 1});
     const source = new File(['bytes'], 'same.zip', {lastModified: 9});
-    await select(component, [source, source, file('extra.zip')]);
+    await select(component, [source, source]);
     expect(component.duplicates()).toHaveLength(1);
-    expect(component.errors().map((error) => error.fileName)).toEqual(['extra.zip']);
+    expect(component.errors()).toEqual([]);
     expect(TestBed.inject(UploadQueueService).items()).toHaveLength(1);
+  });
+  it('does not claim rejected same-selection duplicates are already queued', async () => {
+    const {component} = create({multiple: true, maxFiles: 1, accept: '.zip'});
+    const source = file('same.zip');
+    await select(component, [source, source, file('extra.zip')]);
+    expect(component.duplicates()).toEqual([]);
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+    const unsupported = file('same.txt');
+    await select(component, [unsupported, unsupported]);
+    expect(component.duplicates()).toEqual([]);
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
   });
 });

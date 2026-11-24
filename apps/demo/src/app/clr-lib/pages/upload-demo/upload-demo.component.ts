@@ -136,11 +136,7 @@ export class UploadDemoComponent {
   private readonly inlineUpload = viewChild<UploadComponent>('inlineUpload');
   private readonly modalUpload = viewChild<UploadComponent>('modalUpload');
   readonly destination = new FormControl('', {nonNullable: true});
-  readonly modalCancelling = signal(false);
-  private modalCancelIds: readonly string[] = [];
-  readonly modalCancelCount = signal(0);
-  readonly modalRows = computed(() => this.queue.items().filter((item) => item.status !== 'success'));
-  readonly modalSuccesses = computed(() => this.queue.items().filter((item) => item.status === 'success'));
+  private readonly modalPanel = viewChild<UploadPanelComponent>('modalPanel');
   readonly modalActive = computed(() =>
     this.queue.items().some((item) => ['queued', 'uploading', 'processing'].includes(item.status)),
   );
@@ -248,7 +244,6 @@ export class UploadDemoComponent {
       this.queue.clearCompleted();
     }
     this.modalOpen.set(false);
-    this.modalCancelling.set(false);
     const previous = this.host.nativeElement.ownerDocument.activeElement;
     afterNextRender(
       () => {
@@ -260,56 +255,20 @@ export class UploadDemoComponent {
     );
   }
 
-  requestModalCancel(): void {
-    this.modalCancelIds = this.queue
+  cancelModalAll(): void {
+    const ids = this.queue
       .items()
       .filter((item) => ['queued', 'uploading', 'processing'].includes(item.status))
       .map((item) => item.id);
-    this.modalCancelCount.set(this.modalCancelIds.length);
-    this.modalCancelling.set(true);
-    this.focusModal('.upload-modal-keep');
-  }
-
-  confirmModalCancel(): void {
-    for (const id of this.modalCancelIds) this.queue.cancel(id);
-    this.modalCancelling.set(false);
-    this.focusModal('.upload-modal-action');
-  }
-
-  retryItem(id: string): void {
-    void this.queue.retry(id)?.catch(() => undefined);
-    this.focusModal('.upload-modal-action');
-  }
-
-  cancelModalItem(id: string): void {
-    this.queue.cancel(id);
-    this.focusModal('.upload-modal-action');
-  }
-
-  dismissModalCancel(): void {
-    this.modalCancelling.set(false);
-    this.focusModal('.upload-modal-action');
-  }
-
-  removeModalItem(id: string): void {
-    this.queue.remove(id);
-    this.focusModal('.upload-modal-action');
-  }
-
-  clearModalSuccesses(): void {
-    for (const item of this.modalSuccesses()) this.queue.remove(item.id);
+    for (const id of ids) this.queue.cancel(id);
     this.focusModal('.upload-modal-action');
   }
 
   locateModalItem(id: string): void {
-    const row = this.host.nativeElement.querySelector<HTMLElement>(`clr-modal [data-upload-id="${id}"]`);
-    const disclosure = row?.closest('details');
-    if (disclosure) disclosure.open = true;
-    row?.focus();
+    this.modalPanel()?.showItem(id);
   }
 
   minimizeDialog(): void {
-    this.modalCancelling.set(false);
     this.queue.minimize();
     this.modalOpen.set(false);
   }
@@ -493,6 +452,7 @@ export class UploadDemoComponent {
   ]);
 
   readonly panelInputs = computed<ApiProperty[]>(() => [
+    {name: 'inline', type: 'boolean', defaultValue: 'false', description: this.api('inline')},
     {name: 'suppressed', type: 'boolean', defaultValue: 'false', description: this.api('suppressed')},
   ]);
 

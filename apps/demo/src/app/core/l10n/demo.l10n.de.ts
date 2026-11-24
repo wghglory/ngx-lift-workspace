@@ -1,4 +1,5 @@
 export const deTranslations: Record<string, string> = {
+  'uploadDemo.api.inline': 'Gemeinsames Upload-Panel im Dialog anzeigen und das schwebende Panel ausblenden.',
   'uploadDemo.dialog.panel.title': 'Upload-Fortschritt',
   'uploadDemo.dialog.cancel': 'Abbrechen',
   'uploadDemo.dialog.retry': 'Erneut versuchen',

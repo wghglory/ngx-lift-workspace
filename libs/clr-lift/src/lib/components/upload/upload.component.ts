@@ -83,6 +83,8 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   readonly disabledState = linkedSignal(() => this.disabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
+  readonly countError = computed(() => this.errors().find((error) => error.code === 'upload.validation.maxFiles'));
+  readonly fileErrors = computed(() => this.errors().filter((error) => error.code !== 'upload.validation.maxFiles'));
   readonly duplicates = signal<readonly {file: File; id?: string}[]>([]);
   readonly reading = signal(false);
   private readonly retryWatch = signal<readonly {readonly id: string; readonly attempt: number}[]>([]);
@@ -160,7 +162,9 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   }
 
   private setErrors(errors: readonly UploadError[]): void {
-    this.errors.set(errors);
+    this.errors.set([
+      ...new Map(errors.map((error) => [JSON.stringify([error.code, error.fileName, error.message]), error])).values(),
+    ]);
     this.onValidatorChange();
   }
 
@@ -220,10 +224,26 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     const scope = this.scope();
     const rejections: UploadError[] = [];
     const duplicates: {file: File; id?: string}[] = [];
-    const accepted: File[] = [];
-    // A single-file host must reject extra dropped files even when maxFiles is unset.
+    const candidates: File[] = [];
     const limit = this.multiple() ? (this.maxFiles() > 0 ? this.maxFiles() : Infinity) : 1;
     for (const file of selected) {
+      const existing = this.autoEnqueue() ? this.panelManager.duplicate(file, adapter, scope) : undefined;
+      if (existing || candidates.some((candidate) => this.panelManager.sameFile(candidate, file))) {
+        duplicates.push({file, id: existing?.id});
+      } else {
+        candidates.push(file);
+      }
+    }
+    // Count is a selection-level contract: never choose an arbitrary first N files or cancel prior work.
+    if (candidates.length > limit) {
+      this.duplicates.set(duplicates.filter((duplicate) => duplicate.id !== undefined));
+      const error: UploadError = {code: 'upload.validation.maxFiles', phase: 'validation', message: String(limit)};
+      this.setErrors([...this.fileErrors(), error]);
+      this.validationErrors.emit([error]);
+      return;
+    }
+    const accepted: File[] = [];
+    for (const file of candidates) {
       if (!this.matchesAccept(file)) {
         rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: this.fileLabel(file)});
       } else if (this.maxSize() === 0 || file.size > this.maxSize() * 1024 * 1024) {
@@ -234,25 +254,16 @@ export class UploadComponent implements ControlValueAccessor, Validator {
           fileName: this.fileLabel(file),
         });
       } else {
-        const existing = this.autoEnqueue() ? this.panelManager.duplicate(file, adapter, scope) : undefined;
-        if (existing || accepted.some((candidate) => this.panelManager.sameFile(candidate, file))) {
-          duplicates.push({file, id: existing?.id});
-          continue;
-        }
-        if (accepted.length >= limit) {
-          rejections.push({
-            code: 'upload.validation.maxFiles',
-            phase: 'validation',
-            message: String(limit),
-            fileName: this.fileLabel(file),
-          });
-        } else {
-          accepted.push(file);
-        }
+        accepted.push(file);
       }
     }
-    this.setErrors([...this.errors(), ...rejections]);
-    this.duplicates.set(duplicates);
+    this.setErrors([...this.fileErrors(), ...rejections]);
+    this.duplicates.set(
+      duplicates.filter(
+        (duplicate) =>
+          duplicate.id !== undefined || accepted.some((file) => this.panelManager.sameFile(file, duplicate.file)),
+      ),
+    );
     if (rejections.length) this.validationErrors.emit(rejections);
     if (!accepted.length) return;
 

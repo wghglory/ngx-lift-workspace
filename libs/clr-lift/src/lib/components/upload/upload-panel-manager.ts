@@ -27,6 +27,8 @@ export class UploadPanelManager {
   private readonly scopes = new Map<string, {adapter: UploadAdapter; scope?: string}>();
   private readonly suppressors = new Set<object>();
   readonly suppressed = signal(false);
+  private readonly transferHistory = new Map<string, UploadItem>();
+  readonly transferItems = signal<readonly UploadItem[]>([]);
 
   setSuppressed(owner: object, value: boolean): void {
     if (value) this.suppressors.add(owner);
@@ -71,8 +73,15 @@ export class UploadPanelManager {
 
   constructor() {
     effect(() => {
-      const ids = new Set(this.queue.items().map((item) => item.id));
+      const items = this.queue.items();
+      const ids = new Set(items.map((item) => item.id));
       for (const id of this.scopes.keys()) if (!ids.has(id)) this.scopes.delete(id);
+      if (!items.length) this.transferHistory.clear();
+      for (const [id, previous] of this.transferHistory) {
+        if (!ids.has(id) && previous.status !== 'success') this.transferHistory.delete(id);
+      }
+      for (const item of items) this.transferHistory.set(item.id, item);
+      this.transferItems.set([...this.transferHistory.values()].filter((item) => item.status !== 'cancelled'));
     });
     inject(DestroyRef).onDestroy(() => this.overlayRef?.dispose());
   }

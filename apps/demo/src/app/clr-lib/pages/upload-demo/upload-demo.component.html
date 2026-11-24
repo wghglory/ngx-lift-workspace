@@ -204,8 +204,12 @@
 
   <clr-modal [(clrModalOpen)]="modalOpen" [clrModalClosable]="false" (keydown.escape)="minimizeDialog()">
     <h3 class="modal-title">{{ 'uploadDemo.dialog.panel.title' | translate }}</h3>
-    <div class="modal-body">
-      <cll-alert [alertType]="'info'" [closable]="false" [content]="'uploadDemo.autoInfo' | translate" />
+    <div class="modal-body upload-dialog-body">
+      <clr-alert [clrAlertType]="'info'" [clrAlertClosable]="false"
+        ><clr-alert-item
+          ><span class="alert-text">{{ 'uploadDemo.autoInfo' | translate }}</span></clr-alert-item
+        ></clr-alert
+      >
       <cll-upload
         #modalUpload
         [adapter]="apiAdapter"
@@ -216,75 +220,13 @@
         [chunkSize]="chunk5Mb"
         [concurrency]="2"
       />
-      @for (item of modalRows(); track item.id) {
-        <div class="upload-dialog-row" [attr.data-upload-id]="item.id" tabindex="-1">
-          <strong>{{ item.file.name }}</strong>
-          <span>{{ 'uploadDemo.dialog.status.' + item.status | translate }}</span>
-          @if (item.status === 'uploading') {
-            <clr-progress-bar [clrValue]="item.progress" [attr.aria-label]="item.file.name" />
-          }
-          @if (item.status === 'processing') {
-            <clr-progress-bar
-              [clrLoop]="item.processingProgress === undefined"
-              [clrValue]="item.processingProgress ?? 0"
-              [attr.aria-label]="item.file.name"
-            />
-          }
-          @if (item.status === 'queued' || item.status === 'uploading' || item.status === 'processing') {
-            <button type="button" class="btn btn-link btn-sm" (click)="cancelModalItem(item.id)">
-              {{ 'uploadDemo.dialog.cancel' | translate }}
-            </button>
-          }
-          @if (item.error) {
-            <p class="clr-error">{{ item.error.message }}</p>
-          }
-          @if (item.status === 'error' && item.error?.recovery !== 'replace') {
-            <button type="button" class="btn btn-link btn-sm" (click)="retryItem(item.id)">
-              {{ 'uploadDemo.dialog.retry' | translate }}
-            </button>
-          }
-          @if (item.status === 'error' || item.status === 'cancelled') {
-            <button type="button" class="btn btn-link btn-sm" (click)="removeModalItem(item.id)">
-              {{ 'uploadDemo.dialog.remove' | translate }}
-            </button>
-          }
-        </div>
-      }
-      @if (modalSuccesses().length) {
-        <div class="upload-dialog-summary">
-          <details>
-            <summary>
-              {{
-                'uploadDemo.dialog.summary.success'
-                  | translate
-                    : modalSuccesses().length
-                    : formatFileSize(modalSuccesses().reduce((sum, item) => sum + item.file.size, 0))
-              }}
-            </summary>
-            @for (item of modalSuccesses(); track item.id) {
-              <p [attr.data-upload-id]="item.id" tabindex="-1">{{ item.file.name }}</p>
-            }
-          </details>
-          <button type="button" class="btn btn-link btn-sm" (click)="clearModalSuccesses()">
-            {{ 'uploadDemo.dialog.clearCompleted' | translate }}
-          </button>
-        </div>
-      }
-      @if (modalCancelling()) {
-        <div role="group" [attr.aria-label]="'uploadDemo.dialog.cancelAll' | translate">
-          <p>{{ 'uploadDemo.dialog.cancel.confirm' | translate: modalCancelCount() }}</p>
-          <button type="button" class="btn btn-outline upload-modal-keep" (click)="dismissModalCancel()">
-            {{ 'uploadDemo.dialog.confirm.background' | translate }}
-          </button>
-          <button type="button" class="btn btn-danger" (click)="confirmModalCancel()">
-            {{ 'uploadDemo.dialog.cancelAll' | translate }}
-          </button>
-        </div>
+      @if (modalOpen()) {
+        <cll-upload-panel #modalPanel [inline]="true" />
       }
     </div>
     <div class="modal-footer">
       @if (modalActive()) {
-        <button type="button" class="btn btn-outline" (click)="requestModalCancel()">
+        <button type="button" class="btn btn-outline" (click)="cancelModalAll()">
           {{ 'uploadDemo.dialog.cancelAll' | translate }}
         </button>
       }

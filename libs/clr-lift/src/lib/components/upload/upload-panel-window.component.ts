@@ -1,3 +1,4 @@
+import {NgTemplateOutlet} from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,6 +7,7 @@ import {
   computed,
   effect,
   inject,
+  input,
   Injector,
   signal,
 } from '@angular/core';
@@ -37,7 +39,7 @@ ClarityIcons.addIcons(angleIcon, checkCircleIcon, exclamationTriangleIcon, uploa
  */
 @Component({
   selector: 'cll-upload-panel-window',
-  imports: [TranslatePipe, ClarityModule],
+  imports: [TranslatePipe, ClarityModule, NgTemplateOutlet],
   templateUrl: './upload-panel-window.component.html',
   styleUrls: ['./upload-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,14 +53,14 @@ export class UploadPanelWindowComponent {
   readonly announcement = signal('');
   readonly closed = signal(false);
   readonly summaryExpanded = signal(false);
-  readonly confirmingClose = signal(false);
-  private cancelSnapshot: readonly string[] = [];
+  readonly embedded = input(false);
   private readonly observedFailures = new Set<string>();
-  private readonly transferHistory = new Map<string, UploadItem>();
-  private readonly transferItems = signal<readonly UploadItem[]>([]);
+  private readonly transferItems = this.manager.transferItems;
   private readonly clock = signal(Date.now());
 
-  readonly visible = computed(() => this.queue.items().length > 0 && !this.closed() && !this.manager.suppressed());
+  readonly visible = computed(
+    () => this.queue.items().length > 0 && !this.closed() && (this.embedded() || !this.manager.suppressed()),
+  );
   readonly activeItems = computed(() => this.queue.items().filter((item) => ACTIVE_STATUSES.includes(item.status)));
   readonly errorItems = computed(() => this.queue.items().filter((item) => item.status === 'error'));
   readonly cancelledItems = computed(() => this.queue.items().filter((item) => item.status === 'cancelled'));
@@ -68,6 +70,21 @@ export class UploadPanelWindowComponent {
   readonly queuedCount = computed(() => this.activeItems().filter((item) => item.status === 'queued').length);
   readonly processingCount = computed(() => this.activeItems().filter((item) => item.status === 'processing').length);
   readonly hasActive = computed(() => this.activeItems().length > 0);
+  readonly title = computed(() => {
+    let key = 'upload.title.complete';
+    let count = this.successItems().length;
+    if (this.hasActive()) {
+      key = this.uploadingCount() || this.queuedCount() ? 'upload.title.uploading' : 'upload.title.processing';
+      count = this.activeItems().length;
+    } else if (!count) {
+      key = this.errorItems().length ? 'upload.title.failed' : 'upload.title.cancelled';
+      count = this.errorItems().length || this.cancelledItems().length;
+    }
+    const title = this.translationService.translate(key, count);
+    return this.errorItems().length && key !== 'upload.title.failed'
+      ? `${title} · ${this.translationService.translate('upload.title.failed', this.errorItems().length)}`
+      : title;
+  });
   readonly uploadedTotal = computed(() => this.transferItems().reduce((sum, item) => sum + item.uploadedBytes, 0));
   readonly totalBytes = computed(() => this.transferItems().reduce((sum, item) => sum + item.file.size, 0));
   readonly transferProgress = computed(() =>
@@ -99,19 +116,12 @@ export class UploadPanelWindowComponent {
     });
     effect(() => {
       const items = this.queue.items();
-      const ids = new Set(items.map((item) => item.id));
-      if (!items.length) this.transferHistory.clear();
-      for (const [id, previous] of this.transferHistory) {
-        if (!ids.has(id) && previous.status !== 'success') this.transferHistory.delete(id);
-      }
-      for (const item of items) this.transferHistory.set(item.id, item);
-      this.transferItems.set([...this.transferHistory.values()].filter((item) => item.status !== 'cancelled'));
       for (const item of items) {
         if (item.status !== 'error') continue;
         const key = `${item.id}:${item.attempt}`;
         if (this.observedFailures.has(key)) continue;
         this.observedFailures.add(key);
-        if (!this.manager.suppressed()) this.queue.restore();
+        if (!this.embedded() && !this.manager.suppressed()) this.queue.restore();
       }
       for (const key of this.observedFailures) {
         if (!items.some((item) => key === `${item.id}:${item.attempt}`)) this.observedFailures.delete(key);
@@ -188,24 +198,13 @@ export class UploadPanelWindowComponent {
     this.closeIdle();
   }
 
-  keepInBackground(): void {
-    this.confirmingClose.set(false);
-    this.minimize();
-  }
-
-  confirmCancelAll(): void {
-    const ids = new Set(this.cancelSnapshot);
-    this.confirmingClose.set(false);
-    this.cancelActiveAndAnnounce(ids);
-    this.focusAfterRender('.cll-upload-panel__minimize');
-  }
-
   clearSuccesses(): void {
     this.restoreRowFocus();
     for (const item of this.successItems()) this.queue.remove(item.id);
   }
 
   showItem(id: string): void {
+    if (!this.queue.items().some((item) => item.id === id)) return;
     this.closed.set(false);
     this.queue.restore();
     if (this.successItems().some((item) => item.id === id)) this.summaryExpanded.set(true);
@@ -221,18 +220,9 @@ export class UploadPanelWindowComponent {
 
   onKeydown(event: Event): void {
     if (!(event instanceof KeyboardEvent)) return;
-    if (event.key === 'Tab' && this.confirmingClose()) {
-      this.wrapFocusInConfirmation(event);
-      return;
-    }
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || this.embedded()) return;
     event.preventDefault();
-    if (this.confirmingClose()) {
-      this.confirmingClose.set(false);
-      this.focusAfterRender('.cll-upload-panel__cancel-all');
-    } else {
-      this.minimize();
-    }
+    this.minimize();
   }
 
   cancel(id: string): void {
@@ -252,12 +242,9 @@ export class UploadPanelWindowComponent {
   }
 
   cancelAll(): void {
-    this.cancelSnapshot = this.activeItems().map((item) => item.id);
-    this.confirmingClose.set(true);
-    this.focusAfterRender('.cll-upload-panel__confirm-background');
+    this.restoreRowFocus();
+    this.cancelActiveAndAnnounce(new Set(this.activeItems().map((item) => item.id)));
   }
-
-  readonly cancelCount = computed(() => (this.confirmingClose() ? this.cancelSnapshot.length : 0));
 
   /** Cancels every active item, pre-marking their announcements so one count message is spoken. */
   private cancelActiveAndAnnounce(ids: ReadonlySet<string>): void {
@@ -292,13 +279,10 @@ export class UploadPanelWindowComponent {
   }
 
   errorText(item: UploadItem): string {
+    const message = item.error?.message?.trim();
+    if (message && !message.startsWith('upload.')) return message.replace(/\s+/g, ' ');
     const phase = item.error?.phase ?? 'unknown';
     return this.translationService.translate(`upload.error.${phase === 'validation' ? 'unknown' : phase}`);
-  }
-
-  hasErrorDetail(item: UploadItem): boolean {
-    const message = item.error?.message;
-    return Boolean(message && !message.startsWith('upload.'));
   }
 
   formatBytes(bytes: number): string {
@@ -347,9 +331,10 @@ export class UploadPanelWindowComponent {
         if (active.isConnected && document.activeElement === active) return;
         // Use a stable window control: a retried row may finish again immediately.
         const target = this.host.nativeElement.querySelector<HTMLButtonElement>(
-          '.cll-upload-panel__minimize, .cll-upload-panel__badge',
+          '.cll-upload-panel__minimize, .cll-upload-panel__badge, .cll-upload-panel__title',
         );
         if (target) target.focus();
+        else if (this.embedded()) this.host.nativeElement.querySelector<HTMLElement>('.cll-upload-panel')?.focus();
         else this.restoreTrigger();
       },
       {injector: this.injector},
@@ -359,22 +344,6 @@ export class UploadPanelWindowComponent {
   private restoreTrigger(): void {
     const target = this.manager.restoreTarget();
     target?.focus();
-  }
-
-  private wrapFocusInConfirmation(event: KeyboardEvent): void {
-    const container = this.host.nativeElement.querySelector<HTMLElement>('.cll-upload-panel__confirm');
-    const buttons = container ? Array.from(container.querySelectorAll<HTMLButtonElement>('button')) : [];
-    if (buttons.length < 2) return;
-    const first = buttons[0];
-    const last = buttons[buttons.length - 1];
-    const active = document.activeElement;
-    if (active === first && event.shiftKey) {
-      event.preventDefault();
-      last.focus();
-    } else if (active === last && !event.shiftKey) {
-      event.preventDefault();
-      first.focus();
-    }
   }
 
   private focusAfterRender(selector: string): void {

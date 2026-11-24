@@ -1,4 +1,5 @@
 export const koTranslations: Record<string, string> = {
+  'uploadDemo.api.inline': '공유 업로드 패널을 대화 상자 안에 표시하고 플로팅 패널을 숨깁니다.',
   'uploadDemo.dialog.panel.title': '업로드 진행 상황',
   'uploadDemo.dialog.cancel': '취소',
   'uploadDemo.dialog.retry': '다시 시도',

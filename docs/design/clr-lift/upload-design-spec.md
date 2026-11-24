@@ -13,6 +13,36 @@ demo-default recommendations. Historical review and validation records below app
 maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
 validation record below distinguishes implemented changes from checks still in progress.
 
+## Selection and telemetry refinement: 2026-11-24
+
+- Apply the file-count limit to each new selection after duplicate filtering, for both files and folders. If it exceeds
+  the limit, reject that entire selection with one aggregate error. Preserve the existing queue and running requests.
+  Never silently accept the first N files. Hints explicitly describe the limit as per selection.
+- Within the count limit, reject unsupported types and oversized files individually; valid siblings continue uploading.
+- Hide the selected-count/clear-X summary in automatic upload mode. Keep it for manual staging only; the shared transfer
+  list already describes automatically queued files. Do not show a cumulative used/limit ratio for a per-selection
+  limit.
+- Failed files retain the same type badge, filename, progress and action alignment as uploading files. Show one
+  meaningful server/client error, falling back to the localized phase error when no meaningful detail exists.
+  Replacement guidance remains available for application-classified non-retryable errors.
+- Reserve stable telemetry slots for bytes, rate and estimated transfer time. Keep row telemetry on one line and the
+  compact dock on two lines as estimates appear or disappear. Show short durations with the full localized estimate in
+  the tooltip and accessible label; truncate long byte text instead of wrapping and changing panel height.
+
+## Latest verification: screenshot refinements (2026-11-24)
+
+- Upload component/renderer/drop helpers: 63 unit tests passed, including atomic count rejection preserving existing
+  work, individual size rejection, duplicate feedback, shared modal rendering and focus restoration.
+- Upload and S3 browser regressions: 108 passed across Chromium, Firefox and WebKit, including compact height stability
+  with/without estimates, native Clarity colors, shared modal rows, count overflow and per-file size errors.
+- Upload route light/dark accessibility checks: 6 passed across the three browsers.
+- Configured lint/typecheck for clr-lift, demo and demo-e2e, translation completeness, formatting, development demo
+  build and production library build passed. Existing lint warnings remain; Nx Cloud remote cache was unavailable.
+- Both independent standards and spec reviews are clear after fixing misleading duplicate notices for rejected batches.
+- Earlier full-suite/coverage results remain dated evidence. This refinement does not claim a fresh full validation or
+  fresh installed-consumer package check: the previously recorded npm connectivity limitation remains. Human visual and
+  language acceptance, CI at the pushed revision and package publication remain separate gates.
+
 ## Current recommendation and decisions
 
 - Make validated selection start uploading automatically in the primary workflow. Remove routine pre-upload review and
@@ -46,6 +76,31 @@ server support for independent upload sessions and name/version conflicts, desti
 responsive dimensions. Folder selection and partial acceptance are part of the accepted UX; this does not imply archive
 creation or server-side folder hierarchy. Verify these integration facts rather than asking the maintainer to guess
 numeric limits. The concise designer feedback was finalized separately in the review conversation.
+
+## Visual feedback revision: 2026-11-24
+
+The maintainer's rendered review supersedes the earlier cancellation-confirmation and separate modal-list choices:
+
+- Cancel all immediately cancels the current active snapshot. Do not display any confirmation in the dock or dialog.
+- Use the design's Uploading {count} files headline for unfinished transfer work; show a separate failed suffix only
+  when failures exist. Processing-only and terminal queues receive accurate status titles, never 0 active / 0 failed.
+- The compact dock is a neutral two-line card with a disclosure caret, status title, byte/percentage telemetry and a
+  bottom-edge progress track. It is not an outlined primary-action button. Carets inherit the same neutral text color in
+  expanded, compact and success-disclosure states; keyboard focus remains visibly outlined.
+- Reuse the existing upload panel renderer inside the application dialog. Add optional `UploadPanelComponent.inline`
+  (boolean, default false): render the same list/progress/success UI in place, without floating chrome or dock controls,
+  and suppress the floating presentation while this inline owner exists. Root queue/network ownership is unchanged. This
+  member is admitted for the real dialog composition: it removes duplicated product markup without adding a domain
+  protocol, dependency, root export or modal API. A modal does not maintain a second file-list implementation.
+- Validation alert summaries start at the top without paragraph top margin. Clear validation errors is the standard
+  Clarity `btn-link` action, with no custom text color. Place this action immediately below the tinted alert so default
+  action color and contrast remain valid. Use standard Clarity alert markup, bounded details and explicit spacing.
+- Application dialog content uses explicit vertical gaps between banner, picker and the shared inline panel. The shared
+  list has a bounded scroll height; the native dialog body can also scroll on constrained screens. Successful rows use
+  the same compact anatomy as the dock.
+
+Earlier 2026-11-24 passing results below establish the preceding revision only. This rendered-feedback revision must
+receive new focused unit/browser/visual validation and code review before it is reported as green.
 
 ## Applicable contracts
 
@@ -110,8 +165,8 @@ transport-agnostic lifecycle in `ngx-lift` plus a non-modal Clarity panel in `cl
 - **Presentation actions**: collapse/minimize preserves records and transfers; restore expands the compact dock. No
   active-state Close/X is offered. Explicit settled Close ends the displayed batch and clears its terminal records; it
   neither deletes uploaded artifacts nor requires a permanent history/reopening entry.
-- **Cancellation confirmation**: a warning about explicitly cancelling active work, separate from starting uploads or
-  hiding progress. It never appears merely because the user minimizes the panel.
+- **Batch cancellation**: an immediate action over the active snapshot in the displayed scope. No confirmation is shown;
+  successful records and existing failures remain available until explicit clearing or settled Close.
 - **Success summary row**: the collapsed representation of all `success` items ("Uploaded {0} files · {1}") with an
   expand toggle; failed items are never collapsed into it.
 
@@ -146,19 +201,19 @@ the library never parses a vendor response format.
 
 ## Use cases and acceptance
 
-| ID   | Actor and task                                    | Initial data/state                              | Action                                                                        | Observable outcome                                                                                                                               | Failure/recovery                                                                                        | Demo/test                                                       |
-| ---- | ------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| UC1  | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose an allowed file                                                        | Accepted selection automatically enqueues; item moves queued -> uploading -> processing -> success; no routine confirmation                      | Invalid files never enqueue; failures retain details and Retry                                          | Planned primary demo + transition test                          |
-| UC2  | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                                                 | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                           | `maxFiles` or `maxSize` rejection is visible and does not start a request                               | Planned playground + E2E multi-file fixture                     |
-| UC3  | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                                                  | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                       | Failed abort still marks local cancellation and reports an error event                                  | Planned unit race test + E2E                                    |
-| UC4  | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                                                   | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                      | Exhausted retries remain `error` with visible message                                                   | Planned unit test with stub adapter                             |
-| UC5  | Operator keeps working during upload              | Active panel                                    | Collapse, navigate in-app, restore                                            | Same queue continues; compact bar retains active and failed counts; no Close/X prompt                                                            | Focus returns safely; application-shell ownership survives host teardown                                | Planned keyboard/focus E2E                                      |
-| UC10 | Operator manages a mixed queue                    | Active, successful and failed items             | Cancel all, Retry failed, Clear completed, then explicitly Close when settled | Cancel affects explicit active scope; Clear completed removes successes only; settled Close dismisses the displayed terminal batch               | Failures remain available for retry until explicit Remove or Close; no automatic clearing on settlement | Planned mixed-state unit + E2E                                  |
-| UC6  | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                                          | Rejected files listed with localized validation error; accepted files still enqueue                                                              | Clear validation errors removes rejections without changing form value or queue                         | Planned unit + i18n check                                       |
-| UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                        | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected                 | Invalid selection sets a validation error on the control                                                | Planned form demo + type test                                   |
-| UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                   | Named progress, status changes and errors announced once per transition                                                                          | Repeated renders do not re-announce identical state                                                     | Planned interaction test; manual AT decision tracked separately |
-| UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                          | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success     | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                    | Planned headless unit test + Composition demo tab               |
-| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Add folder"            | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, usage hints and the used count | Invalid files are rejected with the same localized validation errors and never enqueue                  | Planned unit + E2E drop fixture                                 |
+| ID   | Actor and task                                    | Initial data/state                              | Action                                                                        | Observable outcome                                                                                                                           | Failure/recovery                                                                                        | Demo/test                                                       |
+| ---- | ------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| UC1  | Operator uploads one release/update bundle        | Idle page, single-selection trigger             | Choose an allowed file                                                        | Accepted selection automatically enqueues; item moves queued -> uploading -> processing -> success; no routine confirmation                  | Invalid files never enqueue; failures retain details and Retry                                          | Planned primary demo + transition test                          |
+| UC2  | Operator uploads several files                    | `multiple=true`, empty queue                    | Choose multiple allowed files                                                 | One item per file, aggregate progress; one active file in enqueue order with up to `concurrency` chunk requests for it                       | `maxFiles` or `maxSize` rejection is visible and does not start a request                               | Planned playground + E2E multi-file fixture                     |
+| UC3  | Operator cancels an active upload                 | One item `uploading`, `queued`, or `processing` | Click Cancel                                                                  | Chunk/polling aborted where applicable, adapter `cancel(uploadId)` called only when an `uploadId` exists, item `cancelled`                   | Failed abort still marks local cancellation and reports an error event                                  | Planned unit race test + E2E                                    |
+| UC4  | Operator retries a failed chunk                   | Item `error` after chunk 3 of 10                | Click Retry                                                                   | Upload re-sends only unacknowledged chunks, beginning with the lowest unacknowledged chunk; auto-retry respects `retryable`                  | Exhausted retries remain `error` with visible message                                                   | Planned unit test with stub adapter                             |
+| UC5  | Operator keeps working during upload              | Active panel                                    | Collapse, navigate in-app, restore                                            | Same queue continues; compact bar retains active and failed counts; no Close/X prompt                                                        | Focus returns safely; application-shell ownership survives host teardown                                | Planned keyboard/focus E2E                                      |
+| UC10 | Operator manages a mixed queue                    | Active, successful and failed items             | Cancel all, Retry failed, Clear completed, then explicitly Close when settled | Cancel affects explicit active scope; Clear completed removes successes only; settled Close dismisses the displayed terminal batch           | Failures remain available for retry until explicit Remove or Close; no automatic clearing on settlement | Planned mixed-state unit + E2E                                  |
+| UC6  | Developer validates selection before upload       | `accept`, `maxSize=512` MiB, `maxFiles=3`       | Choose oversized or disallowed files                                          | Count overflow rejects the new selection once; otherwise type/size errors reject individual files and valid siblings enqueue                 | Clear validation errors removes rejections without changing form value or queue                         | Planned unit + i18n check                                       |
+| UC7  | Developer binds the chosen files to a form        | Reactive form with `formControlName`            | Select and reset files                                                        | Control value is `readonly File[]`; owner reset yields a new empty array and removes its queue items; touched/disabled reflected             | Invalid selection sets a validation error on the control                                                | Planned form demo + type test                                   |
+| UC8  | Operator reads progress with assistive technology | Panel open                                      | Start, fail, retry, succeed                                                   | Named progress, status changes and errors announced once per transition                                                                      | Repeated renders do not re-announce identical state                                                     | Planned interaction test; manual AT decision tracked separately |
+| UC9  | Developer awaits a transfer programmatically      | Queue has the id returned by `enqueue`          | `await queue.completion(id)`, then register metadata                          | Promise resolves with the terminal item on success and rejects on error, cancellation or removal; the business write runs only after success | Unknown id rejects immediately; `retry(id)` re-arms a new promise for the next phase                    | Planned headless unit test + Composition demo tab               |
+| UC11 | Operator adds files by dragging or from a folder  | Dropzone visible, `multiple=true`               | Drag files or a folder onto the dropzone, or activate "Add folder"            | Dropped files run the same validation and enqueue path as the native input; the dropzone shows a drag-over state, per-selection limit hints  | Invalid files are rejected with the same localized validation errors and never enqueue                  | Planned unit + E2E drop fixture                                 |
 
 ## Industry evidence and current gaps
 
@@ -692,7 +747,7 @@ increment; see the verification record below.
   Upload is not installation, deployment, rollout approval or an overwrite decision; those retain their own controls.
 - The dock has two presentations, expanded and compact, with one disclosure action. Remove the separate size-toggle,
   minimize and active-state Close control set and its close-confirmation prompt. Collapse/minimize never cancels work.
-  The compact bar shows active and failed counts, a concise transfer summary and a bottom-edge progress indicator.
+  The compact card shows the design title, a second-line transfer summary and a bottom-edge progress indicator.
 - An application may compose a richer upload dialog around the same queue. While the modal is open, suppress the
   interactive dock and avoid leaving it above the modal or exposing duplicate controls. Minimizing the dialog transfers
   presentation to the dock without stopping work. Dialog state and queue scope remain application-owned; a static info
@@ -720,11 +775,10 @@ increment; see the verification record below.
 - Keep per-row Retry/Remove and batch Retry failed. An upload failure has actionable phase/error text. Distinguish
   failure to query status from a confirmed server processing failure; do not promise that retry can repair every
   validation or business rejection. Removing a failed row dismisses its record without deleting a server artifact.
-- Cancel all targets a visible, explicit scope and snapshots its queued/uploading/processing items. A confirmation names
-  the count and scope; its safe action keeps uploading, and confirming cancels those items without clearing successes or
-  existing failures. Files added after opening confirmation are not silently included. The global dock covers the whole
-  root queue; a feature dialog must not imply feature-only cancellation while invoking global scope. A failed server
-  cancellation remains visible: local stopped/cancelled does not prove server termination succeeded.
+- Cancel all immediately snapshots and cancels queued/uploading/processing items in its explicit scope, without a
+  confirmation step. Successful records and existing failures are not cleared. Items added after the click are not
+  silently included. The global dock covers the root queue; feature-specific dialogs must identify their own scope. A
+  failed server cancellation remains visible: local stopped/cancelled does not prove server termination succeeded.
 - Accepted D2: Close is available only when the displayed scope has no queued/uploading/processing work. Clicking it
   explicitly ends that displayed batch, clears its success/error/cancelled records and hides its surface. It does not
   delete uploaded files or cancel any other scope's work. Do not auto-close or auto-clear when a batch settles: failures
@@ -865,6 +919,8 @@ added. Existing consumers keep their signatures and the headless queue's uncondi
 | `UploadComponent.scope`             | Optional string input. Stable destination key for duplicate detection. If absent, use a stable destination-bound adapter instance. Scope changes affect new selections only.                | A file can be sent to different targets. Optional member on the existing picker; native File identity cannot express destination.                                  |
 | `UploadComponent.duplicateSelected` | String output containing the retained item id when Show details is activated. Applications locate their own modal row; an unsuppressed dock locates its own row.                            | Application-owned modal markup must not be reached through private DOM traversal.                                                                                  |
 | `UploadPanelComponent.suppressed`   | Boolean input, default false. Hide the shared dock while a dialog presents its queue. All live suppression owners must release suppression; anchor destruction releases only that owner.    | Actual modal/dock handoff; overlay lifetime differs from dialog lifetime. No queue work is cancelled.                                                              |
+| `UploadPanelComponent.inline`       | Boolean input, default false. Render the shared file/progress/success presentation in place and suppress the floating dock. The application retains its modal/footer.                       | Replaces the actual duplicate modal list identified during rendered review; no protocol or modal API is added.                                                     |
+| `UploadPanelComponent.showItem(id)` | Reveal/focus a retained item in this anchor's inline renderer, or the floating renderer for a default anchor. Unknown ids are no-ops.                                                       | The duplicate notice must be able to locate a collapsed successful row without reaching into private renderer DOM.                                                 |
 | `UploadError.recovery`              | Optional manual-recovery classification. The value `replace` hides Retry and shows corrected-file guidance; `retry` or absence preserves manual Retry. Normalize this field with the error. | Distinguishes permanent application-content rejection from transient request failure without vendor-text matching. Independent of automatic `retryable` semantics. |
 
 Adapter authors must capture target/configuration when constructing an adapter; a scope string cannot freeze a closure
@@ -979,9 +1035,9 @@ Implemented additional library messages (all library locales and aliases):
 
 | Key                         | English source                                                                           | Use                                |
 | --------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------- |
-| `upload.progress.counts`    | {0} active · {1} failed                                                                  | Expanded/compact status            |
-| `upload.progress.phases`    | {0} uploading · {1} queued · {2} processing                                              | Explicit active phases             |
-| `upload.cancel.confirm`     | Cancel {0} active uploads in this queue? Completed files will be kept.                   | Snapshot cancellation confirmation |
+| `upload.progress.counts`    | {0} active · {1} failed                                                                  | Legacy, not the visible title      |
+| `upload.progress.phases`    | {0} uploading · {1} queued · {2} processing                                              | Legacy; phases remain per row      |
+| `upload.cancel.confirm`     | Cancel {0} active uploads in this queue? Completed files will be kept.                   | Legacy, not rendered               |
 | `upload.transfer.remaining` | Estimated transfer time: {0}                                                             | Transfer-only estimate             |
 | `upload.replace`            | Choose a corrected file.                                                                 | Permanent content failure guidance |
 | `upload.reading`            | Reading files…                                                                           | Local folder enumeration           |
@@ -991,8 +1047,8 @@ Implemented additional library messages (all library locales and aliases):
 The application demo owns its banner, destination form, minimize action, API explanations and dialog labels in all
 eleven demo locales. Library dictionary aliases are preserved. Reuse existing Close, Cancel all, Retry failed and
 success summary messages where their meaning matches. The legacy `upload.confirm.*` close-prompt keys remain compatible;
-`upload.confirm.background` is reused for the safe cancellation-confirmation action. These translated implementations
-and automated dictionary checks do not constitute independent human language acceptance.
+all cancellation-confirmation keys are legacy aliases and are not rendered. These translated implementations and
+automated dictionary checks do not constitute independent human language acceptance.
 
 Accessibility contract:
 
@@ -1003,13 +1059,13 @@ Accessibility contract:
   renders do not re-announce identical values.
 - Collapse/restore, settled Close, Retry and removal controls are real buttons with meaningful names and visible focus.
   The disclosure exposes `aria-expanded`. Compact status includes failure counts as well as active work.
-- There is no active-state close-confirmation dialog. Cancel-all confirmation names its scope/count, initially focuses
-  the safe action and supports Escape without cancellation. Modal focus is contained; non-modal dock focus is not.
+- There is no active-state close or cancel-all confirmation dialog. Cancel all runs immediately. Modal focus stays
+  inside the dialog, including when its final success/error is removed; the non-modal dock does not trap focus.
 - The success disclosure has `aria-expanded`, count and size; its Clear completed action is a sibling button, not a
   nested interactive element. Failed rows never disappear into the success disclosure.
 - Explicit settled Close restores focus safely and dismisses the displayed terminal records. Automatic failure expansion
   uses a deduplicated polite announcement without moving focus. Announce phase changes, not every progress tick.
-- Keyboard/browser journeys cover selection, cancellation confirmation, retry, success-only clearing, collapse, restore,
+- Keyboard/browser journeys cover selection, immediate cancellation, retry, success-only clearing, collapse, restore,
   settled Close, Escape, in-app navigation and modal/dock handoff in both themes and RTL. Honor reduced motion,
   zoom/reflow and long labels. Reuse the existing semantic progress implementation or Clarity where it fits; replacing a
   progress element purely for its tag name is not an acceptance criterion.
@@ -1053,8 +1109,8 @@ historical passing results apply only to their earlier revisions.
   automatic clearing on settlement. No fixed history entry or reopen-after-dismiss behavior is required. Success-only
   clearing leaves errors, cancelled items, completion state and form value untouched. Retain the headless
   `clearCompleted()` terminal-purge regression and existing `restore()` semantics.
-- Test Cancel all's explicit scope and snapshot, new enqueue during confirmation, safe dismissal, cancellation failure
-  and transition to settled Close without accidental action substitution. Validate feature-dialog versus global scope.
+- Test immediate Cancel all with no confirmation, its active snapshot, subsequent additions, cancellation failure and
+  transition to settled Close without accidental action substitution. Validate feature-dialog versus global scope.
 - Test byte-weighted telemetry with one tiny and one large file; no false completion during processing; stable batch
   bookkeeping when successful records clear; appended/removed/retried/failed/cancelled files; unavailable ETA.
 - Test modal unmount without form reset, immutable destinations, late folder-scan callbacks after cancellation/logout,

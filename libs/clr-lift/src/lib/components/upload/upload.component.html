@@ -73,10 +73,7 @@
       }
     </div>
   </label>
-  @if (maxFiles() > 0) {
-    <span class="cll-upload__count">{{ 'upload.usedFiles' | translate: value().length : maxFiles() }}</span>
-  }
-  @if (value().length) {
+  @if (value().length && !autoEnqueue()) {
     <div class="cll-upload__names-row" cds-layout="horizontal gap:sm align:center">
       <span class="cll-upload__names">
         @if (value().length === 1) {
@@ -103,14 +100,18 @@
 }
 <div [id]="inputId + '-errors'" aria-live="polite" aria-atomic="true">
   @if (errors().length) {
-    <div class="alert alert-danger cll-upload__rejections">
-      <div class="alert-items">
-        <div class="alert-item">
-          <cds-icon shape="exclamation-triangle" aria-hidden="true" />
-          <div>
-            <p>{{ 'upload.validation.summary' | translate: errors().length }}</p>
+    <clr-alert class="cll-upload__rejections" [clrAlertType]="'danger'" [clrAlertClosable]="false">
+      <clr-alert-item
+        ><div class="alert-text">
+          @if (countError(); as error) {
+            <p class="cll-upload__rejection-summary">{{ 'upload.validation.maxFiles' | translate: error.message }}</p>
+          }
+          @if (fileErrors().length) {
+            <p class="cll-upload__rejection-summary">
+              {{ 'upload.validation.summary' | translate: fileErrors().length }}
+            </p>
             <ul class="cll-upload__errors">
-              @for (error of errors(); track $index) {
+              @for (error of fileErrors(); track $index) {
                 <li>
                   <strong class="cll-upload__error-name">{{ error.fileName }}</strong
                   >:
@@ -128,13 +129,13 @@
                 </li>
               }
             </ul>
-            <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
-              {{ 'upload.clearValidationErrors' | translate }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+          }
+        </div></clr-alert-item
+      ></clr-alert
+    >
+    <button type="button" class="btn btn-link btn-sm" (click)="clearValidationErrors()">
+      {{ 'upload.clearValidationErrors' | translate }}
+    </button>
   }
 </div>
 @if (duplicates().length) {
