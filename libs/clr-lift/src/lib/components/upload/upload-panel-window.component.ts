@@ -51,16 +51,13 @@ export class UploadPanelWindowComponent {
   private readonly injector = inject(Injector);
   readonly queue = inject(UploadQueueService);
   readonly announcement = signal('');
-  readonly closed = signal(false);
   readonly summaryExpanded = signal(false);
   readonly embedded = input(false);
   private readonly observedFailures = new Set<string>();
   private readonly transferItems = this.manager.transferItems;
   private readonly clock = signal(Date.now());
 
-  readonly visible = computed(
-    () => this.queue.items().length > 0 && !this.closed() && (this.embedded() || !this.manager.suppressed()),
-  );
+  readonly visible = computed(() => this.queue.items().length > 0 && (this.embedded() || !this.manager.suppressed()));
   readonly activeItems = computed(() => this.queue.items().filter((item) => ACTIVE_STATUSES.includes(item.status)));
   readonly errorItems = computed(() => this.queue.items().filter((item) => item.status === 'error'));
   readonly cancelledItems = computed(() => this.queue.items().filter((item) => item.status === 'cancelled'));
@@ -72,40 +69,56 @@ export class UploadPanelWindowComponent {
   readonly hasActive = computed(() => this.activeItems().length > 0);
   readonly title = computed(() => {
     let key = 'upload.title.complete';
-    let count = this.successItems().length;
+    const count = this.activeItems().length;
     if (this.hasActive()) {
-      key = this.uploadingCount() || this.queuedCount() ? 'upload.title.uploading' : 'upload.title.processing';
-      count = this.activeItems().length;
-    } else if (!count) {
-      key = this.errorItems().length ? 'upload.title.failed' : 'upload.title.cancelled';
-      count = this.errorItems().length || this.cancelledItems().length;
+      const transferring = this.uploadingCount() || this.queuedCount();
+      key = transferring ? 'upload.title.uploading' : 'upload.title.processing';
+      if (count === 1) key += 'One';
+    } else if (this.errorItems().length || (this.successItems().length && this.cancelledItems().length)) {
+      key = 'upload.title.finished';
+    } else if (!this.successItems().length) {
+      key = 'upload.title.cancelled';
     }
-    const title = this.translationService.translate(key, count);
-    return this.errorItems().length && key !== 'upload.title.failed'
-      ? `${title} · ${this.translationService.translate('upload.title.failed', this.errorItems().length)}`
-      : title;
+    return this.translationService.translate(key, count);
   });
+  readonly failureLabel = computed(() =>
+    this.errorItems().length ? this.translationService.translate('upload.title.failed', this.errorItems().length) : '',
+  );
+  readonly statusLabel = computed(() => [this.title(), this.failureLabel()].filter(Boolean).join(', '));
+  readonly completedBytes = computed(() => this.successItems().reduce((sum, item) => sum + item.file.size, 0));
   readonly uploadedTotal = computed(() => this.transferItems().reduce((sum, item) => sum + item.uploadedBytes, 0));
   readonly totalBytes = computed(() => this.transferItems().reduce((sum, item) => sum + item.file.size, 0));
   readonly transferProgress = computed(() =>
     this.totalBytes() ? Math.min(100, Math.floor((100 * this.uploadedTotal()) / this.totalBytes())) : 0,
   );
+  private readonly rateEstimate = signal({rate: 0, at: 0, since: 0, samples: 0});
   readonly remainingSeconds = computed(() => {
-    if (!this.uploadingCount() || this.clock() - this.lastProgressAt > 3000) return undefined;
-    const remaining = this.totalBytes() - this.uploadedTotal();
-    if (this.rateBytesPerSecond <= 0 || remaining <= 0) return undefined;
-    return Math.max(1, Math.round(remaining / this.rateBytesPerSecond));
+    const estimate = this.rateEstimate();
+    const now = this.clock();
+    if (
+      !this.uploadingCount() ||
+      estimate.samples < 2 ||
+      estimate.at - estimate.since < 2000 ||
+      now - estimate.at > 3000
+    ) {
+      return undefined;
+    }
+    const remaining = this.activeItems().reduce(
+      (sum, item) => sum + (item.status === 'processing' ? 0 : Math.max(0, item.file.size - item.uploadedBytes)),
+      0,
+    );
+    if (estimate.rate <= 0 || remaining <= 0) return undefined;
+    const seconds = Math.round(remaining / estimate.rate);
+    return seconds >= 3 ? seconds : undefined;
   });
 
   private readonly announced = new Set<string>();
-  private readonly seenTotal = signal(0);
   private lastSampleBytes = 0;
   private lastSampleAt = 0;
   private rateBytesPerSecond = 0;
   private lastProgressAt = 0;
-  private readonly itemSamples = new Map<string, {bytes: number; at: number}>();
-  private readonly itemSmoothed = new Map<string, number>();
-  private readonly itemRates = signal<Readonly<Record<string, number>>>({});
+  private sampleCount = 0;
+  private samplingStartedAt = 0;
 
   constructor() {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
@@ -128,45 +141,30 @@ export class UploadPanelWindowComponent {
       }
     });
     effect(() => {
-      const total = this.queue.aggregate().total;
-      if (total > this.seenTotal()) {
-        this.closed.set(false);
-      }
-      this.seenTotal.set(total);
-    });
-    effect(() => {
       const bytes = this.uploadedTotal();
-      const now = this.now();
-      if (this.lastSampleAt > 0 && bytes > this.lastSampleBytes && now > this.lastSampleAt) {
+      const now = Date.now();
+      if (bytes < this.lastSampleBytes || !this.totalBytes() || !this.hasActive()) {
+        this.rateBytesPerSecond = 0;
+        this.sampleCount = 0;
+      } else if (this.lastSampleAt > 0 && bytes > this.lastSampleBytes && now > this.lastSampleAt) {
+        if (!this.sampleCount || now - this.lastProgressAt > 3000) {
+          this.sampleCount = 0;
+          this.samplingStartedAt = now;
+          this.rateBytesPerSecond = 0;
+        }
         const instant = ((bytes - this.lastSampleBytes) / (now - this.lastSampleAt)) * 1000;
         this.rateBytesPerSecond = this.smoothRate(this.rateBytesPerSecond, instant);
-        this.lastProgressAt = Date.now();
+        this.lastProgressAt = now;
+        this.sampleCount += 1;
       }
-      if (bytes < this.lastSampleBytes || !this.totalBytes()) this.rateBytesPerSecond = 0;
+      this.rateEstimate.set({
+        rate: this.rateBytesPerSecond,
+        at: this.lastProgressAt,
+        since: this.samplingStartedAt,
+        samples: this.sampleCount,
+      });
       this.lastSampleBytes = bytes;
       this.lastSampleAt = now;
-    });
-    effect(() => {
-      const uploading = this.queue.items().filter((item) => item.status === 'uploading');
-      const now = this.now();
-      const next: Record<string, number> = {};
-      for (const item of uploading) {
-        const sample = this.itemSamples.get(item.id);
-        if (sample && now > sample.at && item.uploadedBytes > sample.bytes) {
-          const instant = ((item.uploadedBytes - sample.bytes) / (now - sample.at)) * 1000;
-          const rate = this.smoothRate(this.itemSmoothed.get(item.id) ?? 0, instant);
-          this.itemSmoothed.set(item.id, rate);
-          next[item.id] = rate;
-        }
-        this.itemSamples.set(item.id, {bytes: item.uploadedBytes, at: now});
-      }
-      for (const id of [...this.itemSamples.keys()]) {
-        if (!uploading.some((item) => item.id === id)) {
-          this.itemSamples.delete(id);
-          this.itemSmoothed.delete(id);
-        }
-      }
-      this.itemRates.set(next);
     });
     effect(() => {
       const items = this.queue.items();
@@ -205,7 +203,6 @@ export class UploadPanelWindowComponent {
 
   showItem(id: string): void {
     if (!this.queue.items().some((item) => item.id === id)) return;
-    this.closed.set(false);
     this.queue.restore();
     if (this.successItems().some((item) => item.id === id)) this.summaryExpanded.set(true);
     this.focusAfterRender(`[data-upload-id="${id}"]`);
@@ -214,7 +211,6 @@ export class UploadPanelWindowComponent {
   closeIdle(): void {
     if (this.hasActive()) return;
     this.queue.clearCompleted();
-    this.closed.set(true);
     this.restoreTrigger();
   }
 
@@ -304,20 +300,6 @@ export class UploadPanelWindowComponent {
     return minutes > 0 ? `${minutes}m ${rest}s` : `${seconds}s`;
   }
 
-  /** Smoothed transfer rate for an uploading item; undefined while no byte progress is observed. */
-  rateOf(item: UploadItem): number | undefined {
-    if (this.clock() - this.lastProgressAt > 3000) return undefined;
-    return this.itemRates()[item.id];
-  }
-
-  remainingFor(item: UploadItem): number | undefined {
-    const rate = this.rateOf(item);
-    if (!rate || rate <= 0) return undefined;
-    const remainingBytes = item.file.size - item.uploadedBytes;
-    if (remainingBytes <= 0) return undefined;
-    return Math.max(1, Math.round(remainingBytes / rate));
-  }
-
   private restoreRowFocus(id?: string): void {
     const active = this.host.nativeElement.ownerDocument.activeElement;
     if (!(active instanceof HTMLElement) || !this.host.nativeElement.contains(active)) return;
@@ -372,11 +354,6 @@ export class UploadPanelWindowComponent {
     return this.translationService.translate(`upload.announce.${item.status}`, item.file.name, detail);
   }
 
-  private now(): number {
-    return typeof performance !== 'undefined' ? performance.now() : Date.now();
-  }
-
-  /** 60/40 exponential blend that smooths an observed byte rate; the first sample seeds it. */
   private smoothRate(previous: number, instant: number): number {
     return previous > 0 ? previous * 0.6 + instant * 0.4 : instant;
   }

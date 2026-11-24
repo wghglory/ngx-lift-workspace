@@ -12,17 +12,24 @@
         type="button"
         class="cll-upload-panel__badge"
         (click)="restore()"
-        [attr.aria-label]="title()"
+        [attr.aria-label]="statusLabel()"
         aria-expanded="false"
       >
         <cds-icon class="cll-upload-panel__caret" shape="angle" direction="up" aria-hidden="true" />
         <span class="cll-upload-panel__compact-content">
-          <span class="cll-upload-panel__compact-title">{{ title() }}</span>
+          <span class="cll-upload-panel__title-line">
+            <span class="cll-upload-panel__compact-title">{{ title() }}</span>
+            @if (failureLabel()) {
+              <span class="label label-danger cll-upload-panel__failure">{{ failureLabel() }}</span>
+            }
+          </span>
           <span class="cll-upload-panel__aggregate"><ng-container [ngTemplateOutlet]="telemetry" /></span>
         </span>
-        <span class="cll-upload-panel__compact-track" aria-hidden="true"
-          ><span class="cll-upload-panel__compact-progress" [style.width.%]="transferProgress()"></span
-        ></span>
+        @if (!hasActive() || uploadingCount() || queuedCount()) {
+          <span class="cll-upload-panel__compact-track" aria-hidden="true"
+            ><span class="cll-upload-panel__compact-progress" [style.width.%]="transferProgress()"></span
+          ></span>
+        }
       </button>
     } @else {
       <div class="card cll-upload-panel__card" [class.cll-upload-panel__card--inline]="embedded()">
@@ -40,8 +47,30 @@
               </button>
             }
             <div class="cll-upload-panel__heading">
-              <h3 class="card-title cll-upload-panel__title" tabindex="-1">{{ title() }}</h3>
-              <div class="cll-upload-panel__aggregate"><ng-container [ngTemplateOutlet]="telemetry" /></div>
+              <div class="cll-upload-panel__title-line">
+                <h3 class="card-title cll-upload-panel__title" tabindex="-1">{{ title() }}</h3>
+                @if (failureLabel()) {
+                  <span class="label label-danger cll-upload-panel__failure">{{ failureLabel() }}</span>
+                }
+              </div>
+              @if (hasActive()) {
+                <div class="cll-upload-panel__aggregate"><ng-container [ngTemplateOutlet]="telemetry" /></div>
+                @if (uploadingCount() || queuedCount()) {
+                  <div class="cll-upload-panel__overall-progress">
+                    <div
+                      class="cll-upload-panel__bar"
+                      role="progressbar"
+                      [attr.aria-label]="'upload.panel.title' | translate"
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                      [attr.aria-valuenow]="transferProgress()"
+                    >
+                      <div class="cll-upload-panel__bar-fill" [style.width.%]="transferProgress()"></div>
+                    </div>
+                    <span class="cll-upload-panel__percent">{{ transferProgress() }}%</span>
+                  </div>
+                }
+              }
             </div>
             @if (!embedded()) {
               @if (hasActive()) {
@@ -97,24 +126,14 @@
                     ></div>
                   </div>
                   <div class="cll-upload-panel__meta">
-                    <span>{{ 'upload.status.' + item.status | translate }}</span>
-                    <span class="cll-upload-panel__bytes"
-                      >{{ formatBytes(item.uploadedBytes) }} / {{ formatBytes(item.file.size) }}</span
-                    >
-                    <span class="cll-upload-panel__rate">
-                      @if (rateOf(item); as rate) {
-                        {{ 'upload.rate' | translate: formatBytes(rate) }}
-                      }
-                    </span>
-                    <span class="cll-upload-panel__remaining">
-                      @if (remainingFor(item); as seconds) {
-                        <span
-                          [title]="'upload.transfer.remaining' | translate: formatRemaining(seconds)"
-                          [attr.aria-label]="'upload.transfer.remaining' | translate: formatRemaining(seconds)"
-                          >{{ formatRemaining(seconds) }}</span
-                        >
-                      }
-                    </span>
+                    @if (item.status === 'uploading') {
+                      {{
+                        'upload.transfer.bytes'
+                          | translate: formatBytes(item.uploadedBytes) : formatBytes(item.file.size)
+                      }}
+                    } @else {
+                      {{ 'upload.status.' + item.status | translate }}
+                    }
                   </div>
                 </div>
               </div>
@@ -190,13 +209,9 @@
                   (click)="toggleSummary()"
                 >
                   <cds-icon shape="angle" [attr.direction]="summaryExpanded() ? 'up' : 'down'" aria-hidden="true" />
-                  <span>{{
-                    'upload.summary.success'
-                      | translate
-                        : successItems().length
-                        : formatBytes(successItems().reduce((sum, item) => sum + item.file.size, 0))
-                  }}</span>
+                  <span>{{ 'upload.summary.success' | translate: successItems().length }}</span>
                 </button>
+                <span class="cll-upload-panel__summary-size">{{ formatBytes(completedBytes()) }}</span>
                 <button
                   type="button"
                   class="btn btn-sm btn-link cll-upload-panel__clear-completed"
@@ -239,22 +254,17 @@
 
 <ng-template #telemetry>
   <span class="cll-upload-panel__transfer-text">
-    @if (processingCount() && !uploadingCount() && !queuedCount()) {
-      {{ 'upload.status.processing' | translate }}
+    @if (hasActive()) {
+      {{ 'upload.transfer.bytes' | translate: formatBytes(uploadedTotal()) : formatBytes(totalBytes()) }}
     } @else {
-      {{
-        'upload.progress.detailsBytes'
-          | translate: transferProgress() : formatBytes(uploadedTotal()) : formatBytes(totalBytes())
-      }}
+      {{ formatBytes(totalBytes()) }}
     }
   </span>
   <span class="cll-upload-panel__remaining">
-    @if (hasActive() && remainingSeconds(); as seconds) {
-      <span
-        [title]="'upload.transfer.remaining' | translate: formatRemaining(seconds)"
-        [attr.aria-label]="'upload.transfer.remaining' | translate: formatRemaining(seconds)"
-        >{{ formatRemaining(seconds) }}</span
-      >
+    @if (remainingSeconds(); as seconds) {
+      <span [title]="'upload.transfer.remaining' | translate: formatRemaining(seconds)">
+        {{ 'upload.transfer.estimate' | translate: formatRemaining(seconds) }}
+      </span>
     }
   </span>
 </ng-template>

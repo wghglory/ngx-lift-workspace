@@ -34,7 +34,7 @@ test('S3 demo stages files and enforces overwrite protection', async ({page}, te
   await demo.getByRole('checkbox', {name: 'Overwrite existing objects'}).check();
   await picker.setInputFiles(file('readme.txt'));
   await start.click();
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 2 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (2)');
 });
 
 test('S3 PUT preserves bytes, encodes keys and snapshots the destination for queued files', async ({page}) => {

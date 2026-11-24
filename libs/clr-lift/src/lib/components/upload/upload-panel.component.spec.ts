@@ -86,6 +86,10 @@ describe('UploadPanelComponent', () => {
     expect(queue.items()[0].processingProgress).toBe(42);
     expect(panel().querySelector('[role="progressbar"]')?.getAttribute('aria-valuenow')).toBe('42');
     expect(panel().querySelector('.cll-upload-panel__bar--indeterminate')).toBeNull();
+    queue.minimize();
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__compact-title')!.textContent).toBe('Processing 1 file');
+    expect(panel().querySelector('.cll-upload-panel__compact-track')).toBeNull();
     queue.cancel(item.id);
     finish({status: 'success', progress: 100});
     await flush();
@@ -113,7 +117,7 @@ describe('UploadPanelComponent', () => {
     expect(queue.minimized()).toBe(true);
     const badge = panel().querySelector<HTMLButtonElement>('.cll-upload-panel__badge')!;
     expect(badge).not.toBeNull();
-    expect(badge.getAttribute('aria-label')).toBe('Uploading 1 files');
+    expect(badge.getAttribute('aria-label')).toBe('Uploading 1 file');
 
     badge.click();
     fixture.detectChanges();
@@ -244,7 +248,7 @@ describe('UploadPanelComponent', () => {
     await flush();
 
     const summary = panel().querySelector('.cll-upload-panel__summary')!;
-    expect(summary.textContent).toContain('Uploaded 1 files');
+    expect(summary.textContent).toContain('Completed (1)');
     expect(panel().textContent).toContain('broken.zip');
     expect(panel().textContent).toContain('A chunk could not be uploaded.');
 
@@ -506,11 +510,11 @@ describe('UploadPanelComponent', () => {
     queue.enqueue([uploadFile('large.zip', 18)], options(gate.adapter));
     await flush();
     expect(queue.items()[0].status).toBe('success');
-    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('10%');
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__clear-completed')!.click();
     await flush();
     expect(queue.items().some((item) => item.id === small.id)).toBe(false);
-    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('10%');
     gate.release();
   });
 
@@ -580,7 +584,7 @@ describe('UploadPanelComponent', () => {
     await flush();
     panel().querySelector<HTMLButtonElement>('.cll-upload-panel__clear-completed')!.click();
     await flush();
-    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('10%');
     const inline = TestBed.createComponent(UploadPanelComponent);
     inline.componentRef.setInput('inline', true);
     inline.detectChanges();
@@ -592,7 +596,7 @@ describe('UploadPanelComponent', () => {
     ).toBe(20);
     inline.destroy();
     await flush();
-    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('10%');
+    expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('10%');
     gate.release();
   });
 
@@ -634,5 +638,109 @@ describe('UploadPanelComponent', () => {
     await flush();
     expect(panel().querySelector('.cll-upload-panel__item')).not.toBeNull();
     expect(queue.items()[0].status).toBe('uploading');
+  });
+  it('separates the completed title, group count and size without separator chains', async () => {
+    const gate = blockedAdapter();
+    gate.release();
+    queue.enqueue([uploadFile('first.zip'), uploadFile('second.zip')], options(gate.adapter));
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__title')!.textContent).toBe('Upload complete');
+    expect(panel().querySelector('.cll-upload-panel__summary-toggle')!.textContent).toContain('Completed (2)');
+    expect(panel().querySelector('.cll-upload-panel__summary-size')!.textContent).toBe('8 B');
+    expect(panel().textContent).not.toContain('·');
+  });
+
+  it('shows a distinct failure label without claiming mixed results are all complete', async () => {
+    queue.enqueue(
+      [uploadFile('bad.zip')],
+      options({
+        initiate: async () => ({uploadId: 'bad'}),
+        uploadChunk: async () => {
+          throw {code: 'network', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+      }),
+    );
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__title')!.textContent).toBe('Uploads finished');
+    expect(panel().querySelector('.cll-upload-panel__failure')!.textContent).toBe('1 failed');
+  });
+
+  it('shows only an aggregate labeled estimate after sustained progress, then hides stale estimates', async () => {
+    vi.useFakeTimers({toFake: ['Date', 'setInterval', 'clearInterval']});
+    let progress: (bytes: number) => void = () => undefined;
+    const gate = blockedAdapter();
+    try {
+      queue.enqueue(
+        [uploadFile('large.zip', 10000)],
+        options(
+          {
+            ...gate.adapter,
+            uploadChunk: async (request) => {
+              progress = request.onProgress;
+              await new Promise<void>(() => undefined);
+            },
+          },
+          {chunkSize: 10000},
+        ),
+      );
+      await flush();
+      const estimate = () => panel().querySelector('.cll-upload-panel__remaining')!.textContent!.trim();
+      expect(estimate()).toBe('');
+      await vi.advanceTimersByTimeAsync(1000);
+      progress(100);
+      await flush();
+      expect(estimate()).toBe('');
+      await vi.advanceTimersByTimeAsync(100);
+      progress(110);
+      await flush();
+      await vi.advanceTimersByTimeAsync(1900);
+      await flush();
+      // A short burst followed by idle time is not sustained sampling.
+      expect(estimate()).toBe('');
+      progress(300);
+      await flush();
+      expect(estimate()).toBe('About 1m 37s left');
+      expect(panel().querySelector('.cll-upload-panel__meta')!.textContent).toContain('300 B of');
+      expect(panel().querySelector('.cll-upload-panel__rate')).toBeNull();
+      expect(panel().querySelector('.cll-upload-panel__meta .cll-upload-panel__remaining')).toBeNull();
+      await vi.advanceTimersByTimeAsync(4000);
+      await flush();
+      expect(estimate()).toBe('');
+    } finally {
+      for (const item of queue.items()) queue.cancel(item.id);
+      await flush();
+      vi.useRealTimers();
+    }
+  });
+  it('keeps queued metadata concise and removes row-level rate and ETA', async () => {
+    const gate = blockedAdapter();
+    queue.enqueue([uploadFile('first.zip'), uploadFile('second.zip')], options(gate.adapter));
+    await flush();
+    expect(panel().querySelector('[data-status="queued"] .cll-upload-panel__meta')!.textContent!.trim()).toBe('Queued');
+    expect(panel().querySelector('[data-status="uploading"] .cll-upload-panel__meta')!.textContent).toContain(
+      '0 B of 4 B uploaded',
+    );
+    expect(panel().querySelector('.cll-upload-panel__meta .cll-upload-panel__remaining')).toBeNull();
+    expect(panel().querySelector('.cll-upload-panel__rate')).toBeNull();
+    expect(panel().textContent).not.toContain('·');
+    gate.release();
+  });
+  it('reopens a smaller batch enqueued in the same render turn as settled Close', async () => {
+    const gate = blockedAdapter();
+    queue.enqueue(
+      [uploadFile('old-a.zip'), uploadFile('old-b.zip')],
+      options({...gate.adapter, uploadChunk: async () => undefined}),
+    );
+    await flush();
+    panel().querySelector<HTMLButtonElement>('.cll-upload-panel__close')!.click();
+    queue.enqueue([uploadFile('new.zip')], options(gate.adapter));
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__card')).not.toBeNull();
+    expect(panel().textContent).toContain('new.zip');
+    expect(panel().textContent).not.toContain('old-a.zip');
+    expect(panel().querySelector('.cll-upload-panel__aggregate')!.textContent).toContain('0 B of 4 B uploaded');
+    expect(panel().querySelector('.cll-upload-panel__overall-progress')!.textContent).toContain('0%');
+    gate.release();
   });
 });

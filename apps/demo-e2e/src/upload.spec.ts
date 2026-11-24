@@ -50,7 +50,7 @@ test('restores visible Browse focus after selection from the dropzone label', as
   await chooser.setFiles([zipFile('bundle.zip')]);
 
   const panel = page.locator('.cll-upload-panel');
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await panel.locator('.cll-upload-panel__done').click();
 
   await expect(host.locator('.cll-upload__browse')).toBeFocused();
@@ -88,7 +88,7 @@ test('uploads several files and collapses successes while failures stay pinned',
   await selectFiles(page, 'upload-demo-basic', [zipFile('first.zip'), zipFile('second.zip')]);
 
   const panel = page.locator('.cll-upload-panel');
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 2 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (2)');
   await expect(page.getByTestId('upload-demo-registered')).toContainText('2');
 
   await panel.locator('.cll-upload-panel__summary-toggle').click();
@@ -108,7 +108,7 @@ test('retries a failed item from the footer until it succeeds @cross-browser-smo
   await expect(panel.locator('[data-status="error"] .cll-upload-panel__error')).toHaveCount(1);
 
   await retryFailed.click();
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 2 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (2)');
   await expect(retryFailed).toHaveCount(0);
 });
 
@@ -136,7 +136,7 @@ test('active work offers collapse rather than Close and continues in the backgro
   await panel.locator('.cll-upload-panel__minimize').click();
   await expect(panel.locator('.cll-upload-panel__badge')).toBeVisible();
   await panel.locator('.cll-upload-panel__badge').click();
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 3 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (3)');
 });
 
 test('Cancel all immediately retains cancelled records until explicit Close', async ({page}) => {
@@ -193,7 +193,7 @@ test('composition transfers, registers and refreshes the query list', async ({pa
   await page.getByTestId('upload-demo-transfer').click();
 
   const panel = page.locator('.cll-upload-panel');
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await expect(page.getByTestId('upload-demo-registered-composition')).toContainText('1');
   await expect(page.getByTestId('upload-demo-bundles')).toContainText('container-image.tar');
 });
@@ -232,7 +232,7 @@ test('error rows expose keyboard-operable Retry and Remove actions', async ({pag
   await retry.focus();
   await expect(retry).toBeFocused();
   await retry.press('Enter');
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
 
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
   const nextError = panel.locator('.cll-upload-panel__item[data-status="error"]');
@@ -364,7 +364,7 @@ test('row retry, remove and cancel preserve keyboard focus on a stable window co
   const retry = panel.locator('[data-status="error"]').getByRole('button', {name: 'Retry', exact: true});
   await retry.focus();
   await retry.press('Enter');
-  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(panel.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await expect(header).toBeFocused();
 
   await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
@@ -406,7 +406,7 @@ test('modal files upload automatically and only one transfer view stays interact
   await launcher.click();
   const modal = page.locator('clr-modal').filter({has: page.locator('cll-upload')});
   await modal.locator('cll-upload input[type="file"]').first().setInputFiles(zipFile('modal.zip'));
-  await expect(modal.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(modal.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await expect(page.locator('.cdk-overlay-container .cll-upload-panel__card')).toHaveCount(0);
   await expect(modal.locator('.cll-upload-panel__list')).toBeVisible();
   await modal.getByRole('button', {name: 'Close', exact: true}).click();
@@ -468,13 +468,13 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
   ).toBe(true);
   await page.getByTestId('upload-demo-add-files').click();
   const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
-  await expect(panel.locator('.cll-upload-panel__title')).toContainText(/^Uploading \d+ files/);
+  await expect(panel.locator('.cll-upload-panel__title')).toContainText(/^Uploading \d+ files?/);
   const expandedColor = await panel
     .locator('.cll-upload-panel__minimize cds-icon')
     .evaluate((element) => getComputedStyle(element).color);
   await panel.locator('.cll-upload-panel__minimize').click();
   const compact = panel.locator('.cll-upload-panel__badge');
-  await expect(compact.locator('.cll-upload-panel__aggregate')).toContainText(/%.*of/);
+  await expect(compact.locator('.cll-upload-panel__aggregate')).toContainText(/of.*uploaded/);
   expect(await compact.evaluate((element) => getComputedStyle(element).textTransform)).not.toBe('uppercase');
   expect(await compact.locator('cds-icon').evaluate((element) => getComputedStyle(element).color)).toBe(expandedColor);
   const geometry = await compact.evaluate((element) => {
@@ -483,8 +483,8 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
     const before = element.getBoundingClientRect().height;
     const original = slot.innerHTML;
     const originalText = text.textContent;
-    slot.textContent = '1m 59s';
-    text.textContent = '100% · 999.9 MB of 999.9 MB';
+    slot.textContent = 'About 1m 59s left';
+    text.textContent = '999.9 MB of 999.9 MB uploaded';
     const withEstimate = element.getBoundingClientRect().height;
     slot.textContent = '';
     const withoutEstimate = element.getBoundingClientRect().height;
@@ -503,7 +503,7 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
 test('clearing the final completed item in the shared modal renderer keeps focus inside the dialog', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   await selectFiles(page, 'upload-demo-basic', [zipFile('complete.zip')]);
-  await expect(page.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(page.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await page.getByTestId('upload-demo-modal-open').click();
   const modal = page.locator('clr-modal').filter({has: page.locator('cll-upload')});
   await expect(modal.locator('cll-upload-panel-window')).toBeVisible();
@@ -529,6 +529,21 @@ test('count overflow rejects only the new selection once while size failures sta
   await input.setInputFiles([pdf('large.pdf', 2 * 1024 * 1024), pdf('another.pdf', 2 * 1024 * 1024), pdf('valid.pdf')]);
   await expect(host.locator('.cll-upload__error-name')).toHaveCount(2);
   await expect(host).toContainText('The file is larger than 1 MiB.');
-  await expect(page.locator('.cll-upload-panel__summary')).toContainText('Uploaded 1 files');
+  await expect(page.locator('.cll-upload-panel__summary')).toContainText('Completed (1)');
   await expect(host.locator('.cll-upload__selection')).toHaveCount(0);
+});
+
+test('a completed batch closes cleanly and a smaller new batch shows its own status', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await selectFiles(page, 'upload-demo-basic', [zipFile('first.zip'), zipFile('second.zip')]);
+  const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
+  await expect(panel.locator('.cll-upload-panel__title')).toHaveText('Upload complete');
+  await expect(panel.locator('.cll-upload-panel__summary-toggle')).toContainText('Completed (2)');
+  await expect(panel.locator('.cll-upload-panel__summary-size')).toBeVisible();
+  await panel.locator('.cll-upload-panel__close').click();
+  await selectFiles(page, 'upload-demo-failure', [zipFile('failing.zip')]);
+  await expect(panel.locator('.cll-upload-panel__failure')).toHaveText('1 failed');
+  await expect(panel.locator('.cll-upload-panel__title')).toHaveText('Uploads finished');
+  await expect(panel.locator('.cll-upload-panel__rate')).toHaveCount(0);
+  expect(await panel.innerText()).not.toContain('·');
 });

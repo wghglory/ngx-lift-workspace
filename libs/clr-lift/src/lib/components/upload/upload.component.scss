@@ -65,13 +65,13 @@
 }
 
 .cll-upload__dropzone-hint {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.25rem 0.75rem;
   margin: 0;
   font-size: var(--cds-alias-typography-fontsize-0, 0.5rem);
   color: var(--cds-alias-typography-color-300, var(--clr-color-neutral-600, #737373));
-
-  span + span::before {
-    content: ' · ';
-  }
 }
 
 .cll-upload__dropzone-actions {

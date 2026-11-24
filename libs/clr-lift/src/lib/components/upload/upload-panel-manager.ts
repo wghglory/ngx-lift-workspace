@@ -76,7 +76,9 @@ export class UploadPanelManager {
       const items = this.queue.items();
       const ids = new Set(items.map((item) => item.id));
       for (const id of this.scopes.keys()) if (!ids.has(id)) this.scopes.delete(id);
-      if (!items.length) this.transferHistory.clear();
+      // A disjoint set starts a new displayed batch, even if Close and enqueue happen in one render turn.
+      // Retain cleared successes only while at least one recorded item still connects the ongoing batch.
+      if (!items.some((item) => this.transferHistory.has(item.id))) this.transferHistory.clear();
       for (const [id, previous] of this.transferHistory) {
         if (!ids.has(id) && previous.status !== 'success') this.transferHistory.delete(id);
       }

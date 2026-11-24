@@ -163,8 +163,7 @@
 }
 
 .cll-upload-panel__meta,
-.cll-upload-panel__aggregate,
-.cll-upload-panel__error-detail {
+.cll-upload-panel__aggregate {
   font-size: 0.55rem;
   line-height: 0.85rem;
   font-variant-numeric: tabular-nums;
@@ -172,12 +171,7 @@
 
 .cll-upload-panel__meta {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.25rem;
-  > span + span:not(:empty)::before {
-    content: '·';
-    margin-inline-end: 0.25rem;
-  }
 }
 
 .cll-upload-panel__error {
@@ -287,9 +281,6 @@
 }
 
 // Progress samples must not change line count or panel height as estimates appear/disappear.
-.cll-upload-panel__card {
-  container-type: inline-size;
-}
 .cll-upload-panel__aggregate {
   display: flex;
   align-items: baseline;
@@ -298,8 +289,7 @@
   white-space: nowrap;
   overflow: hidden;
 }
-.cll-upload-panel__transfer-text,
-.cll-upload-panel__bytes {
+.cll-upload-panel__transfer-text {
   flex: 1;
   min-inline-size: 0;
   overflow: hidden;
@@ -307,15 +297,13 @@
   white-space: nowrap;
 }
 .cll-upload-panel__remaining {
-  flex: 0 0 3rem;
-  inline-size: 3rem;
+  flex: 0 1 auto;
+  max-inline-size: 50%;
+  min-inline-size: 0;
   text-align: end;
   white-space: nowrap;
-}
-.cll-upload-panel__rate {
-  flex: 0 0 3.5rem;
-  inline-size: 3.5rem;
-  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .cll-upload-panel__meta {
   flex-wrap: nowrap;
@@ -332,8 +320,25 @@
 .cll-upload-panel__item[data-status='error'] .cll-upload-panel__bar-fill {
   background: var(--clr-color-danger-600, #c21d00);
 }
-@container (max-width: 20rem) {
-  .cll-upload-panel__rate {
-    display: none;
+.cll-upload-panel__title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+}
+.cll-upload-panel__failure {
+  flex-shrink: 0;
+  margin: 0;
+}
+.cll-upload-panel__summary-size {
+  font-size: 0.6rem;
+  white-space: nowrap;
+}
+.cll-upload-panel__overall-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  .cll-upload-panel__bar {
+    flex: 1;
   }
 }
