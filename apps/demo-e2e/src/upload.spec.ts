@@ -535,6 +535,36 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
   expect(Math.abs(bounds!.y + bounds!.height - track!.y - track!.height)).toBeLessThanOrEqual(2);
 });
 
+test('keeps panel controls usable with doubled root text size', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  await page.evaluate(() => {
+    document.documentElement.style.fontSize = '32px';
+  });
+  await selectFiles(page, 'upload-demo-basic', [zipFile('large-text.zip')]);
+
+  const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
+  const viewport = page.viewportSize()!;
+  const expanded = await panel.boundingBox();
+  expect(expanded!.x).toBeGreaterThanOrEqual(0);
+  expect(expanded!.x + expanded!.width).toBeLessThanOrEqual(viewport.width);
+  const cancelAll = panel.getByRole('button', {name: 'Cancel all'});
+  await expect(cancelAll).toBeVisible();
+  const cancelAllBox = await cancelAll.boundingBox();
+  expect(cancelAllBox!.x + cancelAllBox!.width).toBeLessThanOrEqual(viewport.width);
+  await expect(
+    panel.locator('.cll-upload-panel__item').getByRole('button', {name: 'Cancel', exact: true}),
+  ).toBeVisible();
+  await panel.getByRole('button', {name: 'Minimize'}).click();
+
+  const badge = panel.locator('.cll-upload-panel__badge');
+  await expect(badge).toBeVisible();
+  const compact = await badge.boundingBox();
+  expect(compact!.x).toBeGreaterThanOrEqual(0);
+  expect(compact!.x + compact!.width).toBeLessThanOrEqual(viewport.width);
+  await badge.click();
+  await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
+});
+
 test('clearing the final completed item in the shared modal renderer keeps focus inside the dialog', async ({page}) => {
   await page.goto('/clr-lift/components/upload');
   await selectFiles(page, 'upload-demo-basic', [zipFile('complete.zip')]);

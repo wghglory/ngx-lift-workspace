@@ -193,11 +193,6 @@ export class UploadPanelWindowComponent {
     this.summaryExpanded.update((value) => !value);
   }
 
-  /** Settled Close is explicit; active work only offers collapse and cancellation. */
-  requestClose(): void {
-    this.closeIdle();
-  }
-
   clearSuccesses(): void {
     this.restoreRowFocus();
     for (const item of this.successItems()) this.queue.remove(item.id);
@@ -218,9 +213,10 @@ export class UploadPanelWindowComponent {
 
   onKeydown(event: Event): void {
     if (!(event instanceof KeyboardEvent)) return;
-    if (event.key !== 'Escape' || this.embedded()) return;
+    if (event.key !== 'Escape' || event.repeat || this.embedded()) return;
     event.preventDefault();
-    this.minimize();
+    if (this.hasActive()) this.minimize();
+    else this.closeIdle();
   }
 
   cancel(id: string): void {
@@ -345,7 +341,7 @@ export class UploadPanelWindowComponent {
 
   private restoreTrigger(): void {
     const target = this.manager.restoreTarget();
-    target?.focus();
+    if (target?.isConnected) target.focus();
   }
 
   private focusAfterRender(selector: string): void {

@@ -58,6 +58,7 @@ describe('upload public contracts', () => {
     expectTypeOf(item.progress).toEqualTypeOf<number>();
     expectTypeOf(item.uploadedBytes).toEqualTypeOf<number>();
     expectTypeOf(item.attempt).toEqualTypeOf<number>();
+    expectTypeOf(item.processingProgress).toEqualTypeOf<number | undefined>();
     expectTypeOf(item.uploadId).toEqualTypeOf<string | undefined>();
     expectTypeOf(item.error).toEqualTypeOf<UploadError | undefined>();
     // @ts-expect-error item snapshots are immutable
@@ -65,6 +66,17 @@ describe('upload public contracts', () => {
   });
 
   it('keeps the adapter and chunk request transport shape', () => {
+    const adapter = {} as UploadAdapter;
+    expectTypeOf(adapter.initiate).parameters.toEqualTypeOf<[File]>();
+    expectTypeOf(adapter.initiate).returns.toEqualTypeOf<Promise<{uploadId: string}>>();
+    expectTypeOf(adapter.uploadChunk).parameters.toEqualTypeOf<[UploadChunkRequest]>();
+    expectTypeOf(adapter.uploadChunk).returns.toEqualTypeOf<Promise<void>>();
+    expectTypeOf(adapter.combine).parameters.toEqualTypeOf<[{uploadId: string; totalChunks: number}]>();
+    expectTypeOf(adapter.combine).returns.toEqualTypeOf<Promise<void>>();
+    expectTypeOf(adapter.cancel).parameters.toEqualTypeOf<[string]>();
+    expectTypeOf(adapter.cancel).returns.toEqualTypeOf<Promise<void>>();
+    expectTypeOf(adapter.getStatus).toEqualTypeOf<((uploadId: string) => Promise<UploadStatusResult>) | undefined>();
+
     const request = {} as UploadChunkRequest;
     expectTypeOf(request.uploadId).toEqualTypeOf<string>();
     expectTypeOf(request.chunk).toEqualTypeOf<Blob>();

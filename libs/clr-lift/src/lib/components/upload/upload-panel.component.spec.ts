@@ -441,6 +441,55 @@ describe('UploadPanelComponent', () => {
     expect(queue.items()[0].status).toBe('uploading');
   });
 
+  it('closes an idle panel on Escape and restores focus to the last host', async () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    TestBed.inject(UploadPanelManager).setTrigger(trigger);
+    enqueueBlocked();
+    await flush();
+    queue.cancel(queue.items()[0].id);
+    await flush();
+
+    panel().querySelector<HTMLElement>('.cll-upload-panel__title')!.focus();
+    panel().dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}));
+    await flush();
+
+    expect(queue.items()).toEqual([]);
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
+  it('ignores repeated Escape so a key hold cannot clear failed retry records', async () => {
+    queue.enqueue(
+      [uploadFile('failed.zip')],
+      options({
+        initiate: async () => ({uploadId: 'failed'}),
+        uploadChunk: async () => {
+          throw {code: 'chunk-failed', phase: 'chunk'};
+        },
+        combine: async () => undefined,
+        cancel: async () => undefined,
+      }),
+    );
+    enqueueBlocked();
+    await flush();
+    panel().dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}));
+    await flush();
+    expect(queue.minimized()).toBe(true);
+    queue.cancel(queue.items().find((item) => item.status === 'uploading')!.id);
+    await flush();
+
+    panel().dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', repeat: true, bubbles: true}));
+    await flush();
+    expect(queue.items().some((item) => item.status === 'error')).toBe(true);
+    expect(queue.minimized()).toBe(true);
+
+    panel().dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true}));
+    await flush();
+    expect(queue.items()).toEqual([]);
+  });
+
   it('clears successful records without losing failures and closes mixed settled records explicitly', async () => {
     queue.enqueue(
       [uploadFile('ok.zip'), uploadFile('bad.zip')],

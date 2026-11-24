@@ -79,6 +79,12 @@ describe('UploadQueueService', () => {
     TestBed.resetTestingModule();
   });
 
+  it('uses the documented poll interval default when the option is not finite', async () => {
+    queue.enqueue([uploadFile('poll.zip', 2)], options(stubDebugAdapter(), {pollIntervalMs: Number.NaN}));
+    await flush();
+    expect(window.__uploadQueue!.snapshot().runtimes[0].options.pollIntervalMs).toBe(10_000);
+  });
+
   it('rejects existing completion immediately while remote cancellation is pending', async () => {
     const cleanup = deferred<void>();
     const adapter = {
