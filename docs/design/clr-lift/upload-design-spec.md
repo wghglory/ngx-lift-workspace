@@ -13,6 +13,18 @@ demo-default recommendations. Historical review and validation records below app
 maintainer authorized implementation, iterative code review, commit and push after finalizing the UX decisions. The
 validation record below distinguishes implemented changes from checks still in progress.
 
+## Native folder authorization and application confirmation
+
+The folder input uses `webkitdirectory`. A browser may display its own folder-sharing authorization before returning
+files to the component. This is browser-owned UI, not a library/application upload confirmation; neither can suppress
+that security prompt. Browse and folder selection otherwise share the default automatic validation/enqueue path. Any
+additional business review dialog belongs to the application, using `autoEnqueue=false` when staging is required.
+
+## Validation alert spacing: 2026-11-24
+
+Keep visible external spacing between the selection dropzone and the validation alert (0.75rem). The Clarity alert host
+must participate as a block for this margin to apply; the summary paragraph inside the alert retains zero top margin.
+
 ## Selection and telemetry refinement: 2026-11-24
 
 - Apply the file-count limit to each new selection after duplicate filtering, for both files and folders. If it exceeds

@@ -106,7 +106,8 @@
   overflow-wrap: anywhere;
 }
 .cll-upload__rejections {
-  margin-block-start: 0.5rem;
+  display: block;
+  margin-block-start: 0.75rem;
 }
 
 .cll-upload__rejection-summary {
