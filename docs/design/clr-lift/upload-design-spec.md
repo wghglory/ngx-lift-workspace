@@ -1131,8 +1131,7 @@ queue-wide, and uses the same root scope for Close; feature-scoped product dialo
 
 Use Clarity tokens, file input container, progress bar, buttons, alert styles and `cds-layout`. Light/dark, compact,
 narrow layouts, large text and RTL must be exercised in the demo. Owned messages are listed below; every key ships in
-`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`, plus any alias already present in a
-dictionary. Runtime English fallback is not delivery.
+`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`. Runtime English fallback is not delivery.
 
 The tables below list every message shipped in the library dictionaries. `upload.clearCompleted` describes the UI action
 on successful records only. The additional message inventory below reflects the implementation; independent human
@@ -1188,14 +1187,18 @@ acceptance remains separate.
 
 Current hierarchy messages (all library locales and aliases):
 
-| Key                          | English source      | Use                                    |
-| ---------------------------- | ------------------- | -------------------------------------- |
-| `upload.title.complete`      | Upload complete     | All-success batch heading              |
-| `upload.title.finished`      | Uploads finished    | Mixed/failed batch heading             |
-| `upload.title.uploadingOne`  | Uploading 1 file    | Singular transfer heading              |
-| `upload.title.processingOne` | Processing 1 file   | Singular processing heading            |
-| `upload.transfer.bytes`      | {0} of {1} uploaded | Aggregate and uploading-row bytes      |
-| `upload.transfer.estimate`   | About {0} left      | Meaningful aggregate transfer estimate |
+| Key                          | English source       | Use                                    |
+| ---------------------------- | -------------------- | -------------------------------------- |
+| `upload.title.complete`      | Upload complete      | All-success batch heading              |
+| `upload.title.finished`      | Uploads finished     | Mixed/failed batch heading             |
+| `upload.title.uploading`     | Uploading {0} files  | Plural transfer heading                |
+| `upload.title.processing`    | Processing {0} files | Plural processing heading              |
+| `upload.title.uploadingOne`  | Uploading 1 file     | Singular transfer heading              |
+| `upload.title.processingOne` | Processing 1 file    | Singular processing heading            |
+| `upload.title.cancelled`     | Uploads cancelled    | All-cancelled batch heading            |
+| `upload.title.failed`        | {0} failed           | Failure-count heading                  |
+| `upload.transfer.bytes`      | {0} of {1} uploaded  | Aggregate and uploading-row bytes      |
+| `upload.transfer.estimate`   | About {0} left       | Meaningful aggregate transfer estimate |
 
 Implemented additional library messages (all library locales and aliases):
 
@@ -1208,9 +1211,9 @@ Implemented additional library messages (all library locales and aliases):
 | `upload.duplicate`          | {0} is already selected or in this queue. Check the existing item for details. | Non-danger duplicate notice        |
 
 The application demo owns its banner, destination form, minimize action, API explanations and dialog labels in all
-eleven demo locales. Library dictionary aliases are preserved. Reuse existing Close, Cancel all, Retry failed and
-success summary messages where their meaning matches. These translated implementations and automated dictionary checks
-do not constitute independent human language acceptance.
+eleven demo locales. Reuse existing Close, Cancel all, Retry failed and success summary messages where their meaning
+matches. Retired close-prompt messages are not shipped; hosts own any replacement strings. These translated
+implementations and automated dictionary checks do not constitute independent human language acceptance.
 
 Accessibility contract:
 
