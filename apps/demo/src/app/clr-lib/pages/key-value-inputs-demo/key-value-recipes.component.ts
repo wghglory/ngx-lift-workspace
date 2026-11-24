@@ -9,7 +9,7 @@ import {
   KeyValueValue,
   KeyValueValueConfig,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -53,7 +53,7 @@ interface Recipe {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KeyValueRecipesComponent {
-  private readonly translations = inject(TranslationService);
+  private readonly translations = inject(ClrLiftI18nService);
   private readonly controls = {
     keySelect: this.control([{key: 'environment', value: 'production'}]),
     valueSelect: this.control([{key: 'environment', value: 'production'}]),

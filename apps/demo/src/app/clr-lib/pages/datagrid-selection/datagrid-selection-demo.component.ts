@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiTableComponent} from '../../../shared/components/api-table/api-table.component';
 import {ApiProperty} from '../../../shared/components/api-table/api-table.model';
@@ -55,7 +55,7 @@ import {TemplateOrganizationFormComponent} from './template-driven.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DatagridSelectionDemoComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly multipleTs = multipleTs;
   readonly multipleHtml = multipleHtml;

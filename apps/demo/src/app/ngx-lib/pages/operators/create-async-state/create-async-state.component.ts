@@ -4,7 +4,7 @@ import {AsyncPipe} from '@angular/common';
 import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService, AlertComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService, AlertComponent} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -96,7 +96,7 @@ export class StarterComponent {
   }
 }`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -3,8 +3,8 @@ import {FormArray, ReactiveFormsModule} from '@angular/forms';
 import {vi} from 'vitest';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {KeyValueFormGroup} from './key-value-form-group.type';
 import {KeyValueInputsComponent} from './key-value-inputs.component';
 
@@ -15,7 +15,7 @@ describe('KeyValueInputsComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [KeyValueInputsComponent, ReactiveFormsModule, TranslatePipe],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     fixture = TestBed.createComponent(KeyValueInputsComponent);
     component = fixture.componentInstance;

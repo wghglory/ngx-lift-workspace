@@ -36,13 +36,71 @@ Translations were AI-assisted and technically reviewed for API names, concurrenc
 placeholders. Independent language acceptance for all eleven locales was approved on 2026-11-08; see the
 [acceptance contract](accessibility-and-localization.md). Automated and technical review remain separate evidence.
 
+Applications set the initial language once at bootstrap. An explicit locale comes from the application's own preference
+source; without one the provider follows Angular's `LOCALE_ID`, then the browser locale on the browser platform, then
+English. The provider never persists a language, and runtime changes are forwarded to the same service.
+
+`app.config.ts` (bootstrap):
+
 ```typescript
-translationService.loadClarityCommonStrings('de', {close: 'Custom close'});
-translationService.setLanguage('de');
+import {ApplicationConfig} from '@angular/core';
+import {provideClrLiftI18n} from 'clr-lift';
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideClrLiftI18n({locale: 'de'})],
+};
+```
+
+`language.service.ts` (runtime, inside an injection context):
+
+```typescript
+import {inject, Injectable} from '@angular/core';
+import {ClrLiftI18nService} from 'clr-lift';
+
+@Injectable({providedIn: 'root'})
+export class LanguageService {
+  private readonly translationService = inject(ClrLiftI18nService);
+
+  use(lang: string): void {
+    this.translationService.loadClarityCommonStrings(lang, {close: 'Custom close'});
+    this.translationService.setLanguage(lang);
+  }
+}
 ```
 
 Every switch resets against upstream and English defaults before applying base and exact locale overrides. Custom
 partial locales therefore cannot retain strings from the previously selected language.
+
+### Locale that arrives after an API call
+
+Use `provideClrLiftI18n({locale})` only when the locale is known synchronously at bootstrap. When `LOCALE_ID` is the
+only source and no pre-render override is needed, the provider is unnecessary: `ClrLiftI18nService` reads that token on
+construction. When the locale comes from a preference API, keep `provideClrLiftI18n()` for the fallback and forward the
+response with `setLanguage()`. An app initializer can await the request before bootstrap:
+
+`app.config.ts` (excerpt; `PreferenceService` belongs to the application):
+
+```typescript
+import {ApplicationConfig, inject, provideAppInitializer} from '@angular/core';
+import {provideClrLiftI18n, ClrLiftI18nService} from 'clr-lift';
+import {PreferenceService} from './preference.service';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideClrLiftI18n(),
+    provideAppInitializer(() => {
+      const translationService = inject(ClrLiftI18nService);
+      return inject(PreferenceService)
+        .getLanguage()
+        .then((lang) => translationService.setLanguage(lang));
+    }),
+  ],
+};
+```
+
+If blocking bootstrap is not acceptable, call `setLanguage(lang)` from the component that receives the response. Do not
+pass `LOCALE_ID` into `locale`: the provider already uses that token as its fallback. See the
+[README](../../libs/clr-lift/README.md#-built-in-localization) for an SSR-safe browser-locale example.
 
 ## Shared services and query diagnostics
 

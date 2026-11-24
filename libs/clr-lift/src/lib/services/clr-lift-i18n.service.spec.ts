@@ -3,15 +3,15 @@ import {TestBed} from '@angular/core/testing';
 import {ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
 import {vi} from 'vitest';
 
-import {TranslationService} from './translation.service';
+import {ClrLiftI18nService} from './clr-lift-i18n.service';
 import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
 
-describe('TranslationService', () => {
-  let translationService: TranslationService;
+describe('ClrLiftI18nService', () => {
+  let translationService: ClrLiftI18nService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    translationService = TestBed.inject(TranslationService);
+    translationService = TestBed.inject(ClrLiftI18nService);
 
     translationService['language'] = 'en';
   });
@@ -176,7 +176,7 @@ describe('TranslationService', () => {
       'zh-CN': {greeting: '你好'},
     });
 
-    translationService.setLanguage('zh-CN', false);
+    translationService.setLanguage('zh-CN');
 
     expect(translationService.currentLanguage()).toBe('zh-CN');
     expect(translationService.getLanguage()).toBe('zh-CN');
@@ -190,17 +190,17 @@ describe('TranslationService', () => {
       fr: {greeting: 'Bonjour'},
     });
 
-    translationService.setLanguage('en', false);
+    translationService.setLanguage('en');
 
     expect(translationService.translateWithLanguage('example.greeting', 'fr')).toBe('Bonjour');
     expect(translationService.translateWithLanguage('example.greeting', 'es')).toBe('Hola');
   });
 });
 
-describe('TranslationService dictionary and script updates', () => {
+describe('ClrLiftI18nService dictionary and script updates', () => {
   it('refreshes cached computed messages when a dictionary is loaded or replaced', () => {
-    const service = TestBed.inject(TranslationService);
-    service.setLanguage('en', false);
+    const service = TestBed.inject(ClrLiftI18nService);
+    service.setLanguage('en');
     const message = computed(() => service.translate('lazy.greeting'));
     expect(message()).toContain('not found');
     service.loadTranslationsForComponent('lazy', {en: {greeting: 'Hello'}});
@@ -209,7 +209,7 @@ describe('TranslationService dictionary and script updates', () => {
     expect(message()).toBe('Updated');
   });
   it('resolves Traditional Chinese script tags before generic Chinese', () => {
-    const service = TestBed.inject(TranslationService);
+    const service = TestBed.inject(ClrLiftI18nService);
     service.loadTranslationsForComponent('test', {
       zh: {text: '简体'},
       'zh-CN': {text: '简体'},
@@ -220,8 +220,8 @@ describe('TranslationService dictionary and script updates', () => {
     expect(service.translateWithLanguage('test.text', 'zh-Hans')).toBe('简体');
   });
   it('deduplicates warnings and allows new warnings after a dictionary update', () => {
-    const service = TestBed.inject(TranslationService);
-    service.setLanguage('en', false);
+    const service = TestBed.inject(ClrLiftI18nService);
+    service.setLanguage('en');
     service.loadTranslationsForComponent('test', {en: {text: 'ok'}});
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
     service.translate('missing.key');
@@ -233,12 +233,12 @@ describe('TranslationService dictionary and script updates', () => {
 
 describe('Translation locale metadata', () => {
   it('sets document language and writing direction for selected locales', () => {
-    const service = TestBed.inject(TranslationService);
-    service.setLanguage('ar-EG', false);
+    const service = TestBed.inject(ClrLiftI18nService);
+    service.setLanguage('ar-EG');
     TestBed.tick();
     expect(document.documentElement.lang).toBe('ar-EG');
     expect(document.documentElement.dir).toBe('rtl');
-    service.setLanguage('bad_locale', false);
+    service.setLanguage('bad_locale');
     TestBed.tick();
     expect(service.locale()).toBe('en');
     expect(document.documentElement.dir).toBe('ltr');
@@ -246,22 +246,18 @@ describe('Translation locale metadata', () => {
 });
 
 describe('Translation storage and safe lookup', () => {
-  it('keeps the selected language when browser persistence is blocked', () => {
-    const service = TestBed.inject(TranslationService);
-    const storage = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
-      throw new Error('Blocked');
-    });
-    try {
-      expect(() => service.setLanguage('fr')).not.toThrow();
-      expect(service.getLanguage()).toBe('fr');
-      service.setLanguage('', false);
-      expect(service.getLanguage()).toBe('fr');
-    } finally {
-      storage.mockRestore();
-    }
+  it('does not write a stored language when the active language changes', () => {
+    const service = TestBed.inject(ClrLiftI18nService);
+    const storage = vi.spyOn(Storage.prototype, 'setItem');
+    service.setLanguage('fr');
+    expect(service.getLanguage()).toBe('fr');
+    expect(storage).not.toHaveBeenCalledWith('clr-lift-lang', 'fr');
+    service.setLanguage('');
+    expect(service.getLanguage()).toBe('fr');
+    storage.mockRestore();
   });
   it('does not treat inherited object names as messages or language dictionaries', () => {
-    const service = TestBed.inject(TranslationService);
+    const service = TestBed.inject(ClrLiftI18nService);
     service.loadTranslationsForComponent('', {en: {text: 'English'}});
     expect(service.translateWithLanguage('text', '')).toBe('English');
     expect(service.translateWithLanguage('toString', 'en')).toContain('not found');
@@ -273,8 +269,8 @@ describe('Translation storage and safe lookup', () => {
 
 describe('Translation cache stability', () => {
   it('does not invalidate consumers when identical component dictionaries are registered again', () => {
-    const service = TestBed.inject(TranslationService);
-    service.setLanguage('en-US', false);
+    const service = TestBed.inject(ClrLiftI18nService);
+    service.setLanguage('en-US');
     service.loadTranslationsForComponent('test', {en: {message: 'Hello'}});
     let reads = 0;
     const message = computed(() => {
@@ -297,10 +293,10 @@ describe('Clarity Common Strings dynamic synchronization', () => {
     TestBed.configureTestingModule({
       providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
     });
-    const service = TestBed.inject(TranslationService);
+    const service = TestBed.inject(ClrLiftI18nService);
     TestBed.flushEffects();
 
-    service.setLanguage('zh-CN', false);
+    service.setLanguage('zh-CN');
     TestBed.flushEffects();
 
     expect(commonStringsMock.localize).toHaveBeenCalledWith(
@@ -312,7 +308,7 @@ describe('Clarity Common Strings dynamic synchronization', () => {
       }),
     );
 
-    service.setLanguage('de', false);
+    service.setLanguage('de');
     TestBed.flushEffects();
 
     expect(commonStringsMock.localize).toHaveBeenCalledWith(
@@ -332,8 +328,8 @@ describe('Clarity Common Strings dynamic synchronization', () => {
     TestBed.configureTestingModule({
       providers: [{provide: ClrCommonStringsService, useValue: commonStringsMock}],
     });
-    const service = TestBed.inject(TranslationService);
-    service.setLanguage('en', false);
+    const service = TestBed.inject(ClrLiftI18nService);
+    service.setLanguage('en');
     TestBed.flushEffects();
 
     service.loadClarityCommonStrings('en', {
@@ -347,19 +343,19 @@ describe('Clarity Common Strings dynamic synchronization', () => {
     );
   });
   it('resets missing Clarity strings to English when switching to a partial custom locale', () => {
-    const translationService = TestBed.inject(TranslationService);
+    const translationService = TestBed.inject(ClrLiftI18nService);
     const clarity = TestBed.inject(ClrCommonStringsService);
-    translationService.setLanguage('de', false);
+    translationService.setLanguage('de');
     TestBed.tick();
     translationService.loadClarityCommonStrings('it', {close: 'Chiudi'});
-    translationService.setLanguage('it', false);
+    translationService.setLanguage('it');
     TestBed.tick();
     expect(clarity.keys.close).toBe('Chiudi');
     expect(clarity.keys.open).toBe('Open');
   });
 
   it('canonicalizes Clarity registrations and prefers exact regional overrides', () => {
-    const translationService = TestBed.inject(TranslationService);
+    const translationService = TestBed.inject(ClrLiftI18nService);
     translationService.loadTranslationsForComponent('', {de: {test: 'Test'}});
     translationService.loadClarityCommonStrings('DE-de', {close: 'Regional close'});
     expect(translationService.resolveClarityStrings('de-DE').close).toBe('Regional close');

@@ -20,7 +20,7 @@ import {ClarityModule} from '@clr/angular';
 import {QUERY_CLIENT, QueryClient, QueryClientDiagnostics, QueryEntryDiagnostics, QuerySnapshot} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {AlertComponent} from '../alert/alert.component';
 import {QueryDevtoolsLauncherDirective} from './query-devtools-launcher.directive';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
@@ -54,7 +54,7 @@ let nextPanelId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryDevtoolsComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly defaultClient = inject(QUERY_CLIENT);
   private readonly document = inject(DOCUMENT);
   private readonly injector = inject(Injector);

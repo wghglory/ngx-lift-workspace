@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal, viewChildren} from '@angular/core';
 import {ClarityModule, ClrTab} from '@clr/angular';
-import {AlertComponent, CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -85,7 +85,7 @@ export function certificateTabId(digests: CertificateDigests): string {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateDemoComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   inputs = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

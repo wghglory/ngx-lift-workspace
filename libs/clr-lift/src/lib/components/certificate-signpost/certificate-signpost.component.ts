@@ -5,7 +5,7 @@ import {ClarityModule} from '@clr/angular';
 import {differenceInDays} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {certificateTranslations} from './certificate.l10n';
 import {md5, sha1, sha256} from './certificate-crypto';
 import {extractDerFromPem, parseCertificate, X509Certificate} from './certificate-parser';
@@ -29,7 +29,7 @@ const STATUS_STYLES = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateSignpostComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   /** Internal minute-tick so expiry status updates as time passes; the browser clock is used, no time override is exposed. */
   private readonly currentTime = signal(Date.now());

@@ -1,6 +1,6 @@
 import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -13,7 +13,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageContainerDemoComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   pageContainerInputs = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

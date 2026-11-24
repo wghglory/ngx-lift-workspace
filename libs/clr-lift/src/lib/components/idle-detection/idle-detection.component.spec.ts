@@ -5,8 +5,8 @@ import {IdleDetectionService, IdleDetectionState} from 'ngx-lift';
 import {BehaviorSubject, Subject} from 'rxjs';
 import {vi, beforeEach, afterEach} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {IdleDetectionComponent} from './idle-detection.component';
 
 beforeEach(() => {
@@ -55,7 +55,7 @@ describe('IdleDetectionComponent', () => {
       imports: [IdleDetectionComponent],
       providers: [
         {provide: IdleDetectionService, useValue: mockIdleDetectionService},
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
         provideNoopAnimations(),
       ],
     }).compileComponents();
@@ -249,7 +249,7 @@ describe('IdleDetectionComponent service ownership', () => {
       imports: [IdleDetectionComponent],
       providers: [
         IdleDetectionService,
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
         provideNoopAnimations(),
       ],
     });

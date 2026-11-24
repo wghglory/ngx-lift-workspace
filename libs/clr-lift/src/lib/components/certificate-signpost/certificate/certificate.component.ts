@@ -3,7 +3,7 @@ import {ChangeDetectionStrategy, Component, computed, inject, input} from '@angu
 import {ClarityModule} from '@clr/angular';
 
 import {TranslatePipe} from '../../../pipes/translate.pipe';
-import {TranslationService} from '../../../services/translation.service';
+import {ClrLiftI18nService} from '../../../services/clr-lift-i18n.service';
 import {certificateTranslations} from '../certificate.l10n';
 import {X509Certificate} from '../certificate-parser';
 import {CertificateStatus} from '../certificate-status.model';
@@ -16,7 +16,7 @@ import {CertificateStatus} from '../certificate-status.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   certificate = input.required<X509Certificate>();
   certificateStatus = input.required<CertificateStatus>();

@@ -21,7 +21,7 @@ import {createAsyncState, isEqual} from 'ngx-lift';
 import {debounceTime, distinctUntilChanged, shareReplay, Subject, Subscription, switchMap, tap} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {TimelineBaseComponent} from './timeline-base.component';
 import {TimelineStep} from './timeline-step.type';
 import {timelineWizardTranslations} from './timeline-wizard.l10n';
@@ -36,7 +36,7 @@ import {TimelineWizardService} from './timeline-wizard.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimelineWizardComponent implements AfterViewInit {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
   private patchTimers = new Set<ReturnType<typeof setTimeout>>();

@@ -17,7 +17,7 @@ import {
   SpinnerComponent,
   TooltipModule,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -39,7 +39,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TooltipDemoComponent implements OnInit {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {

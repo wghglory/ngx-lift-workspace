@@ -264,7 +264,7 @@ export class CertificateImportComponent {
 |                    | `KeyValueControlComponent`     | `cll-key-value-control`    | Ordered array CVA with text/select/typed editors, custom validation, unique pairs and form integration. |
 |                    | `DatagridSelectionComponent`   | `cll-datagrid-selection`   | Native Clarity datagrid CVA preserving stable keys, scoped select-all, availability and loading guards. |
 | **Theming & i18n** | `ThemeToggleComponent`         | `cll-theme-toggle`         | Light/dark theme switch with Clarity token synchronization & persistence.                               |
-|                    | `TranslationService`           | Injectable Service         | Runtime language selection, dictionary registration and fallback.                                       |
+|                    | `ClrLiftI18nService`           | Injectable Service         | Runtime language selection, dictionary registration and fallback.                                       |
 |                    | `TranslatePipe`                | `translate`                | Reactive pipe for localized component labels and messages.                                              |
 | **Overlays**       | `CalloutComponent`             | `cll-callout`              | Lightweight contextual notice box with subtle borders.                                                  |
 |                    | `CertificateSignpostComponent` | `cll-certificate-signpost` | Interactive X.509 certificate inspector showing issuer, validity, and fingerprint details.              |
@@ -304,18 +304,96 @@ Brazilian Portuguese and Russian, with regional fallback. The libraries and the 
 dictionaries. Key/placeholder checks establish dictionary completeness; independent native-speaker acceptance remains
 separate. Applications own translations for their content and can register additional dictionaries.
 
-Switch language on the fly via `TranslationService`:
+### Bootstrap: the language is already known
+
+Use `provideClrLiftI18n` when the locale is available synchronously at bootstrap, for example from local storage, a
+server-rendered value, or static configuration. It accepts an explicit locale, otherwise follows Angular's `LOCALE_ID`,
+then `navigator.language` on the browser, then English. The provider never persists a language: the application owns
+preference storage.
+
+`app.config.ts`:
+
+```typescript
+import {ApplicationConfig} from '@angular/core';
+import {provideClrLiftI18n} from 'clr-lift';
+
+// Application-owned preference; replace with your real source.
+function readPreference(): string | undefined {
+  return typeof localStorage === 'undefined' ? undefined : (localStorage.getItem('app-lang') ?? undefined);
+}
+
+export const appConfig: ApplicationConfig = {
+  providers: [provideClrLiftI18n({locale: readPreference()})],
+};
+```
+
+If the application has no separate language source, use `provideClrLiftI18n()` and let `LOCALE_ID` decide. Passing
+`LOCALE_ID` into `locale` is redundant — the provider already reads that token. When `LOCALE_ID` is the only source and
+no pre-render override is needed, the provider itself is unnecessary: `ClrLiftI18nService` reads that token on
+construction. Use `locale` only when the value differs from `LOCALE_ID`. To follow the browser in an app that shares its
+config between server and browser, guard the factory:
+
+```typescript
+import {isPlatformBrowser} from '@angular/common';
+import {inject, LOCALE_ID, PLATFORM_ID} from '@angular/core';
+
+{provide: LOCALE_ID, useFactory: () => isPlatformBrowser(inject(PLATFORM_ID)) ? navigator.language || 'en' : 'en'}
+```
+
+The provider does not change `LOCALE_ID`; applications that need localized date/number formatting still provide it and
+register CLDR data themselves.
+
+### Bootstrap: the language comes from an API
+
+When the language is only known after an asynchronous call, do not pass `locale` to the provider. Keep
+`provideClrLiftI18n()` for the initial fallback and forward the resolved language to `ClrLiftI18nService.setLanguage()`.
+An Angular app initializer can wait for the call before the app starts, avoiding a flash of the fallback language:
+
+`app.config.ts`:
+
+```typescript
+import {ApplicationConfig, inject, Injectable, provideAppInitializer} from '@angular/core';
+import {provideClrLiftI18n, ClrLiftI18nService} from 'clr-lift';
+
+@Injectable({providedIn: 'root'})
+export class PreferenceService {
+  getLanguage(): Promise<string> {
+    return fetch('/api/preferences/language').then((response) => response.text());
+  }
+}
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideClrLiftI18n(),
+    provideAppInitializer(() => {
+      const translationService = inject(ClrLiftI18nService);
+      return inject(PreferenceService)
+        .getLanguage()
+        .then((lang) => translationService.setLanguage(lang));
+    }),
+  ],
+};
+```
+
+If the application should not block on the request, call the same `setLanguage(lang)` from the component or service that
+receives the response instead. `setLanguage` updates clr-lift strings and Clarity common strings immediately and never
+writes preference storage; persist the choice in the application's own service.
+
+### Runtime language selection
+
+Switch language on the fly through the same setter:
 
 ```typescript
 // Inside a component/service injection context.
 import {inject} from '@angular/core';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 
-const translationService = inject(TranslationService);
-
-// Change locale at runtime - all clr-lift components react immediately!
+const translationService = inject(ClrLiftI18nService);
 translationService.setLanguage('zh-CN');
 ```
+
+See the
+[locale provider design spec](https://github.com/wghglory/ngx-lift-workspace/blob/main/docs/design/clr-lift/locale-provider-design-spec.md).
 
 ---
 

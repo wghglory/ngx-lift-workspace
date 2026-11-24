@@ -1,7 +1,7 @@
 import {Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {BreadcrumbComponent} from './breadcrumb.component';
 import {BreadcrumbItem} from './breadcrumb.model';
 
@@ -26,7 +26,7 @@ class Host {
 describe('Breadcrumb public host', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [Host]});
-    TestBed.inject(TranslationService).setLanguage('en', false);
+    TestBed.inject(ClrLiftI18nService).setLanguage('en');
   });
 
   it('renders current text, emits the exact frozen ancestor and never submits a native form', () => {
@@ -75,7 +75,7 @@ describe('Breadcrumb public host', () => {
   it('updates mounted default landmark names and depth for all dictionary aliases', () => {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const translation = TestBed.inject(TranslationService);
+    const translation = TestBed.inject(ClrLiftI18nService);
     for (const [locale, name] of [
       ['zh', '面包屑导航'],
       ['zh-Hant', '麵包屑導覽'],
@@ -83,7 +83,7 @@ describe('Breadcrumb public host', () => {
       ['it', 'Percorso di navigazione'],
       ['en-US', 'Breadcrumb'],
     ]) {
-      translation.setLanguage(locale, false);
+      translation.setLanguage(locale);
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('nav').getAttribute('aria-label')).toBe(name);
       expect(fixture.nativeElement.querySelectorAll('nav')[1].getAttribute('aria-label')).toBe('Secondary');
@@ -222,8 +222,8 @@ describe('Breadcrumb public host', () => {
     const element: HTMLElement = fixture.nativeElement;
     const filter = element.querySelector<HTMLInputElement>('input');
     if (!filter) throw new Error('breadcrumb: input not found');
-    const translation = TestBed.inject(TranslationService);
-    translation.setLanguage('tr', false);
+    const translation = TestBed.inject(ClrLiftI18nService);
+    translation.setLanguage('tr');
     fixture.detectChanges();
     filter.value = 'istanbul';
     filter.dispatchEvent(new Event('input'));
@@ -234,7 +234,7 @@ describe('Breadcrumb public host', () => {
     filter.dispatchEvent(new Event('input'));
     fixture.detectChanges();
     expect(element.querySelector('.panel-list a')?.getAttribute('href')).toBe('/go/8');
-    translation.setLanguage('zh-CN', false);
+    translation.setLanguage('zh-CN');
     fixture.detectChanges();
     expect(element.querySelector('input')).toBe(filter);
     expect(filter.value).toBe('Cafe\u0301');
@@ -266,8 +266,8 @@ describe('Breadcrumb public host', () => {
           href: `/go/${index}`,
         })),
       );
-      const translation = TestBed.inject(TranslationService);
-      translation.setLanguage('tr', false);
+      const translation = TestBed.inject(ClrLiftI18nService);
+      translation.setLanguage('tr');
       fixture.detectChanges();
       const element: HTMLElement = fixture.nativeElement;
       const panel = element.querySelector<HTMLElement>('[popover]');
@@ -310,7 +310,7 @@ describe('Breadcrumb public host', () => {
       fixture.detectChanges();
       expect(element.querySelector('[role="status"]')?.textContent).toContain('Matching ancestors: 1');
       element.querySelector<HTMLAnchorElement>('.panel-list a')?.focus();
-      translation.setLanguage('en', false);
+      translation.setLanguage('en');
       fixture.detectChanges();
       expect(element.querySelector('[role="status"]')?.textContent?.trim()).toBe('');
       expect(trigger.getAttribute('aria-expanded')).toBe('false');

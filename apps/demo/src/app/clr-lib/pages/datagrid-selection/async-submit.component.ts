@@ -9,7 +9,7 @@ import {
   Validators,
 } from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
 import {filter, firstValueFrom} from 'rxjs';
 
@@ -34,7 +34,7 @@ const eligibility: AsyncValidatorFn = (control) =>
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AsyncSubmitComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly organizationService = inject(OrganizationService);
 
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));

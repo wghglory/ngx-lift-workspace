@@ -260,7 +260,7 @@ import {
 } from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule, ClrDatagrid} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
 import {STATUS_KEYS, type Organization} from './organization-example.data';
 import {OrganizationService} from './organization.service';
@@ -272,7 +272,7 @@ import {OrganizationService} from './organization.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataServicePolicyFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly organizationService = inject(OrganizationService);
   private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
@@ -720,7 +720,7 @@ import {queryResource} from 'ngx-lift';
 import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy, viewChild} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule, ClrDatagrid} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
 import {StatusFilter} from './status.filter';
 import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
@@ -746,7 +746,7 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 })
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));
@@ -856,7 +856,7 @@ import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, output, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {toSignalForm} from 'ngx-lift';
 
 import {OrganizationPickerComponent} from './organization-picker.component';
@@ -868,7 +868,7 @@ import {OrganizationPickerComponent} from './organization-picker.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PolicyFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({
@@ -1080,9 +1080,9 @@ application. Examples use a fixed scope. A scoped picker accepts scope from its 
 the parent owns scope transitions and edit baselines.
 
 appConfig registers these example messages once. Component templates use the translate pipe without registering messages
-or injecting TranslationService just for startup. If normal application setup already loads these keys, omit
+or injecting ClrLiftI18nService just for startup. If normal application setup already loads these keys, omit
 registerExampleMessages and its initializer. A translation pipe looks up loaded messages; it does not register a
-dictionary. The advanced validation-message computed still uses TranslationService in TypeScript. All messages cover the
+dictionary. The advanced validation-message computed still uses ClrLiftI18nService in TypeScript. All messages cover the
 supported locales; language and assistive-technology acceptance are tracked in the
 [acceptance contract](../../guides/accessibility-and-localization.md).
 
@@ -1102,7 +1102,7 @@ display it.
 ```typescript
 import {provideHttpClient} from '@angular/common/http';
 import {inject, provideAppInitializer, type ApplicationConfig} from '@angular/core';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {provideQueryClient} from 'ngx-lift';
 import {registerExampleMessages} from './organization-example.messages';
 
@@ -1110,7 +1110,7 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideHttpClient(),
     provideQueryClient(),
-    provideAppInitializer(() => registerExampleMessages(inject(TranslationService))),
+    provideAppInitializer(() => registerExampleMessages(inject(ClrLiftI18nService))),
   ],
 };
 ```
@@ -1254,7 +1254,7 @@ API to implement this. See the
 ### organization-example.messages.ts
 
 ```typescript
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 
 // Independent language acceptance remains a separate gate.
 export const EXAMPLE_MESSAGES: Record<string, Record<string, string>> = {
@@ -1491,7 +1491,7 @@ export const EXAMPLE_MESSAGES: Record<string, Record<string, string>> = {
   },
 };
 
-export function registerExampleMessages(service: TranslationService): void {
+export function registerExampleMessages(service: ClrLiftI18nService): void {
   service.loadTranslationsForComponent('organizationExample', EXAMPLE_MESSAGES);
 }
 ```

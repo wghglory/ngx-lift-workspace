@@ -1,10 +1,10 @@
 import {describe, expect, it} from 'vitest';
 
-import {MockTranslationService} from './translation.service.mock';
+import {MockClrLiftI18nService} from './clr-lift-i18n.service.mock';
 
-describe('MockTranslationService', () => {
+describe('MockClrLiftI18nService', () => {
   it('exposes a reactive language signal', () => {
-    const service = new MockTranslationService();
+    const service = new MockClrLiftI18nService();
     expect(service.currentLanguage()).toBe('en');
     expect(service.locale()).toBe('en');
     expect(service.getLanguage()).toBe('en');
@@ -14,7 +14,7 @@ describe('MockTranslationService', () => {
   });
 
   it('returns deterministic translations and tolerates registrations', () => {
-    const service = new MockTranslationService();
+    const service = new MockClrLiftI18nService();
     expect(service.translate('any.key', 'arg')).toBe('TranslatedText');
     expect(service.translateWithLanguage('any.key', 'fr')).toBe('TranslatedText');
     expect(() => service.loadTranslationsForComponent('component', {en: {}})).not.toThrow();

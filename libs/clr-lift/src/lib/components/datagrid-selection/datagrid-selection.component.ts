@@ -26,7 +26,7 @@ import {ClrCommonFormsModule, ClrDatagrid, ClrDatagridRow, SelectionType} from '
 import {Subscription} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {datagridSelectionTranslations} from './datagrid-selection.l10n';
 
 let nextId = 0;
@@ -164,7 +164,7 @@ export class DatagridSelectionComponent<T = unknown> implements ControlValueAcce
   };
 
   constructor() {
-    inject(TranslationService).loadTranslationsForComponent('datagrid-selection', datagridSelectionTranslations);
+    inject(ClrLiftI18nService).loadTranslationsForComponent('datagrid-selection', datagridSelectionTranslations);
     for (const name of ['click', 'keydown', 'change']) this.host.addEventListener(name, this.guard, true);
     this.host.addEventListener('change', this.radioChange);
     this.host.addEventListener('click', this.rowClick);

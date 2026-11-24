@@ -12,7 +12,7 @@ import {
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClrDatagridSortOrder} from '@clr/angular';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {queryResource} from 'ngx-lift';
 import {Subscription} from 'rxjs';
 
@@ -35,7 +35,7 @@ import {ServerNameFilter} from './server-name.filter';
 /** Reusable business picker: owns the paged server query and native grid, but no form control of its own. */
 export class ServerOrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(ServerOrganizationService);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly nameFilterSubscription: Subscription;
 
   /** The page-owned control bound directly to the single value-control module. */

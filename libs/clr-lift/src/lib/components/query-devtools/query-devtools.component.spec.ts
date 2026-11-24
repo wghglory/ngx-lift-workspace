@@ -6,7 +6,7 @@ import {ClrDatagridColumn, ClrDatagridPagination, ClrDatagridSortOrder} from '@c
 import {QUERY_CLIENT, QueryClient} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {QueryDevtoolsComponent} from './query-devtools.component';
 import {queryDevtoolsTranslations} from './query-devtools.l10n';
 
@@ -36,7 +36,7 @@ describe('QueryDevtoolsComponent', () => {
 
   function mount(): void {
     fixture = TestBed.createComponent(QueryDevtoolsComponent);
-    TestBed.inject(TranslationService).setLanguage('en', false);
+    TestBed.inject(ClrLiftI18nService).setLanguage('en');
     fixture.detectChanges();
   }
 
@@ -442,7 +442,7 @@ describe('QueryDevtoolsComponent', () => {
     mount();
     click('Query devtools');
     expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations['en']['empty']);
-    TestBed.inject(TranslationService).setLanguage('zh-CN', false);
+    TestBed.inject(ClrLiftI18nService).setLanguage('zh-CN');
     fixture.detectChanges();
     expect(fixture.nativeElement.textContent).toContain('查询开发工具');
     expect(fixture.nativeElement.textContent).toContain(queryDevtoolsTranslations['zh-CN']['empty']);

@@ -2,7 +2,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject, signal, DestroyRef} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {
   aggregatePaginatedKubernetesResources,
   KubernetesList,
@@ -47,7 +47,7 @@ export interface DemoPod extends KubernetesObject {
 })
 export class KubernetesPaginationComponent {
   private readonly destroyRef = inject(DestroyRef);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   aggregateParameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {startWithTap} from 'ngx-lift';
 import {delay, finalize, of, tap} from 'rxjs';
 
@@ -23,7 +23,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartWithTapComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

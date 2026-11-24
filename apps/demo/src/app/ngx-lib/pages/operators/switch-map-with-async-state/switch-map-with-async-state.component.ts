@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {switchMapWithAsyncState} from 'ngx-lift';
 import {Subject, startWith, timer, map} from 'rxjs';
 
@@ -97,7 +97,7 @@ export class StarterComponent {
 }`);
 
   private http = inject(HttpClient);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

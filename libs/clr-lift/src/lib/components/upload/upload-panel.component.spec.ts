@@ -4,7 +4,7 @@ import {OverlayContainer} from '@angular/cdk/overlay';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {UploadPanelManager} from './upload-panel-manager';
 import {UploadPanelComponent} from './upload-panel.component';
 import {UploadPanelWindowComponent} from './upload-panel-window.component';
@@ -33,12 +33,12 @@ function blockedAdapter(): {adapter: UploadAdapter; release(): void} {
 
 describe('UploadPanelComponent', () => {
   let queue: UploadQueueService;
-  let translation: TranslationService;
+  let translation: ClrLiftI18nService;
   let fixture: ReturnType<typeof TestBed.createComponent<UploadPanelComponent>>;
 
   function bootstrap(): void {
     TestBed.configureTestingModule({imports: [UploadPanelComponent, UploadPanelWindowComponent]});
-    translation = TestBed.inject(TranslationService);
+    translation = TestBed.inject(ClrLiftI18nService);
     translation.setLanguage('en');
     queue = TestBed.inject(UploadQueueService);
     fixture = TestBed.createComponent(UploadPanelComponent);
@@ -402,11 +402,11 @@ describe('UploadPanelComponent', () => {
   it('docks the shared window on the left in RTL documents', async () => {
     TestBed.resetTestingModule();
     try {
-      // The TranslationService effect syncs the document dir to the locale, and the panel
+      // The ClrLiftI18nService effect syncs the document dir to the locale, and the panel
       // creates the overlay in ngAfterViewInit — so an RTL locale must be set and flushed
       // before the declaring host is created.
       TestBed.configureTestingModule({imports: [UploadPanelComponent, UploadPanelWindowComponent]});
-      translation = TestBed.inject(TranslationService);
+      translation = TestBed.inject(ClrLiftI18nService);
       translation.setLanguage('he');
       queue = TestBed.inject(UploadQueueService);
       TestBed.inject(ApplicationRef).tick();
@@ -625,7 +625,7 @@ describe('UploadPanelComponent', () => {
   it('hands an initially inline-only queue back to the floating owner without restarting transfers', async () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({imports: [UploadPanelComponent]});
-    TestBed.inject(TranslationService).setLanguage('en');
+    TestBed.inject(ClrLiftI18nService).setLanguage('en');
     queue = TestBed.inject(UploadQueueService);
     fixture = TestBed.createComponent(UploadPanelComponent);
     fixture.componentRef.setInput('inline', true);

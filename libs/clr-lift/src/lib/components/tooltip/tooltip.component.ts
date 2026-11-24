@@ -23,7 +23,7 @@ import {
 } from '@angular/core';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {tooltipTranslations} from './tooltip.l10n';
 import {TooltipPosition} from './tooltip.model';
 import {isElementClickable, isElementInsideCollection} from './tooltip.util';
@@ -47,7 +47,7 @@ export class TooltipComponent {
   accessibleLabel = input('');
   readonly interactive = computed(() => !!this.content() && typeof this.content() !== 'string');
   readonly dialogLabel = computed(() => this.accessibleLabel() || this.translationService.translate('tooltip.details'));
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   /**
    * Content to display in the tooltip.
@@ -77,7 +77,7 @@ export class TooltipComponent {
   private leaveTimer?: ReturnType<typeof setTimeout>;
 
   constructor() {
-    inject(TranslationService).loadTranslationsForComponent('tooltip', tooltipTranslations);
+    inject(ClrLiftI18nService).loadTranslationsForComponent('tooltip', tooltipTranslations);
     const cdr = inject(ChangeDetectorRef);
     afterEveryRender(() => {
       // Detached caller-owned components still need to render input/signal updates.

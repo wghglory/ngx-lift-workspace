@@ -6,7 +6,7 @@ import {
   AlertService,
   PageContainerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -42,7 +42,7 @@ export class MultiAlertsDemoComponent implements OnDestroy {
   readonly alertsStarterCode = highlight(
     "import {ChangeDetectionStrategy, Component, inject} from '@angular/core';\nimport {AlertService, AlertContainerComponent} from 'clr-lift';\n\n@Component({\n  selector: 'app-feedback',\n  imports: [AlertContainerComponent],\n  templateUrl: './feedback.html',\n  changeDetection: ChangeDetectionStrategy.OnPush,\n})\nexport class FeedbackComponent {\n  private alertService = inject(AlertService);\n\n  ngOnDestroy() {\n    this.alertService.clearAlerts();\n  }\n\n  addAlert() {\n    this.alertService.addAlert({\n      content: `New standard alert added on ${new Date().toLocaleTimeString()}`,\n      alertType: 'success',\n    });\n  }\n\n  addAlertWithInlineButton() {\n    this.alertService.addAlert({\n      content:\n        'New alert with an inline button: <button type=\"button\" class=\"btn btn-sm alert-action\" id=\"inline-click-target\">Click Me</button> inside the message.',\n      alertType: 'info',\n      targetSelector: '#inline-click-target',\n      onTargetClick: () => this.clickMe(),\n    });\n  }\n\n  addAlertWithAction() {\n    this.alertService.addAlert({\n      content: 'New alert with trailing action buttons.',\n      alertType: 'warning',\n      actions: [{label: 'Acknowledge', onClick: () => alert('Acknowledged!')}],\n    });\n  }\n\n  clearAlerts() {\n    this.alertService.clearAlerts();\n  }\n\n  clickMe() {\n    alert('You did it correctly!');\n  }\n}",
   );
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly methods = computed<ApiProperty[]>(() => [
     {

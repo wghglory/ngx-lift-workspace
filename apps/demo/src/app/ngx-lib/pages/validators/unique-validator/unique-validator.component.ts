@@ -2,7 +2,7 @@ import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playgr
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {UniqueValidator} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -52,7 +52,7 @@ export class UniqueValidatorComponent {
 </form>`,
   );
   private fb = inject(FormBuilder);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

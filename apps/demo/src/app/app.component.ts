@@ -2,7 +2,7 @@ import {NgTemplateOutlet} from '@angular/common';
 import {ChangeDetectionStrategy, Component, effect, ElementRef, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {ClarityModule, ClrHeader} from '@clr/angular';
-import {ThemeToggleComponent, ToastContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {ThemeToggleComponent, ToastContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {LanguageSwitcherComponent} from './core/components/language-switcher/language-switcher.component';
 import {VerticalNavComponent} from './core/components/vertical-nav/vertical-nav.component';
@@ -28,7 +28,7 @@ import {loadDemoLanguage, registerDemoTranslations} from './core/l10n/demo-regis
 })
 export class AppComponent {
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   closeNavigation(header: ClrHeader): void {
     const level = header.openNavLevel;

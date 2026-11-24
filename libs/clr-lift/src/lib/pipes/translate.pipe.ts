@@ -1,13 +1,13 @@
 import {ChangeDetectorRef, effect, inject, Pipe, PipeTransform} from '@angular/core';
 
-import {TranslationService} from '../services/translation.service';
+import {ClrLiftI18nService} from '../services/clr-lift-i18n.service';
 
 /**
  * Angular pipe that translates a translation key to its localized string value.
  * Supports parameter substitution using placeholders like `{0}`, `{1}`, etc.
  *
  * Configured as impure (`pure: false`) so template bindings update reactively
- * whenever the active language changes via `TranslationService.setLanguage(...)`.
+ * whenever the active language changes via `ClrLiftI18nService.setLanguage(...)`.
  *
  * @example
  * ```html
@@ -23,7 +23,7 @@ import {TranslationService} from '../services/translation.service';
   pure: false,
 })
 export class TranslatePipe implements PipeTransform {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private cdr = inject(ChangeDetectorRef, {optional: true});
 
   constructor() {

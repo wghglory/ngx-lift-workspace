@@ -3,7 +3,7 @@ import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@ang
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ClrRangeModule} from '@clr/angular';
-import {BreadcrumbComponent, BreadcrumbItem, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {BreadcrumbComponent, BreadcrumbItem, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {catchError, of} from 'rxjs';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -85,7 +85,7 @@ const path = '/clr-lift/components/breadcrumb';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbDemoComponent {
-  readonly translation = inject(TranslationService);
+  readonly translation = inject(ClrLiftI18nService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly params = toSignal(this.route.queryParamMap, {initialValue: this.route.snapshot.queryParamMap});

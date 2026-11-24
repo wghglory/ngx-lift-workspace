@@ -12,7 +12,7 @@ import {
 import {ClarityModule} from '@clr/angular';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {TooltipModule} from '../tooltip';
 import {TooltipPosition} from './../tooltip/tooltip.model';
 import {statusIndicatorTranslations} from './status-indicator.l10n';
@@ -34,7 +34,7 @@ ClarityIcons.addIcons(
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StatusIndicatorComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   iconStatus = input.required<'success' | 'error' | 'pending' | 'warning' | 'inactive' | 'unknown'>();
   iconSize = input<'lg' | 'md' | 'sm' | string>('sm');

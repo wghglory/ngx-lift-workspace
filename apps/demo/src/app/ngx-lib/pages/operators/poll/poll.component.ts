@@ -12,7 +12,7 @@ import {
   PageContainerComponent,
   SpinnerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 import {AsyncState, isEqual, poll} from 'ngx-lift';
 import {
@@ -134,7 +134,7 @@ export class StarterComponent {
   }
 
   userService = inject(UserService);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -7,7 +7,7 @@ import {
   TimelineStep,
   TimelineWizardComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -36,7 +36,7 @@ import {Deployment} from './deployment.type';
   styleUrl: './timeline-wizard-demo.component.scss',
 })
 export class TimelineWizardDemoComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly wizard = viewChild(TimelineWizardComponent);
 
   // simulate an API response

@@ -15,7 +15,7 @@ import {ClarityModule, ClarityIcons, angleIcon, errorStandardIcon} from '@clr/an
 import {type UploadItem, type UploadStatus, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {relativeFilePath} from './drop-files';
 import {UploadPanelManager} from './upload-panel-manager';
 import {uploadTranslations} from './upload.l10n';
@@ -38,7 +38,7 @@ ClarityIcons.addIcons(angleIcon, errorStandardIcon);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadPanelWindowComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly manager = inject(UploadPanelManager);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);

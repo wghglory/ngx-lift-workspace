@@ -13,7 +13,7 @@ import {
   KeyValueValueConfig,
 } from './key-value-entry.type';
 import {keyValueErrors} from './key-value-validation';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 
 @Component({
   imports: [KeyValueControlComponent, ReactiveFormsModule],
@@ -444,12 +444,12 @@ describe('key/value editor configuration', () => {
     });
     const saved = host.control.value;
     host.control.markAllAsTouched();
-    TestBed.inject(TranslationService).setLanguage('zh-CN', false);
+    TestBed.inject(ClrLiftI18nService).setLanguage('zh-CN');
     await settle();
     expect(query(element, '.retained-value').textContent).toContain('已保存的值：');
     expect(element.textContent).toContain('无法表示仅含一个空字符串的数组');
     expect(host.control.value).toBe(saved);
-    TestBed.inject(TranslationService).setLanguage('en', false);
+    TestBed.inject(ClrLiftI18nService).setLanguage('en');
     await settle();
     expect(query(element, '.retained-value').textContent).toContain('Stored value:');
     expect(element.textContent).toContain('A single empty item');

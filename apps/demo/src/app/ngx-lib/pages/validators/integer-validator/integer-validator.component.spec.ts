@@ -1,6 +1,6 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {describe, expect, it} from 'vitest';
 
 import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
@@ -17,7 +17,7 @@ describe('IntegerValidatorComponent', () => {
       providers: [provideNoopAnimations()],
     }).compileComponents();
 
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     translations.setLanguage('en');
 

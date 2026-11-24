@@ -17,7 +17,7 @@ import {IdleDetectionConfig, IdleDetectionService, isEmpty, pickBy} from 'ngx-li
 import {map, merge, Subject, switchMap, tap} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {idleDetectionTranslations} from './idle-detection.l10n';
 
 @Component({
@@ -29,7 +29,7 @@ import {idleDetectionTranslations} from './idle-detection.l10n';
 })
 export class IdleDetectionComponent implements OnInit {
   private readonly rootIdleDetectionService = inject(IdleDetectionService);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly injector = inject(Injector);
   private readonly closeSubject = new Subject<void>();
 

@@ -19,7 +19,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {breadcrumbTranslations} from './breadcrumb.l10n';
 import {BreadcrumbItem, BreadcrumbLinkContext} from './breadcrumb.model';
 
@@ -54,7 +54,7 @@ const breadcrumbIds = new InjectionToken<{next: number}>('Breadcrumb IDs', {
 })
 export class BreadcrumbComponent {
   protected readonly panelId = `cll-breadcrumb-${inject(APP_ID)}-${inject(breadcrumbIds).next++}`;
-  private readonly translation = inject(TranslationService);
+  private readonly translation = inject(ClrLiftI18nService);
   readonly items = input.required<readonly BreadcrumbItem[]>();
   readonly ariaLabel = input<string>();
   readonly linkTemplate = input<TemplateRef<BreadcrumbLinkContext>>();

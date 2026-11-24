@@ -3,7 +3,7 @@ import {CollectionStarterComponent} from '../collection-starter/collection-start
 import {TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {QUERY_CLIENT} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
@@ -17,9 +17,9 @@ describe('queryResources guide', () => {
       imports: [QueryResourcesDemoComponent],
       providers: [provideRouter([]), provideNoopAnimations()],
     });
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
-    translations.setLanguage('en', false);
+    translations.setLanguage('en');
   });
   afterEach(() => {
     TestBed.resetTestingModule();

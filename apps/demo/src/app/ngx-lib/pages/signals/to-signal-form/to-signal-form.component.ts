@@ -9,7 +9,7 @@ import {
   PageContainerComponent,
   SpinnerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 import {computedAsync, resourceAsync, toSignalForm, toSubmitValue} from 'ngx-lift';
 import {delay, merge, of} from 'rxjs';
@@ -53,7 +53,7 @@ export interface ClusterNameCheckResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToSignalFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly toSignalFormProperties = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -2,7 +2,7 @@ import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playgr
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {intersectionValidator} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -80,7 +80,7 @@ export class IntersectionValidatorComponent {
   <output aria-live="polite">{{ form.status }}</output>
 </form>`,
   );
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -6,7 +6,7 @@ import {
   PageContainerComponent,
   SpinnerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 import {AsyncState, computedAsync, createAsyncState, createTrigger} from 'ngx-lift';
 import {delay, map, of, throwError, timer} from 'rxjs';
@@ -40,7 +40,7 @@ import {highlight} from '../../../../shared/utils/highlight.util';
 export class ComputedAsyncComponent {
   private userService = inject(UserService);
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   readonly starterInput = signal(1);
   readonly starterValue = computedAsync(

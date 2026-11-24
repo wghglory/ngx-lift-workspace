@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {TranslationService} from '../../../services/translation.service';
-import {MockTranslationService} from '../../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../../services/clr-lift-i18n.service.mock';
 import {X509Certificate} from '../certificate-parser';
 import {CertificateComponent} from './certificate.component';
 
@@ -12,7 +12,7 @@ describe('CertificateComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CertificateComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     fixture = TestBed.createComponent(CertificateComponent);
     component = fixture.componentInstance;

@@ -1,5 +1,5 @@
 import {
-  TranslationService,
+  ClrLiftI18nService,
   registerLazyTranslations,
   registerTranslations,
   resolveLocale,
@@ -15,7 +15,7 @@ export {resolveLocale, supportedLocales};
 export const initialDemoTranslations = {en: enTranslations};
 
 /** Registers the synchronous English dictionary before any language effect runs. */
-export function registerDemoTranslations(service: TranslationService): void {
+export function registerDemoTranslations(service: ClrLiftI18nService): void {
   registerTranslations(service, '', initialDemoTranslations);
 }
 
@@ -33,7 +33,7 @@ const loaders: Record<string, () => Promise<Record<string, string>>> = {
 };
 
 /** Imports a dictionary without changing language selection; late loads cannot undo newer choices. */
-export function loadDemoLanguage(service: TranslationService, language: string): Promise<void> {
+export function loadDemoLanguage(service: ClrLiftI18nService, language: string): Promise<void> {
   const locale = resolveLocale(language);
   const load = locale === 'en' ? undefined : loaders[locale];
   if (!load) return Promise.resolve();

@@ -5,7 +5,7 @@ import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {UploadComponent} from './upload.component';
 import {UploadPanelManager} from './upload-panel-manager';
 
@@ -40,11 +40,11 @@ class BlurUploadHost {
 }
 
 describe('UploadComponent', () => {
-  let translation: TranslationService;
+  let translation: ClrLiftI18nService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [UploadComponent]});
-    translation = TestBed.inject(TranslationService);
+    translation = TestBed.inject(ClrLiftI18nService);
     translation.setLanguage('en');
   });
 
@@ -303,11 +303,11 @@ describe('UploadComponent', () => {
 });
 
 describe('UploadComponent dropzone', () => {
-  let translation: TranslationService;
+  let translation: ClrLiftI18nService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [UploadComponent]});
-    translation = TestBed.inject(TranslationService);
+    translation = TestBed.inject(ClrLiftI18nService);
     translation.setLanguage('en');
   });
 

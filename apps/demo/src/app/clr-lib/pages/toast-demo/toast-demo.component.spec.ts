@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {Toast, ToastService, TranslationService} from 'clr-lift';
+import {Toast, ToastService, ClrLiftI18nService} from 'clr-lift';
 import {MockInstance, vi} from 'vitest';
 
 import {enTranslations} from '../../../core/l10n/demo.l10n.en';
@@ -22,7 +22,7 @@ describe('ToastDemoComponent', () => {
       providers: [ToastService],
     }).compileComponents();
 
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     translations.setLanguage('en');
     fixture = TestBed.createComponent(ToastDemoComponent);

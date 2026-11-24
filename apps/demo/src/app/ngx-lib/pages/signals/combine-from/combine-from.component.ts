@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {combineFrom, createAsyncState} from 'ngx-lift';
 import {BehaviorSubject, delay, of, pipe, startWith, switchMap} from 'rxjs';
 
@@ -52,7 +52,7 @@ export class StarterComponent {
 </div>
 <output aria-live="polite">left: {{ combined()?.left }}, right: {{ combined()?.right }}</output>`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

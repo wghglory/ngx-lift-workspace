@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {describe, expect, it} from 'vitest';
 
 import {demoTranslations} from '../../../core/l10n/demo.l10n';
@@ -29,10 +29,10 @@ describe('ApiTableComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ApiTableComponent],
-      providers: [TranslationService],
+      providers: [ClrLiftI18nService],
     }).compileComponents();
 
-    const translationService = TestBed.inject(TranslationService);
+    const translationService = TestBed.inject(ClrLiftI18nService);
     translationService.loadTranslationsForComponent('', demoTranslations);
     translationService.setLanguage('en');
 

@@ -5,7 +5,7 @@ import {
   IdleDetectionComponent,
   PageContainerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
@@ -27,7 +27,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClrIdleDetectionDemoComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   readonly isMonitoring = signal(false);
   readonly timeoutCount = signal(0);

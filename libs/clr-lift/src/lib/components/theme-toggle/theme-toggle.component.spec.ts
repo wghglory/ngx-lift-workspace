@@ -3,8 +3,8 @@ import {ClarityIcons, moonIcon, sunIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 import {vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {ThemeService} from './theme.service';
 import {ThemeToggleComponent} from './theme-toggle.component';
 
@@ -15,7 +15,7 @@ describe('ThemeToggleComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ClarityModule, ThemeToggleComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}, ThemeService],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}, ThemeService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ThemeToggleComponent);

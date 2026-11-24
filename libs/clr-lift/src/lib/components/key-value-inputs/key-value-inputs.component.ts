@@ -22,7 +22,7 @@ import {ClarityModule} from '@clr/angular';
 import {UniqueValidator} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {keyValueTranslations} from './key-value.l10n';
 import {KeyValueFormGroup} from './key-value-form-group.type';
 
@@ -51,7 +51,7 @@ let nextControlId = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KeyValueInputsComponent implements OnInit {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private fb = inject(NonNullableFormBuilder);
   private hostElement = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private focusTimer?: ReturnType<typeof setTimeout>;

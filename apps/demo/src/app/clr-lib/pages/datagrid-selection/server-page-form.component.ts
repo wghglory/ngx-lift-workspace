@@ -2,7 +2,7 @@ import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, effect, inject, OnDestroy, signal} from '@angular/core';
 import {FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule, ClrDatagridSortOrder} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {queryResource, toSignalForm} from 'ngx-lift';
 import {Subscription} from 'rxjs';
 
@@ -24,7 +24,7 @@ import {ServerNameFilter} from './server-name.filter';
 })
 /** Direct server-paged form host: the page owns the query, eligibility validation and key-only submission. */
 export class ServerPageFormComponent implements OnDestroy {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly organizationService = inject(ServerOrganizationService);
   private readonly nameFilterSubscription: Subscription;
 

@@ -1,7 +1,7 @@
 import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject, Injector, numberAttribute} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {computedAsync, injectQueryParams} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -55,7 +55,7 @@ export class StarterComponent {
 
   private userService = inject(UserService);
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

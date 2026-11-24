@@ -1,6 +1,6 @@
 import {pickBy, omitBy} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -33,7 +33,7 @@ const omitted = omitBy(input, (value) => value == null);
 // Boolean as a predicate would also remove 0 and false. Choose the predicate deliberately.
 // Both return a new Partial<typeof input>; the input is unchanged and nested values are shared.`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   pickByParameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

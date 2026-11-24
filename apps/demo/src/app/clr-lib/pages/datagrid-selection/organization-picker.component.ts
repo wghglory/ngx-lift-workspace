@@ -3,7 +3,7 @@ import {queryResource} from 'ngx-lift';
 import {booleanAttribute, ChangeDetectionStrategy, Component, inject, input, OnDestroy, viewChild} from '@angular/core';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule, ClrDatagrid} from '@clr/angular';
-import {AlertComponent, DatagridSelectionComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, DatagridSelectionComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {STATUS_KEYS, STATUS_ORDER, type Organization} from './organization-example.data';
 import {StatusFilter} from './status.filter';
 import {OrganizationStatusFilterComponent} from './organization-status-filter.component';
@@ -29,7 +29,7 @@ import {OrganizationStatusFilterComponent} from './organization-status-filter.co
 })
 export class OrganizationPickerComponent implements OnDestroy {
   private readonly organizationService = inject(OrganizationService);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly grid = viewChild<ClrDatagrid<Organization>>(ClrDatagrid);
 
   readonly organizationsQuery = queryResource(() => this.organizationService.listQuery('scope-1'));

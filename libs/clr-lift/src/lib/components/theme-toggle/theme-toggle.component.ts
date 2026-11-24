@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, computed, inject, input, output, sig
 import {ClarityIcons, moonIcon, sunIcon} from '@clr/angular/icon';
 import {ClarityModule} from '@clr/angular';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {ThemeService} from './theme.service';
 import {ClarityTheme} from './theme.type';
 import {themeToggleTranslations} from './theme-toggle.l10n';
@@ -18,7 +18,7 @@ ClarityIcons.addIcons(sunIcon);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeToggleComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private themeService = inject(ThemeService);
 
   lang = input('');

@@ -1,7 +1,7 @@
 import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject, Injector, numberAttribute, Signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {injectParams} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -55,7 +55,7 @@ export class StarterComponent {
 <output aria-live="polite">{{ selectedId() ?? 'null' }} → {{ numericId() }}</output>`);
 
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -1,4 +1,4 @@
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
@@ -12,7 +12,7 @@ describe('MutationStarterComponent save workflow', () => {
   beforeEach(async () => {
     vi.useFakeTimers();
     await TestBed.configureTestingModule({imports: [MutationStarterComponent]}).compileComponents();
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     translations.setLanguage('en');
     fixture = TestBed.createComponent(MutationStarterComponent);

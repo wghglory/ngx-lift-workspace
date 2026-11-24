@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {angleIcon, checkIcon, ClarityIcons, worldIcon} from '@clr/angular/icon';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {resolveLocale, supportedLocales} from '../../l10n/demo-registration';
+import {storeDemoLanguagePreference} from '../../l10n/demo-language-preference';
 
 ClarityIcons.addIcons(worldIcon, angleIcon, checkIcon);
 
@@ -33,7 +34,7 @@ export interface SupportedLanguage {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSwitcherComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   readonly languages: SupportedLanguage[] = supportedLocales.map((code) => ({code, label: LANGUAGE_LABELS[code]}));
 
@@ -59,6 +60,7 @@ export class LanguageSwitcherComponent {
   }
 
   selectLanguage(code: string): void {
-    this.translationService.setLanguage(code, true);
+    storeDemoLanguagePreference(code);
+    this.translationService.setLanguage(code);
   }
 }

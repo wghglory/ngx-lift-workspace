@@ -4,7 +4,7 @@ import {DemoPlaygroundComponent} from '../../../../shared/components/demo-playgr
 import {AsyncPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -57,7 +57,7 @@ export class StarterComponent {
   <output aria-live="polite">left: {{ values.left }}, right: {{ values.right ?? 'null' }}</output>
 }`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

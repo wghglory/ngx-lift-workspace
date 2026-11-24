@@ -5,7 +5,7 @@ import {ClarityModule} from '@clr/angular';
 import {AlertType} from '../alerts/alert.type';
 import {alertTranslations} from '../alerts/alert.l10n';
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 
 /**
  * A reusable alert component built on top of Clarity Design System.
@@ -98,7 +98,7 @@ export class AlertComponent {
   closedChange = output<boolean>();
 
   constructor() {
-    inject(TranslationService).loadTranslationsForComponent('alert', alertTranslations);
+    inject(ClrLiftI18nService).loadTranslationsForComponent('alert', alertTranslations);
   }
 
   /** Relays Clarity's close/open event to the controlled `closed` model and `closedChange` output. */

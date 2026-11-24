@@ -18,6 +18,20 @@ recorded for the affected releases.
 
 - `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated
   `omitBy` alias exclude the guarded value type. Keys remain optional; boolean predicates retain `Partial<T>`.
+- `clr-lift` exports `provideClrLiftI18n` and `ClrLiftI18nOptions` for bootstrap locale configuration. Resolution order
+  is application locale → `LOCALE_ID` → browser locale on the browser platform → English.
+
+### Changed — breaking, major release decision pending
+
+- `clr-lift` renames `TranslationService` to `ClrLiftI18nService` with no old alias. Applications importing
+  `TranslationService` must rename the import.
+- `ClrLiftI18nService` no longer reads or writes `clr-lift-lang`, `STORAGE_KEY_LANGUAGE` is removed, and `setLanguage`
+  takes one argument. Applications own preference storage and pass the resolved locale through `locale` or
+  `setLanguage()`; the demo uses `demo-language-preference.ts` as an example migration.
+- The historical 21.6.0 note about `MockTranslationService` being exported is superseded: the test helper is now
+  `MockClrLiftI18nService`, is not in the root barrel, and its old name is removed by this rename.
+- `provideClrLiftI18n` and `ClrLiftI18nService` share one locale-resolution helper, so bootstrap and service defaults
+  cannot drift. These incompatible changes need an explicit maintainer release decision.
 
 ## [21.6.0] (ngx-lift) / [21.5.0] (clr-lift) - 2026-11-20
 

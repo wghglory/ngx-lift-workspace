@@ -1,7 +1,7 @@
 import {BehaviorSubject} from 'rxjs';
 import {ChangeDetectionStrategy, Component, computed, inject, Injector, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {mergeFrom} from 'ngx-lift';
 import {delay, of, pipe, startWith, switchMap} from 'rxjs';
 
@@ -50,7 +50,7 @@ export class StarterComponent {
 <output aria-live="polite">{{ latest() }}</output>`);
 
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -4,7 +4,7 @@ import {By} from '@angular/platform-browser';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {describe, expect, it, beforeEach, vi} from 'vitest';
 
 import {demoTranslations} from '../../../../core/l10n/demo.l10n';
@@ -23,7 +23,7 @@ describe('QueryResourceDemoComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
 
-    const translationService = TestBed.inject(TranslationService);
+    const translationService = TestBed.inject(ClrLiftI18nService);
     translationService.loadTranslationsForComponent('', demoTranslations);
 
     fixture = TestBed.createComponent(QueryResourceDemoComponent);
@@ -125,10 +125,10 @@ describe('QueryResourceDemoComponent', () => {
   });
 
   it('updates an already mounted API table when its lazy dictionary arrives', async () => {
-    const translations = TestBed.inject(TranslationService);
-    translations.setLanguage('en', false);
+    const translations = TestBed.inject(ClrLiftI18nService);
+    translations.setLanguage('en');
     const english = component.queryResourceApiProps()[0].description;
-    translations.setLanguage('de', false);
+    translations.setLanguage('de');
     await loadDemoLanguage(translations, 'de');
     fixture.detectChanges();
     const german = component.queryResourceApiProps()[0].description;

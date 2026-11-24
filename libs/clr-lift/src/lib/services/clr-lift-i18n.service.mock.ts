@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import {computed, signal} from '@angular/core';
 
-/** @deprecated Compatibility test mock. Use the real TranslationService with fixture dictionaries to test localization. */
-export class MockTranslationService {
+/** @deprecated Compatibility test mock. Use the real ClrLiftI18nService with fixture dictionaries to test localization. */
+export class MockClrLiftI18nService {
   readonly currentLanguage = signal('en');
   readonly locale = computed(() => this.currentLanguage());
 
@@ -14,7 +14,7 @@ export class MockTranslationService {
     return this.translate(key, ...args);
   }
 
-  setLanguage(lang: string, persist = true): void {
+  setLanguage(lang: string): void {
     this.currentLanguage.set(lang);
   }
 
