@@ -8,6 +8,17 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- Object filtering reads each own value once, preserving the exact value checked by a type guard. Widened options cannot
+  incorrectly select positive narrowing, and reusable guards support literal-valued sources.
+- `isEqual` accepts unrelated value shapes without explicit generic arguments, retaining explicit-generic compatibility.
+
+### Added
+
+- `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated
+  `omitBy` alias exclude the guarded value type. Keys remain optional; boolean predicates retain `Partial<T>`.
+
 ## [21.6.0] (ngx-lift) / [21.5.0] (clr-lift) - 2026-11-20
 
 **Release decision — November 20, 2026 (approved):** both packages remain on 21.x while the supported platform remains
