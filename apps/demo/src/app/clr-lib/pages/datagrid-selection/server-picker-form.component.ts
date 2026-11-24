@@ -2,7 +2,7 @@ import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {FormControl, FormGroup, FormGroupDirective, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {toSignalForm} from 'ngx-lift';
 
 import {ServerOrganizationPickerComponent} from './server-organization-picker.component';
@@ -15,7 +15,7 @@ import {ServerOrganizationPickerComponent} from './server-organization-picker.co
 })
 /** Parent host for the reusable picker: owns values, required validation, the baseline and the submit DTO. */
 export class ServerPickerFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   /** Parent-owned baseline: saved keys include rows that live on pages the picker has not requested. */
   readonly initialKeys = ['org-s-13', 'org-s-25'];

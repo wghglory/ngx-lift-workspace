@@ -26,7 +26,7 @@ for (const [localeIndex, {code, label}] of demoLocales.entries()) {
   }) => {
     test.setTimeout(180_000);
     await page.setViewportSize({width: 390, height: 844});
-    await page.addInitScript((locale) => localStorage.setItem('clr-lift-lang', locale), code);
+    await page.addInitScript((locale) => localStorage.setItem('demo-lang', locale), code);
     for (const route of demoRoutes) {
       await test.step(route, async () => {
         await page.goto(route, {waitUntil: 'domcontentloaded'});
@@ -67,7 +67,7 @@ for (const [localeIndex, {code, label}] of demoLocales.entries()) {
 test('switching languages preserves dismissed seeds and user-created alerts', async ({page}) => {
   const english = dictionaryMessages(demoFile('en'));
   const chinese = dictionaryMessages(demoFile('zh-CN'));
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/multi-alerts', {waitUntil: 'domcontentloaded'});
   const danger = page.locator('cll-alert-container clr-alert').filter({hasText: english['multiAlerts.dangerMessage']});
   await page.getByRole('button', {name: /Previous alert message/}).click();
@@ -90,7 +90,7 @@ test('wizard language changes preserve the current step and entered values', asy
   const english = dictionaryMessages(demoFile('en'));
   const chinese = dictionaryMessages(demoFile('zh-CN'));
   const wizardChinese = dictionaryMessages(library + 'timeline-wizard/timeline-wizard.l10n.ts', 'zh-CN');
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/timeline-wizard', {waitUntil: 'domcontentloaded'});
   await expect(page.locator('#operator-name')).toHaveValue('my-operator');
   await page.locator('#operator-name').fill('localized-operator');

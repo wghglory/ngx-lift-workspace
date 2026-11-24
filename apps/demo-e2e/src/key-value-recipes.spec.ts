@@ -3,7 +3,7 @@ import {expect, test} from '@playwright/test';
 import {expectAccessible} from './support/accessibility';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/key-value-inputs');
 });
 

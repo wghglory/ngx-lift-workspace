@@ -329,7 +329,7 @@ keys, show per-row warning content, or depend on removal callbacks. The current 
 readonly semantics.
 
 When the application uses another localization framework, bridge its active locale to
-`TranslationService.setLanguage(locale, false)` using the application's initialization/lifecycle conventions. Coordinate
+`ClrLiftI18nService.setLanguage(locale)` using the application's initialization/lifecycle conventions. Coordinate
 Clarity common-string overrides and document language/direction ownership as well. Test a locale that differs from the
 browser preference, runtime switching, and mounting a second editor. Field `messages`, placeholders, helpers and
 `addText` accept caller translations; group errors, row names, remove text and announcements use library translations.
@@ -668,7 +668,7 @@ submission mapping, translated wording and locale ownership. In particular:
   covered by the current CVA. `keyConfig` applies to all keys; `valueConfig` resolves by key only. A disabled field is
   not a substitute for readonly because it skips field validation. Keep an application adapter/FormArray implementation
   until the required generic extension is designed and verified.
-- Applications with another translation service must synchronize locale ownership. This library's TranslationService
+- Applications with another translation service must synchronize locale ownership. This library's ClrLiftI18nService
   also updates document lang/dir and Clarity common strings. Per-field messages and addText do not cover every group
   message, accessible label or announcement. Supplying only min/max wording would not solve that integration.
 

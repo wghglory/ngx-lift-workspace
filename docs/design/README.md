@@ -37,7 +37,8 @@ upgrade. Feature API examples remain drafts until reviewed and implemented.
 | BreadcrumbComponent and object-path helper                         | [Breadcrumbs](clr-lift/breadcrumb-design-spec.md)                       |
 | DatagridSelectionComponent value control                           | [Native grid selection](clr-lift/datagrid-selection-design-spec.md)     |
 | TimelineWizardComponent, base step and service                     | [Timeline wizard](clr-lift/timeline-wizard-design-spec.md)              |
-| TranslationService and ThemeService                                | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)    |
+| ClrLiftI18nService and ThemeService                                | [Runtime presentation](clr-lift/runtime-presentation-design-spec.md)    |
+| provideClrLiftI18n and bootstrap locale resolution                 | [Locale provider](clr-lift/locale-provider-design-spec.md)              |
 | Legacy FormArray editor and additive immutable array-value control | [Key/value control contracts](clr-lift/key-value-inputs-design-spec.md) |
 | QueryDevtoolsComponent and conditional root provider               | [Query inspector](clr-lift/query-devtools-design-spec.md)               |
 

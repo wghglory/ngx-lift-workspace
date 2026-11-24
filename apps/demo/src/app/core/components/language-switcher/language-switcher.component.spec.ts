@@ -1,23 +1,23 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {LanguageSwitcherComponent} from './language-switcher.component';
 
 describe('LanguageSwitcherComponent', () => {
   let component: LanguageSwitcherComponent;
   let fixture: ComponentFixture<LanguageSwitcherComponent>;
-  let translationService: TranslationService;
+  let translationService: ClrLiftI18nService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [LanguageSwitcherComponent],
-      providers: [TranslationService],
+      providers: [ClrLiftI18nService],
     }).compileComponents();
 
     fixture = TestBed.createComponent(LanguageSwitcherComponent);
     component = fixture.componentInstance;
-    translationService = TestBed.inject(TranslationService);
-    translationService.setLanguage('en', false);
+    translationService = TestBed.inject(ClrLiftI18nService);
+    translationService.setLanguage('en');
     fixture.detectChanges();
   });
 
@@ -35,7 +35,7 @@ describe('LanguageSwitcherComponent', () => {
   });
 
   it('should handle regional code fallback gracefully', () => {
-    translationService.setLanguage('fr-CA', false);
+    translationService.setLanguage('fr-CA');
     fixture.detectChanges();
 
     expect(component.currentLabel()).toBe('Français');
@@ -48,14 +48,14 @@ describe('LanguageSwitcherComponent', () => {
     ['ja-JP', '日本語', 'ja'],
     ['bad_locale', 'English', 'en'],
   ])('matches script/region locale %s consistently in label and menu', (locale, label, active) => {
-    translationService.setLanguage(locale, false);
+    translationService.setLanguage(locale);
     fixture.detectChanges();
     expect(component.currentLabel()).toBe(label);
     expect(component.isLanguageActive(active)).toBe(true);
     expect(component.isLanguageActive('ru')).toBe(false);
   });
   it('shows the selected complete locale without a partial-support marker', () => {
-    translationService.setLanguage('de', false);
+    translationService.setLanguage('de');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('.lang-text').textContent).toBe('Deutsch');
     expect(fixture.nativeElement.querySelector('.language-trigger [title]')).toBeNull();
@@ -70,7 +70,7 @@ describe('LanguageSwitcherComponent', () => {
     ['ja', '日本語'],
     ['fr-CA', 'Français'],
   ])('uses the compact label for %s', (locale, label) => {
-    translationService.setLanguage(locale, false);
+    translationService.setLanguage(locale);
     expect(component.compactLabel()).toBe(label);
   });
 });

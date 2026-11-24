@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {QueryTimeoutError} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
@@ -20,9 +20,9 @@ describe('query failure examples', () => {
     vi.useFakeTimers();
     vi.setSystemTime(0);
     TestBed.configureTestingModule({imports: [QueryFailureExamplesComponent]});
-    const translation = TestBed.inject(TranslationService);
+    const translation = TestBed.inject(ClrLiftI18nService);
     translation.loadTranslationsForComponent('', {en: enTranslations});
-    translation.setLanguage('en', false);
+    translation.setLanguage('en');
     fixture = TestBed.createComponent(QueryFailureExamplesComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

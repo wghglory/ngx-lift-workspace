@@ -10,8 +10,9 @@ and query caches; service scoping does not isolate the shared document.
 
 ## Background
 
-[TranslationService](../../../libs/clr-lift/src/lib/services/translation.service.ts) coordinates dictionaries, locale,
-document direction and Clarity strings.
+[ClrLiftI18nService](../../../libs/clr-lift/src/lib/services/clr-lift-i18n.service.ts) coordinates dictionaries, locale,
+document direction and Clarity strings. Bootstrap locale resolution is owned by
+[provideClrLiftI18n](locale-provider-design-spec.md); this spec covers the runtime services.
 [ThemeService](../../../libs/clr-lift/src/lib/components/theme-toggle/theme.service.ts) coordinates a light/dark signal
 with document attributes and storage. The [integration guide](../../guides/demo-and-library-integration.md) owns
 application setup.
@@ -38,11 +39,11 @@ Native field ownership, persistence authorization, human translation approval an
 
 ## Use cases and acceptance
 
-| ID  | Task               | Initial state/action              | Outcome                                         | Failure/recovery                              | Demo/test                    |
-| --- | ------------------ | --------------------------------- | ----------------------------------------------- | --------------------------------------------- | ---------------------------- |
-| L1  | Switch locale      | Mounted component/dictionaries    | Text, html lang/dir and Clarity strings update  | Missing keys fall back to English then marker | translation.service.spec.ts  |
-| L2  | Load feature later | Register dictionary after render  | Dictionary version invalidates translated reads | Repeated warnings deduplicated                | translation/pipe regressions |
-| L3  | Switch theme       | Stored dark/light; storage throws | body cds-theme and signal remain usable         | Default light when storage invalid            | theme.service.spec.ts        |
+| ID  | Task               | Initial state/action              | Outcome                                         | Failure/recovery                              | Demo/test                     |
+| --- | ------------------ | --------------------------------- | ----------------------------------------------- | --------------------------------------------- | ----------------------------- |
+| L1  | Switch locale      | Mounted component/dictionaries    | Text, html lang/dir and Clarity strings update  | Missing keys fall back to English then marker | clr-lift-i18n.service.spec.ts |
+| L2  | Load feature later | Register dictionary after render  | Dictionary version invalidates translated reads | Repeated warnings deduplicated                | translation/pipe regressions  |
+| L3  | Switch theme       | Stored dark/light; storage throws | body cds-theme and signal remain usable         | Default light when storage invalid            | theme.service.spec.ts         |
 
 ## Industry evidence and current gaps
 
@@ -68,27 +69,28 @@ limitations; examples introduce them after the first task.
 ```typescript
 // In an Angular injection context.
 import {inject} from '@angular/core';
-import {ThemeService, TranslationService} from 'clr-lift';
+import {ThemeService, ClrLiftI18nService} from 'clr-lift';
 
-const i18n = inject(TranslationService);
+const i18n = inject(ClrLiftI18nService);
 i18n.setLanguage('fr');
 const theme = inject(ThemeService);
 theme.setTheme('dark');
 ```
 
 Register dictionaries with loadTranslationsForComponent(namespace, dictionaries). translate/translateWithLanguage accept
-numbered interpolation arguments. setLanguage persists by default; assigning language uses the nonpersisting path. Theme
-writes should use setTheme so signal, DOM and storage agree; directly writing the public signal updates only that
-signal.
+numbered interpolation arguments. setLanguage changes the active language without persisting it; applications own
+preference storage. Theme writes should use setTheme so signal, DOM and storage agree; directly writing the public
+signal updates only that signal.
 
 ## Behavior and architecture
 
-Translation initial language comes from saved preference, navigator, then English. Resolve exact/case-insensitive
-locale, Chinese script/region, base language, then an available dialect. Missing keys fall back to English and finally a
-visible marker; warnings are deduplicated until dictionary changes. `{0}` substitution retains unresolved placeholders.
-An effect applies canonical html lang/dir and Clarity defaults with locale overrides. Storage errors are caught. Theme
-reads the document window's storage, accepts dark or defaults light, and writes body cds-theme. Multiple service
-instances still target the same document; injector scope alone does not isolate document-level presentation.
+Translation initial language comes from LOCALE_ID, browser navigator on the browser platform, then English. Resolve
+exact/case-insensitive locale, Chinese script/region, base language, then an available dialect. Missing keys fall back
+to English and finally a visible marker; warnings are deduplicated until dictionary changes. `{0}` substitution retains
+unresolved placeholders. An effect applies canonical html lang/dir and Clarity defaults with locale overrides. Storage
+errors are caught. Theme reads the document window's storage, accepts dark or defaults light, and writes body cds-theme.
+Multiple service instances still target the same document; injector scope alone does not isolate document-level
+presentation.
 
 ## Clarity, accessibility, and localization
 

@@ -1,6 +1,6 @@
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
-import {PageContainerComponent, StatusIndicatorComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, StatusIndicatorComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -45,7 +45,7 @@ export class StarterComponent {
   <cll-status-indicator [iconStatus]="currentStatus()">{{ currentStatus() }}</cll-status-indicator>
 </div>`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {

@@ -7,7 +7,7 @@ import {
   buildObjectPathBreadcrumbs,
   EncodedObjectPathLocation,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 // eslint-disable-next-line @nx/enforce-module-boundaries -- Shared object-path consumer harness, not a library import.
 import {
@@ -60,7 +60,7 @@ export class BreadcrumbStorageComponent {
   readonly navigationInfo = PRESERVE_CONTENT_SCROLL;
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   private readonly params = toSignal(this.route.queryParamMap, {initialValue: this.route.snapshot.queryParamMap});
   readonly buckets = buckets;

@@ -10,7 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {IdleDetectionService, provideIdleDetectionService} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -105,7 +105,7 @@ export class IdleComponent implements OnInit, OnDestroy {
 <output aria-live="polite">{{ phase() }} · {{ countdown() ?? '—' }}</output>`,
   );
   private destroyRef = inject(DestroyRef);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   serviceMethods = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

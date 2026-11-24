@@ -1,5 +1,5 @@
 import {TestBed} from '@angular/core/testing';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {
   initialDemoTranslations,
   loadDemoLanguage,
@@ -9,9 +9,9 @@ import {
 
 describe('Lazy demo dictionaries', () => {
   it.each(supportedDemoLanguages)('loads %s without changing a newer selection', async (language) => {
-    const service = TestBed.inject(TranslationService);
+    const service = TestBed.inject(ClrLiftI18nService);
     service.loadTranslationsForComponent('', initialDemoTranslations);
-    service.setLanguage('en', false);
+    service.setLanguage('en');
     await loadDemoLanguage(service, language);
     expect(service.currentLanguage()).toBe('en');
     expect(service.translateWithLanguage('header.selectLanguage', language)).not.toContain('not found');

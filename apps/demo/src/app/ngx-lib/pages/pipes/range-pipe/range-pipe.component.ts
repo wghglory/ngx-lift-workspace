@@ -1,6 +1,6 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {RangePipe} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -36,7 +36,7 @@ import {RangePipe} from 'ngx-lift';
 export class PipeExampleComponent {}
 // Output: [1, 2, 3, 4]
 // End is exclusive: [1, 5] produces 1, 2, 3, 4. JsonPipe displays the array.`);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -2,7 +2,7 @@ import {DemoPlaygroundComponent} from '../../../shared/components/demo-playgroun
 import {ChangeDetectionStrategy, Component, computed, inject, OnInit} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {FileReaderComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {FileReaderComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -53,7 +53,7 @@ export class FileReaderDemoComponent implements OnInit {
   <output aria-live="polite">{{ basicForm.status }}</output>
 </form>`,
   );
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly inputs = computed<ApiProperty[]>(() => [
     {

@@ -1,7 +1,7 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, input, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 /** A formatted entry in the live state inspector. */
 export interface StateInspectorItem {
@@ -19,7 +19,7 @@ export interface StateInspectorItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StateInspectorComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   title = input<string>('inspector.liveState');
   description = input<string>('');

@@ -3,7 +3,7 @@ import {formatDate} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {addCalendarDays, dateRangeValidator} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -83,7 +83,7 @@ export class DateExampleComponent {
   <output aria-live="polite">{{ starterForm.status }}</output>
 </form>`,
   );
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   optionsProperties = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

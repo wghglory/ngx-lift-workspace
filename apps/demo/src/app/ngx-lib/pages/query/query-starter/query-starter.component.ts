@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, signal, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {queryResource} from 'ngx-lift';
 import {map, timer} from 'rxjs';
 
@@ -19,7 +19,7 @@ interface Team {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryStarterComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly teamId = signal('a');
   readonly simulateFailure = signal(false);

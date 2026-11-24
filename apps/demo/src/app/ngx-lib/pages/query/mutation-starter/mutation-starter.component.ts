@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, computed, signal, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {AlertComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {mutateResource} from 'ngx-lift';
 import {map, timer} from 'rxjs';
 
@@ -13,7 +13,7 @@ import {map, timer} from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MutationStarterComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly name = signal('');
   readonly simulateFailure = signal(false);

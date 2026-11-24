@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {beforeEach, describe, expect, it} from 'vitest';
 import {StateInspectorComponent} from './state-inspector.component';
 
@@ -12,11 +12,11 @@ describe('StateInspectorComponent', () => {
       imports: [StateInspectorComponent],
     }).compileComponents();
 
-    TestBed.inject(TranslationService).loadTranslationsForComponent('', {
+    TestBed.inject(ClrLiftI18nService).loadTranslationsForComponent('', {
       en: {'inspector.liveState': 'Live Signal State'},
       'zh-CN': {'inspector.liveState': '实时信号状态'},
     });
-    TestBed.inject(TranslationService).setLanguage('en');
+    TestBed.inject(ClrLiftI18nService).setLanguage('en');
     fixture = TestBed.createComponent(StateInspectorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -29,7 +29,7 @@ describe('StateInspectorComponent', () => {
 
   it('updates the visible and accessible default title when the language changes', () => {
     expect(fixture.nativeElement.querySelector('aside').getAttribute('aria-label')).toBe('Live Signal State');
-    TestBed.inject(TranslationService).setLanguage('zh-CN');
+    TestBed.inject(ClrLiftI18nService).setLanguage('zh-CN');
     fixture.detectChanges();
     expect(fixture.nativeElement.querySelector('h4').textContent).toBe('实时信号状态');
     expect(fixture.nativeElement.querySelector('aside').getAttribute('aria-label')).toBe('实时信号状态');

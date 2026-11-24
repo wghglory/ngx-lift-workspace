@@ -8,7 +8,7 @@ const german = dictionaryMessages('apps/demo/src/app/core/l10n/demo.l10n.de.ts')
 
 test.describe('English validator journeys', () => {
   test.beforeEach(async ({page}) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   });
 
   test('integerValidator validates a replica count and recovers from errors', async ({page}, testInfo) => {
@@ -131,7 +131,7 @@ test.describe('English validator journeys', () => {
 });
 
 test('the new validator pages render translated messages after a language switch', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'de'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'de'));
   const pages = [
     {route: '/ngx-lift/validators/integer', key: 'integerValidator.overview'},
     {route: '/ngx-lift/validators/json', key: 'jsonValidator.overview'},
@@ -148,7 +148,7 @@ test('the new validator pages render translated messages after a language switch
 });
 
 test('switching language at runtime updates validator page messages', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/ngx-lift/validators/same-value');
   const overview = page.locator('main p').first();
   await expect(overview).toContainText(english['sameValueValidator.overview']);

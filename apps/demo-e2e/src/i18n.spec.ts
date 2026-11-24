@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test('switches visible API descriptions, accessible language name and document metadata', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/status-indicator');
   await expect(page.getByText('Status represented by the icon.', {exact: true})).toBeVisible();
   await page.getByRole('button', {name: 'Select Language', exact: true}).click();
@@ -15,7 +15,7 @@ test('switches visible API descriptions, accessible language name and document m
 
 test('switches all secondary locales and updates mounted API descriptions without partial markers', async ({page}) => {
   test.setTimeout(60000);
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/ngx-lift/query/queryResource');
   for (const [locale, label, description] of [
     [

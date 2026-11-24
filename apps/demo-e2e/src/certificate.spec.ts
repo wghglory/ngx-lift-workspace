@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test('loads the certificate examples automatically without moving focus', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');
   await expect(page.getByRole('button', {name: 'Load Certificate Example', exact: true})).toHaveCount(0);
   const triggers = page.locator('cll-certificate-signpost button');
@@ -22,7 +22,7 @@ test('loads the certificate examples automatically without moving focus', async 
 });
 
 test('switches between sample certificates by role and algorithm', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');
   const select = page.getByLabel('Sample certificate');
   await expect(select).toBeVisible();
@@ -48,7 +48,7 @@ test('switches between sample certificates by role and algorithm', async ({page}
 });
 
 test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');
   const pemBox = page.getByLabel('Certificate PEM');
   await expect(pemBox).toHaveValue(/BEGIN CERTIFICATE/);
@@ -71,7 +71,7 @@ test('parses PEM in the build-your-own-viewer and re-encodes it', async ({page})
 });
 
 test('renders a three-level certificate chain in the viewer', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');
   const select = page.getByLabel('Sample certificate');
   await select.selectOption({label: 'Chain — leaf → intermediate CA → root (deep nesting)'});
@@ -100,7 +100,7 @@ test('renders a three-level certificate chain in the viewer', async ({page}) => 
 });
 
 test('reports malformed PEM in the viewer', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/certificate');
   await page.getByLabel('Certificate PEM').fill('-----BEGIN CERTIFICATE-----\nnot base64!\n-----END CERTIFICATE-----');
   await page.getByRole('button', {name: 'Parse', exact: true}).click();

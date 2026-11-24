@@ -3,7 +3,7 @@ import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideRouter} from '@angular/router';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 
 import {enTranslations} from '../../../../core/l10n/demo.l10n.en';
 
@@ -19,9 +19,9 @@ describe('ComputedAsyncComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
 
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
-    translations.setLanguage('en', false);
+    translations.setLanguage('en');
     fixture = TestBed.createComponent(ComputedAsyncComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

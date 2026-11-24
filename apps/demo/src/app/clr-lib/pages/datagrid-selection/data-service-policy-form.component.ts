@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {mutateResource, queryResource, toSignalForm} from 'ngx-lift';
 
 import {OrganizationPickerComponent} from './organization-picker.component';
@@ -57,7 +57,7 @@ type DtoMode = 'id-only' | 'reference' | 'full-entity';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DataServicePolicyFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly organizationService = inject(OrganizationService);
   private readonly namespaceService = inject(NamespaceService);
   private readonly organizationPickerRef = viewChild(OrganizationPickerComponent);

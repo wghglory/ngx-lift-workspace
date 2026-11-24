@@ -9,7 +9,7 @@ import {
   PageContainerComponent,
   SpinnerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 import {resourceAsync, ResourceRef} from 'ngx-lift';
 import {delay, map, of} from 'rxjs';
@@ -90,7 +90,7 @@ export class ResourceAsyncComponent {
   private userService = inject(UserService);
   private http = inject(HttpClient);
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

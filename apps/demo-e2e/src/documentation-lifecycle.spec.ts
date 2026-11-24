@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
 });
 
 test('idle service begins on demand and requires explicit warning confirmation', async ({page}) => {

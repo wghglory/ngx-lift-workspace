@@ -1,4 +1,4 @@
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 
 /** Localized messages owned by the datagrid selection examples. */
 // Independent language acceptance remains a separate gate.
@@ -237,6 +237,6 @@ export const EXAMPLE_MESSAGES: Record<string, Record<string, string>> = {
 };
 
 /** Registers the example-owned messages with the application translation service. */
-export function registerExampleMessages(service: TranslationService): void {
+export function registerExampleMessages(service: ClrLiftI18nService): void {
   service.loadTranslationsForComponent('organizationExample', EXAMPLE_MESSAGES);
 }

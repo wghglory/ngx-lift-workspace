@@ -119,7 +119,7 @@ Inputs/outputs added to `AlertComponent`:
 
 The close button's accessible name binds to the localized `alert.close` entry (already defined in
 `libs/clr-lift/src/lib/components/alerts/alert.l10n.ts` and loaded via
-`TranslationService.loadTranslationsForComponent('alert', alertTranslations)`). This replaces the previous unlocalized
+`ClrLiftI18nService.loadTranslationsForComponent('alert', alertTranslations)`). This replaces the previous unlocalized
 Clarity default.
 
 ## Behavior and architecture

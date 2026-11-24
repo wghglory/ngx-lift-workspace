@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {createTrigger} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -42,7 +42,7 @@ export class StarterComponent {
 <output aria-live="polite">{{ revision() }}</output>`);
 
   private refreshTrigger = createTrigger();
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   properties = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

@@ -11,7 +11,7 @@ import {delay, of, Subject, Subscription, throwError} from 'rxjs';
 import {vi, beforeEach, afterEach} from 'vitest';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {TimelineBaseComponent} from './timeline-base.component';
 import {TimelineWizardComponent} from './timeline-wizard.component';
 import {TimelineWizardService} from './timeline-wizard.service';
@@ -42,7 +42,7 @@ describe('TimelineWizardComponent', () => {
     TestBed.configureTestingModule({
       imports: [TimelineWizardComponent, TranslatePipe, ClarityModule, NoopAnimationsModule, ReactiveFormsModule],
       providers: [
-        TranslationService,
+        ClrLiftI18nService,
         ChangeDetectorRef,
         TimelineWizardService,
         provideHttpClient(),

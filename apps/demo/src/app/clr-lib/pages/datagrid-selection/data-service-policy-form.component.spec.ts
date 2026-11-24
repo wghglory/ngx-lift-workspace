@@ -1,6 +1,6 @@
 import {TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {of} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it} from 'vitest';
 
@@ -53,10 +53,10 @@ describe('DataServicePolicyFormComponent', () => {
         },
       ],
     });
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     registerExampleMessages(translations);
-    translations.setLanguage('en', false);
+    translations.setLanguage('en');
   });
 
   afterEach(() => TestBed.resetTestingModule());

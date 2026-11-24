@@ -1,8 +1,8 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {makeCert, OID, TAG, toPem} from './certificate-der-fixture';
 import {CertificateSignpostComponent} from './certificate-signpost.component';
 
@@ -25,7 +25,7 @@ describe('CertificateSignpostComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [CertificateSignpostComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     fixture = TestBed.createComponent(CertificateSignpostComponent);
     component = fixture.componentInstance;

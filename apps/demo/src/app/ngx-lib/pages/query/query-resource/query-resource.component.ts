@@ -12,7 +12,7 @@ import {
   QueryDevtoolsComponent,
   SpinnerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
@@ -64,7 +64,7 @@ interface DemoUser {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class QueryResourceDemoComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   readonly starterCode = highlight(QUERY_STARTER_SOURCE);
   readonly starterHtmlCode = highlight(QUERY_STARTER_TEMPLATE, 'html');
   readonly httpSetupCode = highlight(`import {ApplicationConfig} from '@angular/core';

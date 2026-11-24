@@ -1,5 +1,5 @@
 import {computed, Signal} from '@angular/core';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty} from '../components/api-table';
 
@@ -25,7 +25,7 @@ export interface LocalizedApiParameter {
  * ```
  */
 export function localizedApiParameters(
-  translations: TranslationService,
+  translations: ClrLiftI18nService,
   parameters: readonly LocalizedApiParameter[],
 ): Signal<ApiProperty[]> {
   return computed<ApiProperty[]>(() => {

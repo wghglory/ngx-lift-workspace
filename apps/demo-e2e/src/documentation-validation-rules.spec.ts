@@ -3,7 +3,7 @@ import {expect, test} from '@playwright/test';
 test.use({timezoneId: 'America/Los_Angeles'});
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
 });
 
 test('the first URL task succeeds without the later HTTPS example', async ({page}) => {

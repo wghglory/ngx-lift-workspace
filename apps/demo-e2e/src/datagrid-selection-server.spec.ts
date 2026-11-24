@@ -35,7 +35,7 @@ test.beforeEach(async ({page}) => {
     const url = new URL(request.url());
     if (url.pathname.endsWith('/organizations-server.json')) requests.push(url);
   });
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto(route);
   const server = page.getByTestId('selection-server');
   await expect(server.getByRole('checkbox', {name: 'Select Aurora', exact: true})).toBeVisible();

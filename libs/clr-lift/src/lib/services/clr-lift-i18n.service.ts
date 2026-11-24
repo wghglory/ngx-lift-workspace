@@ -1,26 +1,26 @@
-import {DOCUMENT} from '@angular/common';
-import {computed, effect, inject, Injectable, signal} from '@angular/core';
+import {DOCUMENT, isPlatformBrowser} from '@angular/common';
+import {computed, effect, inject, Injectable, LOCALE_ID, PLATFORM_ID, signal} from '@angular/core';
 import {ClrCommonStrings, ClrCommonStringsService, commonStringsDefault} from '@clr/angular/utils';
 import {defaultClarityCommonStrings} from './clarity-common-strings.l10n';
+import {DEFAULT_LANGUAGE, resolveLocale} from './locale-resolution';
 
-/** English fallback used when a requested translation is unavailable. */
-export const DEFAULT_LANGUAGE = 'en';
-/** Browser storage key for the selected clr-lift language. */
-export const STORAGE_KEY_LANGUAGE = 'clr-lift-lang';
+export {DEFAULT_LANGUAGE} from './locale-resolution';
 
 /**
  * Service for managing translations and localization in the application.
- * Supports multiple languages, reactive language switching, persistence,
- * component-scoped translation keys, and dynamic synchronization with Clarity Design System common strings.
+ * Supports multiple languages, reactive language switching, component-scoped translation keys, and dynamic
+ * synchronization with Clarity Design System common strings.
  *
- * Automatically resolves initial language from localStorage or `navigator.language`
- * with fallback to English ('en').
+ * Initial language comes from Angular's `LOCALE_ID`, then `navigator.language` on the browser platform, then `en`.
+ * The service never persists a language; applications own their preference storage.
  */
 @Injectable({
   providedIn: 'root',
 })
-export class TranslationService {
+export class ClrLiftI18nService {
   private document = inject(DOCUMENT);
+  private platformId = inject(PLATFORM_ID);
+  private localeId = inject<string>(LOCALE_ID, {optional: true});
   private clrCommonStrings = inject(ClrCommonStringsService, {optional: true});
   private readonly dictionaryVersion = signal(0);
   private readonly warnings = new Set<string>();
@@ -43,20 +43,9 @@ export class TranslationService {
   private translations: Record<string, Record<string, string>> = Object.create(null);
 
   private initialLanguage(): string {
-    if (typeof localStorage !== 'undefined') {
-      try {
-        const saved = localStorage.getItem(STORAGE_KEY_LANGUAGE);
-        if (saved) {
-          return saved;
-        }
-      } catch {
-        // ignore localStorage access errors
-      }
-    }
-    if (typeof navigator !== 'undefined' && navigator.language) {
-      return navigator.language;
-    }
-    return DEFAULT_LANGUAGE;
+    const browserLanguage =
+      isPlatformBrowser(this.platformId) && typeof navigator !== 'undefined' ? navigator.language : undefined;
+    return resolveLocale(undefined, this.localeId, browserLanguage);
   }
 
   private readonly currentLanguageSignal = signal<string>(this.initialLanguage());
@@ -73,7 +62,7 @@ export class TranslationService {
   }
 
   set language(val: string) {
-    this.setLanguage(val, false);
+    this.setLanguage(val);
   }
 
   /**
@@ -108,23 +97,15 @@ export class TranslationService {
   }
 
   /**
-   * Sets the active language across all components.
+   * Sets the active language across all components without persisting it.
    *
    * @param lang - Target language tag (e.g. 'en', 'zh-CN', 'es', 'de', 'fr', 'ja').
-   * @param persist - Whether to store the selection in localStorage (default: true).
    */
-  setLanguage(lang: string, persist = true): void {
+  setLanguage(lang: string): void {
     if (!lang) {
       return;
     }
     this.currentLanguageSignal.set(lang);
-    if (persist && typeof localStorage !== 'undefined') {
-      try {
-        localStorage.setItem(STORAGE_KEY_LANGUAGE, lang);
-      } catch {
-        // ignore storage errors
-      }
-    }
   }
 
   /**

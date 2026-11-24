@@ -5,8 +5,8 @@ import {By} from '@angular/platform-browser';
 import {ClarityModule} from '@clr/angular';
 import {vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {AlertService} from './alert.service';
 import {AlertContainerComponent} from './alert-container.component';
 
@@ -28,7 +28,7 @@ describe('AlertContainerComponent', () => {
             },
           },
         },
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
       ],
     });
 
@@ -86,7 +86,7 @@ describe('TestAlertsHostComponent', () => {
             },
           },
         },
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
       ],
     });
 
@@ -134,7 +134,7 @@ describe('AlertContainerComponent with the real AlertService', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [AlertContainerComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     service = TestBed.inject(AlertService);
     fixture = TestBed.createComponent(AlertContainerComponent);

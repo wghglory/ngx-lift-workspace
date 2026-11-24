@@ -6,7 +6,7 @@ import {toSignalForm} from 'ngx-lift';
 import {Subject} from 'rxjs';
 import {vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {
   KeyValueControlComponent,
   KeyValueEntry,
@@ -411,7 +411,7 @@ describe('KeyValueControlComponent with Angular form owners', () => {
 
   it('switches accessible labels and errors at runtime without losing values or identity', async () => {
     const input = inputs()[0];
-    TestBed.inject(TranslationService).setLanguage('zh-CN');
+    TestBed.inject(ClrLiftI18nService).setLanguage('zh-CN');
     await settle();
     expect(editor().textContent).toContain('标签');
     expect(buttons()[0].getAttribute('aria-label')).toBe('删除 1');

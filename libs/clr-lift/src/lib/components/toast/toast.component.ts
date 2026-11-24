@@ -17,7 +17,7 @@ import {timer} from 'rxjs';
 import {take} from 'rxjs/operators';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {multiply} from '../../shared/animation.const';
 import {toastTranslations} from './toast.l10n';
 import {ToastType} from './toast.type';
@@ -44,7 +44,7 @@ export class ToastComponent implements OnInit, AfterViewInit {
   private element = inject<ElementRef<HTMLElement>>(ElementRef);
   private destroyRef = inject(DestroyRef);
   private ngZone = inject(NgZone);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   toastType = input<ToastType>('info');
   primaryButtonText = input('');

@@ -7,7 +7,7 @@ const route = '/clr-lift/components/key-value-inputs';
 
 test.describe('key/value array form control', () => {
   test.beforeEach(async ({page}) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
     await page.goto(route);
   });
 
@@ -119,7 +119,7 @@ test.describe('key/value array form control', () => {
 for (const theme of ['light', 'dark']) {
   test(`array editor accessibility, narrow layout, compact and RTL (${theme})`, async ({page}, testInfo) => {
     await page.addInitScript((theme) => {
-      localStorage.setItem('clr-lift-lang', 'en');
+      localStorage.setItem('demo-lang', 'en');
       localStorage.setItem('cds-theme', theme);
     }, theme);
     await page.setViewportSize({width: 390, height: 844});
@@ -157,7 +157,7 @@ for (const {code, label} of demoLocales) {
   test(`array editor translates all three hosts and switches language without clearing rows (${code})`, async ({
     page,
   }) => {
-    await page.addInitScript((locale) => localStorage.setItem('clr-lift-lang', locale), code);
+    await page.addInitScript((locale) => localStorage.setItem('demo-lang', locale), code);
     await page.setViewportSize({width: 390, height: 844});
     await page.goto(route);
     for (const mode of ['model', 'reactive', 'facade']) {

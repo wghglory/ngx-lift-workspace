@@ -26,7 +26,7 @@ import {
   AlertComponent,
   PageContainerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
   UploadComponent,
   UploadPanelComponent,
   UploadPanelManager,
@@ -62,7 +62,7 @@ const wait = (milliseconds: number) => new Promise<void>((resolve) => setTimeout
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UploadDemoComponent {
-  private readonly translation = inject(TranslationService);
+  private readonly translation = inject(ClrLiftI18nService);
   readonly queue = inject(UploadQueueService);
   private readonly panelManager = inject(UploadPanelManager);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);

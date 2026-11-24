@@ -50,9 +50,11 @@ try {
     `
 import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
-import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
+import {SpinnerComponent, TooltipDirective, ClrLiftI18nService, QueryDevtoolsComponent, provideClrLiftI18n, ClrLiftI18nOptions} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';
 void provideQueryDevtools();
+const i18nOptions: ClrLiftI18nOptions = {locale: 'fr'};
+void provideClrLiftI18n(i18nOptions);
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
 import {FormControl, FormGroup} from '@angular/forms';
@@ -131,7 +133,7 @@ const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}
 function form() {return controlValue<string>(new FormControl('', {nonNullable: true}));}
-function translations(service: TranslationService) {return service.locale();}
+function translations(service: ClrLiftI18nService) {return service.locale();}
 function emptiness(items: string[] | undefined) {
   if (isNotEmpty(items)) {
     // @ts-expect-error An emptiness predicate cannot safely narrow nullability in both branches.
@@ -400,7 +402,7 @@ class Negative {items=[{id:'org-1',name:'North'}]; key=(item:{id:string})=>item.
     `
 import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, queryResource, queryResources, QueryResourceItem, QueryClientDiagnostics, fetchQueryObservable, observeQueryObservable, ByteConverterPipe, controlValue, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import {of, type Observable} from 'rxjs';
-import {SpinnerComponent, TooltipDirective, TranslationService, QueryDevtoolsComponent} from 'clr-lift';
+import {SpinnerComponent, TooltipDirective, ClrLiftI18nService, QueryDevtoolsComponent} from 'clr-lift';
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
 import {FormControl} from '@angular/forms';
@@ -458,7 +460,7 @@ const spinner: typeof SpinnerComponent = SpinnerComponent;
 const tooltip: typeof TooltipDirective = TooltipDirective;
 function format(pipe: ByteConverterPipe) {return pipe.transform(1024, 'zh-CN');}
 function form() {return controlValue<string>(new FormControl('', {nonNullable: true}));}
-function translations(service: TranslationService) {return service.locale();}
+function translations(service: ClrLiftI18nService) {return service.locale();}
 function emptiness(items: string[] | undefined) {
   if (items != null && isNotEmpty(items)) { const defined: string[] = items; void defined; }
 }

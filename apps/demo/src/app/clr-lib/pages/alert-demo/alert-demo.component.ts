@@ -3,7 +3,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 import {ClarityIcons, infoCircleIcon} from '@clr/angular/icon';
-import {AlertComponent, PageContainerComponent, TooltipModule, TranslatePipe, TranslationService} from 'clr-lift';
+import {AlertComponent, PageContainerComponent, TooltipModule, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
@@ -28,7 +28,7 @@ ClarityIcons.addIcons(infoCircleIcon);
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertDemoComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   error = new HttpErrorResponse({
     error: {message: 'angular http error response'},

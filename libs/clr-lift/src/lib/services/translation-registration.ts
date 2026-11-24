@@ -1,4 +1,4 @@
-import {TranslationService, canonicalLocale, chineseLocale} from './translation.service';
+import {ClrLiftI18nService, canonicalLocale, chineseLocale} from './clr-lift-i18n.service';
 
 /**
  * The locales whose dictionaries are shipped with clr-lift / the demo.
@@ -56,7 +56,7 @@ function namespaceFor(namespace: string, options?: RegistrationOptions): string 
  * to opt new integrations into the documented kebab-case convention.
  */
 export function registerTranslations(
-  service: TranslationService,
+  service: ClrLiftI18nService,
   namespace: string,
   dictionaries: Record<string, Record<string, string>>,
   options?: RegistrationOptions,
@@ -69,7 +69,7 @@ export function registerTranslations(
  * Namespace handling matches {@link registerTranslations} exactly.
  */
 export async function registerLazyTranslations(
-  service: TranslationService,
+  service: ClrLiftI18nService,
   namespace: string,
   loadDictionaries: () => Promise<Record<string, Record<string, string>>>,
   options?: RegistrationOptions,

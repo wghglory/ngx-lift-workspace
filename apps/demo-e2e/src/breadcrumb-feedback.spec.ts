@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.route('**/breadcrumb-server.json', (request) => request.fulfill({json: {id: 'sql-1', name: 'Server'}}));
   await page.goto('/clr-lift/components/breadcrumb?level=1');
 });

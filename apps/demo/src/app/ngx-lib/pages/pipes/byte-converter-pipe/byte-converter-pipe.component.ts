@@ -1,6 +1,6 @@
 import {ByteConverterPipe} from 'ngx-lift';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../../shared/components/code-block/code-block.component';
@@ -34,7 +34,7 @@ export class PipeExampleComponent {}
 // Output: 1 KB
 // Units use 1024-based scaling; the optional locale controls formatting and labels.
 // Without a locale argument, the pipe reads the application LOCALE_ID.`);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   parameters = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();

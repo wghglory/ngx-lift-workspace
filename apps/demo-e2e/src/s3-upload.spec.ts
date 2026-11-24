@@ -177,7 +177,7 @@ test('S3 fields and teaching text render in every locale at a narrow width', asy
   await page.goto('/clr-lift/components/upload');
   for (const {code} of demoLocales) {
     const messages = dictionaryMessages('apps/demo/src/app/core/l10n/demo.l10n.' + code.toLowerCase() + '.ts');
-    await page.evaluate((locale) => localStorage.setItem('clr-lift-lang', locale), code);
+    await page.evaluate((locale) => localStorage.setItem('demo-lang', locale), code);
     await page.reload();
     const demo = page.getByTestId('upload-demo-s3');
     await expect(demo.getByLabel(messages['uploadDemo.s3.bucket'], {exact: true})).toBeVisible();

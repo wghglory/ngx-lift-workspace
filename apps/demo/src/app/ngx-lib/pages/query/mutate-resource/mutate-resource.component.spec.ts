@@ -3,7 +3,7 @@ import {provideHttpClientTesting} from '@angular/common/http/testing';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {provideRouter} from '@angular/router';
-import {TranslationService} from 'clr-lift';
+import {ClrLiftI18nService} from 'clr-lift';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {demoTranslations} from '../../../../core/l10n/demo.l10n';
@@ -19,7 +19,7 @@ describe('MutateResourceDemoComponent', () => {
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
     }).compileComponents();
 
-    const translationService = TestBed.inject(TranslationService);
+    const translationService = TestBed.inject(ClrLiftI18nService);
     translationService.loadTranslationsForComponent('', demoTranslations);
 
     fixture = TestBed.createComponent(MutateResourceDemoComponent);

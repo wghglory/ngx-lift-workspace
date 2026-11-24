@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormControl, NgControl} from '@angular/forms';
 import {By} from '@angular/platform-browser';
 import {provideNoopAnimations} from '@angular/platform-browser/animations';
-import {DatagridSelectionComponent, TranslationService} from 'clr-lift';
+import {DatagridSelectionComponent, ClrLiftI18nService} from 'clr-lift';
 import {of} from 'rxjs';
 import {beforeEach, describe, expect, it, vi} from 'vitest';
 
@@ -88,10 +88,10 @@ describe('Reusable picker direct form binding', () => {
         },
       ],
     });
-    const translations = TestBed.inject(TranslationService);
+    const translations = TestBed.inject(ClrLiftI18nService);
     translations.loadTranslationsForComponent('', {en: enTranslations});
     registerExampleMessages(translations);
-    translations.setLanguage('en', false);
+    translations.setLanguage('en');
   });
 
   it('organization picker binds the page control through edits, reset and replacement', () => {

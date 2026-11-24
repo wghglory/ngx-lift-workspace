@@ -72,10 +72,10 @@ limitations; examples introduce them after the first task.
 // 'Could not save. <button type="button" class="btn btn-link retry-save">Try again</button> to continue.'
 // Create in an injection context; retrySave is application-owned.
 import {inject} from '@angular/core';
-import {AlertService, TranslationService} from 'clr-lift';
+import {AlertService, ClrLiftI18nService} from 'clr-lift';
 
 const alerts = inject(AlertService);
-const i18n = inject(TranslationService);
+const i18n = inject(ClrLiftI18nService);
 const alert = alerts.addAlert({
   content: i18n.translate('settings.saveFailed'),
   alertType: 'danger',
@@ -96,7 +96,7 @@ return created identity. They are UI services, not CVAs; forms can invoke them a
 AlertService exposes a computed signal and clears on injector destruction. The container renders content through
 innerHTML after the intentional trust bypass. Developers own the markup and any interpolated data. Avoid executable HTML
 including script tags, event attributes such as onclick/onerror, and javascript: URLs; omitting script tags alone is
-insufficient. Escape user/server values as text before inserting them into trusted markup. TranslationService
+insufficient. Escape user/server values as text before inserting them into trusted markup. ClrLiftI18nService
 interpolation does not perform HTML escaping. Do not pass arbitrary API error text directly as trusted alert content.
 Click delegation is scoped to the current alert, handles nested targets and leaves callbacks outside the HTML string. An
 added content string is a translation snapshot; changing language does not retranslate an existing service entry.

@@ -4,8 +4,8 @@ import {provideNoopAnimations} from '@angular/platform-browser/animations';
 import {IdleDetectionService} from 'ngx-lift';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {IdleDetectionComponent} from './idle-detection.component';
 
 describe('IdleDetectionComponent state across scopes', () => {
@@ -16,7 +16,7 @@ describe('IdleDetectionComponent state across scopes', () => {
       providers: [
         IdleDetectionService,
         provideNoopAnimations(),
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
         {provide: InteractivityChecker, useValue: {isFocusable: () => true}},
       ],
     });

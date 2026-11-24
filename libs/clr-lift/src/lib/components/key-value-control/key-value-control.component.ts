@@ -32,7 +32,7 @@ import {ClarityModule} from '@clr/angular';
 import {Subscription} from 'rxjs';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {keyValueTranslations} from '../key-value-inputs/key-value.l10n';
 import {KeyValueEntry, KeyValueValue, KeyValueKeyConfig, KeyValueValueConfig} from './key-value-entry.type';
 import {KeyValueFieldComponent} from './key-value-field.component';
@@ -73,7 +73,7 @@ let nextId = 0;
 })
 export class KeyValueControlComponent implements ControlValueAccessor, Validator, AfterViewInit, DoCheck {
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-  private readonly translations = inject(TranslationService);
+  private readonly translations = inject(ClrLiftI18nService);
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
   private readonly formGroup = inject(FormGroupDirective, {optional: true, skipSelf: true});

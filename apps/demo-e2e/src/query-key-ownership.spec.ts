@@ -2,7 +2,7 @@ import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
-    if (!localStorage.getItem('clr-lift-lang')) localStorage.setItem('clr-lift-lang', 'en');
+    if (!localStorage.getItem('demo-lang')) localStorage.setItem('demo-lang', 'en');
   });
   await page.goto('/ngx-lift/query/mutateResource');
 });
@@ -56,7 +56,7 @@ test('ownership guidance and callback API remain visible in every supported lang
     ru: 'Ключи и теги на уровне домена',
   };
   for (const [locale, title] of Object.entries(titles)) {
-    await page.evaluate((language) => localStorage.setItem('clr-lift-lang', language), locale);
+    await page.evaluate((language) => localStorage.setItem('demo-lang', language), locale);
     await page.reload();
     const guide = page.getByTestId('query-ownership-guide');
     await expect(guide.getByRole('heading', {level: 2})).toHaveText(title);

@@ -30,7 +30,7 @@ import {
 import {ClarityModule} from '@clr/angular';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {fileReaderTranslations} from './file-reader.l10n';
 
 /**
@@ -74,7 +74,7 @@ import {fileReaderTranslations} from './file-reader.l10n';
 })
 export class FileReaderComponent implements ControlValueAccessor, Validator {
   private injector = inject(Injector);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private activeReader?: FileReader;
 
   fileElement = viewChild.required<ElementRef<HTMLInputElement>>('file');

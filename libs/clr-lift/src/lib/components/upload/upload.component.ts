@@ -25,7 +25,7 @@ import {ClarityIcons, ClarityModule, exclamationTriangleIcon, uploadCloudIcon} f
 import {UPLOAD_CHUNK_25MB, type UploadAdapter, type UploadError, type UploadItem, UploadQueueService} from 'ngx-lift';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {filesFromDataTransfer, relativeFilePath} from './drop-files';
 import {UploadPanelManager} from './upload-panel-manager';
 import {uploadTranslations} from './upload.l10n';
@@ -48,7 +48,7 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   private static nextId = 0;
 
   private readonly queue = inject(UploadQueueService);
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly panelManager = inject(UploadPanelManager);
   private readonly platformId = inject(PLATFORM_ID);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);

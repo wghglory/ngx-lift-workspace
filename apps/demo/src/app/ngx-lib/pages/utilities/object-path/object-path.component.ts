@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {deleteValueByPath, getValueByPath} from 'ngx-lift';
 
 import {ApiTableComponent} from '../../../../shared/components/api-table';
@@ -38,7 +38,7 @@ function createSample(): Record<string, unknown> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ObjectPathComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   private readonly source = signal(createSample());
 
   readonly readPath = signal('user.profile.contact.email');

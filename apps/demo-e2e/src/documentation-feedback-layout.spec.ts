@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test.beforeEach(async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
 });
 
 test('feedback-layout documentation fits a narrow screen and exposes its first source', async ({page}) => {

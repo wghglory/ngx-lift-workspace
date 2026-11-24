@@ -5,7 +5,7 @@ import {CommonModule} from '@angular/common';
 import {ChangeDetectionStrategy, Component, signal, computed, inject} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {mutateResource, queryResource} from 'ngx-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../../shared/components/api-table';
@@ -36,7 +36,7 @@ import {TeamSummaryComponent} from './team-summary.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MutateResourceDemoComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   readonly starterCode = highlight(MUTATION_STARTER_SOURCE);
   readonly starterHtmlCode = highlight(MUTATION_STARTER_TEMPLATE, 'html');
 
@@ -250,7 +250,7 @@ clearLogs() {
 }`);
 
   readonly errorCode = highlight(
-    "import {inject, signal} from '@angular/core';\nimport {TranslationService} from 'clr-lift';\nimport {mutateResource} from 'ngx-lift';\n\n// Component fields and handlers used by the live preview.\nprivate readonly translationService = inject(TranslationService);\nsimulateError = signal(false);\n\nsaveSuccessMessage = signal(false);\n\nsaveSettingsMutation = mutateResource(\n  async (payload: {timeoutSeconds: number}) => {\n    this.saveSuccessMessage.set(false);\n    await new Promise((resolve) => setTimeout(resolve, 500));\n    if (this.simulateError()) {\n      throw new Error(this.translationService.translate('runtime.settingsSaveFailure'));\n    }\n    return {success: true, timeoutSeconds: payload.timeoutSeconds};\n  },\n  {concurrency: 'exhaust'},\n);\n\nasync onSaveSettings() {\n  try {\n    await this.saveSettingsMutation.mutate({timeoutSeconds: 30});\n    this.saveSuccessMessage.set(true);\n  } catch {\n    this.saveSuccessMessage.set(false);\n  }\n}",
+    "import {inject, signal} from '@angular/core';\nimport {ClrLiftI18nService} from 'clr-lift';\nimport {mutateResource} from 'ngx-lift';\n\n// Component fields and handlers used by the live preview.\nprivate readonly translationService = inject(ClrLiftI18nService);\nsimulateError = signal(false);\n\nsaveSuccessMessage = signal(false);\n\nsaveSettingsMutation = mutateResource(\n  async (payload: {timeoutSeconds: number}) => {\n    this.saveSuccessMessage.set(false);\n    await new Promise((resolve) => setTimeout(resolve, 500));\n    if (this.simulateError()) {\n      throw new Error(this.translationService.translate('runtime.settingsSaveFailure'));\n    }\n    return {success: true, timeoutSeconds: payload.timeoutSeconds};\n  },\n  {concurrency: 'exhaust'},\n);\n\nasync onSaveSettings() {\n  try {\n    await this.saveSettingsMutation.mutate({timeoutSeconds: 30});\n    this.saveSuccessMessage.set(true);\n  } catch {\n    this.saveSuccessMessage.set(false);\n  }\n}",
   );
 
   // ---------------------------------------------------------------------------

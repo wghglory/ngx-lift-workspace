@@ -5,8 +5,8 @@ import {By} from '@angular/platform-browser';
 import {FormControl, FormControlDirective, NgControl, ReactiveFormsModule} from '@angular/forms';
 import {vi, beforeEach, afterEach} from 'vitest';
 
-import {TranslationService} from '../../services/translation.service';
-import {MockTranslationService} from '../../services/translation.service.mock';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
+import {MockClrLiftI18nService} from '../../services/clr-lift-i18n.service.mock';
 import {FileReaderComponent} from './file-reader.component';
 
 beforeEach(() => {
@@ -36,7 +36,7 @@ describe('FileReaderComponent', () => {
     TestBed.configureTestingModule({
       imports: [FileReaderComponent, ReactiveFormsModule],
       providers: [
-        {provide: TranslationService, useClass: MockTranslationService},
+        {provide: ClrLiftI18nService, useClass: MockClrLiftI18nService},
         {provide: NgControl, useValue: mockNgControl},
       ],
     });
@@ -684,7 +684,7 @@ describe('FileReaderComponent real form integration', () => {
   it('updates from the model without marking the control touched or writing back', async () => {
     TestBed.configureTestingModule({
       imports: [FileReaderFormHost],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     const fixture = TestBed.createComponent(FileReaderFormHost);
     fixture.detectChanges();
@@ -718,7 +718,7 @@ describe('FileReaderComponent real form integration', () => {
     try {
       TestBed.configureTestingModule({
         imports: [FileReaderFormHost],
-        providers: [{provide: TranslationService, useClass: MockTranslationService}],
+        providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
       });
       const fixture = TestBed.createComponent(FileReaderFormHost);
       fixture.detectChanges();
@@ -749,7 +749,7 @@ describe('FileReaderComponent real form integration', () => {
   it('revalidates the real form when the file size limit or parsing state changes', () => {
     TestBed.configureTestingModule({
       imports: [FileReaderFormHost],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     const fixture = TestBed.createComponent(FileReaderFormHost);
     fixture.detectChanges();
@@ -778,7 +778,7 @@ describe('FileReaderComponent real form integration', () => {
   it('renders without NgControl when only the fileChange output is used', () => {
     TestBed.configureTestingModule({
       imports: [FileReaderComponent],
-      providers: [{provide: TranslationService, useClass: MockTranslationService}],
+      providers: [{provide: ClrLiftI18nService, useClass: MockClrLiftI18nService}],
     });
     const fixture = TestBed.createComponent(FileReaderComponent);
 

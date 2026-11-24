@@ -1,6 +1,6 @@
 import {booleanAttribute, ChangeDetectionStrategy, Component, computed, inject, input} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {spinnerTranslations} from './spinner.l10n';
 
 @Component({
@@ -14,7 +14,7 @@ export class SpinnerComponent {
   /** Decorative by default; set false and provide a localized label for standalone loading status. */
   decorative = input(true, {transform: booleanAttribute});
   label = input('');
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
   readonly statusLabel = computed(() => this.label() || this.translationService.translate('cll-spinner.loading'));
   constructor() {
     this.translationService.loadTranslationsForComponent('cll-spinner', spinnerTranslations);

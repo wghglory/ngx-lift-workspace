@@ -8,7 +8,7 @@ import {
   KeyValueInputsComponent,
   PageContainerComponent,
   TranslatePipe,
-  TranslationService,
+  ClrLiftI18nService,
 } from 'clr-lift';
 
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -39,7 +39,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KeyValueInputsDemoComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly modelCode = highlight(`import {Component} from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms';

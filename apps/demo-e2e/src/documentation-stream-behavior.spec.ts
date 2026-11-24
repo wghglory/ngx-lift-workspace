@@ -1,7 +1,7 @@
 import {expect, test} from '@playwright/test';
 
 test('stream behavior documentation fits a narrow screen and starts with a precise trace', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.setViewportSize({width: 390, height: 844});
   for (const route of ['distinctOnChange', 'logger', 'startWithTap']) {
     await page.goto('/ngx-lift/operators/' + route);

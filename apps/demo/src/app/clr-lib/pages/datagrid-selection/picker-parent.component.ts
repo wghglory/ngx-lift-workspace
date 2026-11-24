@@ -2,7 +2,7 @@ import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, output, inject} from '@angular/core';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
-import {TranslatePipe, TranslationService} from 'clr-lift';
+import {TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {toSignalForm} from 'ngx-lift';
 
 import {OrganizationPickerComponent} from './organization-picker.component';
@@ -14,7 +14,7 @@ import {OrganizationPickerComponent} from './organization-picker.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PolicyFormComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   private readonly originalOrganizationIds = ['org-1'];
   readonly form = new FormGroup({

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
 
 import {TranslatePipe} from '../../pipes/translate.pipe';
-import {TranslationService} from '../../services/translation.service';
+import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {alertTranslations} from './alert.l10n';
 import {AlertService} from './alert.service';
 import {RequiredAlert} from './alert.type';
@@ -16,7 +16,7 @@ import {RequiredAlert} from './alert.type';
 })
 export class AlertContainerComponent {
   private alertService = inject(AlertService);
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   alerts = this.alertService.alerts;
 

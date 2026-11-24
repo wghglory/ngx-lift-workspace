@@ -21,7 +21,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormsModule} from '@angular/forms';
 import {RouterLink} from '@angular/router';
 import {ClarityModule} from '@clr/angular';
-import {CalloutComponent, PageContainerComponent, TranslatePipe, TranslationService, AlertComponent} from 'clr-lift';
+import {CalloutComponent, PageContainerComponent, TranslatePipe, ClrLiftI18nService, AlertComponent} from 'clr-lift';
 import {isK8sStatusThrottled, K8S_RETRY_BACKOFF_CONFIG, k8sRetryBackoffInterceptor, createAsyncState} from 'ngx-lift';
 import {defer, finalize, of, throwError, Subject, switchMap, filter, map} from 'rxjs';
 
@@ -387,7 +387,7 @@ clearLogs(): void {
   this.simulationResult.set(null);
 }`);
 
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
   private destroyRef = inject(DestroyRef);
   private injector = inject(Injector);
 

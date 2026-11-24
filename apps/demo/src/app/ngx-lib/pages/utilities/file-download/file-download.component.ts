@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {ClarityModule} from '@clr/angular';
-import {PageContainerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 import {downloadFile} from 'ngx-lift';
 
 import {ApiTableComponent} from '../../../../shared/components/api-table';
@@ -26,7 +26,7 @@ type DownloadStatus = 'idle' | 'started';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileDownloadComponent {
-  private readonly translationService = inject(TranslationService);
+  private readonly translationService = inject(ClrLiftI18nService);
 
   readonly fileName = signal('report.txt');
   readonly content = signal('Hello from ngx-lift!\nThis file is created in the browser.');

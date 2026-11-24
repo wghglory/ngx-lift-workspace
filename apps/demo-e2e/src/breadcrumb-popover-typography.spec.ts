@@ -5,7 +5,7 @@ import {expectAccessible} from './support/accessibility';
 for (const theme of ['light', 'dark']) {
   for (const trail of ['deep-trail', 'search-trail']) {
     test(`${trail} popover keeps default typography with enlarged trail in ${theme}`, async ({page}, info) => {
-      await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+      await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
       await page.goto('/clr-lift/components/breadcrumb');
       await page.evaluate((value) => document.body.setAttribute('cds-theme', value), theme);
       await page.setViewportSize({width: 390, height: 844});
@@ -56,7 +56,7 @@ for (const theme of ['light', 'dark']) {
 }
 
 test('popover default typography still scales with the root font', async ({page}) => {
-  await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+  await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
   await page.goto('/clr-lift/components/breadcrumb');
   const host = page.getByTestId('search-trail');
   await host.evaluate((element) => (element as HTMLElement).style.setProperty('--cll-breadcrumb-font-size', '1.8rem'));

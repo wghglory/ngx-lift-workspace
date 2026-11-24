@@ -31,7 +31,7 @@ test.describe('toSignalForm signal-driven forms', () => {
   });
 
   test('submission options recompute all three payloads by keyboard and stay accessible', async ({page}, testInfo) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
     await page.goto('/ngx-lift/signals/toSignalForm');
 
     const lab = page.getByRole('region', {name: 'Submission options lab', exact: true});
@@ -71,7 +71,7 @@ test.describe('toSignalForm signal-driven forms', () => {
   });
 
   test('replaces validators from a policy signal and announces the active rule', async ({page}, testInfo) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
     await page.goto('/ngx-lift/signals/toSignalForm');
 
     const lab = page.getByRole('region', {name: 'Reactive validators (bindValidators)', exact: true});
@@ -106,7 +106,7 @@ test.describe('toSignalForm signal-driven forms', () => {
   });
 
   test('renders API reference rows that match the exported toSignalForm API', async ({page}) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
     await page.goto('/ngx-lift/signals/toSignalForm');
 
     const reference = page.locator('#api-reference');
@@ -125,7 +125,7 @@ test.describe('toSignalForm signal-driven forms', () => {
   });
 
   test('renders API guide cards named after their APIs, with bindValidators third', async ({page}, testInfo) => {
-    await page.addInitScript(() => localStorage.setItem('clr-lift-lang', 'en'));
+    await page.addInitScript(() => localStorage.setItem('demo-lang', 'en'));
     await page.goto('/ngx-lift/signals/toSignalForm');
 
     const guides = page.locator('#api-guides');
@@ -146,7 +146,7 @@ test.describe('toSignalForm signal-driven forms', () => {
 for (const {code} of demoLocales) {
   test(`submission options lab is localized for ${code}`, async ({page}) => {
     const messages = dictionaryMessages(demoFile(code));
-    await page.addInitScript((locale) => localStorage.setItem('clr-lift-lang', locale), code);
+    await page.addInitScript((locale) => localStorage.setItem('demo-lang', locale), code);
     await page.goto('/ngx-lift/signals/toSignalForm');
 
     const lab = page.getByRole('region', {name: messages['toSignalForm.optionsLabTitle'], exact: true});
@@ -173,7 +173,7 @@ for (const {code} of demoLocales) {
 for (const theme of ['light', 'dark']) {
   test(`submission options lab stays accessible with every option on in ${theme}`, async ({page}, testInfo) => {
     await page.addInitScript((activeTheme) => {
-      localStorage.setItem('clr-lift-lang', 'en');
+      localStorage.setItem('demo-lang', 'en');
       localStorage.setItem('cds-theme', activeTheme);
     }, theme);
     await page.goto('/ngx-lift/signals/toSignalForm');

@@ -1,7 +1,7 @@
 import {DemoPlaygroundComponent} from '../../../shared/components/demo-playground/demo-playground.component';
 import {RouterLink} from '@angular/router';
 import {ChangeDetectionStrategy, Component, computed, inject} from '@angular/core';
-import {PageContainerComponent, SpinnerComponent, TranslatePipe, TranslationService} from 'clr-lift';
+import {PageContainerComponent, SpinnerComponent, TranslatePipe, ClrLiftI18nService} from 'clr-lift';
 
 import {ApiProperty, ApiTableComponent} from '../../../shared/components/api-table';
 import {CodeBlockComponent} from '../../../shared/components/code-block/code-block.component';
@@ -22,7 +22,7 @@ import {highlight} from '../../../shared/utils/highlight.util';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerDemoComponent {
-  private translationService = inject(TranslationService);
+  private translationService = inject(ClrLiftI18nService);
 
   inputs = computed<ApiProperty[]>(() => {
     this.translationService.currentLanguage();
