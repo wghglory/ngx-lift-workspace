@@ -1131,7 +1131,8 @@ queue-wide, and uses the same root scope for Close; feature-scoped product dialo
 
 Use Clarity tokens, file input container, progress bar, buttons, alert styles and `cds-layout`. Light/dark, compact,
 narrow layouts, large text and RTL must be exercised in the demo. Owned messages are listed below; every key ships in
-`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`. Runtime English fallback is not delivery.
+`en`, `zh-CN`, `zh-TW`, `de`, `es`, `fr`, `ja`, `ko`, `nl`, `pt-BR` and `ru`, plus the dictionary aliases `en-US`, `it`
+and `pt`. Runtime English fallback is not delivery.
 
 The tables below list every message shipped in the library dictionaries. `upload.clearCompleted` describes the UI action
 on successful records only. The additional message inventory below reflects the implementation; independent human
@@ -1196,7 +1197,7 @@ Current hierarchy messages (all library locales and aliases):
 | `upload.title.uploadingOne`  | Uploading 1 file     | Singular transfer heading              |
 | `upload.title.processingOne` | Processing 1 file    | Singular processing heading            |
 | `upload.title.cancelled`     | Uploads cancelled    | All-cancelled batch heading            |
-| `upload.title.failed`        | {0} failed           | Failure-count heading                  |
+| `upload.title.failed`        | {0} failed           | Failure badge beside batch heading     |
 | `upload.transfer.bytes`      | {0} of {1} uploaded  | Aggregate and uploading-row bytes      |
 | `upload.transfer.estimate`   | About {0} left       | Meaningful aggregate transfer estimate |
 
