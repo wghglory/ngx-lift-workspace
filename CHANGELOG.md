@@ -13,8 +13,6 @@ recorded for the affected releases.
 - Upload queue treats every rejected chunk as a failure, including empty rejection reasons, and skips finalization until
   all chunks are acknowledged. Cancelling a transfer restores reported bytes to acknowledged chunks. Removing an active
   item also tolerates a synchronous adapter cleanup failure.
-- Unreadable dropped files or folders reject the selection with a localized validation error instead of silently
-  uploading an incomplete subset. Existing selections are preserved and stale read errors are ignored.
 - Upload large-text browser coverage waits for the shared panel to become visible before measuring its geometry.
 - Object filtering reads each own value once, preserving the exact value checked by a type guard. Widened options cannot
   incorrectly select positive narrowing, and reusable guards support literal-valued sources.

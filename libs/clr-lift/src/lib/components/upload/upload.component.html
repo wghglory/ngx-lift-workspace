@@ -96,9 +96,6 @@
                   <strong class="cll-upload__error-name">{{ error.fileName }}</strong
                   >:
                   @switch (error.code) {
-                    @case ('upload.validation.read') {
-                      {{ 'upload.validation.read' | translate }}
-                    }
                     @case ('upload.validation.accept') {
                       {{ 'upload.validation.accept' | translate }} {{ 'upload.hint.accept' | translate: accept() }}
                     }

@@ -881,11 +881,9 @@ error      -> retry (action) -> the failed phase
 - The `cll-upload` dropzone is the primary selection surface: it opens the native input on click, reacts to drag-over
   with a highlighted state, and ingests dropped files through the same validation and enqueue path as the native input.
   Dropped folders are traversed through `webkitGetAsEntry()` entries captured synchronously during the drop event and
-  read in repeated `readEntries` batches until exhausted. A file or directory read failure rejects the entire drop,
-  preserves previous selections and uploads no partial subset. The validation list identifies the unreadable entry path;
-  late errors after reset, disable or destruction are ignored. The "Choose folder" action uses a hidden
-  `webkitdirectory` input and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles`
-  validation; rejected files never create queue items. Hint segments and the used count are omitted without data.
+  read in repeated `readEntries` batches until exhausted. The "Choose folder" action uses a hidden `webkitdirectory`
+  input and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files
+  never create queue items. Hint segments and the used count are omitted without data.
 - The root-scoped panel manager owns one CDK overlay per root queue with `hasBackdrop: false`; it never locks page
   scroll or makes the background inert. An individual declaration anchor or picker can be destroyed without destroying
   that overlay. Dispose the overlay at its root owner teardown; do not mutate global styles.
@@ -1170,7 +1168,6 @@ acceptance remains separate.
 | `upload.status.success`                    | Uploaded                                                        | Item status and success mark label          |
 | `upload.status.error`                      | Failed                                                          | Item status                                 |
 | `upload.status.cancelled`                  | Cancelled                                                       | Item status                                 |
-| `upload.validation.read`                   | We cannot read this selection. No files were added.             | Drop-read validation error                  |
 | `upload.validation.accept`                 | This file type is not allowed.                                  | Validation error                            |
 | `upload.validation.maxSize`                | The file is larger than {0} MiB.                                | Validation error with placeholder           |
 | `upload.validation.maxFiles`               | We cannot add this selection. Choose up to {0} files at a time. | Validation error with placeholder           |

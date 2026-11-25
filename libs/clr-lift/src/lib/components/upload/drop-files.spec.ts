@@ -100,33 +100,10 @@ describe('filesFromEntries', () => {
     expect(files.map((file) => file.name)).toEqual(['first.zip', 'second.zip']);
   });
 
-  it('rejects the entire selection when a file callback fails', async () => {
-    await expect(filesFromEntries([fileEntry('ok.zip'), fileEntryFailing('locked.zip')])).rejects.toMatchObject({
-      code: 'upload.validation.read',
-      phase: 'validation',
-      fileName: 'locked.zip',
-    });
-  });
+  it('skips entries whose file callback fails', async () => {
+    const files = await filesFromEntries([fileEntryFailing('locked.zip'), fileEntry('ok.zip')]);
 
-  it('rejects a directory read failure after a successful batch', async () => {
-    let reads = 0;
-    const directory = {
-      isFile: false,
-      isDirectory: true,
-      name: 'folder',
-      fullPath: '/folder',
-      createReader: () => ({
-        readEntries: (success: (entries: FileSystemEntry[]) => void, failure: (error: DOMException) => void) => {
-          if (reads++ === 0) success([fileEntry('ok.zip')]);
-          else failure(new DOMException('Unavailable', 'NotReadableError'));
-        },
-      }),
-    } as unknown as FileSystemDirectoryEntry;
-    await expect(filesFromEntries([directory])).rejects.toMatchObject({
-      code: 'upload.validation.read',
-      phase: 'validation',
-      fileName: 'folder',
-    });
+    expect(files.map((file) => file.name)).toEqual(['ok.zip']);
   });
 });
 

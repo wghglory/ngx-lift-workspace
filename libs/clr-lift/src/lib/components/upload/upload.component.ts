@@ -91,7 +91,6 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   readonly dragOver = signal(false);
   private dragDepth = 0;
   private selectionVersion = 0;
-  private readonly activeReads = new Set<symbol>();
   readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
   readonly showMaxSizeHint = computed(() => Number.isFinite(this.maxSize()) && this.maxSize() > 0);
   readonly showMaxFilesHint = computed(() => this.maxFiles() > 0);
@@ -108,8 +107,6 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.translationService.loadTranslationsForComponent('upload', uploadTranslations);
     inject(DestroyRef).onDestroy(() => {
       this.selectionVersion++;
-      this.activeReads.clear();
-      this.reading.set(false);
     });
     effect(() => {
       for (const item of this.queue.items()) {
@@ -190,33 +187,15 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.dragOver.set(false);
     if (this.disabledState() || !event.dataTransfer) return;
     const selectionVersion = this.selectionVersion;
-    const read = Symbol();
-    this.activeReads.add(read);
     this.reading.set(true);
-    let files: readonly File[];
     try {
-      files = await filesFromDataTransfer(event.dataTransfer);
-    } catch (error) {
+      const files = await filesFromDataTransfer(event.dataTransfer);
       if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
-      const rejection: UploadError = {
-        code: 'upload.validation.read',
-        phase: 'validation',
-        fileName:
-          error && typeof error === 'object' && 'fileName' in error && typeof error.fileName === 'string'
-            ? error.fileName
-            : undefined,
-      };
-      this.setErrors([...this.fileErrors(), rejection]);
-      this.validationErrors.emit([rejection]);
+      this.ingest(files);
       this.onTouched();
-      return;
     } finally {
-      this.activeReads.delete(read);
-      if (selectionVersion === this.selectionVersion) this.reading.set(this.activeReads.size > 0);
+      this.reading.set(false);
     }
-    if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
-    this.ingest(files);
-    this.onTouched();
   }
 
   onDragEnter(event: DragEvent): void {
@@ -344,7 +323,6 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
   private clearItems(): void {
     this.selectionVersion++;
-    this.activeReads.clear();
     this.reading.set(false);
     this.duplicates.set([]);
     for (const id of this.tracked.keys()) this.queue.remove(id);
@@ -355,7 +333,6 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
   private cancelTracked(): void {
     this.selectionVersion++;
-    this.activeReads.clear();
     this.reading.set(false);
     this.duplicates.set([]);
     for (const id of this.tracked.keys()) this.queue.cancel(id);
