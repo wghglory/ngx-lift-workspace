@@ -536,34 +536,50 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
 });
 
 test('keeps panel controls usable with doubled root text size', async ({page}) => {
+  let finishUpload: () => void = () => undefined;
+  const pendingUpload = new Promise<void>((resolve) => {
+    finishUpload = resolve;
+  });
+  await page.addInitScript(() => {
+    (window as unknown as {__uploadDemoStub?: boolean}).__uploadDemoStub = false;
+  });
+  await page.route('**/api/upload/**', async (route) => {
+    await pendingUpload;
+    await route.fulfill({status: 200, body: 'ok'});
+  });
   await page.goto('/clr-lift/components/upload');
   await page.evaluate(() => {
     document.documentElement.style.fontSize = '32px';
   });
-  await selectFiles(page, 'upload-demo-basic', [zipFile('large-text.zip')]);
+  await page.getByTestId('upload-demo-http-transfer').click();
 
-  const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
-  await expect(panel).toBeVisible();
-  const viewport = page.viewportSize()!;
-  const expanded = await panel.boundingBox();
-  expect(expanded!.x).toBeGreaterThanOrEqual(0);
-  expect(expanded!.x + expanded!.width).toBeLessThanOrEqual(viewport.width);
-  const cancelAll = panel.getByRole('button', {name: 'Cancel all'});
-  await expect(cancelAll).toBeVisible();
-  const cancelAllBox = await cancelAll.boundingBox();
-  expect(cancelAllBox!.x + cancelAllBox!.width).toBeLessThanOrEqual(viewport.width);
-  await expect(
-    panel.locator('.cll-upload-panel__item').getByRole('button', {name: 'Cancel', exact: true}),
-  ).toBeVisible();
-  await panel.getByRole('button', {name: 'Minimize'}).click();
+  try {
+    const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
+    await expect(panel).toBeVisible();
+    const viewport = page.viewportSize()!;
+    const expanded = await panel.boundingBox();
+    expect(expanded!.x).toBeGreaterThanOrEqual(0);
+    expect(expanded!.x + expanded!.width).toBeLessThanOrEqual(viewport.width);
+    const cancelAll = panel.getByRole('button', {name: 'Cancel all'});
+    await expect(cancelAll).toBeVisible();
+    const cancelAllBox = await cancelAll.boundingBox();
+    expect(cancelAllBox!.x + cancelAllBox!.width).toBeLessThanOrEqual(viewport.width);
+    await expect(
+      panel.locator('.cll-upload-panel__item').getByRole('button', {name: 'Cancel', exact: true}),
+    ).toBeVisible();
+    await panel.getByRole('button', {name: 'Minimize'}).click();
 
-  const badge = panel.locator('.cll-upload-panel__badge');
-  await expect(badge).toBeVisible();
-  const compact = await badge.boundingBox();
-  expect(compact!.x).toBeGreaterThanOrEqual(0);
-  expect(compact!.x + compact!.width).toBeLessThanOrEqual(viewport.width);
-  await badge.click();
-  await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
+    const badge = panel.locator('.cll-upload-panel__badge');
+    await expect(badge).toBeVisible();
+    const compact = await badge.boundingBox();
+    expect(compact!.x).toBeGreaterThanOrEqual(0);
+    expect(compact!.x + compact!.width).toBeLessThanOrEqual(viewport.width);
+    await badge.click();
+    await expect(panel.getByRole('button', {name: 'Minimize'})).toBeVisible();
+  } finally {
+    finishUpload();
+  }
+  await expect(page.locator('.cll-upload-panel__title')).toHaveText('Upload complete');
 });
 
 test('clearing the final completed item in the shared modal renderer keeps focus inside the dialog', async ({page}) => {
