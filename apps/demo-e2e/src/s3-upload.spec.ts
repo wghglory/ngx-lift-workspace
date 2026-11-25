@@ -13,12 +13,47 @@ const file = (name: string, body = 'object contents') => ({
   buffer: Buffer.from(body),
 });
 
+test('S3 form keeps even spacing between controls', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const gaps = await page
+    .getByTestId('upload-demo-s3')
+    .locator('form')
+    .evaluate((form) => {
+      const children = Array.from(form.children);
+      return children
+        .slice(1)
+        .map((child, index) =>
+          Math.round(child.getBoundingClientRect().top - children[index].getBoundingClientRect().bottom),
+        );
+    });
+  expect(gaps).toHaveLength(4);
+  expect(Math.max(...gaps) - Math.min(...gaps)).toBeLessThanOrEqual(1);
+});
+
+test('S3 demo discards and replaces a staged selection', async ({page}) => {
+  await page.goto('/clr-lift/components/upload');
+  const demo = page.getByTestId('upload-demo-s3');
+  const picker = demo.locator('input[type="file"]').first();
+  const clear = demo.getByRole('button', {name: 'Clear', exact: true});
+
+  await picker.setInputFiles(file('draft.txt'));
+  await expect(clear).toBeVisible();
+  await clear.click();
+  await expect(clear).toHaveCount(0);
+
+  await picker.setInputFiles(file('final.txt'));
+  await demo.getByRole('button', {name: 'Upload', exact: true}).click();
+  await expect(demo.getByTestId('s3-demo-stored')).toContainText('/final.txt');
+  await expect(demo.getByTestId('s3-demo-stored')).not.toContainText('/draft.txt');
+});
+
 test('S3 demo stages files and enforces overwrite protection', async ({page}, testInfo) => {
   await page.goto('/clr-lift/components/upload');
   const demo = page.getByTestId('upload-demo-s3');
   const picker = demo.locator('input[type="file"]').first();
   const start = demo.getByRole('button', {name: 'Upload', exact: true});
   await picker.setInputFiles(file('readme.txt'));
+  await expect(demo.locator('.cll-upload__names')).toHaveCount(0);
   await expect(page.locator('.cll-upload-panel__card')).toHaveCount(0);
   await start.click();
   const panel = page.locator('.cll-upload-panel');

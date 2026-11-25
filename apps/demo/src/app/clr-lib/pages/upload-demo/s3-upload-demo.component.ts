@@ -12,7 +12,7 @@ import {createS3DemoAdapter} from './s3-upload-demo.adapter';
   selector: 'app-s3-upload-demo',
   imports: [ClarityModule, FormsModule, TranslatePipe, UploadComponent],
   templateUrl: './s3-upload-demo.component.html',
-  styles: [':host { display: block; } code { overflow-wrap: anywhere; }'],
+  styles: [':host { display: block; } form > * { margin: 0; } code { overflow-wrap: anywhere; }'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class S3UploadDemoComponent {
@@ -31,6 +31,11 @@ export class S3UploadDemoComponent {
   readonly disabled = computed(() => !this.bucket().trim() || !this.files().length);
   // The picker requires an adapter even in staging mode; only enqueue() below uses it.
   readonly stagingAdapter = createS3DemoAdapter(this.http, {bucket: '', prefix: '', overwrite: false}, () => undefined);
+
+  clearSelection(): void {
+    this.picker().clear();
+    this.files.set([]);
+  }
 
   upload(): void {
     if (this.disabled()) return;

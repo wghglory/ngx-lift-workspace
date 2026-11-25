@@ -61,7 +61,7 @@ function normalizeOptions(options: UploadQueueOptions): UploadQueueOptions {
     concurrency: clamp(Math.floor(options.concurrency) || 1, 1, 4),
     autoRetry: options.autoRetry === true,
     maxRetries: clamp(Math.floor(options.maxRetries) || 0, 0, 10),
-    pollIntervalMs: Math.max(1000, Number.isFinite(options.pollIntervalMs) ? options.pollIntervalMs : 1000),
+    pollIntervalMs: Math.max(1000, Number.isFinite(options.pollIntervalMs) ? options.pollIntervalMs : 10_000),
   };
 }
 

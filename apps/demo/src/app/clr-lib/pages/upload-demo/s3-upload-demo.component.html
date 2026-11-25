@@ -1,6 +1,6 @@
 <div cds-layout="vertical gap:sm" data-testid="upload-demo-s3">
   <p>{{ 'uploadDemo.s3.note' | translate }}</p>
-  <form clrForm clrLayout="vertical" (ngSubmit)="upload()">
+  <form clrForm clrLayout="vertical" cds-layout="vertical gap:md" (ngSubmit)="upload()">
     <clr-input-container>
       <label for="s3-demo-bucket">{{ 'uploadDemo.s3.bucket' | translate }}</label>
       <input
@@ -33,9 +33,16 @@
       [maxSize]="16"
       (filesChange)="files.set($event)"
     />
-    <button type="submit" class="btn btn-primary" [disabled]="disabled()">
-      {{ 'uploadDemo.confirmUpload' | translate }}
-    </button>
+    <div cds-layout="horizontal gap:sm align:center">
+      <button type="submit" class="btn btn-primary" [disabled]="disabled()">
+        {{ 'uploadDemo.confirmUpload' | translate }}
+      </button>
+      @if (files().length) {
+        <button type="button" class="btn btn-link" (click)="clearSelection()">
+          {{ 'common.clear' | translate }}
+        </button>
+      }
+    </div>
   </form>
   <p>{{ 'uploadDemo.s3.limits' | translate }}</p>
   <h3>{{ 'uploadDemo.s3.completed' | translate }}</h3>

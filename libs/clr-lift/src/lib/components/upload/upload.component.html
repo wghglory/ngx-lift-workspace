@@ -73,26 +73,6 @@
       }
     </div>
   </label>
-  @if (value().length && !autoEnqueue()) {
-    <div class="cll-upload__names-row" cds-layout="horizontal gap:sm align:center">
-      <span class="cll-upload__names">
-        @if (value().length === 1) {
-          {{ value()[0].name }}
-        } @else {
-          {{ 'upload.selectedCount' | translate: value().length }}
-        }
-      </span>
-      <button
-        type="button"
-        class="btn btn-sm btn-icon btn-link btn-close"
-        [disabled]="disabledState()"
-        (click)="clear()"
-        [attr.aria-label]="'upload.clearAll' | translate"
-      >
-        <clr-icon shape="times" />
-      </button>
-    </div>
-  }
 </div>
 
 @if (reading()) {

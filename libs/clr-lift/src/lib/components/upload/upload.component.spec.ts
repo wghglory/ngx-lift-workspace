@@ -3,7 +3,7 @@ import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {By} from '@angular/platform-browser';
-import {afterEach, beforeEach, describe, expect, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, expectTypeOf, it} from 'vitest';
 
 import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {UploadComponent} from './upload.component';
@@ -42,6 +42,10 @@ class BlurUploadHost {
 describe('UploadComponent', () => {
   let translation: ClrLiftI18nService;
 
+  it('types the control value as an immutable file list', () => {
+    expectTypeOf<Parameters<UploadComponent['writeValue']>[0]>().toEqualTypeOf<readonly File[] | null>();
+  });
+
   beforeEach(() => {
     TestBed.configureTestingModule({imports: [UploadComponent]});
     translation = TestBed.inject(ClrLiftI18nService);
@@ -69,6 +73,20 @@ describe('UploadComponent', () => {
     expect(fixture.componentInstance.control.value.map((item) => item.name)).toEqual(['first.zip', 'second.zip']);
     component.clear();
     expect(fixture.componentInstance.control.value).toEqual([]);
+  });
+
+  it('does not render a staged file name or clear control', async () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    fixture.componentRef.setInput('adapter', stubAdapter());
+    fixture.componentRef.setInput('autoEnqueue', false);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    await select(component, [file('staged.zip')]);
+    fixture.detectChanges();
+
+    expect(component.value()).toHaveLength(1);
+    expect(fixture.nativeElement.querySelector('button[aria-label="Clear all files"]')).toBeNull();
+    expect(fixture.nativeElement.textContent).not.toContain('staged.zip');
   });
 
   it('integrates selection errors with Angular validation and accessible feedback', async () => {
@@ -298,7 +316,7 @@ describe('UploadComponent', () => {
   it('ships owned messages in the active locale', () => {
     create();
     expect(translation.translate('upload.status.queued')).toBe('Queued');
-    expect(translation.translate('upload.restore')).toBe('Restore upload progress');
+    expect(translation.translate('upload.minimize')).toBe('Minimize');
   });
 });
 
