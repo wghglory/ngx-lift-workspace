@@ -249,7 +249,15 @@ export class UploadQueueService {
     if (runtime.settlement) return;
     runtime.settlement = {kind: 'cancelled'};
     runtime.resume = undefined;
-    this.patch(id, {status: 'cancelled'});
+    runtime.inFlight.clear();
+    const item = this.item(id);
+    this.patch(id, {
+      status: 'cancelled',
+      uploadedBytes: runtime.acknowledgedBytes,
+      ...(item?.status === 'uploading'
+        ? {progress: clamp(Math.round((runtime.acknowledgedBytes / Math.max(1, runtime.file.size)) * 100), 0, 100)}
+        : {}),
+    });
     const deferreds = runtime.deferreds;
     runtime.deferreds = [];
     for (const deferred of deferreds) deferred.reject(abortError());
@@ -280,7 +288,10 @@ export class UploadQueueService {
     this.state.update((items) => items.filter((item) => item.id !== id));
     for (const deferred of runtime.deferreds) deferred.reject(abortError());
     runtime.deferreds = [];
-    if (notifyServer) void Promise.resolve(runtime.adapter.cancel(uploadId)).catch(() => undefined);
+    if (notifyServer)
+      void Promise.resolve()
+        .then(() => runtime.adapter.cancel(uploadId))
+        .catch(() => undefined);
   }
 
   /** Removes every terminal item (success, cancelled or error) without touching active transfers. */
@@ -425,28 +436,28 @@ export class UploadQueueService {
       }
       if (!pending.length) return;
       let cursor = 0;
-      let failure: unknown;
+      let failure: {error: unknown} | undefined;
       const workers = Array.from({length: Math.min(runtime.options.concurrency, pending.length)}, async () => {
         while (cursor < pending.length && !failure && this.isCurrent(runtime)) {
           const number = pending[cursor++];
           try {
             await this.uploadChunk(runtime, uploadId, number, total);
           } catch (error) {
-            if (!failure) failure = error;
+            failure ??= {error};
           }
         }
       });
       await Promise.all(workers);
       if (!failure) return;
-      if (isAbort(failure)) throw failure;
-      const error = toUploadError(failure, 'chunk');
+      if (isAbort(failure.error)) throw failure.error;
+      const error = toUploadError(failure.error, 'chunk');
       if (runtime.options.autoRetry && error.retryable === true && runtime.retries < runtime.options.maxRetries) {
         runtime.retries += 1;
         const item = this.item(runtime.id);
         if (item) this.patch(runtime.id, {attempt: item.attempt + 1});
         continue;
       }
-      throw failure;
+      throw failure.error;
     }
   }
 

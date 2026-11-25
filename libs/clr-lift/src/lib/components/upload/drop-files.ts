@@ -1,3 +1,5 @@
+import {type UploadError} from 'ngx-lift';
+
 // FileSystemEntry paths are not always copied into File.webkitRelativePath by browsers.
 const droppedPaths = new WeakMap<File, string>();
 
@@ -29,21 +31,29 @@ export async function filesFromDataTransfer(dataTransfer: DataTransfer): Promise
   return filesFromEntries(entries);
 }
 
-/** Walks dropped entries depth-first, flattening folder contents in encounter order. */
+/** Walks dropped entries in encounter order; rejects the whole selection if any entry cannot be read. */
 export async function filesFromEntries(entries: readonly FileSystemEntry[]): Promise<readonly File[]> {
   const nested = await Promise.all(entries.map((entry) => walkEntry(entry)));
   return nested.flat();
 }
 
+function readError(entry: FileSystemEntry): UploadError {
+  return {
+    code: 'upload.validation.read',
+    phase: 'validation',
+    fileName: entry.fullPath?.replace(/^\/+/, '') || entry.name,
+  };
+}
+
 async function walkEntry(entry: FileSystemEntry): Promise<readonly File[]> {
   if (entry.isFile) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       (entry as FileSystemFileEntry).file(
         (file) => {
           if (entry.fullPath) droppedPaths.set(file, entry.fullPath.replace(/^\//, ''));
           resolve([file]);
         },
-        () => resolve([]),
+        () => reject(readError(entry)),
       );
     });
   }
@@ -51,10 +61,10 @@ async function walkEntry(entry: FileSystemEntry): Promise<readonly File[]> {
   const children: FileSystemEntry[] = [];
   for (;;) {
     // readEntries returns at most 100 entries per call and must be repeated until it yields an empty batch.
-    const batch = await new Promise<FileSystemEntry[]>((resolve) => {
+    const batch = await new Promise<FileSystemEntry[]>((resolve, reject) => {
       reader.readEntries(
         (next) => resolve(next),
-        () => resolve([]),
+        () => reject(readError(entry)),
       );
     });
     if (!batch.length) break;

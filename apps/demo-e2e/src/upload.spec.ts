@@ -543,6 +543,7 @@ test('keeps panel controls usable with doubled root text size', async ({page}) =
   await selectFiles(page, 'upload-demo-basic', [zipFile('large-text.zip')]);
 
   const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
+  await expect(panel).toBeVisible();
   const viewport = page.viewportSize()!;
   const expanded = await panel.boundingBox();
   expect(expanded!.x).toBeGreaterThanOrEqual(0);
@@ -703,4 +704,49 @@ test('a native-picked root file is not uploaded again in a mixed file and folder
   await expect(page.getByTestId('upload-demo-registered')).toContainText('2');
   await expect.poll(() => queuedItemCount(page)).toBe(2);
   await expect(page.locator('.cll-upload-panel__summary')).toContainText('Completed (2)');
+});
+
+test('reports an unreadable folder without uploading the readable subset', async ({page}, testInfo) => {
+  await page.goto('/clr-lift/components/upload');
+  const host = page.getByTestId('upload-demo-basic').locator('cll-upload');
+  await expect(host.locator('.cll-upload__dropzone')).toBeVisible();
+  await expect(page.locator('.cll-upload-panel')).toBeAttached();
+  const unreadable = await page.evaluateHandle(() => {
+    const transfer = new DataTransfer();
+    const file = new File(['bundle'], 'readable.zip');
+    transfer.items.add(file);
+    const child = {
+      isFile: true,
+      isDirectory: false,
+      fullPath: '/folder/readable.zip',
+      file: (success: (value: File) => void) => success(file),
+    };
+    const folder = {
+      isFile: false,
+      isDirectory: true,
+      name: 'folder',
+      fullPath: '/folder',
+      createReader: () => {
+        let read = false;
+        return {
+          readEntries: (success: (entries: unknown[]) => void, error: (reason: DOMException) => void) => {
+            if (read) error(new DOMException('Permission denied', 'NotReadableError'));
+            else {
+              read = true;
+              success([child]);
+            }
+          },
+        };
+      },
+    };
+    Object.defineProperty(transfer, 'items', {value: [{kind: 'file', webkitGetAsEntry: () => folder}]});
+    return transfer;
+  });
+  await host.locator('.cll-upload__dropzone').dispatchEvent('drop', {dataTransfer: unreadable});
+  const error = host.locator('.cll-upload__rejections');
+  await expect(error).toContainText('folder');
+  await expect(error).toContainText('We cannot read this selection. No files were added.');
+  await expect.poll(() => queuedItemCount(page)).toBe(0);
+  await expect(page.getByTestId('upload-demo-registered')).toContainText('0');
+  await expectAccessible(page, testInfo, '[data-testid="upload-demo-basic"]');
 });

@@ -79,6 +79,75 @@ describe('UploadQueueService', () => {
     TestBed.resetTestingModule();
   });
 
+  it.each([undefined, null, false, 0, '', Number.NaN])(
+    'rejects completion and skips combine when a chunk rejects with %s',
+    async (reason) => {
+      const uploadChunk = vi.fn(() => Promise.reject(reason));
+      const combine = vi.fn(async () => undefined);
+      const [item] = queue.enqueue(
+        [uploadFile('failed.zip', 6)],
+        options({...stubDebugAdapter(), uploadChunk, combine}),
+      );
+      const rejected = expect(queue.completion(item.id)).rejects.toMatchObject({
+        code: 'upload.error.unknown',
+        phase: 'chunk',
+      });
+      await flush();
+      await rejected;
+      expect(queue.items()[0]).toMatchObject({status: 'error', uploadedBytes: 0});
+      expect(uploadChunk).toHaveBeenCalledTimes(1);
+      expect(combine).not.toHaveBeenCalled();
+    },
+  );
+
+  it('rolls cancelled progress back to acknowledged bytes and ignores late chunk completion', async () => {
+    const pending = deferred<void>();
+    let reportProgress!: (loaded: number) => void;
+    const [item] = queue.enqueue(
+      [uploadFile('cancel.zip', 6)],
+      options({
+        ...stubDebugAdapter(),
+        uploadChunk: async (request) => {
+          if (request.chunkNumber === 1) return;
+          reportProgress = request.onProgress;
+          request.onProgress(1);
+          return pending.promise;
+        },
+      }),
+    );
+    const cancelled = expect(queue.completion(item.id)).rejects.toMatchObject({name: 'AbortError'});
+    await flush();
+    expect(queue.items()[0]).toMatchObject({status: 'uploading', uploadedBytes: 3, progress: 50});
+    queue.cancel(item.id);
+    await cancelled;
+    expect(queue.items()[0]).toMatchObject({status: 'cancelled', uploadedBytes: 2, progress: 33});
+    reportProgress(2);
+    pending.resolve();
+    await flush();
+    expect(queue.items()[0]).toMatchObject({status: 'cancelled', uploadedBytes: 2, progress: 33});
+  });
+
+  it('removes an active item even when adapter cancellation throws synchronously', async () => {
+    const cancel = vi.fn((): Promise<void> => {
+      throw new Error('Cannot contact server');
+    });
+    const [item] = queue.enqueue(
+      [uploadFile('remove.zip', 2)],
+      options({
+        ...stubDebugAdapter(),
+        uploadChunk: () => new Promise<void>(() => undefined),
+        cancel,
+      }),
+    );
+    const cancelled = expect(queue.completion(item.id)).rejects.toMatchObject({name: 'AbortError'});
+    await flush();
+    expect(() => queue.remove(item.id)).not.toThrow();
+    await cancelled;
+    await flush();
+    expect(queue.items()).toEqual([]);
+    expect(cancel).toHaveBeenCalledTimes(1);
+  });
+
   it('uses the documented poll interval default when the option is not finite', async () => {
     queue.enqueue([uploadFile('poll.zip', 2)], options(stubDebugAdapter(), {pollIntervalMs: Number.NaN}));
     await flush();
