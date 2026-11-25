@@ -23,7 +23,8 @@ recorded for the affected releases.
 - `ngx-lift` exports the transport-agnostic `UploadQueueService`, adapter and lifecycle contracts, chunk presets,
   progress signals, cancellation, phase-aware retry and promise-based completion.
 - `clr-lift` adds the `cll-upload` file-selection form control and shared non-modal upload panel, with folder selection,
-  localized validation, keyboard controls, transfer telemetry and a minimized dock.
+  localized file-type, size and per-selection count validation, keyboard controls, transfer telemetry and a minimized
+  dock.
 - Upload composition demos cover promises, HttpClient and query/mutation utilities. The application-owned S3 demo and
   transport guides explain whole-object PUT, cancellation, immutable destination settings and chunk sizing.
 - `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated
