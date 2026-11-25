@@ -535,7 +535,7 @@ test('validation alert and compact dock preserve the Clarity and Figma visual co
   expect(Math.abs(bounds!.y + bounds!.height - track!.y - track!.height)).toBeLessThanOrEqual(2);
 });
 
-test('keeps panel controls usable with doubled root text size', async ({page}) => {
+test('keeps panel controls usable with doubled root text size @cross-browser-smoke', async ({page}) => {
   let finishUpload: () => void = () => undefined;
   const pendingUpload = new Promise<void>((resolve) => {
     finishUpload = resolve;
