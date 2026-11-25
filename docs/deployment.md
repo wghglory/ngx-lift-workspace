@@ -80,6 +80,15 @@ Angular 21 / Clarity 18 / RxJS 7. Preserve the [21.6.0 / 21.5.0 breaking and mig
 `ngx-lift` first, confirm strict installed consumers and the publication dry run, and verify credentials before
 authorizing publication. Any later incompatible change needs the same explicit review.
 
+**November 25, 2026 decision (approved for the 21.7.0 / 21.6.0 release):** the maintainer approved the localization API
+rename/removals and application-owned language persistence as a fourth explicit 21.x compatibility exception. Preserve
+the [localization migration notes](../CHANGELOG.md#localization-migration); previous exceptions do not approve future
+breaks. The same decision accepts deferring the two moderate development-tool dependency findings in
+[issue #260](https://github.com/wghglory/ngx-lift-workspace/issues/260) and
+[draft PR #261](https://github.com/wghglory/ngx-lift-workspace/pull/261) beyond this release, keeping both follow-ups
+open. This accepted deferral does not waive the standard release checks, installed-consumer verification or publication
+dry run. Publish `ngx-lift` before `clr-lift` after the reviewed version PR is merged.
+
 ## Release tags
 
 Tag events always publish; they are not dry runs. Commit reviewed version and changelog changes before pushing a tag:

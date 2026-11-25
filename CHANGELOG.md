@@ -8,6 +8,20 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+## [21.7.0] (ngx-lift) / [21.6.0] (clr-lift) - 2026-11-25
+
+**Release decision — November 25, 2026 (approved):** the maintainer approved the localization API changes below as a
+separate 21.x compatibility exception. Both packages remain on Angular 21; 22.x stays reserved for the Angular 22
+upgrade. This release is intentionally incompatible for consumers of the removed localization APIs. Publish `ngx-lift`
+before `clr-lift`; complete installed-consumer verification and the publication dry run before publication.
+
+**Development-tool deferral — November 25, 2026 (accepted):** the maintainer accepted deferring the two moderate
+`@hono/node-server` and `qs` development-tool dependency findings tracked in
+[issue #260](https://github.com/wghglory/ngx-lift-workspace/issues/260) and
+[draft PR #261](https://github.com/wghglory/ngx-lift-workspace/pull/261) beyond this release. Both library manifests
+have no runtime dependencies. Keep the follow-up open; this is a deferral rather than a verified dependency repair.
+Normal release validation remains required.
+
 ### Fixed
 
 - Upload queue treats every rejected chunk as a failure, including empty rejection reasons, and skips finalization until
@@ -32,7 +46,7 @@ recorded for the affected releases.
 - `clr-lift` exports `provideClrLiftI18n` and `ClrLiftI18nOptions` for bootstrap locale configuration. Resolution order
   is application locale → `LOCALE_ID` → browser locale on the browser platform → English.
 
-### Changed — breaking, major release decision pending
+### Changed — breaking, maintainer-approved 21.x exception
 
 - `clr-lift` renames `TranslationService` to `ClrLiftI18nService` with no old alias. Applications importing
   `TranslationService` must rename the import.
@@ -42,7 +56,16 @@ recorded for the affected releases.
 - The historical 21.6.0 note about `MockTranslationService` being exported is superseded: the test helper is now
   `MockClrLiftI18nService`, is not in the root barrel, and its old name is removed by this rename.
 - `provideClrLiftI18n` and `ClrLiftI18nService` share one locale-resolution helper, so bootstrap and service defaults
-  cannot drift. These incompatible changes need an explicit maintainer release decision.
+  cannot drift. These incompatible changes are covered by the November 25 release decision above.
+
+### Localization migration
+
+- Replace `TranslationService` imports and injections with `ClrLiftI18nService`.
+- Remove `STORAGE_KEY_LANGUAGE` imports and manage saved language preferences in the application. Pass the resolved
+  locale to `provideClrLiftI18n({locale})` during bootstrap.
+- Replace two-argument `setLanguage` calls with `setLanguage(locale)` and save preferences in application-owned code.
+- Tests using the removed `MockTranslationService` root export should supply an application-owned test double or use the
+  real `ClrLiftI18nService` when verifying localization behavior.
 
 ## [21.6.0] (ngx-lift) / [21.5.0] (clr-lift) - 2026-11-20
 
