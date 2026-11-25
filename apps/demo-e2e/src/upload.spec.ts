@@ -543,6 +543,7 @@ test('keeps panel controls usable with doubled root text size', async ({page}) =
   await selectFiles(page, 'upload-demo-basic', [zipFile('large-text.zip')]);
 
   const panel = page.locator('.cdk-overlay-container .cll-upload-panel');
+  await expect(panel).toBeVisible();
   const viewport = page.viewportSize()!;
   const expanded = await panel.boundingBox();
   expect(expanded!.x).toBeGreaterThanOrEqual(0);

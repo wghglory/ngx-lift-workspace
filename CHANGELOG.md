@@ -10,12 +10,23 @@ recorded for the affected releases.
 
 ### Fixed
 
+- Upload queue treats every rejected chunk as a failure, including empty rejection reasons, and skips finalization until
+  all chunks are acknowledged. Cancelling a transfer restores reported bytes to acknowledged chunks. Removing an active
+  item also tolerates a synchronous adapter cleanup failure.
+- Upload large-text browser coverage waits for the shared panel to become visible before measuring its geometry.
 - Object filtering reads each own value once, preserving the exact value checked by a type guard. Widened options cannot
   incorrectly select positive narrowing, and reusable guards support literal-valued sources.
 - `isEqual` accepts unrelated value shapes without explicit generic arguments, retaining explicit-generic compatibility.
 
 ### Added
 
+- `ngx-lift` exports the transport-agnostic `UploadQueueService`, adapter and lifecycle contracts, chunk presets,
+  progress signals, cancellation, phase-aware retry and promise-based completion.
+- `clr-lift` adds the `cll-upload` file-selection form control and shared non-modal upload panel, with folder selection,
+  localized file-type, size and per-selection count validation, keyboard controls, transfer telemetry and a minimized
+  dock.
+- Upload composition demos cover promises, HttpClient and query/mutation utilities. The application-owned S3 demo and
+  transport guides explain whole-object PUT, cancellation, immutable destination settings and chunk sizing.
 - `pickBy` now narrows retained values from explicit or inferred type guards. Literal negation and the deprecated
   `omitBy` alias exclude the guarded value type. Keys remain optional; boolean predicates retain `Partial<T>`.
 - `clr-lift` exports `provideClrLiftI18n` and `ClrLiftI18nOptions` for bootstrap locale configuration. Resolution order
