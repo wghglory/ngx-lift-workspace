@@ -158,11 +158,27 @@ describe('queryResource', () => {
     );
     await settle();
     expect(registrations).toBe(1);
-    expect(loader).toHaveBeenCalledTimes(1);
+    expect(loader).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({refresh: true}));
     source.next(7);
     await settle();
     expect(resource.value()).toBe(7);
     expect(client.getDiagnostics().totalObserverCount).toBe(1);
+  });
+
+  it('keeps an inactive cache entry idle when a custom client reloads and destroys before attaching', async () => {
+    const loader = vi.fn(async () => 7);
+    const definition = {key: ['custom-before-registration'], loader, staleTime: Infinity};
+    await client.fetchQuery(definition);
+    const observe = client.observeQuery.bind(client);
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener) => {
+      resource.reload();
+      resource.destroy();
+      return observe(query, listener);
+    });
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(client.getDiagnostics().totalObserverCount).toBe(0);
   });
 
   it('returns the shared result to a reentrant caller destroyed while a peer keeps the read alive', async () => {

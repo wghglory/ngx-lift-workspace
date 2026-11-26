@@ -236,10 +236,18 @@ export function queryResource<T, E = Error>(
           if (observer.handle?.isAttached()) return refresh(current.query);
           if (!observer.handle) {
             // A custom client can publish synchronously without forwarding the private registration hook.
-            // Join existing work now. Otherwise wait for this handle before starting a refresh.
+            // Preserve manual intent if the entry already has an observer, even before automatic loading.
             const registering = observer;
             const cached = client.getSnapshot(current.query.key);
-            if (cached?.status === 'loading' || cached?.status === 'reloading') return refresh(current.query);
+            if (
+              cached &&
+              (cached.status === 'loading' ||
+                cached.status === 'reloading' ||
+                client
+                  .getEntriesSnapshot()
+                  .some((entry) => entry.serializedKey === current.key && entry.observerCount > 0))
+            )
+              return refresh(current.query);
             return Promise.resolve().then(() => {
               if (destroyed) throw new QueryResourceDisposedError();
               if (untracked(requested)?.key !== current.key || (cached && !registering.handle?.isAttached())) {
