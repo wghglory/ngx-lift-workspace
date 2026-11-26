@@ -644,7 +644,12 @@ export function resourceAsync<T, P, E = Error>(
           options.reactive === false
             ? untracked(() => factory({abortSignal: evaluation.controller.signal}))
             : factory({abortSignal: evaluation.controller.signal});
-        if (isPromise(evaluation.source)) void Promise.resolve(evaluation.source).catch(noop);
+        if (!isObservable(evaluation.source) && isPromise(evaluation.source)) {
+          // Reuse the same execution for rejection handling and the subscription, including for cold thenables.
+          const promise = Promise.resolve(evaluation.source);
+          evaluation.source = promise;
+          void promise.catch(noop);
+        }
       } catch (error) {
         evaluation.failed = true;
         evaluation.error = error;
