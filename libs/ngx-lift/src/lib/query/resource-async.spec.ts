@@ -24,15 +24,38 @@ interface User {
 }
 
 describe('resourceAsync lifecycle regressions', () => {
-  it('accepts a Promise-like source without a catch method and infers the resolved value type', async () => {
+  it('starts a cold thenable once per execution and infers its resolved value type', async () => {
     await TestBed.runInInjectionContext(async () => {
-      const promise = Promise.resolve('thenable value');
-      const thenable: PromiseLike<string> = {then: promise.then.bind(promise)};
-      const resource = resourceAsync(() => thenable);
+      let starts = 0;
+      const thenable: PromiseLike<string> = {
+        then: (resolve, reject) => Promise.resolve(`result ${++starts}`).then(resolve, reject),
+      };
+      const resource = resourceAsync(() => thenable, {lazy: true});
       expectTypeOf(resource.value).returns.toEqualTypeOf<string | undefined>();
+      const execution = resource.execute();
       await flushEffects();
+      expect(starts).toBe(1);
+      expect(await execution).toBe('result 1');
       expect(resource.status()).toBe('resolved');
-      expect(resource.value()).toBe('thenable value');
+      expect(resource.value()).toBe('result 1');
+    });
+  });
+
+  it('handles a rejecting factory thenable after onLoading resets its execution', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const failure = new Error('transport failed');
+      const resource: WritableResourceRef<string | undefined> = resourceAsync(
+        (): PromiseLike<string> => {
+          const transport = Promise.reject<string>(failure);
+          return {then: transport.then.bind(transport)};
+        },
+        {lazy: true, onLoading: () => resource.reset()},
+      );
+      const execution = resource.execute();
+      await flushEffects();
+      await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+      expect(resource.status()).toBe('idle');
+      expect(resource.error()).toBeNull();
     });
   });
 
