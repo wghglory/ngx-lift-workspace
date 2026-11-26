@@ -273,6 +273,7 @@ export class UploadPanelWindowComponent {
   }
 
   errorText(item: UploadItem): string {
+    if (item.error?.serverStatus === 'error') return this.translationService.translate('upload.error.serverFailed');
     const message = item.error?.message?.trim().replace(/\s+/g, ' ');
     if (message && !message.startsWith('upload.') && !/^\d+$/.test(message)) return message;
     const phase = item.error?.phase ?? 'unknown';

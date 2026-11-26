@@ -576,6 +576,77 @@ describe('UploadQueueService', () => {
     await expect(completion).resolves.toMatchObject({status: 'success'});
   });
 
+  it.each([
+    ['retryable', 1],
+    ['retryable', 2],
+    ['abort', 1],
+    ['abort', 2],
+  ] as const)('preserves a permanent rejection alongside %s when chunk %i fails first', async (peer, first) => {
+    const gates = [deferred<void>(), deferred<void>()];
+    const failures = [
+      peer === 'abort'
+        ? new DOMException('Stopped by transport', 'AbortError')
+        : {code: 'transient', phase: 'chunk', retryable: true},
+      {code: 'invalid-content', phase: 'chunk', retryable: false, recovery: 'replace'},
+    ];
+    const requests: number[] = [];
+    const [item] = queue.enqueue(
+      [uploadFile('mixed.zip', 4)],
+      options(
+        {
+          ...stubDebugAdapter(),
+          uploadChunk: ({chunkNumber}) => {
+            requests.push(chunkNumber);
+            return gates[chunkNumber - 1].promise;
+          },
+        },
+        {concurrency: 2, autoRetry: true, maxRetries: 1},
+      ),
+    );
+    const outcome = queue.completion(item.id).catch((error: unknown) => error);
+    await flush();
+    gates[first - 1].reject(failures[first - 1]);
+    await flush();
+    gates[2 - first].reject(failures[2 - first]);
+    await flush();
+
+    expect(requests).toEqual([1, 2]);
+    expect(await outcome).toMatchObject(failures[1]);
+    expect(queue.items()[0]).toMatchObject({attempt: 1, status: 'error', error: failures[1]});
+  });
+
+  it('dispatches the first chunk before scanning the rest of a many-chunk file', async () => {
+    const size = 8192;
+    const source = uploadFile('many.zip', size);
+    const gate = deferred<void>();
+    const requests: number[] = [];
+    const checks = vi.spyOn(Set.prototype, 'has');
+    let checksBeforeDispatch = 0;
+    try {
+      const [item] = queue.enqueue(
+        [source],
+        options(
+          {
+            ...stubDebugAdapter(),
+            uploadChunk: ({chunkNumber}) => {
+              checksBeforeDispatch = checks.mock.calls.filter(([key]) => typeof key === 'number').length;
+              requests.push(chunkNumber);
+              return gate.promise;
+            },
+          },
+          {chunkSize: 1},
+        ),
+      );
+      await flush();
+      expect(requests).toEqual([1]);
+      expect(checksBeforeDispatch).toBeLessThan(32);
+      queue.cancel(item.id);
+    } finally {
+      checks.mockRestore();
+      gate.resolve();
+    }
+  });
+
   it('auto-retries retryable chunk errors up to the configured limit', async () => {
     let calls = 0;
     const adapter: UploadAdapter = {
@@ -651,6 +722,20 @@ describe('UploadQueueService', () => {
     expect(initiates).toBe(2);
   });
 
+  it('rejects completion when the server reports cancellation without requesting another cancel', async () => {
+    const cancel = vi.fn(async () => undefined);
+    const adapter: UploadAdapter = {
+      ...stubDebugAdapter(),
+      getStatus: async () => ({status: 'cancelled', progress: 40}),
+      cancel,
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+
+    await expect(queue.completion(item.id)).rejects.toMatchObject({name: 'AbortError'});
+    expect(queue.items()[0]).toMatchObject({id: item.id, status: 'cancelled', processingProgress: 40});
+    expect(cancel).not.toHaveBeenCalled();
+  });
+
   it('retries the failed status phase by resuming polling', async () => {
     const statuses: {status: 'processing' | 'success' | 'error'; progress: number}[] = [
       {status: 'error', progress: 10},
@@ -670,6 +755,8 @@ describe('UploadQueueService', () => {
     const rejection = expect(queue.completion(item.id)).rejects.toMatchObject({
       code: 'upload.error.status',
       phase: 'status',
+      message: 'Server reported a failed upload',
+      serverStatus: 'error',
     });
     await flush();
     await flush();

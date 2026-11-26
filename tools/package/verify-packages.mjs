@@ -49,6 +49,11 @@ try {
     join(consumer, 'consumer.ts'),
     `
 import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import type {UploadError} from 'ngx-lift';
+const reportedFailure: UploadError = {code: 'upload.error.status', phase: 'status', serverStatus: 'error'};
+const lookupFailure: UploadError = {code: 'unavailable', phase: 'status'};
+const reportedStatus = (error: UploadError): 'error' | undefined => error.serverStatus;
+void [reportedStatus(reportedFailure), reportedStatus(lookupFailure)];
 import {of, type Observable} from 'rxjs';
 import {SpinnerComponent, TooltipDirective, ClrLiftI18nService, QueryDevtoolsComponent, provideClrLiftI18n, ClrLiftI18nOptions} from 'clr-lift';
 import {provideQueryDevtools} from 'clr-lift/devtools';

@@ -100,9 +100,13 @@ describe('filesFromEntries', () => {
     expect(files.map((file) => file.name)).toEqual(['first.zip', 'second.zip']);
   });
 
-  it('skips entries whose file callback fails', async () => {
-    const files = await filesFromEntries([fileEntryFailing('locked.zip'), fileEntry('ok.zip')]);
+  it('reports unreadable paths and returns readable siblings', async () => {
+    const unreadable: string[] = [];
+    const files = await filesFromEntries([fileEntryFailing('locked.zip'), fileEntry('ok.zip')], (path) =>
+      unreadable.push(path),
+    );
 
+    expect(unreadable).toEqual(['locked.zip']);
     expect(files.map((file) => file.name)).toEqual(['ok.zip']);
   });
 });

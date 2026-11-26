@@ -12,7 +12,6 @@ import {
   forwardRef,
   inject,
   input,
-  linkedSignal,
   output,
   signal,
 } from '@angular/core';
@@ -82,7 +81,8 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
   readonly uploadError = output<readonly UploadItem[]>();
   readonly uploadCancelled = output<readonly UploadItem[]>();
 
-  readonly disabledState = linkedSignal(() => this.disabled());
+  private readonly formDisabled = signal(false);
+  readonly disabledState = computed(() => this.disabled() || this.formDisabled());
   readonly value = signal<readonly File[]>([]);
   readonly errors = signal<readonly UploadError[]>([]);
   readonly countError = computed(() => this.errors().find((error) => error.code === 'upload.validation.maxFiles'));
@@ -177,7 +177,7 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
   }
 
   setDisabledState(disabled: boolean): void {
-    this.disabledState.set(disabled);
+    this.formDisabled.set(disabled);
     if (disabled) this.cancelTracked();
   }
 
@@ -199,7 +199,10 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
     const scope = this.scope();
     this.reading.set(true);
     try {
-      const files = await filesFromDataTransfer(event.dataTransfer);
+      const readErrors: UploadError[] = [];
+      const files = await filesFromDataTransfer(event.dataTransfer, (fileName) => {
+        readErrors.push({code: 'upload.validation.read', phase: 'validation', fileName});
+      });
       if (
         this.disabledState() ||
         selectionVersion !== this.selectionVersion ||
@@ -209,7 +212,7 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
       ) {
         return;
       }
-      this.ingest(files);
+      this.ingest(files, readErrors);
     } finally {
       this.reading.set(false);
     }
@@ -234,15 +237,16 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
   }
 
   /** Validates a selection and enqueues the accepted files on the shared queue. */
-  private ingest(selected: readonly File[]): void {
-    if (!selected.length || this.disabledState()) {
+  private ingest(selected: readonly File[], readErrors: readonly UploadError[] = []): void {
+    if ((!selected.length && !readErrors.length) || this.disabledState()) {
       this.onTouched();
       return;
     }
     const selectionVersion = this.selectionVersion;
     const adapter = this.adapter();
     const scope = this.scope();
-    const {accepted, rejections} = this.validateSelection(selected, adapter, scope);
+    const {accepted, rejections: validationErrors} = this.validateSelection(selected, adapter, scope);
+    const rejections = [...readErrors, ...validationErrors];
     this.setErrors([...this.fileErrors(), ...rejections]);
     if (selectionVersion !== this.selectionVersion) return;
     if (rejections.length) {
