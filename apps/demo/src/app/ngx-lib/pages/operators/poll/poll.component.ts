@@ -424,7 +424,7 @@ export class DeviceMonitorComponent {
   pollingFn: (input?: Input) => Observable<Data> | Promise<Data> | Data;
   interval: number;
   forceRefresh?: Observable<Input> | Signal<Input>;
-  paramsBuilder?: (input: Input) => any;
+  paramsBuilder?: (input?: Input) => any;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }
@@ -445,7 +445,7 @@ export class PollComponent {
 
   usersState$ = poll({
     interval: 10_000,
-    pollingFn: (params) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
+    pollingFn: (params) => this.userService.getUsers({...(params ?? {}), results: 10, seed: 'abc'}),
     paramsBuilder: (dgState: ClrDatagridStateInterface | null | undefined) => convertToHttpParams(dgState ?? null), // build params for getUsers
     forceRefresh: this.dgState$, // datagrid filter, sort, pagination change will immediately force a refresh of the API call
   });

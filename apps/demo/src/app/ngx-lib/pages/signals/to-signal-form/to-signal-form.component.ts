@@ -1,7 +1,15 @@
 import {JsonPipe} from '@angular/common';
 import {ChangeDetectionStrategy, Component, computed, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from '@angular/forms';
 import {ClarityModule} from '@clr/angular';
 import {
   AlertComponent,
@@ -30,6 +38,13 @@ export interface ClusterNameCheckResult {
   name: string;
   available: boolean;
   message?: string;
+}
+
+function trimmedClusterNameValidator(control: AbstractControl): ValidationErrors | null {
+  const value = String(control.value ?? '').trim();
+  if (!value) return {required: true};
+  if (value.length < 4) return {minlength: {requiredLength: 4, actualLength: value.length}};
+  return null;
 }
 
 @Component({
@@ -100,7 +115,7 @@ export class ToSignalFormComponent {
       },
       {
         name: 'sf.value',
-        type: 'Signal<TValue>',
+        type: "Signal<FormGroup<TControls>['value']>",
         description: this.translationService.translate('toSignalForm.apiPropValue'),
       },
       {
@@ -326,7 +341,7 @@ export class ToSignalFormComponent {
     }),
     clusterName: new FormControl('', {
       nonNullable: true,
-      validators: [Validators.required, Validators.minLength(4)],
+      validators: [trimmedClusterNameValidator],
     }),
     autoScaling: new FormControl(false, {nonNullable: true}),
     storageGb: new FormControl<number | ''>('', {

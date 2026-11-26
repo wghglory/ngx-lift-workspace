@@ -204,11 +204,8 @@ export function formSubmitValue<TInput extends object = Record<string, unknown>,
       : eventStream$;
   const stream$ = concat(
     defer(() => of(compute())),
-    changes$.pipe(
-      map(() => compute()),
-      distinctUntilChanged((a, b) => isEqual(a, b)),
-    ),
-  );
+    changes$.pipe(map(() => compute())),
+  ).pipe(distinctUntilChanged((a, b) => isEqual(a, b)));
 
   return toSignal(stream$, {
     initialValue: undefined as TOutput,

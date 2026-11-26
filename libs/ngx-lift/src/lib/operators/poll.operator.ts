@@ -75,7 +75,7 @@ import {isPromise} from '../utils/is-promise.util';
  *   interval: 10000,
  *   pollingFn: (id: number) => this.http.get(`/api/users/${id}`),
  *   forceRefresh: userId$,
- *   paramsBuilder: (id) => id
+ *   paramsBuilder: (id) => id ?? 1
  * });
  * ```
  */

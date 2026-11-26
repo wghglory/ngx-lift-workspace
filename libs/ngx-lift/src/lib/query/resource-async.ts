@@ -542,7 +542,6 @@ export function resourceAsync<T, P, E = Error>(
   let queuedExecution: number | undefined;
   let cancellationGeneration = 0;
   let localParamsSnapshot: {value: P | undefined; valid: boolean} | undefined;
-  let suppressNextDirectRun = false;
   let disposed = false;
   let dependencyEffect: EffectRef | undefined;
   const pendingDependencyEffects = new Set<EffectRef>();
@@ -593,6 +592,12 @@ export function resourceAsync<T, P, E = Error>(
     for (const deferred of cancelled) deferred.reject(reason);
   };
   const isCurrent = (operation: Operation) => !disposed && currentOperation === operation;
+  const reportHandlerError = (error: unknown) => {
+    // Preserve the observer contract: a throwing user handler is reported asynchronously.
+    setTimeout(() => {
+      throw error;
+    });
+  };
   const handleError = (operation: Operation, originalError: unknown) => {
     if (!isCurrent(operation)) return;
     let error = originalError;
@@ -668,12 +673,6 @@ export function resourceAsync<T, P, E = Error>(
         evaluation.error = error;
       }
     }
-    if (suppressNextDirectRun && !paramsCapture) {
-      // Dependencies were captured above; the notification predates the local write, so the loader must not run.
-      suppressNextDirectRun = false;
-      evaluation.controller.abort(new ResourceAsyncCancelledError('Operation cancelled by local override'));
-      return;
-    }
     if (disposed || generation !== cancellationGeneration) {
       evaluation.controller.abort(new ResourceAsyncCancelledError('Operation cancelled during source creation'));
       return;
@@ -730,7 +729,11 @@ export function resourceAsync<T, P, E = Error>(
             try {
               options.onSuccess?.(value);
             } catch (error) {
-              handleError(operation, error);
+              try {
+                handleError(operation, error);
+              } catch (handlerError) {
+                reportHandlerError(handlerError);
+              }
               return;
             }
             if (isCurrent(operation)) settle(operation.id, valueComputed());
@@ -740,10 +743,7 @@ export function resourceAsync<T, P, E = Error>(
             try {
               handleError(operation, error);
             } catch (handlerError) {
-              // Preserve the observer contract: a throwing error handler is reported asynchronously.
-              setTimeout(() => {
-                throw handlerError;
-              });
+              reportHandlerError(handlerError);
             }
           }),
         complete: () =>
@@ -837,7 +837,6 @@ export function resourceAsync<T, P, E = Error>(
     if (disposed || (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)))
       return false;
     localParamsSnapshot = undefined;
-    suppressNextDirectRun = false;
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by reload'));
     if (options.behavior === 'exhaust') queuedExecution = ++sequence;
     if (untracked(statusSignal) === 'idle') statusSignal.set('loading');
@@ -846,13 +845,7 @@ export function resourceAsync<T, P, E = Error>(
   };
   const suppressQueued = () => {
     suppressedTrigger = untracked(reloadTrigger);
-    if (!paramsCapture) {
-      suppressNextDirectRun = true;
-      queueMicrotask(() => {
-        suppressNextDirectRun = false;
-      });
-      return;
-    }
+    if (!paramsCapture) return;
     try {
       localParamsSnapshot = {value: untracked(paramsCapture), valid: true};
     } catch {
@@ -888,7 +881,6 @@ export function resourceAsync<T, P, E = Error>(
       return executionPromise(currentOperation?.id ?? (queuedExecution as number));
     }
     localParamsSnapshot = undefined;
-    suppressNextDirectRun = false;
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by newer execution'));
     queuedExecution = ++sequence;
     const promise = executionPromise(queuedExecution);

@@ -472,7 +472,7 @@ describe('ToSignalFormComponent', () => {
     expect(formTypes.get('options.omitIf')).toBe(
       '(value: unknown, key: string, raw: Record<string, unknown>) => boolean',
     );
-    expect(formTypes.get('sf.value')).toBe('Signal<TValue>');
+    expect(formTypes.get('sf.value')).toBe("Signal<FormGroup<TControls>['value']>");
     expect(formTypes.get('sf.submitValue')).toBe('Signal<TSubmitValue>');
     expect(bindIfProps[0].type).toBe('string');
     expect(revalidateProps[1].type).toBe('string | AbstractControl | Signal<unknown> | (() => unknown)');
@@ -544,6 +544,15 @@ describe('ToSignalFormComponent', () => {
       expect(component.optionsControls.getRawValue().deep).toBe(false);
       expect(component.optionsControls.getRawValue().includeDisabled).toBe(true);
     });
+  });
+
+  it('reports a padded name that is too short after trimming', () => {
+    component.form.controls.clusterName.setValue(' db ');
+    fixture.detectChanges();
+    expect(component.form.controls.clusterName.hasError('minlength')).toBe(true);
+    component.form.controls.clusterName.setValue(' db12 ');
+    fixture.detectChanges();
+    expect(component.form.controls.clusterName.valid).toBe(true);
   });
 
   it('does not submit a reserved name while its availability check is pending', async () => {

@@ -1,4 +1,4 @@
-import {EventEmitter} from '@angular/core';
+import {effect, EventEmitter} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {describe, expect, it, vi} from 'vitest';
@@ -293,6 +293,24 @@ describe('to-submit-value utilities', () => {
         },
       });
       expect(() => failing()).toThrow(failure);
+    });
+  });
+
+  it('deduplicates the first event against the initial snapshot', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+      const submitValue = formSubmitValue(form);
+      const observed: unknown[] = [];
+      effect(() => {
+        observed.push(submitValue());
+      });
+      TestBed.flushEffects();
+      expect(observed).toHaveLength(1);
+      events.emit('unchanged');
+      TestBed.flushEffects();
+      expect(observed).toHaveLength(1);
     });
   });
 

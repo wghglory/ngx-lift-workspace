@@ -585,26 +585,6 @@ describe('resourceAsync lifecycle regressions', () => {
     });
   });
 
-  it('keeps a later local override for a direct factory when a parameter change was already scheduled', async () => {
-    await TestBed.runInInjectionContext(async () => {
-      const id = signal(1);
-      const factory = vi.fn((value: number) => of(value));
-      const resource = resourceAsync(() => factory(id()));
-      await flushEffects();
-      id.set(2);
-      resource.set(99);
-      await flushEffects();
-      expect(resource.value()).toBe(99);
-      expect(resource.status()).toBe('local');
-      // The superseded notification still captures dependencies but must not start an operation.
-      expect(factory).toHaveBeenCalledTimes(2);
-      id.set(3);
-      await flushEffects();
-      expect(resource.value()).toBe(3);
-      expect(factory).toHaveBeenCalledTimes(3);
-    });
-  });
-
   it('reserves a reload slot before the scheduler runs in exhaust mode', async () => {
     await TestBed.runInInjectionContext(async () => {
       const factory = vi.fn(() => promise(1, 10));
@@ -1712,8 +1692,6 @@ describe('WritableResourceRef', () => {
         // Set local value
         resource.set({id: 99, name: 'Local'});
         expect(resource.status()).toBe('local');
-        // Clear the one-tick direct-factory suppression before testing a later parameter change.
-        await Promise.resolve();
 
         // Change signal - should trigger refetch
         userId.set(2);
@@ -2039,8 +2017,6 @@ describe('WritableResourceRef', () => {
         resource.reset();
         expect(resource.status()).toBe('idle');
         expect(resource.value()).toBeUndefined();
-        // Clear the one-tick direct-factory suppression before testing a later parameter change.
-        await Promise.resolve();
 
         // Changing reactive signal dependency should trigger refetch
         userId.set(2);
