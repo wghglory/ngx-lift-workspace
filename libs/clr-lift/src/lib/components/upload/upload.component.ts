@@ -93,6 +93,7 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
   readonly dragOver = signal(false);
   private dragDepth = 0;
   private selectionVersion = 0;
+  private destinationVersion = 0;
   readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
   readonly showMaxSizeHint = computed(() => Number.isFinite(this.maxSize()) && this.maxSize() > 0);
   readonly showMaxFilesHint = computed(() => this.maxFiles() > 0);
@@ -141,8 +142,8 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
   }
 
   ngOnChanges(changes: SimpleChanges<UploadComponent>): void {
-    // Returning to an earlier destination still invalidates selections started before the change.
-    if (changes.adapter || changes.scope) this.selectionVersion++;
+    // Invalidate pending directory reads, including when a binding returns to its original value.
+    if (changes.adapter || changes.scope) this.destinationVersion++;
   }
 
   writeValue(files: readonly File[] | null): void {
@@ -193,6 +194,7 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
     this.dragOver.set(false);
     if (this.disabledState() || !event.dataTransfer) return;
     const selectionVersion = this.selectionVersion;
+    const destinationVersion = this.destinationVersion;
     const adapter = this.adapter();
     const scope = this.scope();
     this.reading.set(true);
@@ -201,6 +203,7 @@ export class UploadComponent implements ControlValueAccessor, Validator, OnChang
       if (
         this.disabledState() ||
         selectionVersion !== this.selectionVersion ||
+        destinationVersion !== this.destinationVersion ||
         adapter !== this.adapter() ||
         scope !== this.scope()
       ) {

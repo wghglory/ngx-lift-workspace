@@ -140,6 +140,32 @@ describe('UploadComponent', () => {
     expect(changes).toEqual([[discarded], []]);
   });
 
+  it('keeps the accepted destination when filesChange binds a new adapter and scope', async () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    const first = stubAdapter();
+    const second = stubAdapter();
+    const firstStart = vi.spyOn(first, 'initiate');
+    const secondStart = vi.spyOn(second, 'initiate');
+    fixture.componentRef.setInput('adapter', first);
+    fixture.componentRef.setInput('scope', 'first');
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.filesChange.subscribe(() => {
+      fixture.componentRef.setInput('adapter', second);
+      fixture.componentRef.setInput('scope', 'second');
+      fixture.detectChanges();
+    });
+
+    const source = file('bundle.zip');
+    await select(component, [source]);
+    expect(firstStart).toHaveBeenCalledExactlyOnceWith(source);
+    expect(secondStart).not.toHaveBeenCalled();
+
+    await select(component, [source]);
+    expect(firstStart).toHaveBeenCalledOnce();
+    expect(secondStart).toHaveBeenCalledExactlyOnceWith(source);
+  });
+
   it('does not render a staged file name or clear control', async () => {
     const fixture = TestBed.createComponent(UploadComponent);
     fixture.componentRef.setInput('adapter', stubAdapter());
