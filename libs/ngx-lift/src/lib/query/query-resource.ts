@@ -157,6 +157,11 @@ export function queryResource<T, E = Error>(
         current.query,
         (snapshot) => {
           if (observer !== next || isSupersededQueryDispatch(client, key, next.handle)) return;
+          // Removal detaches the handle before delivering idle. Later queued callbacks no longer own this state.
+          if (next.handle?.isAttached() === false) {
+            state.set({key, snapshot: idleSnapshot<T>()});
+            return;
+          }
           state.set({key, snapshot});
           // The first snapshot precedes automatic loading. Start explicit reads here so they have
           // an observer before dispatch and retain their manual trigger and shared request Promise.

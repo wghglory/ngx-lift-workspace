@@ -223,6 +223,44 @@ describe('queryResource', () => {
     expect(resource.value()).toBeUndefined();
   });
 
+  it('keeps a removed observer idle when a decorator delivers an earlier success in a microtask', async () => {
+    const observe = client.observeQuery.bind(client);
+    const source = new Subject<number>();
+    let idleAfterPurge = false;
+    let delivered = false;
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+      observe(
+        query,
+        (snapshot) => {
+          if (snapshot.status === 'resolved' && snapshot.value === 2) {
+            queueMicrotask(() => {
+              delivered = true;
+              listener(structuredClone(snapshot));
+            });
+            client.removeQueries();
+            idleAfterPurge = resource.status() === 'idle' && !resource.hasValue();
+          } else listener(snapshot);
+        },
+        options,
+      ),
+    );
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['deferred-purge'], loader: () => source})),
+    );
+    await settle();
+    source.next(1);
+    await settle();
+    expect(resource.value()).toBe(1);
+    resource.reload();
+    source.next(2);
+    await settle();
+    expect(idleAfterPurge).toBe(true);
+    expect(delivered).toBe(true);
+    expect(client.getSnapshot(['deferred-purge'])).toBeUndefined();
+    expect(resource.status()).toBe('idle');
+    expect(resource.value()).toBeUndefined();
+  });
+
   it.each(['shallow', 'structured'] as const)(
     'preserves error translations on a %s copy of a snapshot',
     async (copy) => {
