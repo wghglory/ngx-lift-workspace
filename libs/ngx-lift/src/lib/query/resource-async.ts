@@ -11,7 +11,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {from, isObservable, noop, Observable, Subscription} from 'rxjs';
+import {from, isObservable, noop, Observable, Subscriber, Subscription} from 'rxjs';
 
 import {isPromise} from '../utils/is-promise.util';
 import {ResourceStatus} from '../models';
@@ -541,6 +541,7 @@ export function resourceAsync<T, P, E = Error>(
   let sequence = 0;
   let queuedExecution: number | undefined;
   let cancellationGeneration = 0;
+  let localParamsSnapshot: {value: P | undefined; valid: boolean} | undefined;
   let disposed = false;
   let dependencyEffect: EffectRef | undefined;
   const pendingDependencyEffects = new Set<EffectRef>();
@@ -569,9 +570,16 @@ export function resourceAsync<T, P, E = Error>(
   const stopOperation = (reason: Error) => {
     const operation = currentOperation;
     currentOperation = undefined;
-    if (operation) {
-      operation.controller.abort(reason);
-      operation.subscription.unsubscribe();
+    if (!operation) return;
+    try {
+      try {
+        operation.controller.abort(reason);
+      } finally {
+        operation.subscription.unsubscribe();
+      }
+    } catch {
+      // A failing teardown must not prevent settlement or the caller's state transition.
+    } finally {
       settle(operation.id, undefined as T, {reason});
     }
   };
@@ -623,6 +631,9 @@ export function resourceAsync<T, P, E = Error>(
       } catch (error) {
         parameterError = {reason: error};
       }
+      const superseded = localParamsSnapshot;
+      localParamsSnapshot = undefined;
+      if (superseded?.valid && !parameterError && Object.is(selection, superseded.value)) return;
     }
     // Legacy factories may eagerly start work, so exhaust must refuse them before invocation.
     if (options.behavior === 'exhaust' && currentOperation) return;
@@ -631,7 +642,8 @@ export function resourceAsync<T, P, E = Error>(
     const generation = ++cancellationGeneration;
     for (const pendingEffect of pendingDependencyEffects) pendingEffect.destroy();
     pendingDependencyEffects.clear();
-    stopOperation(new ResourceAsyncCancelledError('Operation cancelled by dependency change'));
+    untracked(() => stopOperation(new ResourceAsyncCancelledError('Operation cancelled by dependency change')));
+    if (disposed || generation !== cancellationGeneration) return;
     const evaluation: Evaluation = {
       controller: new AbortController(),
       failed: !!parameterError,
@@ -700,40 +712,59 @@ export function resourceAsync<T, P, E = Error>(
           ? from(asyncSource)
           : from([asyncSource]);
       let received = false;
-      operation.subscription.add(
-        source$.subscribe({
-          next: (value) =>
-            untracked(() => {
-              if (!isCurrent(operation)) return;
-              received = true;
-              valueSignal.set(value);
+      const subscriber = new Subscriber<T>({
+        next: (value) =>
+          untracked(() => {
+            if (!isCurrent(operation)) return;
+            received = true;
+            valueSignal.set(value);
+            errorSignal.set(null);
+            statusSignal.set('resolved');
+            try {
+              options.onSuccess?.(value);
+            } catch (error) {
+              handleError(operation, error);
+              return;
+            }
+            if (isCurrent(operation)) settle(operation.id, valueComputed());
+          }),
+        error: (error: E) =>
+          untracked(() => {
+            try {
+              handleError(operation, error);
+            } catch (handlerError) {
+              // Preserve the observer contract: a throwing error handler is reported asynchronously.
+              setTimeout(() => {
+                throw handlerError;
+              });
+            }
+          }),
+        complete: () =>
+          untracked(() => {
+            if (!isCurrent(operation)) return;
+            if (!received) {
+              valueSignal.set(undefined);
               errorSignal.set(null);
               statusSignal.set('resolved');
-              try {
-                options.onSuccess?.(value);
-              } catch (error) {
-                handleError(operation, error);
-                return;
-              }
-              if (isCurrent(operation)) settle(operation.id, valueComputed());
-            }),
-          error: (error: E) => untracked(() => handleError(operation, error)),
-          complete: () =>
-            untracked(() => {
-              if (!isCurrent(operation)) return;
-              if (!received) {
-                valueSignal.set(undefined);
-                errorSignal.set(null);
-                statusSignal.set('resolved');
-              }
-              // An exhaust caller can join after the stream's final emission and still needs completion settlement.
-              settle(operation.id, valueComputed());
-              currentOperation = undefined;
-              operation.subscription.unsubscribe();
-            }),
-        }),
-      );
+            }
+            // An exhaust caller can join after the stream's final emission and still needs completion settlement.
+            settle(operation.id, valueComputed());
+            currentOperation = undefined;
+            operation.subscription.unsubscribe();
+          }),
+      });
+      operation.subscription.add(subscriber);
+      source$.subscribe(subscriber);
     });
+  };
+  const captureParamsOnly = () => {
+    if (!paramsCapture) return;
+    try {
+      if (options.reactive === false) untracked(paramsCapture);
+      else paramsCapture();
+    } catch {
+      // The cancelled operation must not replace local/idle state with a capture error.
+    }
   };
   const createDependencyEffect = () => {
     const generation = cancellationGeneration;
@@ -747,12 +778,7 @@ export function resourceAsync<T, P, E = Error>(
             // Pure params can establish initial dependencies without undoing a local override or reset.
             dependencyEffect = created;
             firstRun = false;
-            try {
-              if (options.reactive === false) untracked(paramsCapture);
-              else paramsCapture();
-            } catch {
-              // The cancelled operation must not replace local/idle state with a capture error.
-            }
+            captureParamsOnly();
           } else created.destroy();
           return;
         }
@@ -803,13 +829,21 @@ export function resourceAsync<T, P, E = Error>(
   const reload = () => {
     if (disposed || (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)))
       return false;
+    localParamsSnapshot = undefined;
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by reload'));
+    if (options.behavior === 'exhaust') queuedExecution = ++sequence;
     if (untracked(statusSignal) === 'idle') statusSignal.set('loading');
     resume();
     return true;
   };
   const suppressQueued = () => {
     suppressedTrigger = untracked(reloadTrigger);
+    if (!paramsCapture) return;
+    try {
+      localParamsSnapshot = {value: untracked(paramsCapture), valid: true};
+    } catch {
+      localParamsSnapshot = {value: undefined, valid: false};
+    }
   };
   const reset = () => {
     if (disposed) return;
@@ -839,6 +873,7 @@ export function resourceAsync<T, P, E = Error>(
     if (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)) {
       return executionPromise(currentOperation?.id ?? (queuedExecution as number));
     }
+    localParamsSnapshot = undefined;
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by newer execution'));
     queuedExecution = ++sequence;
     const promise = executionPromise(queuedExecution);

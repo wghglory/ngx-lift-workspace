@@ -470,6 +470,132 @@ describe('resourceAsync lifecycle regressions', () => {
       expect(resource.value()).toBe(1);
     });
   });
+
+  it('stops a synchronous producer when its success callback resets the resource', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const produced: number[] = [];
+      const resource = resourceAsync(
+        () =>
+          new Observable<number>((subscriber) => {
+            for (let value = 1; value <= 16; value++) {
+              if (subscriber.closed) return;
+              produced.push(value);
+              subscriber.next(value);
+            }
+          }),
+        {lazy: true, onSuccess: () => resource.reset()},
+      );
+      const settled = vi.fn();
+      resource.execute().then(settled, settled);
+      await flushEffects();
+      expect(produced).toEqual([1]);
+      expect(settled.mock.calls[0][0]).toMatchObject({name: 'ResourceAsyncCancelledError'});
+      expect(resource.status()).toBe('idle');
+    });
+  });
+
+  it('settles reset and disposal even when an observable finalizer throws', async () => {
+    const resource = TestBed.runInInjectionContext(() =>
+      resourceAsync(
+        () =>
+          new Observable<number>(() => () => {
+            throw new Error('teardown failed');
+          }),
+        {lazy: true},
+      ),
+    );
+    const first = resource.execute();
+    await flushEffects();
+    resource.reset();
+    await expect(first).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+    expect(resource.status()).toBe('idle');
+    const second = resource.execute();
+    await flushEffects();
+    expect(resource.status()).toBe('loading');
+    expect(() => resource.destroy()).not.toThrow();
+    await expect(second).rejects.toMatchObject({name: 'ResourceAsyncDisposedError'});
+  });
+
+  it('does not start a replacement factory when an abort handler destroys the resource', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      let starts = 0;
+      const owner: {resource?: WritableResourceRef<number>} = {};
+      const resource = resourceAsync(() => {
+        starts++;
+        const value = id();
+        return new Observable<number>((subscriber) => {
+          subscriber.next(value);
+          return () => {
+            if (starts === 1) owner.resource?.destroy();
+          };
+        });
+      });
+      owner.resource = resource;
+      await flushEffects();
+      expect(starts).toBe(1);
+      id.set(2);
+      await flushEffects();
+      expect(starts).toBe(1);
+    });
+  });
+
+  it('does not track signal reads in an outgoing teardown', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const incidental = signal('a');
+      const loader = vi.fn(
+        (value: number) =>
+          new Observable<string>((subscriber) => {
+            subscriber.next(`${value}:${incidental()}`);
+            return () => {
+              void incidental();
+            };
+          }),
+      );
+      const resource = resourceAsync({params: () => id(), loader});
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      id.set(2);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      incidental.set('b');
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      expect(resource.value()).toBe('2:a');
+    });
+  });
+
+  it('keeps a later local override when a parameter change was already scheduled', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const loader = vi.fn((value: number) => of(value));
+      const resource = resourceAsync({params: () => id(), loader});
+      await flushEffects();
+      id.set(2);
+      resource.set(99);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      expect(resource.value()).toBe(99);
+      expect(resource.status()).toBe('local');
+      id.set(3);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      expect(resource.value()).toBe(3);
+    });
+  });
+
+  it('reserves a reload slot before the scheduler runs in exhaust mode', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const factory = vi.fn(() => promise(1, 10));
+      const resource = resourceAsync(factory, {lazy: true, behavior: 'exhaust'});
+      expect(resource.reload()).toBe(true);
+      expect(resource.reload()).toBe(false);
+      await flushEffects(10);
+      expect(factory).toHaveBeenCalledTimes(1);
+      expect(resource.reload()).toBe(true);
+    });
+  });
 });
 
 describe('resourceAsync', () => {
