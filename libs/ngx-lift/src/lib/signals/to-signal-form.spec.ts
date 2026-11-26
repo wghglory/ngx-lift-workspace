@@ -267,6 +267,24 @@ describe('toSignalForm', () => {
     });
   });
 
+  it('observes an array length change when a batched disable is propagated', () => {
+    TestBed.runInInjectionContext(() => {
+      const first = new FormControl('x');
+      const rows = new FormArray([first, new FormControl('x')]);
+      const target = new FormControl('', () => (rows.value.length < 2 ? {tooFewRows: true} : null));
+      const sf = toSignalForm(new FormGroup({rows, target}));
+
+      first.disable({onlySelf: true});
+      expect(rows.value).toEqual(['x', 'x']);
+      sf.revalidate('target', 'rows');
+
+      rows.updateValueAndValidity();
+      expect(rows.value).toEqual(['x']);
+      expect(rows.status).toBe('VALID');
+      expect(target.hasError('tooFewRows')).toBe(true);
+    });
+  });
+
   it('observes same-valued replacement of a mounted array entry', () => {
     TestBed.runInInjectionContext(() => {
       const original = new FormControl('same');

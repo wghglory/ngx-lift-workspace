@@ -10,10 +10,12 @@ function snapshotSource(source: AbstractControl | null): unknown[] {
   function visit(control: AbstractControl, value: unknown): void {
     parts.push(control, value !== excludedValue);
     if (control instanceof FormArray) {
-      parts.push(control.length);
+      const entries = Array.isArray(value) ? value : [];
+      // An onlySelf change can leave the cached aggregate out of sync with the children's enabled flags.
+      parts.push(control.length, entries.length);
       let index = 0;
       for (const child of control.controls) {
-        visit(child, Array.isArray(value) && (child.enabled || control.disabled) ? value[index++] : excludedValue);
+        visit(child, index < entries.length && (child.enabled || control.disabled) ? entries[index++] : excludedValue);
       }
     } else if (control instanceof FormGroup) {
       const fields = Object.entries<AbstractControl>(control.controls);
