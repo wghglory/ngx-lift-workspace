@@ -8,7 +8,7 @@ const excludedValue = Symbol('excluded form value');
 function snapshotSource(source: AbstractControl | null): unknown[] {
   const parts: unknown[] = [];
   function visit(control: AbstractControl, value: unknown): void {
-    parts.push(control);
+    parts.push(control, value !== excludedValue);
     if (control instanceof FormArray) {
       parts.push(control.length);
       let index = 0;

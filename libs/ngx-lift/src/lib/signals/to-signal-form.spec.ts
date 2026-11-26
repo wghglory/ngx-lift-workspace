@@ -240,6 +240,33 @@ describe('toSignalForm', () => {
     });
   });
 
+  it.each([
+    {parent: 'group', child: 'group'},
+    {parent: 'group', child: 'array'},
+    {parent: 'array', child: 'group'},
+    {parent: 'array', child: 'array'},
+  ])('observes $parent value changes when an empty $child is disabled and enabled', ({parent, child}) => {
+    TestBed.runInInjectionContext(() => {
+      const empty = child === 'group' ? new FormGroup({}) : new FormArray([]);
+      const enabled = new FormControl({value: undefined, disabled: false}, {nonNullable: true});
+      const source = parent === 'group' ? new FormGroup({empty, enabled}) : new FormArray([empty, enabled]);
+      const target = new FormControl('', () => (empty.disabled ? {excluded: true} : null));
+      const sf = toSignalForm(new FormGroup({source, target}));
+      sf.revalidate('target', 'source');
+
+      empty.disable();
+      expect(source.value).toStrictEqual(parent === 'group' ? {enabled: undefined} : [undefined]);
+      expect(source.status).toBe('VALID');
+      expect(target.hasError('excluded')).toBe(true);
+      empty.enable();
+      const emptyValue = child === 'group' ? {} : [];
+      expect(source.value).toStrictEqual(
+        parent === 'group' ? {empty: emptyValue, enabled: undefined} : [emptyValue, undefined],
+      );
+      expect(target.valid).toBe(true);
+    });
+  });
+
   it('observes same-valued replacement of a mounted array entry', () => {
     TestBed.runInInjectionContext(() => {
       const original = new FormControl('same');
