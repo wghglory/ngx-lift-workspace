@@ -1,9 +1,9 @@
-import {ApplicationRef, Component} from '@angular/core';
+import {ApplicationRef, ChangeDetectionStrategy, Component} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
 import {By} from '@angular/platform-browser';
-import {afterEach, beforeEach, describe, expect, expectTypeOf, it} from 'vitest';
+import {afterEach, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 
 import {ClrLiftI18nService} from '../../services/clr-lift-i18n.service';
 import {UploadComponent} from './upload.component';
@@ -37,6 +37,16 @@ async function select(component: UploadComponent, files: readonly File[]): Promi
 class BlurUploadHost {
   readonly adapter = stubAdapter();
   readonly control = new FormControl<readonly File[]>([], {nonNullable: true, updateOn: 'blur'});
+}
+
+@Component({
+  imports: [ReactiveFormsModule, UploadComponent],
+  template: '<cll-upload [formControl]="control" [adapter]="adapter" />',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class ResetUploadHost {
+  readonly adapter = stubAdapter();
+  control = new FormControl<readonly File[]>([], {nonNullable: true});
 }
 
 describe('UploadComponent', () => {
@@ -73,6 +83,87 @@ describe('UploadComponent', () => {
     expect(fixture.componentInstance.control.value.map((item) => item.name)).toEqual(['first.zip', 'second.zip']);
     component.clear();
     expect(fixture.componentInstance.control.value).toEqual([]);
+  });
+
+  it.each(['change', 'blur'] as const)(
+    'honors a synchronous form reset on %s before starting transport',
+    async (updateOn) => {
+      const fixture = TestBed.createComponent(ResetUploadHost);
+      const host = fixture.componentInstance;
+      host.control = new FormControl<readonly File[]>([], {nonNullable: true, updateOn});
+      const initiate = vi.spyOn(host.adapter, 'initiate');
+      fixture.detectChanges();
+      const component: UploadComponent = fixture.debugElement.query(By.directive(UploadComponent)).componentInstance;
+      const emitted = vi.fn();
+      const settled = vi.fn();
+      component.filesChange.subscribe(emitted);
+      component.uploadComplete.subscribe(settled);
+      component.uploadCancelled.subscribe(settled);
+      const discarded = file('discard.zip');
+      const observed: File[] = [];
+      host.control.valueChanges.subscribe((files) => {
+        if (files.length) {
+          observed.push(...files);
+          host.control.reset();
+        }
+      });
+
+      await select(component, [discarded]);
+
+      expect(observed).toEqual([discarded]);
+      expect(initiate).not.toHaveBeenCalled();
+      expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+      expect(host.control.value).toEqual([]);
+      expect(component.value()).toEqual([]);
+      expect(settled).not.toHaveBeenCalled();
+      expect(emitted).not.toHaveBeenCalled();
+      if (updateOn === 'change') expect(host.control.untouched).toBe(true);
+    },
+  );
+
+  it('honors clear during filesChange before starting transport', async () => {
+    const adapter = stubAdapter();
+    const initiate = vi.spyOn(adapter, 'initiate');
+    const component = create({adapter});
+    const changes: (readonly File[])[] = [];
+    component.filesChange.subscribe((files) => {
+      changes.push(files);
+      if (files.length) component.clear();
+    });
+    const discarded = file('discard.zip');
+
+    await select(component, [discarded]);
+
+    expect(initiate).not.toHaveBeenCalled();
+    expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+    expect(component.value()).toEqual([]);
+    expect(changes).toEqual([[discarded], []]);
+  });
+
+  it('keeps the accepted destination when filesChange binds a new adapter and scope', async () => {
+    const fixture = TestBed.createComponent(UploadComponent);
+    const first = stubAdapter();
+    const second = stubAdapter();
+    const firstStart = vi.spyOn(first, 'initiate');
+    const secondStart = vi.spyOn(second, 'initiate');
+    fixture.componentRef.setInput('adapter', first);
+    fixture.componentRef.setInput('scope', 'first');
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    component.filesChange.subscribe(() => {
+      fixture.componentRef.setInput('adapter', second);
+      fixture.componentRef.setInput('scope', 'second');
+      fixture.detectChanges();
+    });
+
+    const source = file('bundle.zip');
+    await select(component, [source]);
+    expect(firstStart).toHaveBeenCalledExactlyOnceWith(source);
+    expect(secondStart).not.toHaveBeenCalled();
+
+    await select(component, [source]);
+    expect(firstStart).toHaveBeenCalledOnce();
+    expect(secondStart).toHaveBeenCalledExactlyOnceWith(source);
   });
 
   it('does not render a staged file name or clear control', async () => {
@@ -349,27 +440,96 @@ describe('UploadComponent dropzone', () => {
     return {preventDefault: () => undefined, type} as unknown as DragEvent;
   }
 
+  function startDirectoryDrop(component: UploadComponent) {
+    let release: (entries: FileSystemEntry[]) => void = () => undefined;
+    let reads = 0;
+    const directory = {
+      isDirectory: true,
+      isFile: false,
+      createReader: () => ({
+        readEntries: (next: (entries: FileSystemEntry[]) => void) => {
+          if (reads++ === 0) release = next;
+          else next([]);
+        },
+      }),
+    } as unknown as FileSystemEntry;
+    const child = {
+      isFile: true,
+      file: (next: (value: File) => void) => next(file('late.zip')),
+    } as unknown as FileSystemEntry;
+    const pending = component.onDrop({
+      preventDefault: () => undefined,
+      dataTransfer: {files: [], items: [{kind: 'file', webkitGetAsEntry: () => directory}]},
+    } as unknown as DragEvent);
+    return {pending, finish: () => release([child])};
+  }
+
+  it.each(['adapter', 'scope', 'both'])(
+    'discards a pending directory drop after changing destination bindings (%s)',
+    async (binding) => {
+      const fixture = TestBed.createComponent(UploadComponent);
+      const first = stubAdapter();
+      const second = stubAdapter();
+      const firstStart = vi.spyOn(first, 'initiate');
+      const secondStart = vi.spyOn(second, 'initiate');
+      fixture.componentRef.setInput('adapter', first);
+      fixture.componentRef.setInput('scope', 'first');
+      fixture.detectChanges();
+      const component = fixture.componentInstance;
+      const {pending, finish} = startDirectoryDrop(component);
+
+      if (binding !== 'scope') fixture.componentRef.setInput('adapter', second);
+      if (binding !== 'adapter') fixture.componentRef.setInput('scope', 'second');
+      fixture.detectChanges();
+      finish();
+      await pending;
+
+      expect(component.value()).toEqual([]);
+      expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+      expect(firstStart).not.toHaveBeenCalled();
+      expect(secondStart).not.toHaveBeenCalled();
+
+      await select(component, [file('current.zip')]);
+      expect(binding === 'scope' ? firstStart : secondStart).toHaveBeenCalledOnce();
+    },
+  );
+
+  it.each(['adapter', 'scope'] as const)(
+    'keeps a pending drop invalid after restoring its %s binding',
+    async (binding) => {
+      const fixture = TestBed.createComponent(UploadComponent);
+      const adapter = stubAdapter();
+      fixture.componentRef.setInput('adapter', adapter);
+      fixture.componentRef.setInput('scope', 'first');
+      fixture.detectChanges();
+      const component = fixture.componentInstance;
+      const {pending, finish} = startDirectoryDrop(component);
+
+      fixture.componentRef.setInput(binding, binding === 'adapter' ? stubAdapter() : 'second');
+      fixture.detectChanges();
+      fixture.componentRef.setInput(binding, binding === 'adapter' ? adapter : 'first');
+      fixture.detectChanges();
+      finish();
+      await pending;
+
+      expect(component.value()).toEqual([]);
+      expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+      const current = startDirectoryDrop(component);
+      current.finish();
+      await current.pending;
+      expect(
+        TestBed.inject(UploadQueueService)
+          .items()
+          .map((item) => item.file.name),
+      ).toEqual(['late.zip']);
+    },
+  );
+
   it.each(['reset', 'clear', 'disable', 'destroy'] as const)(
     'invalidates a pending directory drop on %s',
     async (action) => {
       const {component} = create({multiple: true});
       const queue = TestBed.inject(UploadQueueService);
-      let release: (entries: FileSystemEntry[]) => void = () => undefined;
-      let reads = 0;
-      const directory = {
-        isDirectory: true,
-        isFile: false,
-        createReader: () => ({
-          readEntries: (next: (entries: FileSystemEntry[]) => void) => {
-            if (reads++ === 0) release = next;
-            else next([]);
-          },
-        }),
-      } as unknown as FileSystemEntry;
-      const child = {
-        isFile: true,
-        file: (next: (value: File) => void) => next(file('late.zip')),
-      } as unknown as FileSystemEntry;
       let changes = 0;
       let touches = 0;
       component.registerOnChange(() => {
@@ -378,10 +538,7 @@ describe('UploadComponent dropzone', () => {
       component.registerOnTouched(() => {
         touches++;
       });
-      const pending = component.onDrop({
-        preventDefault: () => undefined,
-        dataTransfer: {files: [], items: [{kind: 'file', webkitGetAsEntry: () => directory}]},
-      } as unknown as DragEvent);
+      const {pending, finish} = startDirectoryDrop(component);
       if (action === 'reset') component.writeValue([]);
       if (action === 'clear') component.clear();
       if (action === 'disable') {
@@ -389,7 +546,7 @@ describe('UploadComponent dropzone', () => {
         component.setDisabledState(false);
       }
       if (action === 'destroy') TestBed.resetTestingModule();
-      release([child]);
+      finish();
       await pending;
       expect(component.value()).toEqual([]);
       expect(queue.items()).toEqual([]);

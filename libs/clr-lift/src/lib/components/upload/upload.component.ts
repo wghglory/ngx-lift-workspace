@@ -4,7 +4,9 @@ import {
   Component,
   ElementRef,
   DestroyRef,
+  type OnChanges,
   PLATFORM_ID,
+  type SimpleChanges,
   computed,
   effect,
   forwardRef,
@@ -44,7 +46,7 @@ ClarityIcons.addIcons(uploadCloudIcon, exclamationTriangleIcon);
     {provide: NG_VALIDATORS, useExisting: forwardRef(() => UploadComponent), multi: true},
   ],
 })
-export class UploadComponent implements ControlValueAccessor, Validator {
+export class UploadComponent implements ControlValueAccessor, Validator, OnChanges {
   private static nextId = 0;
 
   private readonly queue = inject(UploadQueueService);
@@ -91,6 +93,7 @@ export class UploadComponent implements ControlValueAccessor, Validator {
   readonly dragOver = signal(false);
   private dragDepth = 0;
   private selectionVersion = 0;
+  private destinationVersion = 0;
   readonly showAcceptHint = computed(() => this.accept().trim().length > 0);
   readonly showMaxSizeHint = computed(() => Number.isFinite(this.maxSize()) && this.maxSize() > 0);
   readonly showMaxFilesHint = computed(() => this.maxFiles() > 0);
@@ -138,6 +141,11 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges<UploadComponent>): void {
+    // Invalidate pending directory reads, including when a binding returns to its original value.
+    if (changes.adapter || changes.scope) this.destinationVersion++;
+  }
+
   writeValue(files: readonly File[] | null): void {
     this.clearItems();
     this.value.set(files ?? []);
@@ -178,7 +186,6 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     const selected = Array.from(input.files ?? []);
     input.value = '';
     this.ingest(selected);
-    this.onTouched();
   }
 
   async onDrop(event: DragEvent): Promise<void> {
@@ -187,12 +194,22 @@ export class UploadComponent implements ControlValueAccessor, Validator {
     this.dragOver.set(false);
     if (this.disabledState() || !event.dataTransfer) return;
     const selectionVersion = this.selectionVersion;
+    const destinationVersion = this.destinationVersion;
+    const adapter = this.adapter();
+    const scope = this.scope();
     this.reading.set(true);
     try {
       const files = await filesFromDataTransfer(event.dataTransfer);
-      if (this.disabledState() || selectionVersion !== this.selectionVersion) return;
+      if (
+        this.disabledState() ||
+        selectionVersion !== this.selectionVersion ||
+        destinationVersion !== this.destinationVersion ||
+        adapter !== this.adapter() ||
+        scope !== this.scope()
+      ) {
+        return;
+      }
       this.ingest(files);
-      this.onTouched();
     } finally {
       this.reading.set(false);
     }
@@ -218,62 +235,34 @@ export class UploadComponent implements ControlValueAccessor, Validator {
 
   /** Validates a selection and enqueues the accepted files on the shared queue. */
   private ingest(selected: readonly File[]): void {
-    if (!selected.length || this.disabledState()) return;
-
-    const adapter = this.adapter();
-    const scope = this.scope();
-    const rejections: UploadError[] = [];
-    const duplicates: {file: File; id?: string}[] = [];
-    const candidates: File[] = [];
-    const limit = this.multiple() ? (this.maxFiles() > 0 ? this.maxFiles() : Infinity) : 1;
-    for (const file of selected) {
-      const existing = this.autoEnqueue() ? this.panelManager.duplicate(file, adapter, scope) : undefined;
-      if (existing || candidates.some((candidate) => this.panelManager.sameFile(candidate, file))) {
-        duplicates.push({file, id: existing?.id});
-      } else {
-        candidates.push(file);
-      }
-    }
-    // Count is a selection-level contract: never choose an arbitrary first N files or cancel prior work.
-    if (candidates.length > limit) {
-      this.duplicates.set(duplicates.filter((duplicate) => duplicate.id !== undefined));
-      const error: UploadError = {code: 'upload.validation.maxFiles', phase: 'validation', message: String(limit)};
-      this.setErrors([...this.fileErrors(), error]);
-      this.validationErrors.emit([error]);
+    if (!selected.length || this.disabledState()) {
+      this.onTouched();
       return;
     }
-    const accepted: File[] = [];
-    for (const file of candidates) {
-      if (!this.matchesAccept(file)) {
-        rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: this.fileLabel(file)});
-      } else if (this.maxSize() === 0 || file.size > this.maxSize() * 1024 * 1024) {
-        rejections.push({
-          code: 'upload.validation.maxSize',
-          phase: 'validation',
-          message: String(this.maxSize()),
-          fileName: this.fileLabel(file),
-        });
-      } else {
-        accepted.push(file);
-      }
-    }
+    const selectionVersion = this.selectionVersion;
+    const adapter = this.adapter();
+    const scope = this.scope();
+    const {accepted, rejections} = this.validateSelection(selected, adapter, scope);
     this.setErrors([...this.fileErrors(), ...rejections]);
-    this.duplicates.set(
-      duplicates.filter(
-        (duplicate) =>
-          duplicate.id !== undefined || accepted.some((file) => this.panelManager.sameFile(file, duplicate.file)),
-      ),
-    );
-    if (rejections.length) this.validationErrors.emit(rejections);
-    if (!accepted.length) return;
+    if (selectionVersion !== this.selectionVersion) return;
+    if (rejections.length) {
+      this.validationErrors.emit(rejections);
+      if (selectionVersion !== this.selectionVersion) return;
+    }
 
+    if (!accepted.length) {
+      this.onTouched();
+      return;
+    }
     const next = [...this.value(), ...accepted];
     this.value.set(next);
     this.onChange(next);
+    if (selectionVersion !== this.selectionVersion) return;
+    // Blur-mode forms commit on touch. Either form callback can synchronously reset the picker.
+    this.onTouched();
+    if (selectionVersion !== this.selectionVersion) return;
     this.filesChange.emit(next);
-
-    // Staging mode: selection is validated and exposed, but the caller decides when to enqueue.
-    if (!this.autoEnqueue()) return;
+    if (selectionVersion !== this.selectionVersion || !this.autoEnqueue()) return;
 
     this.openPanel();
     const items = this.queue.enqueue(accepted, {
@@ -295,6 +284,56 @@ export class UploadComponent implements ControlValueAccessor, Validator {
       this.tracked.set(item.id, true);
       void this.watch(item.id, item);
     }
+  }
+
+  private validateSelection(
+    selected: readonly File[],
+    adapter: UploadAdapter,
+    scope: string | undefined,
+  ): {
+    accepted: File[];
+    rejections: UploadError[];
+  } {
+    const rejections: UploadError[] = [];
+    const duplicates: {file: File; id?: string}[] = [];
+    const candidates: File[] = [];
+    const limit = this.multiple() ? (this.maxFiles() > 0 ? this.maxFiles() : Infinity) : 1;
+    for (const file of selected) {
+      const existing = this.autoEnqueue() ? this.panelManager.duplicate(file, adapter, scope) : undefined;
+      if (existing || candidates.some((candidate) => this.panelManager.sameFile(candidate, file))) {
+        duplicates.push({file, id: existing?.id});
+      } else {
+        candidates.push(file);
+      }
+    }
+    // Count is a selection-level contract: never choose an arbitrary first N files or cancel prior work.
+    if (candidates.length > limit) {
+      this.duplicates.set(duplicates.filter((duplicate) => duplicate.id !== undefined));
+      const error: UploadError = {code: 'upload.validation.maxFiles', phase: 'validation', message: String(limit)};
+      return {accepted: [], rejections: [error]};
+    }
+    const accepted: File[] = [];
+    for (const file of candidates) {
+      if (!this.matchesAccept(file)) {
+        rejections.push({code: 'upload.validation.accept', phase: 'validation', fileName: this.fileLabel(file)});
+      } else if (this.maxSize() === 0 || file.size > this.maxSize() * 1024 * 1024) {
+        rejections.push({
+          code: 'upload.validation.maxSize',
+          phase: 'validation',
+          message: String(this.maxSize()),
+          fileName: this.fileLabel(file),
+        });
+      } else {
+        accepted.push(file);
+      }
+    }
+    this.duplicates.set(
+      duplicates.filter(
+        (duplicate) =>
+          duplicate.id !== undefined || accepted.some((file) => this.panelManager.sameFile(file, duplicate.file)),
+      ),
+    );
+    return {accepted, rejections};
   }
 
   clear(): void {
