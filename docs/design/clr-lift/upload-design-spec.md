@@ -691,9 +691,9 @@ The control value is `readonly File[]`; accepted selections emit a new array and
 Queue state, progress and panel visibility are not form state. Owner writes are authoritative: `writeValue([])` and
 `FormControl.reset()` clear the accepted value and cancel/remove queue items created from that value without emitting
 `onChange` or touch. `setDisabledState(true)` and `disabled=true` cancel in-flight items for this control while
-preserving the committed value. A UI "Clear validation errors" action only drops validation results; it does not change
-the form value or queue. Native Signal Forms support is deferred until the platform upgrade, as required by the forms
-contract.
+preserving the committed value. The picker stays disabled while either the form control or its input is disabled. A UI
+"Clear validation errors" action only drops validation results; it does not change the form value or queue. Native
+Signal Forms support is deferred until the platform upgrade, as required by the forms contract.
 
 ### Transport examples: promises and `HttpClient` (proposed)
 
@@ -858,7 +858,8 @@ error      -> retry (action) -> the failed phase
   bytes for that chunk; `uploadedBytes` is acknowledged bytes plus reported in-flight bytes, and reverts to acknowledged
   bytes on failure or cancellation. Retry re-sends only unacknowledged chunks, beginning with the lowest unacknowledged
   number; acknowledged chunks are never re-sent. Adapters used with `concurrency>1` must support independent,
-  out-of-order chunk requests.
+  out-of-order chunk requests. Workers claim chunk numbers on demand, so the first dispatch requires only the first
+  chunk number regardless of file size.
 - Cancel on a `queued` item marks it `cancelled` without an adapter call because no `uploadId` exists. Cancel during
   upload aborts the `AbortSignal` and calls `cancel(uploadId)`. Cancel during processing stops `getStatus` polling and
   calls `cancel(uploadId)`; `combine` has already been issued and cannot be locally undone, so server termination is the
@@ -883,7 +884,9 @@ error      -> retry (action) -> the failed phase
   Dropped folders are traversed through `webkitGetAsEntry()` entries captured synchronously during the drop event and
   read in repeated `readEntries` batches until exhausted. The "Choose folder" action uses a hidden `webkitdirectory`
   input and is shown with `multiple`. Drops run the same `accept`, `maxSize` and `maxFiles` validation; rejected files
-  never create queue items. Hint segments and the used count are omitted without data.
+  never create queue items. An unreadable file or directory page adds a validation error with its path. Readable
+  siblings and previously read pages still participate in the selection. Hint segments and the used count are omitted
+  without data.
 - The root-scoped panel manager owns one CDK overlay per root queue with `hasBackdrop: false`; it never locks page
   scroll or makes the background inert. An individual declaration anchor or picker can be destroyed without destroying
   that overlay. Dispose the overlay at its root owner teardown; do not mutate global styles.
@@ -895,7 +898,8 @@ error      -> retry (action) -> the failed phase
   acknowledged chunks; a failed `status` poll resumes polling. With `autoRetry=false` the user starts every retry
   explicitly; with `autoRetry=true` only `chunk` errors with `retryable: true` retry automatically, up to `maxRetries`
   attempts, before the error state is shown; manual `retry(id)` stays available for every error phase. Plain adapter
-  rejections are wrapped as non-retryable `UploadError` values.
+  rejections are wrapped as non-retryable `UploadError` values. Concurrent failures settle before a retry decision. Any
+  non-retryable rejection ends the attempt and is available from the queue item and its completion promise.
 - Stale results are ignored by checking item identity and current status before applying adapter callbacks.
 - SSR: no `document` or overlay access during server rendering; the panel is created only in a browser after the host
   view initializes.
@@ -1168,12 +1172,14 @@ acceptance remains separate.
 | `upload.status.success`                    | Uploaded                                                        | Item status and success mark label          |
 | `upload.status.error`                      | Failed                                                          | Item status                                 |
 | `upload.status.cancelled`                  | Cancelled                                                       | Item status                                 |
+| `upload.validation.read`                   | This file or folder cannot be read.                             | Unreadable drop entry or directory page     |
 | `upload.validation.accept`                 | This file type is not allowed.                                  | Validation error                            |
 | `upload.validation.maxSize`                | The file is larger than {0} MiB.                                | Validation error with placeholder           |
 | `upload.validation.maxFiles`               | We cannot add this selection. Choose up to {0} files at a time. | Validation error with placeholder           |
 | `upload.error.initiate`                    | The upload cannot start.                                        | Phase error                                 |
 | `upload.error.chunk`                       | The upload cannot continue.                                     | Phase error                                 |
 | `upload.error.combine`                     | The upload cannot finish.                                       | Phase error                                 |
+| `upload.error.serverFailed`                | The server reports that the upload failed.                      | Failed server processing result             |
 | `upload.error.status`                      | The upload status is unavailable.                               | Phase error                                 |
 | `upload.error.unknown`                     | There is a problem with the upload.                             | Fallback                                    |
 | `upload.error.cancel`                      | The upload cannot be cancelled.                                 | Cancel-failure error                        |

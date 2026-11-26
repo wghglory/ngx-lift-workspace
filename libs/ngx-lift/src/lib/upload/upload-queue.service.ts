@@ -31,6 +31,7 @@ interface Runtime {
   readonly acknowledged: Set<number>;
   readonly inFlight: Map<number, number>;
   acknowledgedBytes: number;
+  firstPendingChunk: number;
   processingProgress: number;
   uploadId?: string;
   combined: boolean;
@@ -180,6 +181,7 @@ export class UploadQueueService {
         acknowledged: new Set(),
         inFlight: new Map(),
         acknowledgedBytes: 0,
+        firstPendingChunk: 1,
         processingProgress: 100,
         combined: false,
         phase: 'initiate',
@@ -227,6 +229,7 @@ export class UploadQueueService {
     if (resume === 'initiate') {
       runtime.uploadId = undefined;
       runtime.acknowledged.clear();
+      runtime.firstPendingChunk = 1;
       runtime.acknowledgedBytes = 0;
       runtime.combined = false;
     }
@@ -430,34 +433,33 @@ export class UploadQueueService {
     if (!uploadId) throw new Error('chunk upload requires a server upload id');
     const total = this.totalChunks(runtime);
     for (;;) {
-      const pending: number[] = [];
-      for (let number = 1; number <= total; number += 1) {
-        if (!runtime.acknowledged.has(number)) pending.push(number);
-      }
-      if (!pending.length) return;
-      let cursor = 0;
-      let failure: {error: unknown} | undefined;
-      const workers = Array.from({length: Math.min(runtime.options.concurrency, pending.length)}, async () => {
-        while (cursor < pending.length && !failure && this.isCurrent(runtime)) {
-          const number = pending[cursor++];
-          try {
-            await this.uploadChunk(runtime, uploadId, number, total);
-          } catch (error) {
-            failure ??= {error};
+      let nextNumber = runtime.firstPendingChunk;
+      // At most one failure per worker. Keep each result until every in-flight request settles.
+      const failures: {number: number; error: unknown}[] = [];
+      const workers = Array.from(
+        {length: Math.min(runtime.options.concurrency, total - runtime.acknowledged.size)},
+        async () => {
+          while (nextNumber <= total && failures.length === 0 && this.isCurrent(runtime)) {
+            const number = nextNumber++;
+            if (runtime.acknowledged.has(number)) continue;
+            try {
+              await this.uploadChunk(runtime, uploadId, number, total);
+            } catch (error) {
+              failures.push({number, error});
+            }
           }
-        }
-      });
+        },
+      );
       await Promise.all(workers);
-      if (!failure) return;
-      if (isAbort(failure.error)) throw failure.error;
-      const error = toUploadError(failure.error, 'chunk');
-      if (runtime.options.autoRetry && error.retryable === true && runtime.retries < runtime.options.maxRetries) {
-        runtime.retries += 1;
-        const item = this.item(runtime.id);
-        if (item) this.patch(runtime.id, {attempt: item.attempt + 1});
-        continue;
+      if (!failures.length) return;
+      runtime.firstPendingChunk = Math.min(...failures.map((failure) => failure.number));
+      for (const {error} of failures) {
+        if (isAbort(error) || toUploadError(error, 'chunk').retryable !== true) throw error;
       }
-      throw failure.error;
+      if (!runtime.options.autoRetry || runtime.retries >= runtime.options.maxRetries) throw failures[0].error;
+      runtime.retries += 1;
+      const item = this.item(runtime.id);
+      if (item) this.patch(runtime.id, {attempt: item.attempt + 1});
     }
   }
 
@@ -518,7 +520,7 @@ export class UploadQueueService {
       if (result.status === 'success') return;
       if (result.status === 'cancelled') throw abortError();
       if (result.status === 'error') {
-        throw {code: 'upload.error.status', phase: 'status', message: 'Server reported a failed upload'};
+        throw {code: 'upload.error.status', phase: 'status', message: 'upload.error.serverFailed'};
       }
       await this.delay(runtime.options.pollIntervalMs, runtime);
       if (!this.isCurrent(runtime)) throw abortError();

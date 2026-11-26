@@ -1,5 +1,6 @@
 // FileSystemEntry paths are not always copied into File.webkitRelativePath by browsers.
 const droppedPaths = new WeakMap<File, string>();
+type ReportUnreadable = (path: string) => void;
 
 /** Relative display/identity hint only; never a server storage key. */
 export function relativeFilePath(file: File): string {
@@ -15,7 +16,10 @@ export function relativeFilePath(file: File): string {
  * the `DataTransfer` item list is cleared once the handler yields, so entries are captured
  * first and walked asynchronously afterwards.
  */
-export async function filesFromDataTransfer(dataTransfer: DataTransfer): Promise<readonly File[]> {
+export async function filesFromDataTransfer(
+  dataTransfer: DataTransfer,
+  reportUnreadable?: ReportUnreadable,
+): Promise<readonly File[]> {
   const items = dataTransfer.items;
   if (!items?.length) return Array.from(dataTransfer.files);
   const entries: FileSystemEntry[] = [];
@@ -26,40 +30,47 @@ export async function filesFromDataTransfer(dataTransfer: DataTransfer): Promise
   }
   if (!entries.length) return Array.from(dataTransfer.files);
   if (!entries.some((entry) => entry.isDirectory)) return Array.from(dataTransfer.files);
-  return filesFromEntries(entries);
+  return filesFromEntries(entries, reportUnreadable);
 }
 
 /** Walks dropped entries depth-first, flattening folder contents in encounter order. */
-export async function filesFromEntries(entries: readonly FileSystemEntry[]): Promise<readonly File[]> {
-  const nested = await Promise.all(entries.map((entry) => walkEntry(entry)));
+export async function filesFromEntries(
+  entries: readonly FileSystemEntry[],
+  reportUnreadable?: ReportUnreadable,
+): Promise<readonly File[]> {
+  const nested = await Promise.all(entries.map((entry) => walkEntry(entry, '', reportUnreadable)));
   return nested.flat();
 }
 
-async function walkEntry(entry: FileSystemEntry): Promise<readonly File[]> {
+async function walkEntry(
+  entry: FileSystemEntry,
+  parentPath: string,
+  reportUnreadable?: ReportUnreadable,
+): Promise<readonly File[]> {
+  const path = (entry.fullPath || [parentPath, entry.name].filter(Boolean).join('/')).replace(/^\/+/, '');
   if (entry.isFile) {
-    return new Promise((resolve) => {
-      (entry as FileSystemFileEntry).file(
-        (file) => {
-          if (entry.fullPath) droppedPaths.set(file, entry.fullPath.replace(/^\//, ''));
-          resolve([file]);
-        },
-        () => resolve([]),
-      );
-    });
+    try {
+      const file = await new Promise<File>((resolve, reject) => (entry as FileSystemFileEntry).file(resolve, reject));
+      if (path) droppedPaths.set(file, path);
+      return [file];
+    } catch {
+      reportUnreadable?.(path);
+      return [];
+    }
   }
-  const reader = (entry as FileSystemDirectoryEntry).createReader();
   const children: FileSystemEntry[] = [];
-  for (;;) {
-    // readEntries returns at most 100 entries per call and must be repeated until it yields an empty batch.
-    const batch = await new Promise<FileSystemEntry[]>((resolve) => {
-      reader.readEntries(
-        (next) => resolve(next),
-        () => resolve([]),
-      );
-    });
-    if (!batch.length) break;
-    children.push(...batch);
+  try {
+    const reader = (entry as FileSystemDirectoryEntry).createReader();
+    for (;;) {
+      // readEntries returns at most 100 entries per call and must be repeated until it yields an empty batch.
+      const batch = await new Promise<FileSystemEntry[]>((resolve, reject) => reader.readEntries(resolve, reject));
+      if (!batch.length) break;
+      children.push(...batch);
+    }
+  } catch {
+    // Earlier pages remain usable if the browser refuses a later read.
+    reportUnreadable?.(path);
   }
-  const nested = await Promise.all(children.map((child) => walkEntry(child)));
+  const nested = await Promise.all(children.map((child) => walkEntry(child, path, reportUnreadable)));
   return nested.flat();
 }

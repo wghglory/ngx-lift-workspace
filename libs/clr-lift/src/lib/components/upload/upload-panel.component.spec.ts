@@ -816,6 +816,46 @@ describe('UploadPanelComponent', () => {
     expect(document.activeElement).toBe(panel().querySelector('.cll-upload-panel__minimize'));
   });
 
+  it('distinguishes server failure from status lookup failure in the French row and announcement', async () => {
+    translation.setLanguage('fr');
+    const adapter: UploadAdapter = {
+      ...blockedAdapter().adapter,
+      uploadChunk: async () => undefined,
+      getStatus: async () => ({status: 'error', progress: 100}),
+    };
+    queue.enqueue([uploadFile('failed.zip')], options(adapter));
+    await flush();
+
+    const error = 'Le serveur a signalé un échec du téléversement.';
+    expect(panel().querySelector('.cll-upload-panel__error')?.textContent).toContain(error);
+    expect(panel().querySelector('.cll-upload-panel__live')?.textContent).toContain(error);
+    queue.enqueue(
+      [uploadFile('unavailable.zip')],
+      options({
+        ...adapter,
+        getStatus: async () => {
+          throw {code: 'offline', phase: 'status'};
+        },
+      }),
+    );
+    await flush();
+    const unavailable = translation.translate('upload.error.status');
+    expect(panel().querySelector('.cll-upload-panel__live')?.textContent).toContain(unavailable);
+    expect(unavailable).not.toBe(error);
+
+    queue.enqueue(
+      [uploadFile('details.zip')],
+      options({
+        ...adapter,
+        getStatus: async () => {
+          throw new Error('Diagnostic du service');
+        },
+      }),
+    );
+    await flush();
+    expect(panel().querySelector('.cll-upload-panel__live')?.textContent).toContain('Diagnostic du service');
+  });
+
   it('keeps numeric diagnostics supplemental to localized error text and announcements', async () => {
     queue.enqueue(
       [uploadFile('conflict.zip')],

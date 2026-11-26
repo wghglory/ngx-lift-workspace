@@ -1,4 +1,4 @@
-import {ApplicationRef, ChangeDetectionStrategy, Component} from '@angular/core';
+import {ApplicationRef, ChangeDetectionStrategy, Component, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
@@ -41,10 +41,12 @@ class BlurUploadHost {
 
 @Component({
   imports: [ReactiveFormsModule, UploadComponent],
-  template: '<cll-upload [formControl]="control" [adapter]="adapter" />',
+  template:
+    '<cll-upload [formControl]="control" [adapter]="adapter" [multiple]="true" [disabled]="pickerDisabled()" />',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class ResetUploadHost {
+  readonly pickerDisabled = signal(false);
   readonly adapter = stubAdapter();
   control = new FormControl<readonly File[]>([], {nonNullable: true});
 }
@@ -118,6 +120,96 @@ describe('UploadComponent', () => {
       expect(settled).not.toHaveBeenCalled();
       expect(emitted).not.toHaveBeenCalled();
       if (updateOn === 'change') expect(host.control.untouched).toBe(true);
+    },
+  );
+
+  it('keeps the picker disabled while either its input or its bound form is disabled', async () => {
+    const fixture = TestBed.createComponent(ResetUploadHost);
+    fixture.detectChanges();
+    const host = fixture.componentInstance;
+    const component: UploadComponent = fixture.debugElement.query(By.directive(UploadComponent)).componentInstance;
+    const input: HTMLInputElement = fixture.nativeElement.querySelector('input[type="file"]');
+    const folder: HTMLButtonElement = fixture.nativeElement.querySelector('.cll-upload__folder');
+    const dropped = file('current.zip');
+    const drop = () =>
+      component.onDrop({
+        preventDefault: () => undefined,
+        dataTransfer: {files: [dropped], items: []},
+      } as unknown as DragEvent);
+    host.control.disable();
+    host.pickerDisabled.set(true);
+    fixture.detectChanges();
+    host.pickerDisabled.set(false);
+    fixture.detectChanges();
+    expect(host.control.disabled).toBe(true);
+    expect(input.disabled).toBe(true);
+    expect(folder.disabled).toBe(true);
+    await drop();
+    expect(component.value()).toEqual([]);
+
+    host.pickerDisabled.set(true);
+    fixture.detectChanges();
+    host.control.enable();
+    fixture.detectChanges();
+    expect(input.disabled).toBe(true);
+    expect(folder.disabled).toBe(true);
+    await drop();
+    expect(component.value()).toEqual([]);
+
+    host.pickerDisabled.set(false);
+    fixture.detectChanges();
+    expect(input.disabled).toBe(false);
+    expect(folder.disabled).toBe(false);
+    await drop();
+    expect(host.control.value).toEqual([dropped]);
+  });
+
+  it.each([true, false])(
+    'reports failed file and directory reads beside the picker (readable sibling: %s)',
+    async (hasSibling) => {
+      const fixture = TestBed.createComponent(ResetUploadHost);
+      fixture.detectChanges();
+      const component: UploadComponent = fixture.debugElement.query(By.directive(UploadComponent)).componentInstance;
+      const good = file('ok.zip');
+      const errors = vi.fn();
+      component.validationErrors.subscribe(errors);
+      const children = [
+        {isFile: true, name: 'locked.zip', file: (_ok: FileCallback, fail: ErrorCallback) => fail(new DOMException())},
+      ];
+      if (hasSibling) children.push({isFile: true, name: 'ok.zip', file: (ok: FileCallback) => ok(good)});
+      let pages = 0;
+      const directory = {
+        isDirectory: true,
+        fullPath: '/archive',
+        createReader: () => ({
+          readEntries: (ok: (entries: unknown[]) => void, fail: ErrorCallback) => {
+            if (pages++ === 0) ok(children);
+            else fail(new DOMException());
+          },
+        }),
+      };
+      await component.onDrop({
+        preventDefault: () => undefined,
+        dataTransfer: {files: [], items: [{kind: 'file', webkitGetAsEntry: () => directory}]},
+      } as unknown as DragEvent);
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.control.hasError('upload')).toBe(true);
+      expect(fixture.componentInstance.control.value).toEqual(hasSibling ? [good] : []);
+      expect(
+        TestBed.inject(UploadQueueService)
+          .items()
+          .map((item) => item.file),
+      ).toEqual(hasSibling ? [good] : []);
+      const expected = ['archive', 'archive/locked.zip'].map((fileName) => ({
+        code: 'upload.validation.read',
+        phase: 'validation',
+        fileName,
+      }));
+      expect(component.errors()).toHaveLength(2);
+      expect(errors).toHaveBeenCalledWith(expect.arrayContaining(expected));
+      expect(fixture.nativeElement.querySelector('[aria-live="polite"]').textContent).toContain('archive/locked.zip');
+      expect(fixture.nativeElement.textContent).toContain('This file or folder cannot be read.');
     },
   );
 
