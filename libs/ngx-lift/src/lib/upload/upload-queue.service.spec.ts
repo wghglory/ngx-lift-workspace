@@ -722,6 +722,20 @@ describe('UploadQueueService', () => {
     expect(initiates).toBe(2);
   });
 
+  it('rejects completion when the server reports cancellation without requesting another cancel', async () => {
+    const cancel = vi.fn(async () => undefined);
+    const adapter: UploadAdapter = {
+      ...stubDebugAdapter(),
+      getStatus: async () => ({status: 'cancelled', progress: 40}),
+      cancel,
+    };
+    const [item] = queue.enqueue([uploadFile('bundle.zip', 2)], options(adapter));
+
+    await expect(queue.completion(item.id)).rejects.toMatchObject({name: 'AbortError'});
+    expect(queue.items()[0]).toMatchObject({id: item.id, status: 'cancelled', processingProgress: 40});
+    expect(cancel).not.toHaveBeenCalled();
+  });
+
   it('retries the failed status phase by resuming polling', async () => {
     const statuses: {status: 'processing' | 'success' | 'error'; progress: number}[] = [
       {status: 'error', progress: 10},
