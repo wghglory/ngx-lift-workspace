@@ -1,6 +1,6 @@
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';
 import {describe, expect, it, vi} from 'vitest';
 
@@ -395,6 +395,17 @@ describe('form-bindings utilities', () => {
       sig.set({id: 2, name: 'Bob'});
       TestBed.flushEffects();
       expect(history).toEqual([{id: 2, name: 'Bob'}]);
+    });
+  });
+
+  it('treats a zero-argument constant-error validator as a validator, not a getter', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const banned: ValidatorFn = () => ({banned: true});
+      bindControlValidators(control, banned);
+      TestBed.flushEffects();
+      expect(control.hasError('banned')).toBe(true);
+      control.setValidators(null);
     });
   });
 });

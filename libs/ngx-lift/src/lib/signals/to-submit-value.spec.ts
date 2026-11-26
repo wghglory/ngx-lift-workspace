@@ -272,4 +272,32 @@ describe('to-submit-value utilities', () => {
       }
     });
   });
+
+  it('computes the initial snapshot once inside the pipeline and defers transform errors to signal reads', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+
+      const transform = vi.fn((value: unknown) => value);
+      const counted = formSubmitValue(form, {transform});
+      expect(transform).toHaveBeenCalledTimes(1);
+      expect(counted()).toEqual({name: 'Ada'});
+      events.emit('tick');
+      expect(transform).toHaveBeenCalledTimes(2);
+
+      const failure = new Error('initial transform failed');
+      const failing = formSubmitValue(form, {
+        transform: () => {
+          throw failure;
+        },
+      });
+      expect(() => failing()).toThrow(failure);
+    });
+  });
+
+  it('keeps a raw record whose fields collide with control property names', () => {
+    const raw = {status: 'approved', value: 7, valueChanges: 2};
+    expect(toSubmitValue(raw)).toEqual(raw);
+  });
 });

@@ -520,7 +520,7 @@ describe('resourceAsync lifecycle regressions', () => {
     await TestBed.runInInjectionContext(async () => {
       const id = signal(1);
       let starts = 0;
-      const owner: {resource?: WritableResourceRef<number>} = {};
+      const owner: {resource?: WritableResourceRef<number | undefined>} = {};
       const resource = resourceAsync(() => {
         starts++;
         const value = id();

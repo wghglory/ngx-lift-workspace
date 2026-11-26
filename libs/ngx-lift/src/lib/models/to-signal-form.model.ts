@@ -398,9 +398,9 @@ export interface SignalForm<
 
   // Form-level Signals
   /** Reactive signal emitting the form's current value (omits disabled controls). */
-  readonly value: Signal<TValue>;
+  readonly value: Signal<FormGroup<TControls>['value']>;
   /** Reactive signal emitting the complete raw value (preserves disabled controls). */
-  readonly rawValue: Signal<TValue>;
+  readonly rawValue: Signal<ReturnType<FormGroup<TControls>['getRawValue']>>;
   /** Reactive signal emitting `'VALID' | 'INVALID' | 'PENDING' | 'DISABLED'`. */
   readonly status: Signal<FormControlStatus>;
   /** Whether the form is currently valid. */

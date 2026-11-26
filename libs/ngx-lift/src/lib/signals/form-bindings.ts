@@ -99,9 +99,13 @@ export function resolveValidators(
     return validators();
   }
   if (typeof validators === 'function') {
-    return validators.length === 0
-      ? (validators as () => ValidatorFn | ValidatorFn[] | null)()
-      : (validators as ValidatorFn);
+    if (validators.length !== 0) return validators as ValidatorFn;
+    const resolved = (validators as () => ValidatorFn | ValidatorFn[] | null)();
+    // A zero-argument ValidatorFn returns errors, not another validator or getter.
+    if (resolved === null || (typeof resolved !== 'function' && !Array.isArray(resolved))) {
+      return validators as ValidatorFn;
+    }
+    return resolved;
   }
   return validators;
 }

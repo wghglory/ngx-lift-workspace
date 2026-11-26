@@ -1,7 +1,7 @@
 import {assertInInjectionContext, inject, Injector, Signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {AbstractControl, FormArray, FormGroup} from '@angular/forms';
-import {debounceTime, distinctUntilChanged, map, merge, Observable, startWith} from 'rxjs';
+import {concat, debounceTime, defer, distinctUntilChanged, map, merge, Observable, of} from 'rxjs';
 
 import {FormRawValue, FormSubmitValueOptions, ToSubmitValueOptions} from '../models/to-signal-form.model';
 import {isEqual} from '../utils/is-equal.util';
@@ -10,7 +10,7 @@ import {isEqual} from '../utils/is-equal.util';
  * Type guard for Angular AbstractControl instances.
  */
 function isAbstractControl(val: unknown): val is AbstractControl {
-  return typeof val === 'object' && val !== null && 'value' in val && 'status' in val && 'valueChanges' in val;
+  return val instanceof AbstractControl;
 }
 
 /**
@@ -197,25 +197,21 @@ export function formSubmitValue<TInput extends object = Record<string, unknown>,
   const compute = (): TOutput => toSubmitValue<TInput, TOutput>(form, options);
 
   const eventStream$: Observable<unknown> =
-    'events' in form && form.events
-      ? form.events.pipe(startWith(null))
-      : merge(form.valueChanges as Observable<unknown>, form.statusChanges).pipe(startWith(null));
-
-  let stream$: Observable<TOutput> = eventStream$.pipe(
-    map(() => compute()),
-    distinctUntilChanged((a, b) => isEqual(a, b)),
-  );
-
-  if (options?.debounceTime !== undefined && options.debounceTime > 0) {
-    stream$ = eventStream$.pipe(
-      debounceTime(options.debounceTime),
+    'events' in form && form.events ? form.events : merge(form.valueChanges as Observable<unknown>, form.statusChanges);
+  const changes$ =
+    options?.debounceTime !== undefined && options.debounceTime > 0
+      ? eventStream$.pipe(debounceTime(options.debounceTime))
+      : eventStream$;
+  const stream$ = concat(
+    defer(() => of(compute())),
+    changes$.pipe(
       map(() => compute()),
       distinctUntilChanged((a, b) => isEqual(a, b)),
-    );
-  }
+    ),
+  );
 
   return toSignal(stream$, {
-    initialValue: compute(),
+    initialValue: undefined as TOutput,
     injector,
   });
 }

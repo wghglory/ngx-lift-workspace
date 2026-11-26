@@ -355,8 +355,8 @@ export function toSignalForm<
     fields: fieldsProxy,
 
     // Form signals
-    value: state.value,
-    rawValue: state.rawValue,
+    value: state.value as Signal<FormGroup<TControls>['value']>,
+    rawValue: state.rawValue as Signal<ReturnType<FormGroup<TControls>['getRawValue']>>,
     status: state.status,
     valid: state.valid,
     invalid: state.invalid,
