@@ -1,7 +1,7 @@
 import {EventEmitter, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {Subject} from 'rxjs';
+import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {of, Subject} from 'rxjs';
 import {describe, expect, it, vi} from 'vitest';
 
 import {toSignalForm} from './to-signal-form';
@@ -180,6 +180,110 @@ describe('toSignalForm', () => {
     },
   );
 
+  it('revalidates each dependent once when several bindings observe the same group', () => {
+    TestBed.runInInjectionContext(() => {
+      const street = new FormControl('');
+      const zip = new FormControl('');
+      const city = new FormControl('');
+      const address = new FormGroup({street, zip, city});
+      const sf = toSignalForm(new FormGroup({address}));
+      const zipBinding = sf.revalidate(zip, 'address');
+      const cityBinding = sf.revalidate(city, 'address');
+      let zipRuns = 0;
+      let cityRuns = 0;
+      zip.setValidators(() => {
+        if (++zipRuns === 4) zipBinding.unsubscribe();
+        return null;
+      });
+      city.setValidators(() => {
+        if (++cityRuns === 4) cityBinding.unsubscribe();
+        return null;
+      });
+
+      street.setValue('First Street');
+      expect([zipRuns, cityRuns]).toEqual([1, 1]);
+      street.setValue('Second Street');
+      expect([zipRuns, cityRuns]).toEqual([2, 2]);
+    });
+  });
+
+  it.each([null, {unavailable: true}])('settles multiple asynchronous dependents with result %j', (errors) => {
+    TestBed.runInInjectionContext(() => {
+      const street = new FormControl('');
+      const zip = new FormControl('');
+      const city = new FormControl('');
+      const address = new FormGroup({street, zip, city});
+      const sf = toSignalForm(new FormGroup({address}));
+      const zipBinding = sf.revalidate(zip, 'address');
+      const cityBinding = sf.revalidate(city, 'address');
+      const zipResult = new Subject<null>();
+      const cityResult = new Subject<typeof errors>();
+      let zipRuns = 0;
+      let cityRuns = 0;
+      zip.setAsyncValidators(() => {
+        if (++zipRuns === 6) zipBinding.unsubscribe();
+        return zipResult;
+      });
+      city.setAsyncValidators(() => {
+        if (++cityRuns === 6) cityBinding.unsubscribe();
+        return cityResult;
+      });
+
+      street.setValue('First Street');
+      zipResult.next(null);
+      cityResult.next(errors);
+      zipResult.next(null);
+      cityResult.next(errors);
+      expect(address.status).toBe(errors ? 'INVALID' : 'VALID');
+      expect(zipRuns).toBeLessThan(4);
+      expect(cityRuns).toBeLessThan(4);
+    });
+  });
+
+  it('compares enabled nested array entries and preserves leaf object identity', () => {
+    TestBed.runInInjectionContext(() => {
+      const hidden = new FormControl({value: new Date(0), disabled: true});
+      const visible = new FormControl(new Date(0));
+      const dates = new FormArray([hidden, visible]);
+      const target = new FormControl('');
+      const group = new FormGroup({dates, target});
+      const sf = toSignalForm(new FormGroup({group}));
+      const subscription = sf.revalidate(target, 'group');
+      let validations = 0;
+      target.setValidators(() => {
+        if (++validations === 5) subscription.unsubscribe();
+        return null;
+      });
+
+      visible.setValue(new Date(0));
+      expect(validations).toBe(1);
+      hidden.setValue(new Date(1));
+      expect(validations).toBe(1);
+      hidden.enable();
+      expect(validations).toBe(2);
+    });
+  });
+
+  it('revalidates once when a source group async validator emits synchronously', () => {
+    TestBed.runInInjectionContext(() => {
+      const street = new FormControl('');
+      const zip = new FormControl('');
+      const address = new FormGroup({street, zip}, {asyncValidators: () => of(null)});
+      const sf = toSignalForm(new FormGroup({address}));
+      const subscription = sf.revalidate('address.zip', 'address');
+      let validations = 0;
+      zip.setValidators(() => {
+        if (++validations === 4) subscription.unsubscribe();
+        return null;
+      });
+
+      street.setValue('First Street');
+      expect(validations).toBe(1);
+      street.setValue('Second Street');
+      expect(validations).toBe(2);
+    });
+  });
+
   it('settles when validating a child restarts an asynchronous validator on its source group', () => {
     TestBed.runInInjectionContext(() => {
       const street = new FormControl('');
@@ -202,6 +306,51 @@ describe('toSignalForm', () => {
       result.next(null);
       expect(validations).toBe(2);
       expect(address.valid).toBe(true);
+    });
+  });
+
+  it('updates value signals before revalidating from a direct control', () => {
+    TestBed.runInInjectionContext(() => {
+      const n = new FormControl(0);
+      const target = new FormControl('');
+      const sf = toSignalForm(new FormGroup({n, target}));
+      const value = sf.controlValue('n');
+      target.setValidators(() => (value() === 1 ? {one: true} : null));
+      sf.revalidate(target, n);
+
+      n.setValue(1);
+      expect(target.hasError('one')).toBe(true);
+    });
+  });
+
+  it('propagates a change to a group status caused by an independent binding', () => {
+    TestBed.runInInjectionContext(() => {
+      const flag = new FormControl(false);
+      const zip = new FormControl('', () => (flag.value ? {zip: true} : null));
+      const street = new FormControl('');
+      const address = new FormGroup({zip, street});
+      const sf = toSignalForm(new FormGroup({flag, address}));
+      street.setValidators(() => (address.invalid ? {address: true} : null));
+      sf.revalidate('address.zip', 'flag');
+      sf.revalidate('address.street', sf.controls.address);
+
+      flag.setValue(true);
+      expect(street.hasError('address')).toBe(true);
+    });
+  });
+
+  it('propagates status changes through a chain of independent bindings', () => {
+    TestBed.runInInjectionContext(() => {
+      const n = new FormControl(0);
+      const first = new FormControl('', () => (n.value === 1 ? {first: true} : null));
+      const last = new FormControl('', () => (first.invalid ? {last: true} : null));
+      const sf = toSignalForm(new FormGroup({n, first, last}));
+      sf.revalidate('first', 'n');
+      sf.revalidate('last', 'first');
+
+      n.setValue(1);
+      expect(first.invalid).toBe(true);
+      expect(last.invalid).toBe(true);
     });
   });
 
