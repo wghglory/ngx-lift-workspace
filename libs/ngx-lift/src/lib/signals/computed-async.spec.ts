@@ -1512,4 +1512,18 @@ describe(computedAsync.name, () => {
       {id: 2, revision: 2},
     ]);
   });
+
+  it('does not pass an absent value to a strict object comparator', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const source = new Subject<{id: number}>();
+      const equal = vi.fn((previous: {id: number}, next: {id: number}) => previous.id === next.id);
+      const result = computedAsync(() => source, {equal});
+      await flushEffects();
+      expect(result()).toBeUndefined();
+      source.next({id: 1});
+      await flushEffects();
+      expect(result()).toEqual({id: 1});
+      expect(equal.mock.calls.every(([previous, next]) => previous !== undefined && next !== undefined)).toBe(true);
+    });
+  });
 });
