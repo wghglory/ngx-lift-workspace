@@ -12,7 +12,6 @@ import {
   untracked,
 } from '@angular/core';
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
-import {merge, Observable} from 'rxjs';
 
 import {
   BindControlDisabledOptions,
@@ -21,6 +20,7 @@ import {
   RevalidateSubscription,
   WatchControlOptions,
 } from '../models/to-signal-form.model';
+import {subscribeToRevalidation} from './control-revalidation';
 import {controlValue} from './form-signals';
 
 /**
@@ -377,17 +377,11 @@ export function revalidateOnChange(
   };
 
   if (source instanceof AbstractControl) {
-    let prevVal = source.value;
-    let prevStatus = source.status;
-    const sub = merge(source.valueChanges as Observable<unknown>, source.statusChanges).subscribe(() => {
-      const currentVal = source.value;
-      const currentStatus = source.status;
-      if (currentVal !== prevVal || currentStatus !== prevStatus) {
-        prevVal = currentVal;
-        prevStatus = currentStatus;
-        trigger();
-      }
-    });
+    const sub = subscribeToRevalidation(
+      source,
+      () => source,
+      () => targets,
+    );
     cleanup = () => sub.unsubscribe();
   } else if (isSignal(source) || typeof source === 'function') {
     const effectRef = effect(

@@ -13,7 +13,6 @@ import {
   untracked,
 } from '@angular/core';
 import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
-import {merge, Observable, Subscription} from 'rxjs';
 
 import {
   BindControlDisabledOptions,
@@ -30,6 +29,7 @@ import {
   ToSubmitValueOptions,
   WatchControlOptions,
 } from '../models/to-signal-form.model';
+import {subscribeToRevalidation} from './control-revalidation';
 import {
   bindControlDisabled,
   bindControlIf,
@@ -515,65 +515,7 @@ export function toSignalForm<
         return form.get(String(targetControl));
       };
 
-      if (typeof source === 'string') {
-        const destroyRef = injector.get(DestroyRef);
-        const initialSrc = form.get(source);
-        let prevVal: unknown = initialSrc ? initialSrc.value : undefined;
-        let prevStatus = initialSrc ? initialSrc.status : '';
-        let isSourceKnown = Boolean(initialSrc);
-
-        const sub: Subscription = merge(form.valueChanges as Observable<unknown>, form.statusChanges).subscribe(() => {
-          const srcCtrl = form.get(source);
-          if (!srcCtrl) {
-            prevVal = undefined;
-            prevStatus = '';
-            isSourceKnown = false;
-            return;
-          }
-          const currentVal = srcCtrl.value;
-          const currentStatus = srcCtrl.status;
-          if (!isSourceKnown) {
-            isSourceKnown = true;
-            prevVal = currentVal;
-            prevStatus = currentStatus;
-            const target = getTarget();
-            if (target) {
-              target.updateValueAndValidity({emitEvent: true});
-            }
-            return;
-          }
-          if (currentVal !== prevVal || currentStatus !== prevStatus) {
-            prevVal = currentVal;
-            prevStatus = currentStatus;
-            const target = getTarget();
-            if (target) {
-              target.updateValueAndValidity({emitEvent: true});
-            }
-          }
-        });
-
-        let isCleanedUp = false;
-        const unreg = destroyRef.onDestroy(() => {
-          if (!isCleanedUp) {
-            isCleanedUp = true;
-            sub.unsubscribe();
-          }
-        });
-
-        const safeCleanup = (): void => {
-          if (isCleanedUp) return;
-          isCleanedUp = true;
-          sub.unsubscribe();
-          unreg();
-        };
-
-        return {
-          unsubscribe: safeCleanup,
-          destroy: safeCleanup,
-        };
-      }
-
-      if (targetControl instanceof AbstractControl) {
+      if (targetControl instanceof AbstractControl && typeof source !== 'string') {
         return revalidateOnChange(targetControl, source as AbstractControl | Signal<unknown>, {injector});
       }
 
@@ -582,21 +524,12 @@ export function toSignalForm<
         // Initial no-op until assigned
       };
 
-      if (source instanceof AbstractControl) {
-        let prevVal = source.value;
-        let prevStatus = source.status;
-        const sub = merge(source.valueChanges as Observable<unknown>, source.statusChanges).subscribe(() => {
-          const currentVal = source.value;
-          const currentStatus = source.status;
-          if (currentVal !== prevVal || currentStatus !== prevStatus) {
-            prevVal = currentVal;
-            prevStatus = currentStatus;
-            const target = getTarget();
-            if (target) {
-              target.updateValueAndValidity({emitEvent: true});
-            }
-          }
-        });
+      if (typeof source === 'string' || source instanceof AbstractControl) {
+        const sub = subscribeToRevalidation(
+          typeof source === 'string' ? form : source,
+          () => (typeof source === 'string' ? form.get(source) : source),
+          () => [getTarget()],
+        );
         cleanup = () => sub.unsubscribe();
       } else if (isSignal(source) || typeof source === 'function') {
         const effectRef = effect(

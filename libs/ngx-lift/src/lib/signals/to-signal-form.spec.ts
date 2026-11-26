@@ -1,6 +1,7 @@
 import {EventEmitter, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {Subject} from 'rxjs';
 import {describe, expect, it, vi} from 'vitest';
 
 import {toSignalForm} from './to-signal-form';
@@ -140,6 +141,113 @@ describe('toSignalForm', () => {
 
       password.setValue('pass2');
       expect(confirmPassword.hasError('mismatch')).toBe(false);
+    });
+  });
+
+  it.each(['paths', 'control source', 'control references'] as const)(
+    'revalidates a nested target once per sibling edit with %s',
+    (binding) => {
+      TestBed.runInInjectionContext(() => {
+        const street = new FormControl('');
+        const zip = new FormControl('');
+        const address = new FormGroup({street, zip});
+        const note = new FormControl('');
+        const sf = toSignalForm(new FormGroup({address, note}));
+        const subscription = sf.revalidate(
+          binding === 'control references' ? zip : 'address.zip',
+          binding === 'paths' ? 'address' : address,
+        );
+        const result = new Subject<null>();
+        let validations = 0;
+        zip.setAsyncValidators(() => {
+          // Bound the failure if ancestor events feed back into this validator.
+          if (++validations === 4) subscription.unsubscribe();
+          return result;
+        });
+
+        street.setValue('First Street');
+        expect(validations).toBe(1);
+        expect(address.pending).toBe(true);
+        result.next(null);
+        expect(address.valid).toBe(true);
+
+        note.setValue('unrelated edit');
+        expect(validations).toBe(1);
+        street.setValue('Second Street');
+        expect(validations).toBe(2);
+        expect(address.pending).toBe(true);
+      });
+    },
+  );
+
+  it('settles when validating a child restarts an asynchronous validator on its source group', () => {
+    TestBed.runInInjectionContext(() => {
+      const street = new FormControl('');
+      const zip = new FormControl('');
+      const address = new FormGroup({street, zip});
+      const sf = toSignalForm(new FormGroup({address}));
+      const result = new Subject<null>();
+      address.setAsyncValidators(() => result);
+      const subscription = sf.revalidate('address.zip', 'address');
+      let validations = 0;
+      zip.setValidators(() => {
+        if (++validations === 5) subscription.unsubscribe();
+        return null;
+      });
+
+      street.setValue('First Street');
+      expect(validations).toBe(1);
+      result.next(null);
+      expect(validations).toBe(2);
+      result.next(null);
+      expect(validations).toBe(2);
+      expect(address.valid).toBe(true);
+    });
+  });
+
+  it('validates the latest value when a target observer edits the source during validation', () => {
+    TestBed.runInInjectionContext(() => {
+      const n = new FormControl(0);
+      const target = new FormControl('', () => (n.value === 2 ? {valueIsTwo: true} : null));
+      const sf = toSignalForm(new FormGroup({n, target}));
+      sf.revalidate('target', 'n');
+      const observer = target.statusChanges.subscribe(() => {
+        if (n.value === 1) n.setValue(2);
+      });
+
+      n.setValue(1);
+      expect(n.value).toBe(2);
+      expect(target.hasError('valueIsTwo')).toBe(true);
+      observer.unsubscribe();
+    });
+  });
+
+  it('treats repeated NaN values as unchanged and observes remounted sources', () => {
+    TestBed.runInInjectionContext(() => {
+      const n = new FormControl(0, {nonNullable: true});
+      const target = new FormControl('');
+      const form = new FormGroup<{n?: typeof n; target: typeof target}>({n, target});
+      const sf = toSignalForm(form);
+      const subscription = sf.revalidate('target', 'n');
+      let validations = 0;
+      target.setValidators(() => {
+        if (++validations === 5) subscription.unsubscribe();
+        return Number.isNaN(form.controls.n?.value) ? {invalidNumber: true} : null;
+      });
+
+      n.setValue(NaN);
+      expect(validations).toBe(1);
+      expect(target.hasError('invalidNumber')).toBe(true);
+      n.setValue(NaN);
+      expect(validations).toBe(1);
+      n.setValue(1);
+      expect(validations).toBe(2);
+      expect(target.valid).toBe(true);
+
+      form.removeControl('n');
+      expect(validations).toBe(2);
+      form.addControl('n', n);
+      expect(validations).toBe(3);
     });
   });
 
