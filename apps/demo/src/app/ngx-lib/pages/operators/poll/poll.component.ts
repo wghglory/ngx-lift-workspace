@@ -208,7 +208,7 @@ export class StarterComponent {
   usersState$ = poll({
     interval: 10000,
     pollingFn: (params: Record<string, unknown>) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
-    paramsBuilder: (dgState: ClrDatagridStateInterface | null) => convertToHttpParams(dgState),
+    paramsBuilder: (dgState: ClrDatagridStateInterface | null | undefined) => convertToHttpParams(dgState ?? null),
     forceRefresh: this.dgState$,
   });
 
@@ -219,9 +219,9 @@ export class StarterComponent {
   signalPollState$ = poll<SignalPollData, 'all' | 'active' | 'inactive', {status: string; limit: number}>({
     interval: 8000,
     forceRefresh: this.signalFilter,
-    paramsBuilder: (filterValue: 'all' | 'active' | 'inactive') => ({
-      status: filterValue,
-      limit: filterValue === 'all' ? 30 : 15,
+    paramsBuilder: (filterValue: 'all' | 'active' | 'inactive' | undefined) => ({
+      status: filterValue ?? 'all',
+      limit: (filterValue ?? 'all') === 'all' ? 30 : 15,
     }),
     pollingFn: (params: {status: string; limit: number}) => {
       const seq = ++this.signalPollSeq;
@@ -446,7 +446,7 @@ export class PollComponent {
   usersState$ = poll({
     interval: 10_000,
     pollingFn: (params) => this.userService.getUsers({...params, results: 10, seed: 'abc'}),
-    paramsBuilder: (dgState: ClrDatagridStateInterface | null) => convertToHttpParams(dgState), // build params for getUsers
+    paramsBuilder: (dgState: ClrDatagridStateInterface | null | undefined) => convertToHttpParams(dgState ?? null), // build params for getUsers
     forceRefresh: this.dgState$, // datagrid filter, sort, pagination change will immediately force a refresh of the API call
   });
 }`);

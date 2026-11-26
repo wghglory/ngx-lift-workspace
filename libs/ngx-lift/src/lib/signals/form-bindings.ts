@@ -100,12 +100,13 @@ export function resolveValidators(
   }
   if (typeof validators === 'function') {
     if (validators.length !== 0) return validators as ValidatorFn;
-    const resolved = (validators as () => ValidatorFn | ValidatorFn[] | null)();
-    // A zero-argument ValidatorFn returns errors, not another validator or getter.
-    if (resolved === null || (typeof resolved !== 'function' && !Array.isArray(resolved))) {
-      return validators as ValidatorFn;
+    const resolved = (validators as () => unknown)();
+    if (typeof resolved === 'function' || Array.isArray(resolved)) {
+      return resolved as ValidatorFn | ValidatorFn[];
     }
-    return resolved;
+    // A zero-argument ValidatorFn returns an errors object; a getter returning null clears validators.
+    if (resolved !== null && typeof resolved === 'object') return validators as ValidatorFn;
+    return null;
   }
   return validators;
 }

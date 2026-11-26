@@ -408,4 +408,23 @@ describe('form-bindings utilities', () => {
       control.setValidators(null);
     });
   });
+
+  it('accepts a zero-argument validator that returns null and a reactive getter', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('value');
+      const noop: ValidatorFn = () => null;
+      bindControlValidators(control, noop);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+
+      const strict = signal(false);
+      bindControlValidators(control, () => (strict() ? Validators.required : null));
+      TestBed.flushEffects();
+      expect(control.validator).toBeNull();
+      control.setValue('');
+      strict.set(true);
+      TestBed.flushEffects();
+      expect(control.hasError('required')).toBe(true);
+    });
+  });
 });
