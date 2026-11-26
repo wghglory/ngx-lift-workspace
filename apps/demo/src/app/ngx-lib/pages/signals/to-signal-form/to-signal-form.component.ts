@@ -429,13 +429,18 @@ export class ToSignalFormComponent {
   readonly isPasswordMounted = computed(() => Boolean(this.sf.fields.password));
   readonly isConfirmPasswordMounted = computed(() => Boolean(this.sf.fields.confirmPassword));
 
+  // A name is submit-ready only after a completed probe for that exact trimmed value.
+  readonly isNameAvailable = computed(() => {
+    const name = String(this.sf.fields.clusterName.value() ?? '').trim();
+    const probe = this.nameAvailabilityRef.value();
+    return Boolean(name) && !this.nameAvailabilityRef.isLoading() && probe?.name === name && probe.available === true;
+  });
+
   // Action disabled state encapsulated in a computed signal
   readonly isSubmitDisabled = computed(() => {
     const isInvalid = this.sf.invalid();
-    const probe = this.nameAvailabilityRef.value();
-    const isNameUnavailable = Boolean(probe && !probe.available);
     const isLoading = this.createClusterRef.isLoading();
-    return isInvalid || isNameUnavailable || isLoading;
+    return isInvalid || !this.isNameAvailable() || isLoading;
   });
 
   // Enterprise form status summary for state inspector
@@ -534,7 +539,7 @@ export class ToSignalFormComponent {
   }
 
   onSubmit(): void {
-    if (this.sf.invalid()) {
+    if (this.isSubmitDisabled()) {
       this.sf.markAllAsTouched();
       return;
     }

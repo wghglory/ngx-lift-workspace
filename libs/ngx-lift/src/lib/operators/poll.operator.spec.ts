@@ -1,7 +1,7 @@
 import {flushEffects} from '../../test-setup';
 import {Observable, of, Subject, throwError} from 'rxjs';
 import {take} from 'rxjs/operators';
-import {vi, beforeEach, afterEach} from 'vitest';
+import {expectTypeOf, vi, beforeEach, afterEach} from 'vitest';
 
 import {AsyncState} from '../models';
 import {poll} from './poll.operator';
@@ -427,5 +427,32 @@ describe('poll', () => {
     expect(abort).toHaveBeenCalledTimes(2);
     expect(disconnect).toHaveBeenCalledTimes(2);
     expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it('types and handles an absent input when a silent forceRefresh source is used', () => {
+    const input$ = new Subject<string>();
+    const states: AsyncState<string>[] = [];
+    const direct = poll({
+      interval: 10,
+      forceRefresh: input$,
+      pollingFn: (input) => {
+        expectTypeOf(input).toEqualTypeOf<string | undefined>();
+        return of(input?.trim() ?? 'none');
+      },
+    });
+    direct.subscribe((state) => states.push(state));
+    vi.advanceTimersByTime(0);
+    expect(states.at(-1)?.data).toBe('none');
+
+    const built = poll({
+      interval: 10,
+      forceRefresh: input$,
+      paramsBuilder: (input) => {
+        expectTypeOf(input).toEqualTypeOf<string | undefined>();
+        return input?.length ?? 0;
+      },
+      pollingFn: (length) => of(length),
+    });
+    built.subscribe();
   });
 });
