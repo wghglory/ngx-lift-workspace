@@ -1,4 +1,4 @@
-import {ApplicationRef, Component} from '@angular/core';
+import {ApplicationRef, ChangeDetectionStrategy, Component} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {type UploadAdapter, UploadQueueService} from 'ngx-lift';
 import {FormControl, ReactiveFormsModule} from '@angular/forms';
@@ -42,6 +42,7 @@ class BlurUploadHost {
 @Component({
   imports: [ReactiveFormsModule, UploadComponent],
   template: '<cll-upload [formControl]="control" [adapter]="adapter" />',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class ResetUploadHost {
   readonly adapter = stubAdapter();
@@ -464,6 +465,37 @@ describe('UploadComponent dropzone', () => {
 
       await select(component, [file('current.zip')]);
       expect(binding === 'scope' ? firstStart : secondStart).toHaveBeenCalledOnce();
+    },
+  );
+
+  it.each(['adapter', 'scope'] as const)(
+    'keeps a pending drop invalid after restoring its %s binding',
+    async (binding) => {
+      const fixture = TestBed.createComponent(UploadComponent);
+      const adapter = stubAdapter();
+      fixture.componentRef.setInput('adapter', adapter);
+      fixture.componentRef.setInput('scope', 'first');
+      fixture.detectChanges();
+      const component = fixture.componentInstance;
+      const {pending, finish} = startDirectoryDrop(component);
+
+      fixture.componentRef.setInput(binding, binding === 'adapter' ? stubAdapter() : 'second');
+      fixture.detectChanges();
+      fixture.componentRef.setInput(binding, binding === 'adapter' ? adapter : 'first');
+      fixture.detectChanges();
+      finish();
+      await pending;
+
+      expect(component.value()).toEqual([]);
+      expect(TestBed.inject(UploadQueueService).items()).toEqual([]);
+      const current = startDirectoryDrop(component);
+      current.finish();
+      await current.pending;
+      expect(
+        TestBed.inject(UploadQueueService)
+          .items()
+          .map((item) => item.file.name),
+      ).toEqual(['late.zip']);
     },
   );
 

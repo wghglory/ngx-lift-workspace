@@ -4,7 +4,9 @@ import {
   Component,
   ElementRef,
   DestroyRef,
+  type OnChanges,
   PLATFORM_ID,
+  type SimpleChanges,
   computed,
   effect,
   forwardRef,
@@ -44,7 +46,7 @@ ClarityIcons.addIcons(uploadCloudIcon, exclamationTriangleIcon);
     {provide: NG_VALIDATORS, useExisting: forwardRef(() => UploadComponent), multi: true},
   ],
 })
-export class UploadComponent implements ControlValueAccessor, Validator {
+export class UploadComponent implements ControlValueAccessor, Validator, OnChanges {
   private static nextId = 0;
 
   private readonly queue = inject(UploadQueueService);
@@ -136,6 +138,11 @@ export class UploadComponent implements ControlValueAccessor, Validator {
         if (item) void this.watch(watch.id, item);
       }
     });
+  }
+
+  ngOnChanges(changes: SimpleChanges<UploadComponent>): void {
+    // Returning to an earlier destination still invalidates selections started before the change.
+    if (changes.adapter || changes.scope) this.selectionVersion++;
   }
 
   writeValue(files: readonly File[] | null): void {
