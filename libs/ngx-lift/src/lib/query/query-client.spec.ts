@@ -38,6 +38,20 @@ describe('QueryClient', () => {
     vi.useRealTimers();
   });
 
+  it('exposes the same plain snapshot fields through observation and direct cache reads', async () => {
+    const client = createClient();
+    const definition = {key: ['plain-snapshot'], loader: async () => 1};
+    const snapshots: QuerySnapshot<number>[] = [];
+    client.observeQuery(definition, (snapshot) => snapshots.push(snapshot));
+    await flushRequests();
+    const cached = client.getSnapshot(definition.key);
+    expect(cached).toMatchObject({status: 'resolved', value: 1});
+    expect(snapshots.at(-1)).toEqual(cached);
+    for (const snapshot of [...snapshots, cached]) {
+      expect(Object.getOwnPropertySymbols(snapshot)).toEqual([]);
+    }
+  });
+
   it('preserves tag membership when transport teardown recreates a removed key', async () => {
     const client = createClient();
     const replacement = {key: ['recreated'], tags: [{type: 'Data'}], loader: vi.fn(async () => 5)};

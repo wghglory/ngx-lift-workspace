@@ -15,12 +15,7 @@ import {
   QueryStatus,
   QueryTag,
 } from './query.models';
-import {
-  onQueryObserverAttached,
-  OwnedQueryObserverOptions,
-  OrderedQuerySnapshot,
-  querySnapshotRevision,
-} from './query-observer-registration';
+import {onQueryObserverAttached, OwnedQueryObserverOptions, dispatchQuerySnapshot} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 import {QueryTimeoutError} from './query-errors';
 import {executeQueryRequest, resolveQueryReadPolicy} from './query-request';
@@ -35,6 +30,7 @@ interface QueryRequest<T> {
 }
 
 interface QueryObserver<T> {
+  readonly handle: QueryObserverHandle;
   readonly listener: (snapshot: QuerySnapshot<T>) => void;
   options: QueryObserverOptions;
 }
@@ -135,10 +131,6 @@ export class QueryClient {
   ): QueryObserverHandle {
     this.validateObserverOptions(options);
     const entry = this.ensureEntry(definition);
-    const observer: QueryObserver<T> = {listener, options};
-    entry.observers.add(observer);
-    entry.inactiveSince = null;
-    this.clearTimer(entry, 'gcTimer');
     let attached = true;
     const unsubscribe = (() => {
       if (!attached) {
@@ -191,6 +183,10 @@ export class QueryClient {
         this.schedulePoll(entry);
       }
     };
+    const observer: QueryObserver<T> = {listener, options, handle: unsubscribe};
+    entry.observers.add(observer);
+    entry.inactiveSince = null;
+    this.clearTimer(entry, 'gcTimer');
     const ownedOptions: OwnedQueryObserverOptions = options;
     ownedOptions[onQueryObserverAttached]?.(unsubscribe);
     if (unsubscribe.isAttached()) this.notify(entry, observer, this.snapshot(entry));
@@ -560,9 +556,8 @@ export class QueryClient {
     );
   }
 
-  private snapshot<T>(entry: QueryEntry<T>): OrderedQuerySnapshot<T> {
+  private snapshot<T>(entry: QueryEntry<T>): QuerySnapshot<T> {
     return {
-      [querySnapshotRevision]: entry.publicationRevision,
       value: entry.value,
       hasValue: entry.hasValue,
       error: entry.error,
@@ -588,7 +583,7 @@ export class QueryClient {
 
   private notify<T>(entry: QueryEntry<T>, observer: QueryObserver<T>, snapshot: QuerySnapshot<T>): void {
     this.invokeCallback(
-      () => observer.listener(snapshot),
+      () => dispatchQuerySnapshot(this, entry, observer.handle, () => observer.listener(snapshot)),
       (error) => this.reportDiagnostic(error, {key: entry.key, phase: 'observer'}),
     );
   }

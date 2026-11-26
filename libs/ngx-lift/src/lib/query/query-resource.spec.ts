@@ -201,6 +201,28 @@ describe('queryResource', () => {
     },
   );
 
+  it('keeps purged data hidden when a decorator forwards a structured clone after removal', async () => {
+    const observe = client.observeQuery.bind(client);
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+      observe(
+        query,
+        (snapshot) => {
+          if (snapshot.status === 'resolved') client.removeQueries();
+          listener(structuredClone(snapshot));
+        },
+        options,
+      ),
+    );
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['purged-copy'], loader: () => of(7)})),
+    );
+    await settle();
+    expect(client.getSnapshot(['purged-copy'])).toBeUndefined();
+    expect(resource.status()).toBe('idle');
+    expect(resource.hasValue()).toBe(false);
+    expect(resource.value()).toBeUndefined();
+  });
+
   it.each(['shallow', 'structured'] as const)(
     'preserves error translations on a %s copy of a snapshot',
     async (copy) => {

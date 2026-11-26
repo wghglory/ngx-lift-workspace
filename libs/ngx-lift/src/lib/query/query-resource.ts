@@ -17,8 +17,7 @@ import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-er
 import {
   onQueryObserverAttached,
   OwnedQueryObserverOptions,
-  OrderedQuerySnapshot,
-  querySnapshotRevision,
+  isSupersededQueryDispatch,
 } from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 
@@ -143,7 +142,6 @@ export function queryResource<T, E = Error>(
     observer = next;
     let execution: Promise<T> | undefined;
     let startManualRead = manual;
-    let lastRevision = -1;
     try {
       const onAttached = (handle: QueryObserverHandle) => {
         if (observer === next) next.handle = handle;
@@ -157,14 +155,8 @@ export function queryResource<T, E = Error>(
       };
       const handle = client.observeQuery(
         current.query,
-        (snapshot: OrderedQuerySnapshot<T>) => {
-          if (observer !== next) return;
-          // A client wrapper can trigger a nested publication before forwarding the outer snapshot.
-          const revision = snapshot[querySnapshotRevision];
-          if (revision !== undefined) {
-            if (revision < lastRevision) return;
-            lastRevision = revision;
-          }
+        (snapshot) => {
+          if (observer !== next || isSupersededQueryDispatch(client, key, next.handle)) return;
           state.set({key, snapshot});
           // The first snapshot precedes automatic loading. Start explicit reads here so they have
           // an observer before dispatch and retain their manual trigger and shared request Promise.
