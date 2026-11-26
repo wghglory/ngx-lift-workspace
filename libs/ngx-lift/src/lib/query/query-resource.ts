@@ -9,14 +9,12 @@ import {
   signal,
   untracked,
 } from '@angular/core';
-import {Observable, Subject} from 'rxjs';
 
 import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapshot, QueryStatus} from './query.models';
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-errors';
 import {serializeQueryKey} from './query-key';
-import {resourceAsync} from './resource-async';
 
 /**
  * Angular query definition accepting Promise or Observable reads.
@@ -108,71 +106,68 @@ export function queryResource<T, E = Error>(
     if (!query) return undefined;
     return {query, key: serializeQueryKey(query.key)};
   });
-  const requestedKey = computed(() => requested()?.key);
-  const observedKey = signal<string | undefined>(undefined);
-  let unsubscribe: QueryObserverHandle | undefined;
-  const initialInterval =
-    typeof options.pollInterval === 'function' ? untracked(options.pollInterval) : options.pollInterval;
-  let observedInterval: number | undefined = initialInterval;
-  let destroyed = false;
-  const recoverObserver = new Subject<void>();
-
-  // resourceAsync owns Observable observation and cancellation; QueryClient owns query state and scheduling.
-  const sharedState = resourceAsync(
-    {
-      params: () => requestedKey(),
-      loader: (key: string | undefined) => {
-        const current = untracked(requested);
-        if (!current || current.key !== key) {
-          observedKey.set(undefined);
-          return idleSnapshot<T>();
-        }
-        return new Observable<QuerySnapshot<T>>((subscriber) => {
-          let handle: QueryObserverHandle | undefined;
-          const detach = () => {
-            handle?.();
-            if (unsubscribe === handle) unsubscribe = undefined;
-            handle = undefined;
-          };
-          const attach = (refresh = false) => {
-            detach();
-            const latest = untracked(requested);
-            if (!latest || latest.key !== key) return;
-            observedKey.set(key);
-            const returnedHandle = client.observeQuery(
-              latest.query,
-              (snapshot) => {
-                untracked(() => {
-                  if (!destroyed && observedKey() === key) subscriber.next(snapshot);
-                });
-              },
-              {
-                pollInterval: observedInterval,
-                refresh,
-                refetchOnFocus: options.refetchOnFocus,
-                refetchOnReconnect: options.refetchOnReconnect,
-              },
-            );
-            // A synchronous snapshot can destroy the resource while recovery is attaching.
-            if (destroyed || subscriber.closed) {
-              returnedHandle();
-              return;
-            }
-            handle = returnedHandle;
-            unsubscribe = handle;
-          };
-          attach();
-          // Explicit cache removal leaves the observer idle. A manual reload can synchronously reattach it.
-          const recovery = recoverObserver.subscribe(() => attach(true));
-          return () => {
-            recovery.unsubscribe();
-            detach();
-          };
-        });
-      },
-    },
-    {injector, defaultValue: idleSnapshot<T>()},
+  const pollInterval = computed(() =>
+    typeof options.pollInterval === 'function' ? options.pollInterval() : options.pollInterval,
   );
+  const state = signal<{key: string; snapshot: QuerySnapshot<T>} | undefined>(undefined);
+  type Observation = {key: string; interval?: number; handle?: QueryObserverHandle};
+  let observer: Observation | undefined;
+  let destroyed = false;
+
+  const detach = () => {
+    const previous = observer;
+    observer = undefined;
+    previous?.handle?.();
+  };
+  const refresh = (query: QueryDefinition<T>) => {
+    try {
+      return client.fetchQuery(query, {refresh: true});
+    } catch (error) {
+      return Promise.reject<T>(error);
+    }
+  };
+  const observe = (key: string, manual = false) => {
+    detach();
+    // Detaching can run application teardown that changes the selection, executes or destroys this ref.
+    const current = requested();
+    if (destroyed || current?.key !== key) return;
+    if (observer) return manual && observer.key === key ? execute(key) : undefined;
+    const interval = pollInterval();
+    const next: Observation = {key, interval};
+    observer = next;
+    let execution: Promise<T> | undefined;
+    let startManualRead = manual;
+    try {
+      const handle = client.observeQuery(
+        current.query,
+        (snapshot) => {
+          if (observer !== next) return;
+          state.set({key, snapshot});
+          // The first snapshot precedes automatic loading. Start explicit reads here so they have
+          // an observer before dispatch and retain their manual trigger and shared request Promise.
+          if (startManualRead) {
+            startManualRead = false;
+            execution = refresh(current.query);
+          }
+        },
+        {
+          pollInterval: interval,
+          refetchOnFocus: options.refetchOnFocus,
+          refetchOnReconnect: options.refetchOnReconnect,
+        },
+      );
+      // A synchronous loader or notification may have disposed or replaced this observer.
+      if (observer === next) next.handle = handle;
+      else handle();
+    } catch (error) {
+      if (observer === next) {
+        observer = undefined;
+        state.set({key: current.key, snapshot: {...idleSnapshot<T>(), status: 'error', error}});
+      }
+      if (manual) return Promise.reject<T>(error);
+    }
+    return execution;
+  };
 
   // Hide the previous scope synchronously, even before Angular schedules the observer effect.
   const visibleState = computed(() => {
@@ -180,33 +175,37 @@ export function queryResource<T, E = Error>(
     if (!current) {
       return idleSnapshot<T>();
     }
-    if (current.key !== observedKey()) {
+    const observed = state();
+    if (current.key !== observed?.key) {
       const cached = client.getSnapshot<T>(current.query.key);
       if (cached?.hasValue) return cached.isStale ? {...cached, status: 'reloading' as const} : cached;
       return {...idleSnapshot<T>(), status: 'loading' as const};
     }
-    const snapshot = sharedState.value();
-    return sharedState.error() ? {...snapshot, error: sharedState.error(), status: 'error' as const} : snapshot;
+    return observed.snapshot;
   });
 
   const observerEffect = effect(
     () => {
       const current = requested();
-      const interval = typeof options.pollInterval === 'function' ? options.pollInterval() : options.pollInterval;
+      const interval = pollInterval();
       untracked(() => {
-        if (destroyed) {
-          return;
-        }
-        const intervalChanged = interval !== observedInterval;
-        observedInterval = interval;
-        if (current?.key === observedKey() && current) {
-          unsubscribe?.updateDefinition(current.query);
-          if (intervalChanged)
-            unsubscribe?.updateOptions({
+        if (destroyed) return;
+        if (!current) {
+          state.set(undefined);
+          detach();
+        } else if (observer?.key !== current.key) {
+          observe(current.key);
+        } else {
+          const retained = observer;
+          retained.handle?.updateDefinition(current.query);
+          if (retained.interval !== interval) {
+            retained.interval = interval;
+            retained.handle?.updateOptions({
               pollInterval: interval,
               refetchOnFocus: options.refetchOnFocus,
               refetchOnReconnect: options.refetchOnReconnect,
             });
+          }
         }
       });
     },
@@ -217,21 +216,31 @@ export function queryResource<T, E = Error>(
     if (!destroyed) {
       destroyed = true;
       observerEffect.destroy();
-      recoverObserver.complete();
-      sharedState.destroy();
+      detach();
     }
   };
   const unregisterDestroy = injector.get(DestroyRef).onDestroy(destroy);
-  const execute = (): Promise<T> => {
-    const current = untracked(requested);
-    if (destroyed || !current) {
-      return Promise.reject(destroyed ? new QueryResourceDisposedError() : new QueryResourceDisabledError());
-    }
+  const execute = (expectedKey?: string): Promise<T> => {
+    if (destroyed) return Promise.reject(new QueryResourceDisposedError());
     try {
-      if (unsubscribe && !unsubscribe.isAttached() && current.key === untracked(observedKey)) {
-        untracked(() => recoverObserver.next());
-      }
-      return untracked(() => client.fetchQuery(current.query, {refresh: true}));
+      return untracked(() => {
+        const current = requested();
+        if (!current) return Promise.reject(new QueryResourceDisabledError());
+        if (expectedKey !== undefined && current.key !== expectedKey) {
+          throw new DOMException('Query selection changed before execution', 'AbortError');
+        }
+        if (observer?.key === current.key) {
+          // Reentrant calls during registration must wait for the handle: the loader or an earlier
+          // listener can remove the entry before observeQuery returns.
+          if (!observer.handle) return Promise.resolve().then(() => execute(current.key));
+          if (observer.handle.isAttached()) return refresh(current.query);
+        }
+        const execution = observe(current.key, true);
+        if (execution) return execution;
+        if (destroyed) throw new QueryResourceDisposedError();
+        if (!requested()) throw new QueryResourceDisabledError();
+        throw new DOMException('Query selection changed before execution', 'AbortError');
+      });
     } catch (error) {
       return Promise.reject(error);
     }
@@ -262,7 +271,7 @@ export function queryResource<T, E = Error>(
       void execute().catch(() => undefined);
       return true;
     },
-    execute,
+    execute: () => execute(),
     destroy: () => {
       unregisterDestroy();
       destroy();

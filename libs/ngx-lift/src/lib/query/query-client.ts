@@ -158,7 +158,8 @@ export class QueryClient {
           entry.invalidated = true;
           entry.status = entry.hasValue ? 'resolved' : 'idle';
           this.resetRetryState(entry);
-          for (const request of entry.requests) {
+          // An abort listener can start a new request for a replacement observer.
+          for (const request of [...entry.requests]) {
             request.controller.abort();
           }
         }
@@ -771,15 +772,16 @@ export class QueryClient {
     this.clearTimer(entry, 'pollTimer');
     this.clearTimer(entry, 'gcTimer');
     this.clearTimer(entry, 'staleTimer');
-    for (const request of entry.requests) {
-      request.controller.abort();
-    }
+    // Transport teardown can recreate this key and register fresh tag memberships.
     for (const membership of entry.tagMemberships) {
       const keys = this.tagIndex.get(membership);
       keys?.delete(entry.serializedKey);
       if (!keys?.size) {
         this.tagIndex.delete(membership);
       }
+    }
+    for (const request of entry.requests) {
+      request.controller.abort();
     }
     entry.value = undefined;
     entry.hasValue = false;

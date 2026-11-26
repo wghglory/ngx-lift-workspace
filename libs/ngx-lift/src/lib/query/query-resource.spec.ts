@@ -3,7 +3,7 @@ import {HttpClient, provideHttpClient, withInterceptors} from '@angular/common/h
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectionStrategy, Component, effect, Injector, input, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
+import {EMPTY, EmptyError, firstValueFrom, Observable, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryDefinition} from './query.models';
@@ -20,6 +20,25 @@ class QueryConsumerComponent {
   definition = input.required<QueryDefinition<string>>();
   interval = input(1000);
   query = queryResource(() => this.definition(), {pollInterval: this.interval});
+}
+
+@Component({
+  selector: 'lib-polling-query',
+  template: '',
+})
+class PollingQueryComponent {
+  readonly interval = input.required<number>();
+  readonly query = queryResource(() => ({key: ['required-poll'], loader: async () => 1}), {
+    pollInterval: this.interval,
+  });
+}
+
+@Component({
+  imports: [PollingQueryComponent],
+  template: '<lib-polling-query [interval]="interval()" />',
+})
+class PollingQueryHostComponent {
+  readonly interval = signal(500);
 }
 
 async function settle(): Promise<void> {
@@ -43,6 +62,134 @@ describe('queryResource', () => {
     client.destroy();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('uses a bound required input for the first polling interval and tracks its changes', async () => {
+    vi.useFakeTimers();
+    const observe = vi.spyOn(client, 'observeQuery');
+    const host = TestBed.createComponent(PollingQueryHostComponent);
+    host.detectChanges();
+    await settle();
+    expect(observe.mock.calls[0][2]?.pollInterval).toBe(500);
+    host.componentInstance.interval.set(1000);
+    host.detectChanges();
+    await settle();
+    expect(client.getEntriesSnapshot()[0].remainingPollDelay).toBe(1000);
+  });
+
+  it('can attach after its first polling configuration was rejected', async () => {
+    const interval = signal(0);
+    const source = new Subject<number>();
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['invalid-interval'], loader: () => source, cancelOnNoObservers: true}), {
+        pollInterval: interval,
+      }),
+    );
+    await settle();
+    expect(resource.error()).toBeInstanceOf(RangeError);
+    interval.set(100);
+    const read = resource.execute();
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+    resource.destroy();
+    await expect(read).rejects.toMatchObject({name: 'AbortError'});
+  });
+
+  it.each([false, true])('owns immediate execution through destruction (surviving observer: %s)', async (shared) => {
+    const source = new Subject<number>();
+    const definition = {key: ['immediate'], loader: vi.fn(() => source), cancelOnNoObservers: true};
+    const first = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    const request = first.execute();
+    const survivor = shared ? client.observeQuery(definition, () => undefined) : undefined;
+    first.destroy();
+    expect(source.observed).toBe(shared);
+    if (shared) {
+      source.next(42);
+      await expect(request).resolves.toBe(42);
+    } else {
+      await expect(request).rejects.toMatchObject({name: 'AbortError'});
+    }
+    expect(definition.loader).toHaveBeenCalledTimes(1);
+    survivor?.();
+  });
+
+  it('owns a read started from the preceding key’s teardown', async () => {
+    const key = signal('a');
+    const replacement = new Subject<number>();
+    let read: Promise<number | undefined> | undefined;
+    const outgoing = new Observable<number>(() => () => {
+      read = resource.execute();
+      void read.catch(() => undefined);
+      resource.destroy();
+    });
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const id = key();
+        return {key: [id], loader: () => (id === 'a' ? outgoing : replacement), cancelOnNoObservers: true};
+      }),
+    );
+    await settle();
+    key.set('b');
+    await settle();
+    expect(replacement.observed).toBe(false);
+    await expect(read).rejects.toMatchObject({name: 'AbortError'});
+  });
+
+  it('does not start an ownerless read when the initial loader removes the entry during attachment', async () => {
+    const source = new Subject<number>();
+    let nested: Promise<number | undefined> | undefined;
+    const loader = vi
+      .fn<() => Observable<number>>()
+      .mockImplementationOnce(() => {
+        client.removeQueries();
+        nested = resource.execute();
+        void nested.catch(() => undefined);
+        resource.destroy();
+        return source;
+      })
+      .mockReturnValue(source);
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({
+        key: ['removed-during-attach'],
+        loader,
+        cancelOnNoObservers: true,
+      })),
+    );
+    await settle();
+    expect(source.observed).toBe(false);
+    await expect(nested).rejects.toBeInstanceOf(Error);
+  });
+
+  it('checks the current selection after the outgoing transport disables the query', async () => {
+    const key = signal<string | undefined>('a');
+    const replacement = vi.fn(() => of(2));
+    const outgoing = new Observable<number>(() => () => key.set(undefined));
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const id = key();
+        return id
+          ? {key: [id], loader: id === 'a' ? () => outgoing : replacement, cancelOnNoObservers: true}
+          : undefined;
+      }),
+    );
+    await settle();
+    key.set('b');
+    await settle();
+    expect(resource.status()).toBe('idle');
+    expect(replacement).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed manual recovery after removal once with its manual trigger', async () => {
+    const report = vi.fn();
+    client.destroy();
+    client = new QueryClient({onQueryError: report});
+    const failure = new Error('manual refresh failed');
+    const loader = vi.fn<() => Promise<number>>().mockResolvedValueOnce(1).mockRejectedValueOnce(failure);
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => ({key: ['recover'], loader}), {client}));
+    await settle();
+    client.removeQueries();
+    await expect(resource.execute()).rejects.toBe(failure);
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(report).toHaveBeenCalledExactlyOnceWith(failure, expect.objectContaining({trigger: 'manual'}));
   });
 
   it('distinguishes falsy initial errors from refresh errors after successful undefined data', async () => {

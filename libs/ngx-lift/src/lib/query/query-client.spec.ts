@@ -1,4 +1,4 @@
-import {EMPTY, EmptyError, of, Subject, throwError} from 'rxjs';
+import {EMPTY, EmptyError, Observable, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryClientOptions, QueryDefinition, QuerySnapshot} from './query.models';
@@ -36,6 +36,57 @@ describe('QueryClient', () => {
     clients.splice(0).forEach((client) => client.destroy());
     vi.clearAllTimers();
     vi.useRealTimers();
+  });
+
+  it('preserves tag membership when transport teardown recreates a removed key', async () => {
+    const client = createClient();
+    const replacement = {key: ['recreated'], tags: [{type: 'Data'}], loader: vi.fn(async () => 5)};
+    client.observeQuery(
+      {
+        ...replacement,
+        loader: () =>
+          new Observable<number>(() => () => {
+            client.observeQuery(replacement, () => undefined);
+          }),
+      },
+      () => undefined,
+    );
+    client.removeQueries();
+    await flushRequests();
+    client.invalidateTags([{type: 'Data'}]);
+    await flushRequests();
+    expect(replacement.loader).toHaveBeenCalledTimes(2);
+    expect(client.getSnapshot(['recreated'])?.value).toBe(5);
+  });
+
+  it('keeps a replacement observer request alive when the last old observer detaches', async () => {
+    const client = createClient();
+    const snapshots: QuerySnapshot<number>[] = [];
+    const source = new Subject<number>();
+    let replacementSignal: AbortSignal | undefined;
+    const replacement: QueryDefinition<number> = {
+      key: ['replacement'],
+      cancelOnNoObservers: true,
+      loader: ({abortSignal}) => {
+        replacementSignal = abortSignal;
+        return source;
+      },
+    };
+    const detach = client.observeQuery(
+      {
+        ...replacement,
+        loader: () =>
+          new Observable<number>(() => () => {
+            client.observeQuery(replacement, (snapshot) => snapshots.push(snapshot));
+          }),
+      },
+      () => undefined,
+    );
+    detach();
+    expect(replacementSignal?.aborted).toBe(false);
+    source.next(7);
+    await flushRequests();
+    expect(snapshots.at(-1)).toMatchObject({status: 'resolved', value: 7});
   });
 
   it('does not republish removed data after an observer synchronously clears the cache', async () => {

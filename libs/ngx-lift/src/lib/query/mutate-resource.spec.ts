@@ -170,19 +170,22 @@ describe('mutateResource', () => {
       const mutation = vi.fn<(id: number) => Observable<number>>();
       const resource = TestBed.runInInjectionContext(() => mutateResource(mutation, {concurrency}));
       let nested: Promise<number> | undefined;
+      const callbackOrder: number[] = [];
+      const onSuccess = (_result: number, id: number) => callbackOrder.push(id);
       mutation.mockImplementation((id) => {
         if (id === 1) {
-          nested = resource.mutate(2);
+          nested = resource.mutate(2, {onSuccess});
           return source;
         }
         return of(id);
       });
-      const first = resource.mutate(1);
+      const first = resource.mutate(1, {onSuccess});
       expect(mutation).toHaveBeenCalledExactlyOnceWith(1);
       expect(nested === first).toBe(concurrency === 'exhaust');
       source.next(10);
       expect(await first).toBe(10);
       expect(await nested).toBe(concurrency === 'exhaust' ? 10 : 2);
+      expect(callbackOrder).toEqual([1, 2]);
       expect(mutation.mock.calls).toEqual(concurrency === 'exhaust' ? [[1]] : [[1], [2]]);
       expect(resource.isLoading()).toBe(false);
     },
@@ -467,17 +470,19 @@ describe('mutateResource', () => {
       const onSuccess = vi.fn();
       const onError = vi.fn();
       const first = resource.mutate(1);
-      const queued = resource.mutate(2, {onSuccess, onError});
-      const rejected = expect(queued).rejects.toThrow('destroyed');
+      const queued = [2, 3].map((id) => resource.mutate(id, {onSuccess, onError}));
       componentInjector.destroy();
-      source.next(1);
-      await first;
-      await rejected;
       await settle();
+      expect(onError.mock.calls).toEqual([
+        [expect.objectContaining({message: expect.stringContaining('destroyed')}), 2],
+        [expect.objectContaining({message: expect.stringContaining('destroyed')}), 3],
+      ]);
+      for (const request of queued) await expect(request).rejects.toThrow('destroyed');
+      expect(source.observed).toBe(true);
+      source.next(1);
+      expect(await first).toBe(1);
+      expect(mutation).toHaveBeenCalledExactlyOnceWith(1);
       expect(onSuccess).not.toHaveBeenCalled();
-      expect(onError).toHaveBeenCalledTimes(1);
-      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
-      expect(onError.mock.calls[0][1]).toBe(2);
     });
 
     it('does not offer onSettled in the public options', async () => {
