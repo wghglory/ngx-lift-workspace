@@ -14,7 +14,11 @@ import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapsho
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-errors';
-import {onQueryObserverAttached, OwnedQueryObserverOptions} from './query-observer-registration';
+import {
+  onQueryObserverAttached,
+  OwnedQueryObserverOptions,
+  querySnapshotRevisions,
+} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 
 /**
@@ -138,6 +142,7 @@ export function queryResource<T, E = Error>(
     observer = next;
     let execution: Promise<T> | undefined;
     let startManualRead = manual;
+    let lastRevision = -1;
     try {
       const onAttached = (handle: QueryObserverHandle) => {
         if (observer === next) next.handle = handle;
@@ -153,6 +158,20 @@ export function queryResource<T, E = Error>(
         current.query,
         (snapshot) => {
           if (observer !== next) return;
+          // A client wrapper can trigger a nested publication before forwarding the outer snapshot.
+          let revision = querySnapshotRevisions.get(snapshot);
+          if (revision === undefined) {
+            // A wrapper may copy the snapshot. Use the current entry to recover its publication order.
+            snapshot =
+              next.handle?.isAttached() === false
+                ? idleSnapshot<T>()
+                : (client.getSnapshot<T>(current.query.key) ?? snapshot);
+            revision = querySnapshotRevisions.get(snapshot);
+          }
+          if (revision !== undefined) {
+            if (revision < lastRevision) return;
+            lastRevision = revision;
+          }
           state.set({key, snapshot});
           // The first snapshot precedes automatic loading. Start explicit reads here so they have
           // an observer before dispatch and retain their manual trigger and shared request Promise.

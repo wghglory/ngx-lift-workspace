@@ -159,11 +159,47 @@ describe('queryResource', () => {
     await settle();
     expect(registrations).toBe(1);
     expect(loader).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({refresh: true}));
+    expect(resource.status()).toBe('loading');
+    expect(resource.isLoading()).toBe(true);
     source.next(7);
     await settle();
     expect(resource.value()).toBe(7);
     expect(client.getDiagnostics().totalObserverCount).toBe(1);
   });
+
+  it.each([false, true])(
+    'keeps a refresh visible when a client forwards the preceding success (copied snapshot: %s)',
+    async (copy) => {
+      const observe = client.observeQuery.bind(client);
+      const source = new Subject<number>();
+      let refreshed = false;
+      vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+        observe(
+          query,
+          (snapshot) => {
+            if (snapshot.status === 'resolved' && !refreshed) {
+              refreshed = true;
+              resource.reload();
+            }
+            listener(copy && snapshot.status === 'reloading' ? {...snapshot} : snapshot);
+          },
+          options,
+        ),
+      );
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['wrapped-refresh'], loader: () => source})),
+      );
+      await settle();
+      source.next(1);
+      await settle();
+      expect(resource.value()).toBe(1);
+      expect(resource.isRefreshing()).toBe(true);
+      source.next(2);
+      await settle();
+      expect(resource.status()).toBe('resolved');
+      expect(resource.value()).toBe(2);
+    },
+  );
 
   it('keeps an inactive cache entry idle when a custom client reloads and destroys before attaching', async () => {
     const loader = vi.fn(async () => 7);

@@ -15,7 +15,11 @@ import {
   QueryStatus,
   QueryTag,
 } from './query.models';
-import {onQueryObserverAttached, OwnedQueryObserverOptions} from './query-observer-registration';
+import {
+  onQueryObserverAttached,
+  OwnedQueryObserverOptions,
+  querySnapshotRevisions,
+} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 import {QueryTimeoutError} from './query-errors';
 import {executeQueryRequest, resolveQueryReadPolicy} from './query-request';
@@ -556,7 +560,7 @@ export class QueryClient {
   }
 
   private snapshot<T>(entry: QueryEntry<T>): QuerySnapshot<T> {
-    return {
+    const snapshot = {
       value: entry.value,
       hasValue: entry.hasValue,
       error: entry.error,
@@ -567,6 +571,8 @@ export class QueryClient {
       failureReason: entry.failureReason,
       nextRetryAt: entry.nextRetryAt,
     };
+    querySnapshotRevisions.set(snapshot, entry.publicationRevision);
+    return snapshot;
   }
 
   private publish<T>(entry: QueryEntry<T>): void {
