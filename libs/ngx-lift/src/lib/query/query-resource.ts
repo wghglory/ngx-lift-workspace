@@ -232,7 +232,23 @@ export function queryResource<T, E = Error>(
       return untracked(() => {
         const current = requested();
         if (!current) return Promise.reject(new QueryResourceDisabledError());
-        if (observer?.key === current.key && observer.handle?.isAttached()) return refresh(current.query);
+        if (observer?.key === current.key) {
+          if (observer.handle?.isAttached()) return refresh(current.query);
+          if (!observer.handle) {
+            // A custom client can publish synchronously without forwarding the private registration hook.
+            // Join existing work now. Otherwise wait for this handle before starting a refresh.
+            const registering = observer;
+            const cached = client.getSnapshot(current.query.key);
+            if (cached?.status === 'loading' || cached?.status === 'reloading') return refresh(current.query);
+            return Promise.resolve().then(() => {
+              if (destroyed) throw new QueryResourceDisposedError();
+              if (untracked(requested)?.key !== current.key || (cached && !registering.handle?.isAttached())) {
+                throw new DOMException('Query changed before execution', 'AbortError');
+              }
+              return execute();
+            });
+          }
+        }
         const execution = observe(current.key, true);
         if (execution) return execution;
         if (destroyed) throw new QueryResourceDisposedError();

@@ -136,6 +136,35 @@ describe('queryResource', () => {
     await expect(read).rejects.toMatchObject({name: 'AbortError'});
   });
 
+  it('joins a reload from a custom client that forwards only public options during registration', async () => {
+    const observe = client.observeQuery.bind(client);
+    const source = new Subject<number>();
+    const loader = vi.fn(() => source);
+    let registrations = 0;
+    vi.spyOn(client, 'observeQuery').mockImplementation((definition, listener, options) => {
+      // Bound the failure so recursive registration produces a deterministic assertion.
+      if (++registrations > 2) throw new Error('Recursive observer registration');
+      return observe(
+        definition,
+        (snapshot) => {
+          if (snapshot.status === 'idle') resource.reload();
+          listener(snapshot);
+        },
+        {pollInterval: options?.pollInterval},
+      );
+    });
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['custom-registration'], loader, cancelOnNoObservers: true})),
+    );
+    await settle();
+    expect(registrations).toBe(1);
+    expect(loader).toHaveBeenCalledTimes(1);
+    source.next(7);
+    await settle();
+    expect(resource.value()).toBe(7);
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+  });
+
   it('returns the shared result to a reentrant caller destroyed while a peer keeps the read alive', async () => {
     const source = new Subject<number>();
     let joined: Promise<number | undefined> | undefined;
