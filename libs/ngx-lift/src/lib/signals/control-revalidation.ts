@@ -1,38 +1,36 @@
 import {AbstractControl, FormArray, FormControlStatus, FormGroup} from '@angular/forms';
 import {merge, Observable, Subscription} from 'rxjs';
 
-// Angular rebuilds group and array values on every validity update. Compare their enabled fields,
-// retaining the normal identity semantics of object-valued FormControls.
-function sameControlValue(control: AbstractControl, previous: unknown, current: unknown): boolean {
-  if (Object.is(previous, current)) return true;
+const excludedValue = Symbol('excluded form value');
 
-  if (control instanceof FormArray && Array.isArray(previous) && Array.isArray(current)) {
-    const children = control.controls.filter((child) => child.enabled || control.disabled);
-    return (
-      previous.length === current.length &&
-      children.every((child, i) => sameControlValue(child, previous[i], current[i]))
-    );
+// Angular rebuilds group/array values on validity updates. Snapshot the mounted controls and
+// their aggregate values so a replacement is visible even when the new leaf has the same value.
+function snapshotSource(source: AbstractControl | null): unknown[] {
+  const parts: unknown[] = [];
+  function visit(control: AbstractControl, value: unknown): void {
+    parts.push(control);
+    if (control instanceof FormArray) {
+      parts.push(control.length);
+      let index = 0;
+      for (const child of control.controls) {
+        visit(child, Array.isArray(value) && (child.enabled || control.disabled) ? value[index++] : excludedValue);
+      }
+    } else if (control instanceof FormGroup) {
+      const fields = Object.entries<AbstractControl>(control.controls);
+      parts.push(fields.length);
+      for (const [key, child] of fields) {
+        parts.push(key);
+        visit(
+          child,
+          value && typeof value === 'object' && Object.hasOwn(value, key) ? Reflect.get(value, key) : excludedValue,
+        );
+      }
+    } else {
+      parts.push(value);
+    }
   }
-
-  if (
-    control instanceof FormGroup &&
-    previous &&
-    current &&
-    typeof previous === 'object' &&
-    typeof current === 'object'
-  ) {
-    const fields = Object.keys(current);
-    return (
-      fields.length === Object.keys(previous).length &&
-      fields.every(
-        (key) =>
-          Object.hasOwn(previous, key) &&
-          sameControlValue(control.controls[key], Reflect.get(previous, key), Reflect.get(current, key)),
-      )
-    );
-  }
-
-  return false;
+  if (source) visit(source, source.value);
+  return parts;
 }
 
 function containsControl(source: AbstractControl, target: AbstractControl): boolean {
@@ -60,13 +58,20 @@ export function subscribeToRevalidation(
   let previousSource = getSource();
   let previousValue: unknown = previousSource?.value;
   let previousStatus = previousSource?.status;
+  let previousSnapshot = snapshotSource(previousSource);
   let statusBeforePendingUpdate: FormControlStatus | undefined;
   const pendingTargets = new WeakSet<AbstractControl>();
 
   return merge(owner.valueChanges as Observable<unknown>, owner.statusChanges).subscribe(() => {
     const source = getSource();
-    const valueChanged =
-      source !== previousSource || (source !== null && !sameControlValue(source, previousValue, source.value));
+    let valueChanged = false;
+    if (source !== previousSource || !Object.is(source?.value, previousValue)) {
+      const snapshot = snapshotSource(source);
+      valueChanged =
+        snapshot.length !== previousSnapshot.length ||
+        snapshot.some((part, i) => !Object.is(part, previousSnapshot[i]));
+      previousSnapshot = snapshot;
+    }
     const statusChanged = source?.status !== previousStatus;
     previousSource = source;
     previousValue = source?.value;
@@ -94,7 +99,7 @@ export function subscribeToRevalidation(
       try {
         target.updateValueAndValidity();
         if (nested && target.pending && target.asyncValidator) pendingTargets.add(target);
-        statusBeforePendingUpdate = nested && source.pending ? sourceStatus : undefined;
+        if (nested) statusBeforePendingUpdate = source.pending ? sourceStatus : undefined;
       } finally {
         updatingSource = previousUpdatingSource;
       }

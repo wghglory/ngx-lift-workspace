@@ -1,6 +1,7 @@
 import {signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Subject} from 'rxjs';
 import {describe, expect, it, vi} from 'vitest';
 
 import {
@@ -132,6 +133,29 @@ describe('form-bindings utilities', () => {
       TestBed.flushEffects();
       expect(form.contains('secretField')).toBe(true);
       expect(form.get('secretField')?.value).toBe('modifiedSecret');
+    });
+  });
+
+  it('settles a source group with mixed nested and external targets', () => {
+    TestBed.runInInjectionContext(() => {
+      const street = new FormControl('');
+      const zip = new FormControl('');
+      const address = new FormGroup({street, zip});
+      const deliveryNote = new FormControl('');
+      const result = new Subject<null>();
+      address.setAsyncValidators(() => result);
+      const binding = revalidateOnChange([zip, deliveryNote], address);
+      let zipRuns = 0;
+      zip.setValidators(() => {
+        if (++zipRuns === 6) binding.unsubscribe();
+        return null;
+      });
+
+      street.setValue('First Street');
+      result.next(null);
+      result.next(null);
+      expect(zipRuns).toBe(2);
+      expect(address.status).toBe('VALID');
     });
   });
 

@@ -240,6 +240,19 @@ describe('toSignalForm', () => {
     });
   });
 
+  it('observes same-valued replacement of a mounted array entry', () => {
+    TestBed.runInInjectionContext(() => {
+      const original = new FormControl('same');
+      const source = new FormArray([original]);
+      const target = new FormControl('', () => (source.at(0) === original ? null : {replaced: true}));
+      const sf = toSignalForm(new FormGroup({source, target}));
+      sf.revalidate('target', 'source');
+
+      source.setControl(0, new FormControl('same'));
+      expect(target.hasError('replaced')).toBe(true);
+    });
+  });
+
   it('compares enabled nested array entries and preserves leaf object identity', () => {
     TestBed.runInInjectionContext(() => {
       const hidden = new FormControl({value: new Date(0), disabled: true});
