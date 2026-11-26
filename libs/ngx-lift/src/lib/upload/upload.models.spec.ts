@@ -50,6 +50,7 @@ describe('upload public contracts', () => {
     const error: UploadError = {code: 'x', phase: 'chunk'};
     expectTypeOf(error.phase).toEqualTypeOf<'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel'>();
     expectTypeOf(error.retryable).toEqualTypeOf<boolean | undefined>();
+    expectTypeOf(error.serverStatus).toEqualTypeOf<'error' | undefined>();
 
     const item = {} as UploadItem;
     expectTypeOf(item.id).toEqualTypeOf<string>();

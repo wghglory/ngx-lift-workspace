@@ -451,6 +451,7 @@ export interface UploadError {
   readonly message?: string;
   readonly phase: 'validation' | 'initiate' | 'chunk' | 'combine' | 'status' | 'cancel';
   readonly retryable?: boolean; // default false; only `chunk` errors with true are auto-retried
+  readonly serverStatus?: 'error'; // set by the queue when getStatus returns a failed server job
   readonly recovery?: 'retry' | 'replace'; // manual recovery guidance, independent from auto-retry
   readonly fileName?: string; // rejected file name for phase `validation`
 }
@@ -899,7 +900,11 @@ error      -> retry (action) -> the failed phase
   explicitly; with `autoRetry=true` only `chunk` errors with `retryable: true` retry automatically, up to `maxRetries`
   attempts, before the error state is shown; manual `retry(id)` stays available for every error phase. Plain adapter
   rejections are wrapped as non-retryable `UploadError` values. Concurrent failures settle before a retry decision. Any
-  non-retryable rejection ends the attempt and is available from the queue item and its completion promise.
+  non-retryable chunk failure is available from the queue item and its completion promise, including when a peer
+  transport aborts. Explicit owner cancellation settles immediately and remains authoritative.
+- When `getStatus` resolves with `status: 'error'`, the queue sets `UploadError.serverStatus` to `'error'` and retains
+  the `upload.error.status` code and readable headless diagnostic. The panel uses this confirmed status to localize the
+  failure. Exceptions from the adapter follow the existing status-lookup diagnostic rules.
 - Stale results are ignored by checking item identity and current status before applying adapter callbacks.
 - SSR: no `document` or overlay access during server rendering; the panel is created only in a browser after the host
   view initializes.

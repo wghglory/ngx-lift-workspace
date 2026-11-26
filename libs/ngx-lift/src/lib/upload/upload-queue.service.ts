@@ -409,9 +409,9 @@ export class UploadQueueService {
           runtime.combined = true;
         }
       }
-      await this.pollStatus(runtime);
+      const settlement = await this.pollStatus(runtime);
       if (!this.isCurrent(runtime)) throw abortError();
-      this.settle(runtime, {kind: 'success'});
+      this.settle(runtime, settlement);
     } catch (error) {
       if (!this.isCurrent(runtime) || runtime.settlement) return;
       if (isAbort(error)) {
@@ -454,8 +454,10 @@ export class UploadQueueService {
       if (!failures.length) return;
       runtime.firstPendingChunk = Math.min(...failures.map((failure) => failure.number));
       for (const {error} of failures) {
-        if (isAbort(error) || toUploadError(error, 'chunk').retryable !== true) throw error;
+        if (!isAbort(error) && toUploadError(error, 'chunk').retryable !== true) throw error;
       }
+      const aborted = failures.find(({error}) => isAbort(error));
+      if (aborted) throw aborted.error;
       if (!runtime.options.autoRetry || runtime.retries >= runtime.options.maxRetries) throw failures[0].error;
       runtime.retries += 1;
       const item = this.item(runtime.id);
@@ -505,8 +507,8 @@ export class UploadQueueService {
     }
   }
 
-  private async pollStatus(runtime: Runtime): Promise<void> {
-    if (!runtime.adapter.getStatus) return;
+  private async pollStatus(runtime: Runtime): Promise<Settlement> {
+    if (!runtime.adapter.getStatus) return {kind: 'success'};
     runtime.phase = 'status';
     const signal = runtime.controller.signal;
     const uploadId = runtime.uploadId;
@@ -517,10 +519,17 @@ export class UploadQueueService {
       if (!this.isCurrent(runtime)) throw abortError();
       runtime.processingProgress = clamp(Math.round(result.progress), 0, 100);
       this.patch(runtime.id, {progress: runtime.processingProgress, processingProgress: runtime.processingProgress});
-      if (result.status === 'success') return;
-      if (result.status === 'cancelled') throw abortError();
+      if (result.status === 'success' || result.status === 'cancelled') return {kind: result.status};
       if (result.status === 'error') {
-        throw {code: 'upload.error.status', phase: 'status', message: 'upload.error.serverFailed'};
+        return {
+          kind: 'error',
+          error: {
+            code: 'upload.error.status',
+            phase: 'status',
+            message: 'Server reported a failed upload',
+            serverStatus: 'error',
+          },
+        };
       }
       await this.delay(runtime.options.pollIntervalMs, runtime);
       if (!this.isCurrent(runtime)) throw abortError();

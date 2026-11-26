@@ -576,10 +576,17 @@ describe('UploadQueueService', () => {
     await expect(completion).resolves.toMatchObject({status: 'success'});
   });
 
-  it.each([1, 2])('preserves a permanent rejection when concurrent chunk %i fails first', async (first) => {
+  it.each([
+    ['retryable', 1],
+    ['retryable', 2],
+    ['abort', 1],
+    ['abort', 2],
+  ] as const)('preserves a permanent rejection alongside %s when chunk %i fails first', async (peer, first) => {
     const gates = [deferred<void>(), deferred<void>()];
     const failures = [
-      {code: 'transient', phase: 'chunk', retryable: true},
+      peer === 'abort'
+        ? new DOMException('Stopped by transport', 'AbortError')
+        : {code: 'transient', phase: 'chunk', retryable: true},
       {code: 'invalid-content', phase: 'chunk', retryable: false, recovery: 'replace'},
     ];
     const requests: number[] = [];
@@ -734,6 +741,8 @@ describe('UploadQueueService', () => {
     const rejection = expect(queue.completion(item.id)).rejects.toMatchObject({
       code: 'upload.error.status',
       phase: 'status',
+      message: 'Server reported a failed upload',
+      serverStatus: 'error',
     });
     await flush();
     await flush();

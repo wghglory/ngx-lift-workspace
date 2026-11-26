@@ -834,7 +834,7 @@ describe('UploadPanelComponent', () => {
       options({
         ...adapter,
         getStatus: async () => {
-          throw {code: 'offline', phase: 'status'};
+          throw {code: 'offline', phase: 'status', message: 'upload.error.serverFailed'};
         },
       }),
     );
@@ -848,12 +848,12 @@ describe('UploadPanelComponent', () => {
       options({
         ...adapter,
         getStatus: async () => {
-          throw new Error('Diagnostic du service');
+          throw {code: 'upload.error.status', phase: 'status', message: 'Server reported a failed upload'};
         },
       }),
     );
     await flush();
-    expect(panel().querySelector('.cll-upload-panel__live')?.textContent).toContain('Diagnostic du service');
+    expect(panel().querySelector('.cll-upload-panel__live')?.textContent).toContain('Server reported a failed upload');
   });
 
   it('keeps numeric diagnostics supplemental to localized error text and announcements', async () => {
