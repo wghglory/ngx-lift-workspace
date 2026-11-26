@@ -3,7 +3,7 @@ import {HttpClient, provideHttpClient, withInterceptors} from '@angular/common/h
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {ChangeDetectionStrategy, Component, effect, Injector, input, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {EMPTY, EmptyError, firstValueFrom, of, Subject, throwError} from 'rxjs';
+import {EMPTY, EmptyError, firstValueFrom, Observable, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, it, vi} from 'vitest';
 
 import {QueryDefinition} from './query.models';
@@ -20,6 +20,27 @@ class QueryConsumerComponent {
   definition = input.required<QueryDefinition<string>>();
   interval = input(1000);
   query = queryResource(() => this.definition(), {pollInterval: this.interval});
+}
+
+@Component({
+  selector: 'lib-polling-query',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '',
+})
+class PollingQueryComponent {
+  readonly interval = input.required<number>();
+  readonly query = queryResource(() => ({key: ['required-poll'], loader: async () => 1}), {
+    pollInterval: this.interval,
+  });
+}
+
+@Component({
+  imports: [PollingQueryComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: '<lib-polling-query [interval]="interval()" />',
+})
+class PollingQueryHostComponent {
+  readonly interval = signal(500);
 }
 
 async function settle(): Promise<void> {
@@ -43,6 +64,354 @@ describe('queryResource', () => {
     client.destroy();
     vi.useRealTimers();
     vi.restoreAllMocks();
+  });
+
+  it('uses a bound required input for the first polling interval and tracks its changes', async () => {
+    vi.useFakeTimers();
+    const observe = vi.spyOn(client, 'observeQuery');
+    const host = TestBed.createComponent(PollingQueryHostComponent);
+    host.detectChanges();
+    await settle();
+    expect(observe.mock.calls[0][2]?.pollInterval).toBe(500);
+    host.componentInstance.interval.set(1000);
+    host.detectChanges();
+    await settle();
+    expect(client.getEntriesSnapshot()[0].remainingPollDelay).toBe(1000);
+  });
+
+  it('can attach after its first polling configuration was rejected', async () => {
+    const interval = signal(0);
+    const source = new Subject<number>();
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['invalid-interval'], loader: () => source, cancelOnNoObservers: true}), {
+        pollInterval: interval,
+      }),
+    );
+    await settle();
+    expect(resource.error()).toBeInstanceOf(RangeError);
+    interval.set(100);
+    const read = resource.execute();
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+    resource.destroy();
+    await expect(read).rejects.toMatchObject({name: 'AbortError'});
+  });
+
+  it.each([false, true])('owns immediate execution through destruction (surviving observer: %s)', async (shared) => {
+    const source = new Subject<number>();
+    const definition = {key: ['immediate'], loader: vi.fn(() => source), cancelOnNoObservers: true};
+    const first = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    const request = first.execute();
+    const survivor = shared ? client.observeQuery(definition, () => undefined) : undefined;
+    first.destroy();
+    expect(source.observed).toBe(shared);
+    if (shared) {
+      source.next(42);
+      await expect(request).resolves.toBe(42);
+    } else {
+      await expect(request).rejects.toMatchObject({name: 'AbortError'});
+    }
+    expect(definition.loader).toHaveBeenCalledTimes(1);
+    survivor?.();
+  });
+
+  it('owns a read started from the preceding key’s teardown', async () => {
+    const key = signal('a');
+    const replacement = new Subject<number>();
+    let read: Promise<number | undefined> | undefined;
+    const outgoing = new Observable<number>(() => () => {
+      read = resource.execute();
+      void read.catch(() => undefined);
+      resource.destroy();
+    });
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const id = key();
+        return {key: [id], loader: () => (id === 'a' ? outgoing : replacement), cancelOnNoObservers: true};
+      }),
+    );
+    await settle();
+    key.set('b');
+    await settle();
+    expect(replacement.observed).toBe(false);
+    await expect(read).rejects.toMatchObject({name: 'AbortError'});
+  });
+
+  it('joins a reload from a custom client that forwards only public options during registration', async () => {
+    const observe = client.observeQuery.bind(client);
+    const source = new Subject<number>();
+    const loader = vi.fn(() => source);
+    let registrations = 0;
+    vi.spyOn(client, 'observeQuery').mockImplementation((definition, listener, options) => {
+      // Bound the failure so recursive registration produces a deterministic assertion.
+      if (++registrations > 2) throw new Error('Recursive observer registration');
+      return observe(
+        definition,
+        (snapshot) => {
+          if (snapshot.status === 'idle') resource.reload();
+          listener(snapshot);
+        },
+        {pollInterval: options?.pollInterval},
+      );
+    });
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['custom-registration'], loader, cancelOnNoObservers: true})),
+    );
+    await settle();
+    expect(registrations).toBe(1);
+    expect(loader).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({refresh: true}));
+    expect(resource.status()).toBe('loading');
+    expect(resource.isLoading()).toBe(true);
+    source.next(7);
+    await settle();
+    expect(resource.value()).toBe(7);
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+  });
+
+  it.each([false, true])(
+    'keeps a refresh visible when a client forwards the preceding success (copied snapshot: %s)',
+    async (copy) => {
+      const observe = client.observeQuery.bind(client);
+      const source = new Subject<number>();
+      let refreshed = false;
+      vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+        observe(
+          query,
+          (snapshot) => {
+            if (snapshot.status === 'resolved' && !refreshed) {
+              refreshed = true;
+              resource.reload();
+            }
+            listener(copy && snapshot.status === 'reloading' ? {...snapshot} : snapshot);
+          },
+          options,
+        ),
+      );
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['wrapped-refresh'], loader: () => source})),
+      );
+      await settle();
+      source.next(1);
+      await settle();
+      expect(resource.value()).toBe(1);
+      expect(resource.isRefreshing()).toBe(true);
+      source.next(2);
+      await settle();
+      expect(resource.status()).toBe('resolved');
+      expect(resource.value()).toBe(2);
+    },
+  );
+
+  it('keeps purged data hidden when a decorator forwards a structured clone after removal', async () => {
+    const observe = client.observeQuery.bind(client);
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+      observe(
+        query,
+        (snapshot) => {
+          if (snapshot.status === 'resolved') client.removeQueries();
+          listener(structuredClone(snapshot));
+        },
+        options,
+      ),
+    );
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['purged-copy'], loader: () => of(7)})),
+    );
+    await settle();
+    expect(client.getSnapshot(['purged-copy'])).toBeUndefined();
+    expect(resource.status()).toBe('idle');
+    expect(resource.hasValue()).toBe(false);
+    expect(resource.value()).toBeUndefined();
+  });
+
+  it('keeps a removed observer idle when a decorator delivers an earlier success in a microtask', async () => {
+    const observe = client.observeQuery.bind(client);
+    const source = new Subject<number>();
+    let idleAfterPurge = false;
+    let delivered = false;
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+      observe(
+        query,
+        (snapshot) => {
+          if (snapshot.status === 'resolved' && snapshot.value === 2) {
+            queueMicrotask(() => {
+              delivered = true;
+              listener(structuredClone(snapshot));
+            });
+            client.removeQueries();
+            idleAfterPurge = resource.status() === 'idle' && !resource.hasValue();
+          } else listener(snapshot);
+        },
+        options,
+      ),
+    );
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({key: ['deferred-purge'], loader: () => source})),
+    );
+    await settle();
+    source.next(1);
+    await settle();
+    expect(resource.value()).toBe(1);
+    resource.reload();
+    source.next(2);
+    await settle();
+    expect(idleAfterPurge).toBe(true);
+    expect(delivered).toBe(true);
+    expect(client.getSnapshot(['deferred-purge'])).toBeUndefined();
+    expect(resource.status()).toBe('idle');
+    expect(resource.value()).toBeUndefined();
+  });
+
+  it.each(['shallow', 'structured'] as const)(
+    'preserves error translations on a %s copy of a snapshot',
+    async (copy) => {
+      const observe = client.observeQuery.bind(client);
+      const transportError = new Error('transport');
+      const translated = new Error('Service unavailable');
+      vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+        observe(
+          query,
+          (snapshot) => {
+            if (snapshot.status === 'error') {
+              const copied = copy === 'shallow' ? {...snapshot} : structuredClone(snapshot);
+              listener({...copied, error: translated});
+            } else listener(snapshot);
+          },
+          options,
+        ),
+      );
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['translated-error'], loader: () => throwError(() => transportError)})),
+      );
+      await settle();
+      expect(resource.error()).toBe(translated);
+      expect(client.getSnapshot(['translated-error'])?.error).toBe(transportError);
+    },
+  );
+
+  it('keeps an inactive cache entry idle when a custom client reloads and destroys before attaching', async () => {
+    const loader = vi.fn(async () => 7);
+    const definition = {key: ['custom-before-registration'], loader, staleTime: Infinity};
+    await client.fetchQuery(definition);
+    const observe = client.observeQuery.bind(client);
+    vi.spyOn(client, 'observeQuery').mockImplementation((query, listener) => {
+      resource.reload();
+      resource.destroy();
+      return observe(query, listener);
+    });
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    expect(loader).toHaveBeenCalledTimes(1);
+    expect(client.getDiagnostics().totalObserverCount).toBe(0);
+  });
+
+  it('returns the shared result to a reentrant caller destroyed while a peer keeps the read alive', async () => {
+    const source = new Subject<number>();
+    let joined: Promise<number | undefined> | undefined;
+    const definition: QueryDefinition<number> = {
+      key: ['shared-registration'],
+      cancelOnNoObservers: true,
+      loader: () => {
+        joined = resource.execute();
+        void joined.catch(() => undefined);
+        client.observeQuery(definition, () => undefined);
+        resource.destroy();
+        return source;
+      },
+    };
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+    source.next(42);
+    await expect(joined).resolves.toBe(42);
+  });
+
+  it.each(['execute then remove', 'remove then execute'] as const)(
+    'preserves the order of a manual execution and removal inside the initial loader (%s)',
+    async (order) => {
+      let nested: Promise<number | undefined> | undefined;
+      const loader = vi
+        .fn<() => Observable<number>>()
+        .mockImplementationOnce(() => {
+          if (order === 'remove then execute') client.removeQueries();
+          nested = resource.execute();
+          void nested.catch(() => undefined);
+          if (order === 'execute then remove') client.removeQueries();
+          return of(1);
+        })
+        .mockReturnValue(of(2));
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['ordered-removal'], loader, cancelOnNoObservers: true})),
+      );
+      await settle();
+      if (order === 'execute then remove') {
+        expect(loader).toHaveBeenCalledTimes(1);
+        await expect(nested).rejects.toMatchObject({name: 'AbortError'});
+        expect(client.getDiagnostics().entryCount).toBe(0);
+      } else {
+        await expect(nested).resolves.toBe(2);
+        expect(resource.value()).toBe(2);
+        expect(loader).toHaveBeenCalledTimes(2);
+        expect(client.getDiagnostics().totalObserverCount).toBe(1);
+      }
+    },
+  );
+
+  it('does not start an ownerless read when the initial loader removes the entry during attachment', async () => {
+    const source = new Subject<number>();
+    let nested: Promise<number | undefined> | undefined;
+    const loader = vi
+      .fn<() => Observable<number>>()
+      .mockImplementationOnce(() => {
+        client.removeQueries();
+        nested = resource.execute();
+        void nested.catch(() => undefined);
+        resource.destroy();
+        return source;
+      })
+      .mockReturnValue(source);
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => ({
+        key: ['removed-during-attach'],
+        loader,
+        cancelOnNoObservers: true,
+      })),
+    );
+    await settle();
+    expect(source.observed).toBe(false);
+    await expect(nested).rejects.toMatchObject({name: 'AbortError'});
+  });
+
+  it('checks the current selection after the outgoing transport disables the query', async () => {
+    const key = signal<string | undefined>('a');
+    const replacement = vi.fn(() => of(2));
+    const outgoing = new Observable<number>(() => () => key.set(undefined));
+    const resource = TestBed.runInInjectionContext(() =>
+      queryResource(() => {
+        const id = key();
+        return id
+          ? {key: [id], loader: id === 'a' ? () => outgoing : replacement, cancelOnNoObservers: true}
+          : undefined;
+      }),
+    );
+    await settle();
+    key.set('b');
+    await settle();
+    expect(resource.status()).toBe('idle');
+    expect(replacement).not.toHaveBeenCalled();
+  });
+
+  it('reports a failed manual recovery after removal once with its manual trigger', async () => {
+    const report = vi.fn();
+    client.destroy();
+    client = new QueryClient({onQueryError: report});
+    const failure = new Error('manual refresh failed');
+    const loader = vi.fn<() => Promise<number>>().mockResolvedValueOnce(1).mockRejectedValueOnce(failure);
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => ({key: ['recover'], loader}), {client}));
+    await settle();
+    client.removeQueries();
+    await expect(resource.execute()).rejects.toBe(failure);
+    expect(loader).toHaveBeenCalledTimes(2);
+    expect(report).toHaveBeenCalledExactlyOnceWith(failure, expect.objectContaining({trigger: 'manual'}));
   });
 
   it('distinguishes falsy initial errors from refresh errors after successful undefined data', async () => {

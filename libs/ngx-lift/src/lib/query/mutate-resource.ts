@@ -124,11 +124,21 @@ export function mutateResource<TArgs, TResult, E = Error>(
   const invalidationError = signal<unknown | null>(null);
   const settledStatus = signal<'idle' | 'resolved' | 'error'>('idle');
   const outstanding = signal(0);
+  const queued = new Map<number, {start: () => void; reject: (failure: Error) => void}>();
+  const startQueued = (invocation: number) => {
+    const entry = queued.get(invocation);
+    if (!entry) return;
+    queued.delete(invocation);
+    entry.start();
+  };
   let pending: Promise<TResult> | undefined;
   let latestInvocation = 0;
   let destroyed = false;
   injector.get(DestroyRef).onDestroy(() => {
     destroyed = true;
+    for (const entry of queued.values()) entry.reject(new Error('Mutation resource has been destroyed'));
+    queued.clear();
+    pending = undefined;
     outstanding.set(0);
   });
 
@@ -210,13 +220,20 @@ export function mutateResource<TArgs, TResult, E = Error>(
           },
         );
       };
-      // Install ownership before synchronous transport callbacks can reenter mutate.
+      // Register the initiating caller before synchronous transport callbacks can join the request.
       pending = request;
-      if (options.concurrency === 'concat' && preceding) void preceding.then(start, start);
-      else start();
+      observeOutcome(request, args, callOptions);
       // Event handlers may ignore this Promise, while awaiting callers still receive its rejection.
       void request.catch(() => undefined);
-      return observeOutcome(request, args, callOptions);
+      if (options.concurrency === 'concat' && preceding) {
+        queued.set(invocation, {start, reject});
+        // A stalled predecessor only retains the id once disposal releases the queued invocation.
+        const next = startQueued.bind(undefined, invocation);
+        void preceding.then(next, next);
+      } else {
+        start();
+      }
+      return request;
     },
   };
 }

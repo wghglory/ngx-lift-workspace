@@ -62,8 +62,10 @@ describe('MutateResourceDemoComponent', () => {
     await vi.waitFor(() => expect(component.callbackOutcome()).toBe('success'), {timeout: 3000});
     expect(component.callbackBusy()).toBe(false);
 
+    const setBusy = vi.spyOn(component.callbackBusy, 'set');
     component.submitCallbackWrite(true);
     await vi.waitFor(() => expect(component.callbackOutcome()).toBe('error'), {timeout: 3000});
+    expect(setBusy.mock.calls).toEqual([[true], [false]]);
     expect(component.callbackBusy()).toBe(false);
   });
 

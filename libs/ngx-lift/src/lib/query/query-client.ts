@@ -15,6 +15,7 @@ import {
   QueryStatus,
   QueryTag,
 } from './query.models';
+import {onQueryObserverAttached, OwnedQueryObserverOptions, dispatchQuerySnapshot} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 import {QueryTimeoutError} from './query-errors';
 import {executeQueryRequest, resolveQueryReadPolicy} from './query-request';
@@ -29,6 +30,7 @@ interface QueryRequest<T> {
 }
 
 interface QueryObserver<T> {
+  readonly handle: QueryObserverHandle;
   readonly listener: (snapshot: QuerySnapshot<T>) => void;
   options: QueryObserverOptions;
 }
@@ -129,20 +131,6 @@ export class QueryClient {
   ): QueryObserverHandle {
     this.validateObserverOptions(options);
     const entry = this.ensureEntry(definition);
-    const observer: QueryObserver<T> = {listener, options};
-    entry.observers.add(observer);
-    entry.inactiveSince = null;
-    this.clearTimer(entry, 'gcTimer');
-    this.notify(entry, observer, this.snapshot(entry));
-    // The initial synchronous listener may remove this query or destroy the client.
-    if (this.isAttached(entry)) {
-      if (options.refresh || this.isStale(entry)) {
-        this.startRequest(entry, options.refresh ?? false, 'initial');
-      } else {
-        this.schedulePoll(entry);
-        this.scheduleStaleness(entry);
-      }
-    }
     let attached = true;
     const unsubscribe = (() => {
       if (!attached) {
@@ -158,7 +146,8 @@ export class QueryClient {
           entry.invalidated = true;
           entry.status = entry.hasValue ? 'resolved' : 'idle';
           this.resetRetryState(entry);
-          for (const request of entry.requests) {
+          // An abort listener can start a new request for a replacement observer.
+          for (const request of [...entry.requests]) {
             request.controller.abort();
           }
         }
@@ -194,6 +183,22 @@ export class QueryClient {
         this.schedulePoll(entry);
       }
     };
+    const observer: QueryObserver<T> = {listener, options, handle: unsubscribe};
+    entry.observers.add(observer);
+    entry.inactiveSince = null;
+    this.clearTimer(entry, 'gcTimer');
+    const ownedOptions: OwnedQueryObserverOptions = options;
+    ownedOptions[onQueryObserverAttached]?.(unsubscribe);
+    if (unsubscribe.isAttached()) this.notify(entry, observer, this.snapshot(entry));
+    // The initial synchronous listener may remove this query or destroy the client.
+    if (unsubscribe.isAttached()) {
+      if (options.refresh || this.isStale(entry)) {
+        this.startRequest(entry, options.refresh ?? false, 'initial');
+      } else {
+        this.schedulePoll(entry);
+        this.scheduleStaleness(entry);
+      }
+    }
     return unsubscribe;
   }
 
@@ -578,7 +583,7 @@ export class QueryClient {
 
   private notify<T>(entry: QueryEntry<T>, observer: QueryObserver<T>, snapshot: QuerySnapshot<T>): void {
     this.invokeCallback(
-      () => observer.listener(snapshot),
+      () => dispatchQuerySnapshot(this, entry, observer.handle, () => observer.listener(snapshot)),
       (error) => this.reportDiagnostic(error, {key: entry.key, phase: 'observer'}),
     );
   }
@@ -771,15 +776,16 @@ export class QueryClient {
     this.clearTimer(entry, 'pollTimer');
     this.clearTimer(entry, 'gcTimer');
     this.clearTimer(entry, 'staleTimer');
-    for (const request of entry.requests) {
-      request.controller.abort();
-    }
+    // Transport teardown can recreate this key and register fresh tag memberships.
     for (const membership of entry.tagMemberships) {
       const keys = this.tagIndex.get(membership);
       keys?.delete(entry.serializedKey);
       if (!keys?.size) {
         this.tagIndex.delete(membership);
       }
+    }
+    for (const request of entry.requests) {
+      request.controller.abort();
     }
     entry.value = undefined;
     entry.hasValue = false;

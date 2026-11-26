@@ -1,11 +1,11 @@
 import {Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
-import {of, Subject} from 'rxjs';
+import {NEVER, Observable, of, Subject} from 'rxjs';
 import {afterEach, beforeEach, describe, expect, expectTypeOf, it, vi} from 'vitest';
 
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
-import {QueryResourceItem, queryResources} from './query-resources';
+import {QueryResourceItem, queryResources, QueryResourcesRef} from './query-resources';
 
 async function settle() {
   TestBed.tick();
@@ -14,6 +14,39 @@ async function settle() {
 }
 
 describe('queryResources', () => {
+  it('executes the latest retained row definition before reconciliation', async () => {
+    const items = signal([{id: 1, revision: 'first'}]);
+    const rows = TestBed.runInInjectionContext(() =>
+      queryResources(items, (item) => ({key: [item.id], loader: () => of(item.revision)})),
+    );
+    await settle();
+    const row = rows()[0];
+    items.set([{id: 1, revision: 'second'}]);
+    await expect(row.execute()).resolves.toBe('second');
+    await settle();
+    expect(rows()[0]).toBe(row);
+    expect(row.value()).toBe('second');
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+  });
+
+  it('disposes replacement rows when an outgoing teardown destroys the collection', async () => {
+    const ids = signal(['a']);
+    const replacement = vi.fn(() => NEVER);
+    const rows: QueryResourcesRef<never, string> = TestBed.runInInjectionContext(() =>
+      queryResources(ids, (id) => ({
+        key: [id],
+        cancelOnNoObservers: true,
+        loader: id === 'a' ? () => new Observable<never>(() => () => rows.destroy()) : replacement,
+      })),
+    );
+    await settle();
+    ids.set(['b']);
+    await settle();
+    expect(rows()).toEqual([]);
+    expect(client.getDiagnostics().totalObserverCount).toBe(0);
+    expect(replacement).not.toHaveBeenCalled();
+  });
+
   it('keeps typed input identity available before data and after a failed read', async () => {
     const items = signal([{id: 1, label: 'first'}]);
     const pending = new Subject<string>();

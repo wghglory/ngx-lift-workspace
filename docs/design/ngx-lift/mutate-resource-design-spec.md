@@ -154,12 +154,15 @@ completion) and `exhaust` (several callers join one Promise).
 
 ```typescript
 async save(name: string): Promise<void> {
+  this.pendingByForm.set(true);
   try {
     const saved = await this.saveMutation.mutate({name});
     this.dialog.close(); // application-owned success side effect, bound to this invocation
     this.announce(saved.name); // application-owned localized announcement
   } catch {
     // error() keeps the failed write visible until the next attempt.
+  } finally {
+    this.pendingByForm.set(false);
   }
   // Configured invalidateTags refreshed matching observers automatically; no reload() call here.
 }
@@ -168,8 +171,6 @@ void this.saveMutation.mutate({name}, {
   onSuccess: (saved) => this.announce(saved.name),
   onError: () => this.announceSaveFailure(), // application-owned localized text
 });
-// Fire-and-forget is also safe: void this.saveMutation.mutate({name}).then(onSaved, onFailed);
-// Cleanup for either outcome: void this.saveMutation.mutate({name}).finally(() => this.pendingByForm.set(false));
 ```
 
 `status()` / `value()` describe the latest accepted invocation, not every invocation. For analytics, toasts, closing
@@ -310,8 +311,8 @@ remains true while any accepted invocation is outstanding, including work queued
 ### 3.3 Server Boundary & Argument Snapshots
 
 Disposal or unmounting does not cancel an already accepted server-side write. Pass immutable argument snapshots to
-prevent accidental mutations of request payloads while requests are pending. Queued `concat` mutations will not start
-after resource disposal.
+prevent accidental mutations of request payloads while requests are pending. Disposal immediately rejects queued
+`concat` mutations, even while a submitted write is still pending.
 
 ### 3.4 Placement & Double Invalidation Prevention (Point B)
 
@@ -366,15 +367,17 @@ mutate(args: TArgs, options?: MutateResourceCallOptions<TArgs, TResult, E>): Pro
 
 ```typescript
 // Services and translations below are application-owned, not library API.
-void this.saveMutation.mutate(
-  {name},
-  {
-    onSuccess: (saved, args) => this.announce(this.translate('saved', {name: args.name})),
-    onError: (_error, args) => this.analytics.track('save-failed', args),
-  },
-);
-// Cleanup for both outcomes stays on the returned Promise:
-// void this.saveMutation.mutate({name}).finally(() => this.pendingByForm.set(false));
+this.pendingByForm.set(true);
+void this.saveMutation
+  .mutate(
+    {name},
+    {
+      onSuccess: (saved, args) => this.announce(this.translate('saved', {name: args.name})),
+      onError: (_error, args) => this.analytics.track('save-failed', args),
+    },
+  )
+  .catch(() => undefined) // onError has already reported the failure.
+  .finally(() => this.pendingByForm.set(false));
 ```
 
 `onError` is typed with the resource's `E` (default `Error`) to match `error()`; as elsewhere in the API this is a

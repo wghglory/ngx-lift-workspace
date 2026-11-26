@@ -46,16 +46,16 @@ export function queryResources<I, T>(
   if (!options.injector) assertInInjectionContext(queryResources);
   const injector = options.injector ?? inject(Injector);
   const requested = computed(() => {
-    const seen = new Set<string>();
-    return items().map((item) => {
+    const byKey = new Map<string, {query: QueryDefinition<T>; item: I}>();
+    for (const item of items()) {
       const query = definition(item);
       const key = serializeQueryKey(query.key);
-      if (seen.has(key)) throw new Error(`Duplicate queryResources key: ${key}`);
-      seen.add(key);
-      return {query, key, item};
-    });
+      if (byKey.has(key)) throw new Error(`Duplicate queryResources key: ${key}`);
+      byKey.set(key, {query, item});
+    }
+    return byKey;
   });
-  type Entry = {definition: WritableSignal<QueryDefinition<T>>; item: WritableSignal<I>; ref: QueryResourceItem<T, I>};
+  type Entry = {item: WritableSignal<I>; ref: QueryResourceItem<T, I>};
   const active = signal<ReadonlyMap<string, Entry>>(new Map());
   let destroyed = false;
   const reconcile = effect(
@@ -65,21 +65,19 @@ export function queryResources<I, T>(
         if (destroyed) return;
         const previous = active();
         const next = new Map<string, Entry>();
-        for (const {query, key, item} of queries) {
+        for (const [key, {item}] of queries) {
           let entry = previous.get(key);
           if (entry) {
-            entry.definition.set(query);
             entry.item.set(item);
           } else {
-            const current = signal(query);
-            const ref = queryResource(() => current(), {...options, injector});
+            const ref = queryResource(() => requested().get(key)?.query, {...options, injector});
             const currentItem = signal(item);
-            entry = {definition: current, item: currentItem, ref: {...ref, key, item: currentItem.asReadonly()}};
+            entry = {item: currentItem, ref: {...ref, key, item: currentItem.asReadonly()}};
           }
           next.set(key, entry);
         }
-        for (const [key, entry] of previous) if (!next.has(key)) entry.ref.destroy();
         active.set(next);
+        for (const [key, entry] of previous) if (!next.has(key)) entry.ref.destroy();
       });
     },
     {injector, manualCleanup: true},
@@ -87,10 +85,12 @@ export function queryResources<I, T>(
   const rows = computed(() => {
     const entries = active();
     if (destroyed) return [];
-    return requested().flatMap(({key}) => {
+    const ordered: QueryResourceItem<T, I>[] = [];
+    for (const key of requested().keys()) {
       const entry = entries.get(key);
-      return entry ? [entry.ref] : [];
-    });
+      if (entry) ordered.push(entry.ref);
+    }
+    return ordered;
   });
   const dispose = () => {
     if (destroyed) return;
