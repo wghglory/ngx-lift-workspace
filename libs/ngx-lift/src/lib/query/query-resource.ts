@@ -14,6 +14,7 @@ import {QueryDefinition, QueryObserverHandle, QueryRecoveryOptions, QuerySnapsho
 import {QueryClient} from './query-client';
 import {QUERY_CLIENT} from './query-client.token';
 import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-errors';
+import {onQueryObserverAttached, OwnedQueryObserverOptions} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 
 /**
@@ -131,13 +132,23 @@ export function queryResource<T, E = Error>(
     // Detaching can run application teardown that changes the selection, executes or destroys this ref.
     const current = requested();
     if (destroyed || current?.key !== key) return;
-    if (observer) return manual && observer.key === key ? execute(key) : undefined;
+    if (observer) return manual && observer.key === key ? execute() : undefined;
     const interval = pollInterval();
     const next: Observation = {key, interval};
     observer = next;
     let execution: Promise<T> | undefined;
     let startManualRead = manual;
     try {
+      const onAttached = (handle: QueryObserverHandle) => {
+        if (observer === next) next.handle = handle;
+        else handle();
+      };
+      const observerOptions: OwnedQueryObserverOptions = {
+        pollInterval: interval,
+        refetchOnFocus: options.refetchOnFocus,
+        refetchOnReconnect: options.refetchOnReconnect,
+        [onQueryObserverAttached]: onAttached,
+      };
       const handle = client.observeQuery(
         current.query,
         (snapshot) => {
@@ -150,15 +161,10 @@ export function queryResource<T, E = Error>(
             execution = refresh(current.query);
           }
         },
-        {
-          pollInterval: interval,
-          refetchOnFocus: options.refetchOnFocus,
-          refetchOnReconnect: options.refetchOnReconnect,
-        },
+        observerOptions,
       );
-      // A synchronous loader or notification may have disposed or replaced this observer.
-      if (observer === next) next.handle = handle;
-      else handle();
+      // A custom client may only return its handle after synchronous publication.
+      if (!next.handle) onAttached(handle);
     } catch (error) {
       if (observer === next) {
         observer = undefined;
@@ -220,21 +226,13 @@ export function queryResource<T, E = Error>(
     }
   };
   const unregisterDestroy = injector.get(DestroyRef).onDestroy(destroy);
-  const execute = (expectedKey?: string): Promise<T> => {
+  const execute = (): Promise<T> => {
     if (destroyed) return Promise.reject(new QueryResourceDisposedError());
     try {
       return untracked(() => {
         const current = requested();
         if (!current) return Promise.reject(new QueryResourceDisabledError());
-        if (expectedKey !== undefined && current.key !== expectedKey) {
-          throw new DOMException('Query selection changed before execution', 'AbortError');
-        }
-        if (observer?.key === current.key) {
-          // Reentrant calls during registration must wait for the handle: the loader or an earlier
-          // listener can remove the entry before observeQuery returns.
-          if (!observer.handle) return Promise.resolve().then(() => execute(current.key));
-          if (observer.handle.isAttached()) return refresh(current.query);
-        }
+        if (observer?.key === current.key && observer.handle?.isAttached()) return refresh(current.query);
         const execution = observe(current.key, true);
         if (execution) return execution;
         if (destroyed) throw new QueryResourceDisposedError();
@@ -271,7 +269,7 @@ export function queryResource<T, E = Error>(
       void execute().catch(() => undefined);
       return true;
     },
-    execute: () => execute(),
+    execute,
     destroy: () => {
       unregisterDestroy();
       destroy();

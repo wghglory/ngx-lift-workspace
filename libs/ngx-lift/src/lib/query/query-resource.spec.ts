@@ -24,6 +24,7 @@ class QueryConsumerComponent {
 
 @Component({
   selector: 'lib-polling-query',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '',
 })
 class PollingQueryComponent {
@@ -35,6 +36,7 @@ class PollingQueryComponent {
 
 @Component({
   imports: [PollingQueryComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: '<lib-polling-query [interval]="interval()" />',
 })
 class PollingQueryHostComponent {
@@ -134,6 +136,58 @@ describe('queryResource', () => {
     await expect(read).rejects.toMatchObject({name: 'AbortError'});
   });
 
+  it('returns the shared result to a reentrant caller destroyed while a peer keeps the read alive', async () => {
+    const source = new Subject<number>();
+    let joined: Promise<number | undefined> | undefined;
+    const definition: QueryDefinition<number> = {
+      key: ['shared-registration'],
+      cancelOnNoObservers: true,
+      loader: () => {
+        joined = resource.execute();
+        void joined.catch(() => undefined);
+        client.observeQuery(definition, () => undefined);
+        resource.destroy();
+        return source;
+      },
+    };
+    const resource = TestBed.runInInjectionContext(() => queryResource(() => definition));
+    await settle();
+    expect(client.getDiagnostics().totalObserverCount).toBe(1);
+    source.next(42);
+    await expect(joined).resolves.toBe(42);
+  });
+
+  it.each(['execute then remove', 'remove then execute'] as const)(
+    'preserves the order of a manual execution and removal inside the initial loader (%s)',
+    async (order) => {
+      let nested: Promise<number | undefined> | undefined;
+      const loader = vi
+        .fn<() => Observable<number>>()
+        .mockImplementationOnce(() => {
+          if (order === 'remove then execute') client.removeQueries();
+          nested = resource.execute();
+          void nested.catch(() => undefined);
+          if (order === 'execute then remove') client.removeQueries();
+          return of(1);
+        })
+        .mockReturnValue(of(2));
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['ordered-removal'], loader, cancelOnNoObservers: true})),
+      );
+      await settle();
+      if (order === 'execute then remove') {
+        expect(loader).toHaveBeenCalledTimes(1);
+        await expect(nested).rejects.toMatchObject({name: 'AbortError'});
+        expect(client.getDiagnostics().entryCount).toBe(0);
+      } else {
+        await expect(nested).resolves.toBe(2);
+        expect(resource.value()).toBe(2);
+        expect(loader).toHaveBeenCalledTimes(2);
+        expect(client.getDiagnostics().totalObserverCount).toBe(1);
+      }
+    },
+  );
+
   it('does not start an ownerless read when the initial loader removes the entry during attachment', async () => {
     const source = new Subject<number>();
     let nested: Promise<number | undefined> | undefined;
@@ -156,7 +210,7 @@ describe('queryResource', () => {
     );
     await settle();
     expect(source.observed).toBe(false);
-    await expect(nested).rejects.toBeInstanceOf(Error);
+    await expect(nested).rejects.toMatchObject({name: 'AbortError'});
   });
 
   it('checks the current selection after the outgoing transport disables the query', async () => {

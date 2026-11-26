@@ -15,6 +15,7 @@ import {
   QueryStatus,
   QueryTag,
 } from './query.models';
+import {onQueryObserverAttached, OwnedQueryObserverOptions} from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 import {QueryTimeoutError} from './query-errors';
 import {executeQueryRequest, resolveQueryReadPolicy} from './query-request';
@@ -133,16 +134,6 @@ export class QueryClient {
     entry.observers.add(observer);
     entry.inactiveSince = null;
     this.clearTimer(entry, 'gcTimer');
-    this.notify(entry, observer, this.snapshot(entry));
-    // The initial synchronous listener may remove this query or destroy the client.
-    if (this.isAttached(entry)) {
-      if (options.refresh || this.isStale(entry)) {
-        this.startRequest(entry, options.refresh ?? false, 'initial');
-      } else {
-        this.schedulePoll(entry);
-        this.scheduleStaleness(entry);
-      }
-    }
     let attached = true;
     const unsubscribe = (() => {
       if (!attached) {
@@ -195,6 +186,18 @@ export class QueryClient {
         this.schedulePoll(entry);
       }
     };
+    const ownedOptions: OwnedQueryObserverOptions = options;
+    ownedOptions[onQueryObserverAttached]?.(unsubscribe);
+    if (unsubscribe.isAttached()) this.notify(entry, observer, this.snapshot(entry));
+    // The initial synchronous listener may remove this query or destroy the client.
+    if (unsubscribe.isAttached()) {
+      if (options.refresh || this.isStale(entry)) {
+        this.startRequest(entry, options.refresh ?? false, 'initial');
+      } else {
+        this.schedulePoll(entry);
+        this.scheduleStaleness(entry);
+      }
+    }
     return unsubscribe;
   }
 
