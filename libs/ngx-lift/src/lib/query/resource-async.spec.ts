@@ -596,9 +596,12 @@ describe('resourceAsync lifecycle regressions', () => {
       await flushEffects();
       expect(resource.value()).toBe(99);
       expect(resource.status()).toBe('local');
+      // The superseded notification still captures dependencies but must not start an operation.
+      expect(factory).toHaveBeenCalledTimes(2);
       id.set(3);
       await flushEffects();
       expect(resource.value()).toBe(3);
+      expect(factory).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -1709,6 +1712,7 @@ describe('WritableResourceRef', () => {
         // Set local value
         resource.set({id: 99, name: 'Local'});
         expect(resource.status()).toBe('local');
+        // Clear the one-tick direct-factory suppression before testing a later parameter change.
         await Promise.resolve();
 
         // Change signal - should trigger refetch
@@ -2035,6 +2039,7 @@ describe('WritableResourceRef', () => {
         resource.reset();
         expect(resource.status()).toBe('idle');
         expect(resource.value()).toBeUndefined();
+        // Clear the one-tick direct-factory suppression before testing a later parameter change.
         await Promise.resolve();
 
         // Changing reactive signal dependency should trigger refetch
