@@ -8,5 +8,10 @@ export interface OwnedQueryObserverOptions extends QueryObserverOptions {
   readonly [onQueryObserverAttached]?: (handle: QueryObserverHandle) => void;
 }
 
-/** Orders client publications without adding internal metadata to public snapshot objects. */
-export const querySnapshotRevisions = new WeakMap<QuerySnapshot<unknown>, number>();
+/** Carried by object spread so decorators can adapt a publication without losing its order. */
+export const querySnapshotRevision = Symbol('querySnapshotRevision');
+
+/** Custom clients may deliver a snapshot without the client's publication order. */
+export interface OrderedQuerySnapshot<T> extends QuerySnapshot<T> {
+  readonly [querySnapshotRevision]?: number;
+}

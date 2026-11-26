@@ -201,6 +201,33 @@ describe('queryResource', () => {
     },
   );
 
+  it.each(['shallow', 'structured'] as const)(
+    'preserves error translations on a %s copy of a snapshot',
+    async (copy) => {
+      const observe = client.observeQuery.bind(client);
+      const transportError = new Error('transport');
+      const translated = new Error('Service unavailable');
+      vi.spyOn(client, 'observeQuery').mockImplementation((query, listener, options) =>
+        observe(
+          query,
+          (snapshot) => {
+            if (snapshot.status === 'error') {
+              const copied = copy === 'shallow' ? {...snapshot} : structuredClone(snapshot);
+              listener({...copied, error: translated});
+            } else listener(snapshot);
+          },
+          options,
+        ),
+      );
+      const resource = TestBed.runInInjectionContext(() =>
+        queryResource(() => ({key: ['translated-error'], loader: () => throwError(() => transportError)})),
+      );
+      await settle();
+      expect(resource.error()).toBe(translated);
+      expect(client.getSnapshot(['translated-error'])?.error).toBe(transportError);
+    },
+  );
+
   it('keeps an inactive cache entry idle when a custom client reloads and destroys before attaching', async () => {
     const loader = vi.fn(async () => 7);
     const definition = {key: ['custom-before-registration'], loader, staleTime: Infinity};

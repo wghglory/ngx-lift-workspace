@@ -17,7 +17,8 @@ import {QueryResourceDisabledError, QueryResourceDisposedError} from './query-er
 import {
   onQueryObserverAttached,
   OwnedQueryObserverOptions,
-  querySnapshotRevisions,
+  OrderedQuerySnapshot,
+  querySnapshotRevision,
 } from './query-observer-registration';
 import {serializeQueryKey} from './query-key';
 
@@ -156,18 +157,10 @@ export function queryResource<T, E = Error>(
       };
       const handle = client.observeQuery(
         current.query,
-        (snapshot) => {
+        (snapshot: OrderedQuerySnapshot<T>) => {
           if (observer !== next) return;
           // A client wrapper can trigger a nested publication before forwarding the outer snapshot.
-          let revision = querySnapshotRevisions.get(snapshot);
-          if (revision === undefined) {
-            // A wrapper may copy the snapshot. Use the current entry to recover its publication order.
-            snapshot =
-              next.handle?.isAttached() === false
-                ? idleSnapshot<T>()
-                : (client.getSnapshot<T>(current.query.key) ?? snapshot);
-            revision = querySnapshotRevisions.get(snapshot);
-          }
+          const revision = snapshot[querySnapshotRevision];
           if (revision !== undefined) {
             if (revision < lastRevision) return;
             lastRevision = revision;
