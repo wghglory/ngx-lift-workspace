@@ -173,6 +173,14 @@ describe('form-bindings utilities', () => {
             : toSignalForm(new FormGroup({name: control})).bindValidators('name', policy);
         TestBed.flushEffects();
         expect(control.hasValidator(selectedMinimum)).toBe(true);
+        strict.set(false);
+        TestBed.flushEffects();
+        expect(control.hasValidator(selectedMinimum)).toBe(false);
+        expect(control.valid).toBe(true);
+        strict.set(true);
+        TestBed.flushEffects();
+        expect(control.hasValidator(selectedMinimum)).toBe(true);
+        expect(control.getError('minlength').requiredLength).toBe(4);
         control.addValidators(addedMinimum);
         control.updateValueAndValidity();
         const compiled = control.validator;

@@ -157,6 +157,12 @@ try {
   assert.equal(compiledOrderValidator(instance.orderControl).minlength.requiredLength, 8);
 
   await until(() => instance.identityControl.hasValidator(instance.identityMinimum));
+  instance.identityStrict.set(false);
+  await until(() => !instance.identityControl.hasValidator(instance.identityMinimum));
+  assert.equal(instance.identityControl.valid, true, 'A live computed policy must remove its validators');
+  instance.identityStrict.set(true);
+  await until(() => instance.identityControl.hasValidator(instance.identityMinimum));
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 4);
   const addedIdentityMinimum = Validators.minLength(8);
   instance.identityControl.addValidators(addedIdentityMinimum);
   instance.identityControl.updateValueAndValidity();
