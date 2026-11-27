@@ -86,6 +86,8 @@ export function bindControlDisabled<T = unknown>(
 /**
  * Resolves a validator argument into `ValidatorFn | ValidatorFn[] | null`.
  * Supports a raw `ValidatorFn`, array of validators, `null`, `Signal`, or a 0-argument getter function.
+ * Wrap zero-argument validators in an array when they can return null: a bare function returning null is
+ * indistinguishable from a getter that clears validators.
  */
 export function resolveValidators(
   validators:
@@ -115,6 +117,7 @@ export function resolveValidators(
  * Declaratively synchronizes an `AbstractControl`'s validators with a reactive signal or getter.
  *
  * Replaces the control's synchronous validators and re-evaluates validity whenever the signal emits.
+ * Pass `[validator]` for a zero-argument validator that can return null, so it remains installed for later edits.
  *
  * @example
  * ```typescript

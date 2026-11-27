@@ -409,7 +409,25 @@ describe('form-bindings utilities', () => {
     });
   });
 
-  it('accepts a zero-argument validator that returns null and a reactive getter', () => {
+  it('retains an initially valid zero-argument validator passed in an array', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('value');
+      let blocked = false;
+      const validator: ValidatorFn = () => (blocked ? {blocked: true} : null);
+      bindControlValidators(control, [validator]);
+      TestBed.flushEffects();
+      expect(control.hasValidator(validator)).toBe(true);
+      expect(control.valid).toBe(true);
+      blocked = true;
+      control.updateValueAndValidity();
+      expect(control.hasError('blocked')).toBe(true);
+      blocked = false;
+      control.updateValueAndValidity();
+      expect(control.valid).toBe(true);
+    });
+  });
+
+  it('preserves null-clearing and reactive validator getter behavior', () => {
     TestBed.runInInjectionContext(() => {
       const control = new FormControl('value');
       const noop: ValidatorFn = () => null;
