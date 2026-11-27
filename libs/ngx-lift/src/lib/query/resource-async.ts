@@ -833,15 +833,17 @@ export function resourceAsync<T, P, E = Error>(
     );
   };
   const resume = () => {
+    // Outgoing teardown may locally override/reset the resource; the accepted manual trigger supersedes it.
+    localParamsSnapshot = undefined;
+    directDependencies?.resume();
     suppressedTrigger = undefined;
     reloadTrigger.update((value) => value + 1);
   };
   const reload = () => {
     if (disposed || (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)))
       return false;
-    localParamsSnapshot = undefined;
-    directDependencies?.resume();
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by reload'));
+    if (disposed) return false;
     if (options.behavior === 'exhaust') queuedExecution = ++sequence;
     if (untracked(statusSignal) === 'idle') statusSignal.set('loading');
     resume();
@@ -876,18 +878,18 @@ export function resourceAsync<T, P, E = Error>(
     void promise.catch(noop);
     return promise;
   };
+  const disposedExecution = () => {
+    const promise = Promise.reject<T>(new ResourceAsyncDisposedError());
+    void promise.catch(noop);
+    return promise;
+  };
   const execute = () => {
-    if (disposed) {
-      const promise = Promise.reject<T>(new ResourceAsyncDisposedError());
-      void promise.catch(noop);
-      return promise;
-    }
+    if (disposed) return disposedExecution();
     if (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)) {
       return executionPromise(currentOperation?.id ?? (queuedExecution as number));
     }
-    localParamsSnapshot = undefined;
-    directDependencies?.resume();
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by newer execution'));
+    if (disposed) return disposedExecution();
     queuedExecution = ++sequence;
     const promise = executionPromise(queuedExecution);
     valueSignal.set(undefined);

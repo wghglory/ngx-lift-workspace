@@ -24,6 +24,85 @@ interface User {
 }
 
 describe('resourceAsync lifecycle regressions', () => {
+  it.each(
+    (['factory', 'params'] as const).flatMap((source) =>
+      (['execute', 'reload'] as const).flatMap((manual) =>
+        (['set', 'reset'] as const).flatMap((local) =>
+          (['abort', 'unsubscribe'] as const).map((cleanup) => ({source, manual, local, cleanup})),
+        ),
+      ),
+    ),
+  )('starts $source $manual after $cleanup cleanup calls $local', async ({source, manual, local, cleanup}) => {
+    const id = signal(1);
+    let starts = 0;
+    const load = (value: number, signal: AbortSignal) => {
+      starts++;
+      if (starts > 1) return of(value);
+      return new Observable<number>(() => {
+        const cancel = () => {
+          if (local === 'set') resource.set(99);
+          else resource.reset();
+        };
+        if (cleanup === 'abort') signal.addEventListener('abort', cancel, {once: true});
+        return cleanup === 'unsubscribe' ? cancel : undefined;
+      });
+    };
+    const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+      source === 'factory'
+        ? resourceAsync(({abortSignal}) => load(id(), abortSignal))
+        : resourceAsync({params: () => id(), loader: (value, {abortSignal}) => load(value, abortSignal)}),
+    );
+    await flushEffects();
+    const execution = manual === 'execute' ? resource.execute() : undefined;
+    if (manual === 'reload') expect(resource.reload()).toBe(true);
+    await flushEffects();
+    expect(starts).toBe(2);
+    expect(resource.status()).toBe('resolved');
+    expect(resource.value()).toBe(1);
+    if (execution) await expect(execution).resolves.toBe(1);
+  });
+
+  it.each(['set', 'reset'] as const)('lets %s after replacement execute cancel its queued work', async (local) => {
+    let starts = 0;
+    const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+      resourceAsync(() => {
+        starts++;
+        return new Observable<number>(() => () => resource.set(99));
+      }),
+    );
+    await flushEffects();
+    const execution = resource.execute();
+    if (local === 'set') resource.set(100);
+    else resource.reset();
+    await flushEffects();
+    await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+    expect(starts).toBe(1);
+    expect(resource.status()).toBe(local === 'set' ? 'local' : 'idle');
+    expect(resource.value()).toBe(local === 'set' ? 100 : undefined);
+  });
+
+  it.each(['execute', 'reload'] as const)(
+    'does not accept %s after its cancellation callback destroys the owner',
+    async (manual) => {
+      let starts = 0;
+      const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+        resourceAsync(() => {
+          starts++;
+          return new Observable<number>(() => () => resource.destroy());
+        }),
+      );
+      await flushEffects();
+      if (manual === 'execute') {
+        const execution = resource.execute();
+        await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncDisposedError'});
+      } else {
+        expect(resource.reload()).toBe(false);
+      }
+      await flushEffects();
+      expect(starts).toBe(1);
+    },
+  );
+
   it.each(['set', 'update', 'reset'] as const)(
     'preserves a later direct-factory %s without starting discarded work',
     async (action) => {

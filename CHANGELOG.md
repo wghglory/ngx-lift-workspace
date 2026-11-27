@@ -8,6 +8,17 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- `resourceAsync` replacement `execute()` and `reload()` clear superseded dependency suppression after outgoing teardown
+  callbacks finish, so a teardown's local write cannot strand the accepted replacement. Disposal during teardown rejects
+  execution or refuses reload instead of queuing work after destruction.
+- Validator binding dispatchers stop reading getter policies when their effect or injector is destroyed, while leaving
+  the last selected policy installed. The public `resolveValidators()` helper preserves snapshot return values and
+  selected validator identities.
+- Historical section and finding links to the combined upload/reactive review continue to reach links to their split
+  reports.
+
 ### Breaking compatibility notes
 
 The upload/reactive API review fixes include the following incompatible corrections. No release version or new 21.x
@@ -22,7 +33,9 @@ compatibility exception is approved by these notes; follow the [version policy](
 - Zero-argument validator callbacks remain installed as dispatchers even when initially returning `null`. Getter results
   still select the effective validators, but a null result does not require `control.validator === null`. Pass
   `[validator]` when `hasValidator` or validator removal needs the original callback identity. Existing one-argument
-  `resolveValidators()` calls remain supported.
+  `resolveValidators()` calls retain their snapshot behavior. On binding disposal, an ambiguous callback observed only
+  returning `null` retires as an empty policy; pass `[validator]` if it must keep validating independently of the
+  binding's lifetime.
 - `UploadComponent.disabledState` changes from a writable signal to a read-only derived signal. Consumers writing
   `disabledState.set()` must use the component's `disabled` input or the Angular form control's enable/disable API.
   Existing component input/output names and the chosen-file value contract remain supported.

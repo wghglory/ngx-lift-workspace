@@ -11,7 +11,19 @@ import {
   signal,
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {bindControlValidators, toSignalForm} from 'ngx-lift';
+import {bindControlValidators, resolveValidators, toSignalForm} from 'ngx-lift';
+
+const requiredPolicy = [Validators.required];
+assert.equal(
+  resolveValidators(() => requiredPolicy),
+  requiredPolicy,
+  'The public resolver must return a snapshot',
+);
+assert.equal(
+  resolveValidators(() => null),
+  null,
+  'A null getter snapshot must stay null',
+);
 
 const dom = new JSDOM('<html><body><form-consumer></form-consumer></body></html>', {pretendToBeVisual: true});
 for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'Event', 'CustomEvent', 'customElements']) {
@@ -40,17 +52,21 @@ class FormConsumer {
   includeNote = signal(false);
   strictName = signal(false);
   strictConfirmation = signal(false);
+  namePolicyReads = 0;
+  confirmationPolicyReads = 0;
 
   constructor() {
     this.facade.bindIf('note', this.includeNote, () => new FormControl('draft', {nonNullable: true}), {
       preserveValue: true,
     });
-    this.facade.bindValidators('name', () =>
-      this.strictName() ? [Validators.required, Validators.minLength(6)] : null,
-    );
-    bindControlValidators(this.form.controls.confirmation, () =>
-      this.strictConfirmation() ? Validators.minLength(10) : null,
-    );
+    this.nameBinding = this.facade.bindValidators('name', () => {
+      this.namePolicyReads++;
+      return this.strictName() ? [Validators.required, Validators.minLength(6)] : null;
+    });
+    bindControlValidators(this.form.controls.confirmation, () => {
+      this.confirmationPolicyReads++;
+      return this.strictConfirmation() ? Validators.minLength(10) : null;
+    });
   }
 }
 Component({selector: 'form-consumer', template: ''})(FormConsumer);
@@ -91,7 +107,7 @@ try {
   instance.strictName.set(false);
   instance.facade.controls.name.setValue('');
   await until(() => instance.form.controls.name.valid);
-  assert.ok(!instance.form.controls.name.validator, 'Relaxed policy must clear the validators');
+  assert.equal(instance.form.controls.name.errors, null, 'Relaxed policy must clear effective validation errors');
 
   instance.strictConfirmation.set(true);
   await until(() => instance.form.controls.confirmation.invalid);
@@ -110,6 +126,13 @@ try {
   await until(() => instance.facade.hasControl('note'));
   assert.equal(instance.facade.fields.note.value(), 'saved');
 
+  instance.nameBinding.destroy();
+  const namePolicyReads = instance.namePolicyReads;
+  instance.strictName.set(true);
+  instance.form.controls.name.setValue('');
+  assert.equal(instance.form.controls.name.valid, true, 'Manual disposal must freeze the relaxed name policy');
+  assert.equal(instance.namePolicyReads, namePolicyReads, 'Manual disposal must stop reading the getter');
+
   const failure = new Error('installed value stream failed');
   const reported = [];
   const originalConsoleError = console.error;
@@ -127,6 +150,15 @@ try {
 
   app.destroy();
   assert.equal(app.destroyed, true, 'Installed consumer must be destroyed');
+  const confirmationPolicyReads = instance.confirmationPolicyReads;
+  instance.strictConfirmation.set(true);
+  instance.form.controls.confirmation.setValue('short');
+  assert.equal(instance.form.controls.confirmation.valid, true, 'Owner disposal must freeze the relaxed policy');
+  assert.equal(
+    instance.confirmationPolicyReads,
+    confirmationPolicyReads,
+    'Owner disposal must stop reading the getter',
+  );
   instance.statusStream.error(new Error('late status stream failure'));
   assert.equal(instance.facade.valid(), true, 'A destroyed consumer must stop observing source errors');
   console.log(

@@ -1,4 +1,4 @@
-import {signal} from '@angular/core';
+import {createEnvironmentInjector, effect, EnvironmentInjector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';
@@ -16,13 +16,133 @@ import {toSignalForm} from './to-signal-form';
 
 describe('form-bindings utilities', () => {
   it('preserves the public one-argument validator resolver', () => {
-    const control = new FormControl('');
     const validators = [Validators.required];
     expect(resolveValidators(null)).toBeNull();
     expect(resolveValidators(validators)).toBe(validators);
-    const resolved = resolveValidators(() => null);
-    expect(typeof resolved).toBe('function');
-    expect((resolved as ValidatorFn)(control)).toBeNull();
+    expect(resolveValidators(() => null)).toBeNull();
+    expect(resolveValidators(() => Validators.required)).toBe(Validators.required);
+    expect(resolveValidators(() => validators)).toBe(validators);
+    const banned: ValidatorFn = () => ({banned: true});
+    expect(resolveValidators(banned)).toBe(banned);
+    const selected = signal<ValidatorFn | null>(Validators.required);
+    const snapshot = resolveValidators(() => selected());
+    selected.set(null);
+    expect(snapshot).toBe(Validators.required);
+    expect(resolveValidators(() => selected())).toBeNull();
+  });
+
+  it.each([false, true])('freezes a nullable getter policy after manual disposal (strict: %s)', (strictInitially) => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const strict = signal(strictInitially);
+      const getter = vi.fn(() => (strict() ? Validators.required : null));
+      const binding = bindControlValidators(control, getter);
+      TestBed.flushEffects();
+      const installed = control.validator;
+      binding.destroy();
+      const reads = getter.mock.calls.length;
+      strict.set(!strictInitially);
+      control.setValue('');
+      installed?.(control);
+      TestBed.flushEffects();
+      expect(control.hasError('required')).toBe(strictInitially);
+      expect(getter).toHaveBeenCalledTimes(reads);
+    });
+  });
+
+  it('stops reading a validator getter when its injector is destroyed', () => {
+    const owner = createEnvironmentInjector([], TestBed.inject(EnvironmentInjector));
+    const control = new FormControl('');
+    const strict = signal(false);
+    const getter = vi.fn(() => (strict() ? Validators.required : null));
+    bindControlValidators(control, getter, {injector: owner});
+    TestBed.flushEffects();
+    owner.destroy();
+    const reads = getter.mock.calls.length;
+    strict.set(true);
+    control.updateValueAndValidity();
+    expect(control.valid).toBe(true);
+    expect(getter).toHaveBeenCalledTimes(reads);
+  });
+
+  it('freezes named facade getter policies when a binding is destroyed', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('')});
+      const facade = toSignalForm(form);
+      const strict = signal(true);
+      const getter = vi.fn(() => (strict() ? [Validators.required] : null));
+      const binding = facade.bindValidators('name', getter);
+      TestBed.flushEffects();
+      binding.destroy();
+      const reads = getter.mock.calls.length;
+      strict.set(false);
+      form.controls.name.updateValueAndValidity();
+      expect(form.controls.name.hasError('required')).toBe(true);
+      expect(getter).toHaveBeenCalledTimes(reads);
+    });
+  });
+
+  it('does not overwrite a newer validator binding when the old one is destroyed', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const old = bindControlValidators(control, () => null);
+      TestBed.flushEffects();
+      bindControlValidators(control, [Validators.required]);
+      TestBed.flushEffects();
+      old.destroy();
+      control.updateValueAndValidity();
+      expect(control.hasValidator(Validators.required)).toBe(true);
+      expect(control.hasError('required')).toBe(true);
+    });
+  });
+
+  it('retains ordinary validation after a callback has identified itself as a validator', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('allowed');
+      const validator: ValidatorFn = () => (control.value === 'blocked' ? {blocked: true} : null);
+      const binding = bindControlValidators(control, validator);
+      TestBed.flushEffects();
+      control.setValue('blocked');
+      expect(control.hasError('blocked')).toBe(true);
+      binding.destroy();
+      control.setValue('allowed');
+      expect(control.valid).toBe(true);
+      control.setValue('blocked');
+      expect(control.hasError('blocked')).toBe(true);
+    });
+  });
+
+  it('preserves unrelated validators added while the binding is active', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const binding = bindControlValidators(control, () => null);
+      TestBed.flushEffects();
+      control.addValidators(Validators.required);
+      binding.destroy();
+      control.updateValueAndValidity();
+      expect(control.hasValidator(Validators.required)).toBe(true);
+      expect(control.hasError('required')).toBe(true);
+    });
+  });
+
+  it('does not add policy getter dependencies to an effect that validates a control', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const strict = signal(false);
+      bindControlValidators(control, () => (strict() ? Validators.required : null));
+      const applicationEffect = vi.fn();
+      effect(() => {
+        applicationEffect();
+        control.setValue('value');
+      });
+      TestBed.flushEffects();
+      expect(applicationEffect).toHaveBeenCalledTimes(1);
+      strict.set(true);
+      TestBed.flushEffects();
+      expect(applicationEffect).toHaveBeenCalledTimes(1);
+      control.setValue('');
+      expect(control.hasError('required')).toBe(true);
+    });
   });
 
   it('should dynamically disable and enable control with bindControlDisabled', () => {

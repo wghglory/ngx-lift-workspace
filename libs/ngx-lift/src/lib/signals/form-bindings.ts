@@ -11,7 +11,7 @@ import {
   Signal,
   untracked,
 } from '@angular/core';
-import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
 
 import {
   BindControlDisabledOptions,
@@ -22,6 +22,7 @@ import {
 } from '../models/to-signal-form.model';
 import {subscribeToRevalidation} from './control-revalidation';
 import {controlValue} from './form-signals';
+import {createValidatorBinding, resolveValidatorSnapshot} from './validator-binding';
 
 /**
  * Declaratively binds an Angular `AbstractControl`'s enabled/disabled state to a boolean `Signal` or predicate function.
@@ -86,11 +87,11 @@ export function bindControlDisabled<T = unknown>(
 /**
  * Resolves a validator argument into `ValidatorFn | ValidatorFn[] | null`.
  * Supports a raw `ValidatorFn`, array of validators, `null`, `Signal`, or a 0-argument getter function.
- * Zero-argument functions remain installed as dispatchers, so an initially null validation result does not discard
- * the callback. Arrays retain their original validator identities for Angular's `hasValidator` checks.
+ * Getters resolve to their current validator, array, or null; the returned snapshot does not observe later changes.
+ * Pass an array to preserve a zero-argument validator identity when its current result is null.
  * @param validators Validators or a reactive getter returning the active validation policy.
  * @param control Optional target used when initially evaluating zero-argument or default-parameter callbacks.
- * @returns The validators to install, retaining nullable callbacks for subsequent validation.
+ * @returns The current validation policy, preserving the selected validators' identities.
  */
 export function resolveValidators(
   validators:
@@ -101,22 +102,7 @@ export function resolveValidators(
     | (() => ValidatorFn | ValidatorFn[] | null),
   control?: AbstractControl,
 ): ValidatorFn | ValidatorFn[] | null {
-  if (isSignal(validators)) {
-    return validators();
-  }
-  if (typeof validators === 'function') {
-    if (validators.length !== 0) return validators as ValidatorFn;
-    const read = validators as (control?: AbstractControl) => ValidatorFn | ValidatorFn[] | ValidationErrors | null;
-    // Capture reactive getter dependencies without treating an initial null as a permanent classification.
-    read(control);
-    return (target) => {
-      const resolved = read(target);
-      if (typeof resolved === 'function') return resolved(target);
-      if (Array.isArray(resolved)) return Validators.compose(resolved)?.(target) ?? null;
-      return resolved;
-    };
-  }
-  return validators;
+  return resolveValidatorSnapshot(validators, control);
 }
 
 /**
@@ -125,6 +111,8 @@ export function resolveValidators(
  * Replaces the control's synchronous validators and re-evaluates validity whenever the signal emits.
  * Zero-argument callbacks are evaluated on each validation, including callbacks that initially return null.
  * A null-returning getter clears effective validation while retaining a dispatcher in `control.validator`.
+ * Destroying the binding retires its dispatcher and keeps the last selected policy without rereading the getter.
+ * Pass an array when an ambiguous, always-null validator must remain active after binding disposal.
  *
  * @example
  * ```typescript
@@ -134,7 +122,7 @@ export function resolveValidators(
  * ```
  *
  * @param control The `AbstractControl` whose validators should be managed.
- * @param validators A `Signal` or getter returning the active `ValidatorFn`, array of validators, or `null`.
+ * @param validators A validator, array, `Signal`, or getter selecting the active validation policy.
  * @param options Configuration options.
  * @returns An `EffectRef` for lifecycle management.
  */
@@ -158,10 +146,11 @@ export function bindControlValidators(
   const updateValueAndValidity = options?.updateValueAndValidity ?? true;
 
   return effect(
-    () => {
-      const valFns = resolveValidators(validators, control);
+    (onCleanup) => {
+      const binding = createValidatorBinding(control, validators);
+      onCleanup(() => untracked(binding.destroy));
       untracked(() => {
-        control.setValidators(valFns);
+        control.setValidators(binding.validators);
         if (updateValueAndValidity) {
           control.updateValueAndValidity({emitEvent});
         }

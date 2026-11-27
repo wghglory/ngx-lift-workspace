@@ -285,6 +285,7 @@ export type SignalEnhancedControl<C extends AbstractControl = AbstractControl> =
   /**
    * Synchronizes this control's validators with a validator, array, Signal, or getter.
    * Zero-argument callbacks stay installed even when initially valid; null clears effective validation.
+   * Destroying the binding freezes the last selected policy and stops reading the policy getter.
    */
   bindValidators(
     validators:
@@ -484,6 +485,7 @@ export interface SignalForm<
   /**
    * Synchronizes a control's validators with a validator, array, Signal, or getter.
    * Zero-argument callbacks stay installed even when initially valid; null clears effective validation.
+   * Destroying the binding freezes the last selected policy and stops reading the policy getter.
    */
   bindValidators<K extends keyof TControls & string>(
     control: K | AbstractControl,

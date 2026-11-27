@@ -125,7 +125,19 @@ while a returned validator or validator array is applied to the current control.
 discard the callback. Getter signal reads still trigger binding effects, and ordinary Angular revalidation evaluates the
 current callback result even before an effect flush. A null-returning getter removes the previous validation policy
 effectively; `control.validator` can remain a dispatcher instead of being literally `null`. Use a validator array when
-Angular validator identity checks such as `hasValidator` need the original zero-argument function.
+Angular validator identity checks such as `hasValidator` need the original zero-argument function. Policy reads during
+ordinary validation are untracked; they must not add dependencies to application effects that call control
+mutation/validation methods. The binding's initial policy read remains tracked for reactive updates.
+
+Destroying the binding, or its owning injector, retires its live dispatcher and leaves the last selected validation
+policy installed. Later control edits no longer evaluate the disposed getter. A zero-argument callback observed only
+returning `null` has an empty policy at disposal, because no validator/getter distinction is available; use a validator
+array when the callback must remain installed independently of the binding. A callback observed returning an errors
+object is retained as an ordinary validator, so normal validation can still respond to control edits. Cleanup removes
+only the binding's owned dispatcher and preserves validators installed by another binding or added by the application.
+
+The public `resolveValidators()` helper remains a snapshot resolver: a getter returns its current validator, array, or
+`null`, preserving that value's identity. It does not return the binding's live dispatcher or observe future changes.
 
 ```typescript
 import {FormControl, FormGroup, Validators} from '@angular/forms';
