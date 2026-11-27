@@ -292,6 +292,11 @@ export function computedAsync<T>(
     options?.injector ? {injector: options.injector} : undefined,
   );
 
+  const compare = options.equal;
+  const equal = compare
+    ? (previous: T | undefined, next: T | undefined) =>
+        previous === undefined || next === undefined ? Object.is(previous, next) : compare(previous, next)
+    : undefined;
   return computed(
     () => {
       const state = sourceState();
@@ -300,7 +305,7 @@ export function computedAsync<T>(
       }
       return state.value as T;
     },
-    {equal: options.equal},
+    {equal},
   );
 }
 

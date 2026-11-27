@@ -1,4 +1,4 @@
-import {effect, Injector, signal} from '@angular/core';
+import {computed, effect, Injector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {delay, EMPTY, map, Observable, of, Subject, throwError} from 'rxjs';
 import {afterEach, beforeEach, vi} from 'vitest';
@@ -24,6 +24,304 @@ interface User {
 }
 
 describe('resourceAsync lifecycle regressions', () => {
+  it.each(
+    (['factory', 'params'] as const).flatMap((source) =>
+      (['execute', 'reload'] as const).flatMap((manual) =>
+        (['set', 'reset'] as const).flatMap((local) =>
+          (['abort', 'unsubscribe'] as const).map((cleanup) => ({source, manual, local, cleanup})),
+        ),
+      ),
+    ),
+  )('starts $source $manual after $cleanup cleanup calls $local', async ({source, manual, local, cleanup}) => {
+    const id = signal(1);
+    let starts = 0;
+    const load = (value: number, signal: AbortSignal) => {
+      starts++;
+      if (starts > 1) return of(value);
+      return new Observable<number>(() => {
+        const cancel = () => {
+          if (local === 'set') resource.set(99);
+          else resource.reset();
+        };
+        if (cleanup === 'abort') signal.addEventListener('abort', cancel, {once: true});
+        return cleanup === 'unsubscribe' ? cancel : undefined;
+      });
+    };
+    const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+      source === 'factory'
+        ? resourceAsync(({abortSignal}) => load(id(), abortSignal))
+        : resourceAsync({params: () => id(), loader: (value, {abortSignal}) => load(value, abortSignal)}),
+    );
+    await flushEffects();
+    const execution = manual === 'execute' ? resource.execute() : undefined;
+    if (manual === 'reload') expect(resource.reload()).toBe(true);
+    await flushEffects();
+    expect(starts).toBe(2);
+    expect(resource.status()).toBe('resolved');
+    expect(resource.value()).toBe(1);
+    if (execution) await expect(execution).resolves.toBe(1);
+  });
+
+  it.each(['set', 'reset'] as const)('lets %s after replacement execute cancel its queued work', async (local) => {
+    let starts = 0;
+    const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+      resourceAsync(() => {
+        starts++;
+        return new Observable<number>(() => () => resource.set(99));
+      }),
+    );
+    await flushEffects();
+    const execution = resource.execute();
+    if (local === 'set') resource.set(100);
+    else resource.reset();
+    await flushEffects();
+    await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+    expect(starts).toBe(1);
+    expect(resource.status()).toBe(local === 'set' ? 'local' : 'idle');
+    expect(resource.value()).toBe(local === 'set' ? 100 : undefined);
+  });
+
+  it.each(['execute', 'reload'] as const)(
+    'does not accept %s after its cancellation callback destroys the owner',
+    async (manual) => {
+      let starts = 0;
+      const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+        resourceAsync(() => {
+          starts++;
+          return new Observable<number>(() => () => resource.destroy());
+        }),
+      );
+      await flushEffects();
+      if (manual === 'execute') {
+        const execution = resource.execute();
+        await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncDisposedError'});
+      } else {
+        expect(resource.reload()).toBe(false);
+      }
+      await flushEffects();
+      expect(starts).toBe(1);
+    },
+  );
+
+  it.each(['set', 'update', 'reset'] as const)(
+    'preserves a later direct-factory %s without starting discarded work',
+    async (action) => {
+      const id = signal(1);
+      const source = vi.fn(() => of(id()));
+      const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+      await flushEffects();
+      id.set(2);
+      if (action === 'set') resource.set(99);
+      else if (action === 'update') resource.update(() => 99);
+      else resource.reset();
+      await flushEffects();
+      expect(resource.value()).toBe(action === 'reset' ? undefined : 99);
+      expect(source).toHaveBeenCalledTimes(1);
+      id.set(3);
+      await flushEffects();
+      expect(resource.value()).toBe(3);
+      expect(source).toHaveBeenCalledTimes(2);
+    },
+  );
+
+  it('accepts a same-turn direct dependency change after a local write', async () => {
+    const id = signal(1);
+    const source = vi.fn(() => of(id()));
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    resource.set(99);
+    id.set(2);
+    await flushEffects();
+    expect(resource.value()).toBe(2);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
+  it('refreshes every computed dependency when snapshotting a local override', async () => {
+    const first = signal(1);
+    const second = signal(1);
+    const derived = computed(() => second() * 10);
+    const source = vi.fn(() => of(first() + derived()));
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    first.set(2);
+    second.set(2);
+    resource.set(99);
+    second.set(3);
+    await flushEffects();
+    expect(resource.value()).toBe(32);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
+  it('retains a local override when a computed dependency stays equal afterward', async () => {
+    const id = signal(1);
+    const parity = computed(() => id() % 2);
+    const source = vi.fn(() => of(parity()));
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    id.set(2);
+    resource.set(99);
+    id.set(4);
+    await flushEffects();
+    expect(resource.value()).toBe(99);
+    expect(source).toHaveBeenCalledTimes(1);
+    id.set(5);
+    await flushEffects();
+    expect(resource.value()).toBe(1);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
+  it('replaces dynamic dependencies after a new change follows a local override', async () => {
+    const chooseFirst = signal(true);
+    const first = signal(1);
+    const second = signal(10);
+    const source = vi.fn(() => of(chooseFirst() ? first() : second()));
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    first.set(2);
+    resource.set(99);
+    chooseFirst.set(false);
+    await flushEffects();
+    expect(resource.value()).toBe(10);
+    expect(source).toHaveBeenCalledTimes(2);
+    first.set(3);
+    await flushEffects();
+    expect(source).toHaveBeenCalledTimes(2);
+    second.set(20);
+    await flushEffects();
+    expect(resource.value()).toBe(20);
+    expect(source).toHaveBeenCalledTimes(3);
+  });
+
+  it.each(['before', 'after'] as const)(
+    'retains new factory dependencies read %s a reentrant local override',
+    async (position) => {
+      const chooseFirst = signal(true);
+      const first = signal(1);
+      const second = signal(10);
+      let override = true;
+      const source = vi.fn(() => {
+        if (chooseFirst()) return of(first());
+        if (override && position === 'before') resource.set(99);
+        const value = second();
+        if (override && position === 'after') resource.set(99);
+        return of(value);
+      });
+      const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+        resourceAsync(source),
+      );
+      await flushEffects();
+      chooseFirst.set(false);
+      await flushEffects();
+      expect(resource.value()).toBe(99);
+      override = false;
+      second.set(20);
+      await flushEffects();
+      expect(resource.value()).toBe(20);
+      expect(source).toHaveBeenCalledTimes(3);
+    },
+  );
+
+  it('does not invoke an eager factory while capturing a local cancellation snapshot', async () => {
+    const id = signal(1);
+    const controllers: AbortSignal[] = [];
+    const source = vi.fn(({abortSignal}: {abortSignal: AbortSignal}) => {
+      controllers.push(abortSignal);
+      return Promise.resolve(id());
+    });
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    id.set(2);
+    resource.set(99);
+    expect(source).toHaveBeenCalledTimes(1);
+    await flushEffects();
+    expect(resource.value()).toBe(99);
+    expect(source).toHaveBeenCalledTimes(1);
+    expect(controllers[0].aborted).toBe(false);
+    const execution = resource.execute();
+    await flushEffects();
+    expect(await execution).toBe(2);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
+  it('retains failed factory dependencies across local cancellation without tracking error-handler reads', async () => {
+    const id = signal(1);
+    const incidental = signal(0);
+    const source = vi.fn(() => {
+      const value = id();
+      if (value === 1) throw new Error('factory failed');
+      return of(value);
+    });
+    const resource = TestBed.runInInjectionContext(() =>
+      resourceAsync(source, {
+        onError: () => {
+          void incidental();
+          return undefined;
+        },
+      }),
+    );
+    await flushEffects();
+    expect(resource.status()).toBe('error');
+    id.set(2);
+    resource.set(99);
+    await flushEffects();
+    expect(resource.value()).toBe(99);
+    expect(source).toHaveBeenCalledTimes(1);
+    incidental.set(1);
+    await flushEffects();
+    expect(source).toHaveBeenCalledTimes(1);
+    id.set(3);
+    await flushEffects();
+    expect(resource.value()).toBe(3);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
+  it('retains dependencies read after a reentrant reset even when the factory throws', async () => {
+    const trigger = signal(1);
+    const later = signal(1);
+    let reset = false;
+    const source = vi.fn(() => {
+      const value = trigger();
+      if (reset) {
+        reset = false;
+        resource.reset();
+        void later();
+        throw new Error('discarded factory failed');
+      }
+      return of(value + later());
+    });
+    const resource: WritableResourceRef<number | undefined> = TestBed.runInInjectionContext(() =>
+      resourceAsync(source),
+    );
+    await flushEffects();
+    reset = true;
+    trigger.set(2);
+    await flushEffects();
+    expect(resource.status()).toBe('idle');
+    expect(resource.error()).toBeNull();
+    later.set(10);
+    await flushEffects();
+    expect(resource.value()).toBe(12);
+    expect(source).toHaveBeenCalledTimes(3);
+  });
+
+  it('retains dependencies when a local override supersedes a queued manual execution', async () => {
+    const id = signal(1);
+    const source = vi.fn(() => of(id()));
+    const resource = TestBed.runInInjectionContext(() => resourceAsync(source));
+    await flushEffects();
+    const execution = resource.execute();
+    id.set(2);
+    resource.set(99);
+    await expect(execution).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+    await flushEffects();
+    expect(resource.value()).toBe(99);
+    expect(source).toHaveBeenCalledTimes(1);
+    id.set(3);
+    await flushEffects();
+    expect(resource.value()).toBe(3);
+    expect(source).toHaveBeenCalledTimes(2);
+  });
+
   it('starts a cold thenable once per execution and infers its resolved value type', async () => {
     await TestBed.runInInjectionContext(async () => {
       let starts = 0;
@@ -468,6 +766,132 @@ describe('resourceAsync lifecycle regressions', () => {
       valid.set(true);
       await flushEffects();
       expect(resource.value()).toBe(1);
+    });
+  });
+
+  it('stops a synchronous producer when its success callback resets the resource', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const produced: number[] = [];
+      const resource = resourceAsync(
+        () =>
+          new Observable<number>((subscriber) => {
+            for (let value = 1; value <= 16; value++) {
+              if (subscriber.closed) return;
+              produced.push(value);
+              subscriber.next(value);
+            }
+          }),
+        {lazy: true, onSuccess: () => resource.reset()},
+      );
+      const settled = vi.fn();
+      resource.execute().then(settled, settled);
+      await flushEffects();
+      expect(produced).toEqual([1]);
+      expect(settled.mock.calls[0][0]).toMatchObject({name: 'ResourceAsyncCancelledError'});
+      expect(resource.status()).toBe('idle');
+    });
+  });
+
+  it('settles reset and disposal even when an observable finalizer throws', async () => {
+    const resource = TestBed.runInInjectionContext(() =>
+      resourceAsync(
+        () =>
+          new Observable<number>(() => () => {
+            throw new Error('teardown failed');
+          }),
+        {lazy: true},
+      ),
+    );
+    const first = resource.execute();
+    await flushEffects();
+    resource.reset();
+    await expect(first).rejects.toMatchObject({name: 'ResourceAsyncCancelledError'});
+    expect(resource.status()).toBe('idle');
+    const second = resource.execute();
+    await flushEffects();
+    expect(resource.status()).toBe('loading');
+    expect(() => resource.destroy()).not.toThrow();
+    await expect(second).rejects.toMatchObject({name: 'ResourceAsyncDisposedError'});
+  });
+
+  it('does not start a replacement factory when an abort handler destroys the resource', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      let starts = 0;
+      const owner: {resource?: WritableResourceRef<number | undefined>} = {};
+      const resource = resourceAsync(() => {
+        starts++;
+        const value = id();
+        return new Observable<number>((subscriber) => {
+          subscriber.next(value);
+          return () => {
+            if (starts === 1) owner.resource?.destroy();
+          };
+        });
+      });
+      owner.resource = resource;
+      await flushEffects();
+      expect(starts).toBe(1);
+      id.set(2);
+      await flushEffects();
+      expect(starts).toBe(1);
+    });
+  });
+
+  it('does not track signal reads in an outgoing teardown', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const incidental = signal('a');
+      const loader = vi.fn(
+        (value: number) =>
+          new Observable<string>((subscriber) => {
+            subscriber.next(`${value}:${incidental()}`);
+            return () => {
+              void incidental();
+            };
+          }),
+      );
+      const resource = resourceAsync({params: () => id(), loader});
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      id.set(2);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      incidental.set('b');
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      expect(resource.value()).toBe('2:a');
+    });
+  });
+
+  it('keeps a later local override when a parameter change was already scheduled', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const id = signal(1);
+      const loader = vi.fn((value: number) => of(value));
+      const resource = resourceAsync({params: () => id(), loader});
+      await flushEffects();
+      id.set(2);
+      resource.set(99);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(1);
+      expect(resource.value()).toBe(99);
+      expect(resource.status()).toBe('local');
+      id.set(3);
+      await flushEffects();
+      expect(loader).toHaveBeenCalledTimes(2);
+      expect(resource.value()).toBe(3);
+    });
+  });
+
+  it('reserves a reload slot before the scheduler runs in exhaust mode', async () => {
+    await TestBed.runInInjectionContext(async () => {
+      const factory = vi.fn(() => promise(1, 10));
+      const resource = resourceAsync(factory, {lazy: true, behavior: 'exhaust'});
+      expect(resource.reload()).toBe(true);
+      expect(resource.reload()).toBe(false);
+      await flushEffects(10);
+      expect(factory).toHaveBeenCalledTimes(1);
+      expect(resource.reload()).toBe(true);
     });
   });
 });

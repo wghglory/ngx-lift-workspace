@@ -2,7 +2,7 @@ import {EventEmitter, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
 import {of, Subject} from 'rxjs';
-import {describe, expect, it, vi} from 'vitest';
+import {describe, expect, expectTypeOf, it, vi} from 'vitest';
 
 import {toSignalForm} from './to-signal-form';
 
@@ -1094,6 +1094,21 @@ describe('toSignalForm', () => {
       } finally {
         report.mockRestore();
       }
+    });
+  });
+
+  it('types disabled controls as absent from value but present in rawValue', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({
+        name: new FormControl({value: 'secret', disabled: true}, {nonNullable: true}),
+        enabled: new FormControl('ok', {nonNullable: true}),
+      });
+      const sf = toSignalForm(form);
+      expectTypeOf(sf.value()).toEqualTypeOf<Partial<{name: string; enabled: string}>>();
+      expectTypeOf(sf.value().name).toEqualTypeOf<string | undefined>();
+      expectTypeOf(sf.rawValue()).toEqualTypeOf<{name: string; enabled: string}>();
+      expect(sf.value()).toEqual({enabled: 'ok'});
+      expect(sf.rawValue()).toEqual({name: 'secret', enabled: 'ok'});
     });
   });
 });

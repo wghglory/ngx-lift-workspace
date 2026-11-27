@@ -75,7 +75,7 @@ import {isPromise} from '../utils/is-promise.util';
  *   interval: 10000,
  *   pollingFn: (id: number) => this.http.get(`/api/users/${id}`),
  *   forceRefresh: userId$,
- *   paramsBuilder: (id) => id
+ *   paramsBuilder: (id) => id ?? 1
  * });
  * ```
  */
@@ -89,7 +89,7 @@ export function poll<Data>(options: {
 // forceRefresh output is the pollingFn params' input
 export function poll<Data, Input>(options: {
   interval: number;
-  pollingFn: (params: Input) => Observable<Data> | Promise<Data> | Data;
+  pollingFn: (params: Input | undefined) => Observable<Data> | Promise<Data> | Data;
   forceRefresh: Observable<Input> | Signal<Input>;
   initialValue?: AsyncState<Data>;
   delay?: number;
@@ -100,7 +100,7 @@ export function poll<Data, Input, Params = Input>(options: {
   interval: number;
   pollingFn: (params: Params) => Observable<Data> | Promise<Data> | Data;
   forceRefresh: Observable<Input> | Signal<Input>;
-  paramsBuilder: (input: Input) => Params;
+  paramsBuilder: (input: Input | undefined) => Params;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>>;
@@ -109,7 +109,7 @@ export function poll<Data, Input = void, Params = Input>(options: {
   interval: number;
   pollingFn: (params: Params) => Observable<Data> | Promise<Data> | Data;
   forceRefresh?: Observable<Input> | Signal<Input>;
-  paramsBuilder?: (input: Input) => Params;
+  paramsBuilder?: (input: Input | undefined) => Params;
   initialValue?: AsyncState<Data>;
   delay?: number;
 }): Observable<AsyncState<Data>> {
@@ -137,7 +137,7 @@ export function poll<Data, Input = void, Params = Input>(options: {
       exhaustMap((trigger) => {
         let observable$: Observable<AsyncState<Data>> = defer(() => {
           const params = (
-            options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh as Input) : inputByForceRefresh
+            options.paramsBuilder ? options.paramsBuilder(inputByForceRefresh) : inputByForceRefresh
           ) as Params;
           const result = options.pollingFn(params);
           return isObservable(result) ? result : isPromise(result) ? from(result) : of(result);

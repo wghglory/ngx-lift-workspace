@@ -282,7 +282,11 @@ export type SignalEnhancedControl<C extends AbstractControl = AbstractControl> =
     options?: BindControlDisabledOptions<C extends AbstractControl<infer V> ? V : unknown>,
   ): EffectRef;
 
-  /** Declaratively synchronizes this control's validators with a reactive Signal or getter. */
+  /**
+   * Synchronizes this control's validators with a validator, array, Signal, or getter.
+   * Zero-argument callbacks stay installed even when initially valid; null clears effective validation.
+   * Destroying the binding freezes the last selected policy and stops reading the policy getter.
+   */
   bindValidators(
     validators:
       | ValidatorFn
@@ -398,9 +402,9 @@ export interface SignalForm<
 
   // Form-level Signals
   /** Reactive signal emitting the form's current value (omits disabled controls). */
-  readonly value: Signal<TValue>;
+  readonly value: Signal<FormGroup<TControls>['value']>;
   /** Reactive signal emitting the complete raw value (preserves disabled controls). */
-  readonly rawValue: Signal<TValue>;
+  readonly rawValue: Signal<ReturnType<FormGroup<TControls>['getRawValue']>>;
   /** Reactive signal emitting `'VALID' | 'INVALID' | 'PENDING' | 'DISABLED'`. */
   readonly status: Signal<FormControlStatus>;
   /** Whether the form is currently valid. */
@@ -478,7 +482,11 @@ export interface SignalForm<
     options?: BindControlDisabledOptions<TControls[K] extends AbstractControl<infer V> ? V : unknown>,
   ): EffectRef;
 
-  /** Declaratively synchronizes a control's validators with a reactive Signal or getter. */
+  /**
+   * Synchronizes a control's validators with a validator, array, Signal, or getter.
+   * Zero-argument callbacks stay installed even when initially valid; null clears effective validation.
+   * Destroying the binding freezes the last selected policy and stops reading the policy getter.
+   */
   bindValidators<K extends keyof TControls & string>(
     control: K | AbstractControl,
     validators:

@@ -34,12 +34,12 @@ import {
   bindControlDisabled,
   bindControlIf,
   bindControlValidators,
-  resolveValidators,
   revalidateOnChange,
   watchControl,
 } from './form-bindings';
 import {controlState, controlStatus, controlValue, formState} from './form-signals';
 import {formSubmitValue} from './to-submit-value';
+import {createValidatorBinding} from './validator-binding';
 
 const ENHANCED_CONTROL_PROPS = new Set(['state', 'bindDisabled', 'bindValidators', 'revalidateOn', 'watch']);
 
@@ -355,8 +355,8 @@ export function toSignalForm<
     fields: fieldsProxy,
 
     // Form signals
-    value: state.value,
-    rawValue: state.rawValue,
+    value: state.value as Signal<FormGroup<TControls>['value']>,
+    rawValue: state.rawValue as Signal<ReturnType<FormGroup<TControls>['getRawValue']>>,
     status: state.status,
     valid: state.valid,
     invalid: state.invalid,
@@ -485,13 +485,14 @@ export function toSignalForm<
       const updateValueAndValidity = opts?.updateValueAndValidity ?? true;
 
       return effect(
-        () => {
+        (onCleanup) => {
           controlsVersion();
-          const valFns = resolveValidators(validators);
           const targetCtrl = form.get(ctrlName);
           if (targetCtrl) {
+            const binding = createValidatorBinding(targetCtrl, validators);
+            onCleanup(() => untracked(binding.destroy));
             untracked(() => {
-              targetCtrl.setValidators(valFns);
+              targetCtrl.setValidators(binding.validators);
               if (updateValueAndValidity) {
                 targetCtrl.updateValueAndValidity({emitEvent});
               }

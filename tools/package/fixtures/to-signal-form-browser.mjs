@@ -5,13 +5,26 @@ import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {
   Component,
+  computed,
   EventEmitter,
   provideZoneChangeDetection,
   provideZonelessChangeDetection,
   signal,
 } from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {bindControlValidators, toSignalForm} from 'ngx-lift';
+import {bindControlValidators, resolveValidators, toSignalForm} from 'ngx-lift';
+
+const requiredPolicy = [Validators.required];
+assert.equal(
+  resolveValidators(() => requiredPolicy),
+  requiredPolicy,
+  'The public resolver must return a snapshot',
+);
+assert.equal(
+  resolveValidators(() => null),
+  null,
+  'A null getter snapshot must stay null',
+);
 
 const dom = new JSDOM('<html><body><form-consumer></form-consumer></body></html>', {pretendToBeVisual: true});
 for (const key of ['document', 'window', 'HTMLElement', 'Element', 'Node', 'Event', 'CustomEvent', 'customElements']) {
@@ -40,17 +53,28 @@ class FormConsumer {
   includeNote = signal(false);
   strictName = signal(false);
   strictConfirmation = signal(false);
+  namePolicyReads = 0;
+  confirmationPolicyReads = 0;
+  orderControl = new FormControl('a');
+  identityControl = new FormControl('a');
+  identityMinimum = Validators.minLength(4);
+  identityStrict = signal(true);
+  identityPolicy = computed(() => (this.identityStrict() ? [this.identityMinimum] : []));
 
   constructor() {
     this.facade.bindIf('note', this.includeNote, () => new FormControl('draft', {nonNullable: true}), {
       preserveValue: true,
     });
-    this.facade.bindValidators('name', () =>
-      this.strictName() ? [Validators.required, Validators.minLength(6)] : null,
-    );
-    bindControlValidators(this.form.controls.confirmation, () =>
-      this.strictConfirmation() ? Validators.minLength(10) : null,
-    );
+    this.nameBinding = this.facade.bindValidators('name', () => {
+      this.namePolicyReads++;
+      return this.strictName() ? [Validators.required, Validators.minLength(6)] : null;
+    });
+    bindControlValidators(this.form.controls.confirmation, () => {
+      this.confirmationPolicyReads++;
+      return this.strictConfirmation() ? Validators.minLength(10) : null;
+    });
+    this.orderBinding = bindControlValidators(this.orderControl, () => Validators.minLength(4));
+    this.identityBinding = bindControlValidators(this.identityControl, this.identityPolicy);
   }
 }
 Component({selector: 'form-consumer', template: ''})(FormConsumer);
@@ -91,7 +115,7 @@ try {
   instance.strictName.set(false);
   instance.facade.controls.name.setValue('');
   await until(() => instance.form.controls.name.valid);
-  assert.ok(!instance.form.controls.name.validator, 'Relaxed policy must clear the validators');
+  assert.equal(instance.form.controls.name.errors, null, 'Relaxed policy must clear effective validation errors');
 
   instance.strictConfirmation.set(true);
   await until(() => instance.form.controls.confirmation.invalid);
@@ -110,6 +134,55 @@ try {
   await until(() => instance.facade.hasControl('note'));
   assert.equal(instance.facade.fields.note.value(), 'saved');
 
+  instance.nameBinding.destroy();
+  const namePolicyReads = instance.namePolicyReads;
+  instance.strictName.set(true);
+  instance.form.controls.name.setValue('');
+  assert.equal(instance.form.controls.name.valid, true, 'Manual disposal must freeze the relaxed name policy');
+  assert.equal(instance.namePolicyReads, namePolicyReads, 'Manual disposal must stop reading the getter');
+
+  await until(() => instance.orderControl.hasError('minlength'));
+  instance.orderControl.addValidators(Validators.minLength(8));
+  instance.orderControl.updateValueAndValidity();
+  assert.equal(instance.orderControl.getError('minlength').requiredLength, 8);
+  const compiledOrderValidator = instance.orderControl.validator;
+  instance.orderBinding.destroy();
+  instance.orderControl.updateValueAndValidity();
+  assert.equal(
+    instance.orderControl.getError('minlength').requiredLength,
+    8,
+    'Disposal must preserve error precedence',
+  );
+  assert.equal(instance.orderControl.validator, compiledOrderValidator, 'Disposal must preserve validator composition');
+  assert.equal(compiledOrderValidator(instance.orderControl).minlength.requiredLength, 8);
+
+  await until(() => instance.identityControl.hasValidator(instance.identityMinimum));
+  instance.identityStrict.set(false);
+  await until(() => !instance.identityControl.hasValidator(instance.identityMinimum));
+  assert.equal(instance.identityControl.valid, true, 'A live computed policy must remove its validators');
+  instance.identityStrict.set(true);
+  await until(() => instance.identityControl.hasValidator(instance.identityMinimum));
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 4);
+  const addedIdentityMinimum = Validators.minLength(8);
+  instance.identityControl.addValidators(addedIdentityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  const compiledIdentityValidator = instance.identityControl.validator;
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 8);
+  instance.identityBinding.destroy();
+  instance.identityStrict.set(false);
+  await app.whenStable();
+  assert.equal(instance.identityControl.validator, compiledIdentityValidator);
+  assert.equal(compiledIdentityValidator(instance.identityControl).minlength.requiredLength, 8);
+  assert.equal(instance.identityControl.hasValidator(instance.identityMinimum), true);
+  instance.identityControl.removeValidators(instance.identityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  assert.equal(instance.identityControl.hasValidator(instance.identityMinimum), false);
+  assert.equal(instance.identityControl.hasValidator(addedIdentityMinimum), true);
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 8);
+  instance.identityControl.removeValidators(addedIdentityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  assert.equal(instance.identityControl.valid, true);
+
   const failure = new Error('installed value stream failed');
   const reported = [];
   const originalConsoleError = console.error;
@@ -127,6 +200,15 @@ try {
 
   app.destroy();
   assert.equal(app.destroyed, true, 'Installed consumer must be destroyed');
+  const confirmationPolicyReads = instance.confirmationPolicyReads;
+  instance.strictConfirmation.set(true);
+  instance.form.controls.confirmation.setValue('short');
+  assert.equal(instance.form.controls.confirmation.valid, true, 'Owner disposal must freeze the relaxed policy');
+  assert.equal(
+    instance.confirmationPolicyReads,
+    confirmationPolicyReads,
+    'Owner disposal must stop reading the getter',
+  );
   instance.statusStream.error(new Error('late status stream failure'));
   assert.equal(instance.facade.valid(), true, 'A destroyed consumer must stop observing source errors');
   console.log(

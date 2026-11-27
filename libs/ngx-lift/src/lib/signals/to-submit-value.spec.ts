@@ -1,4 +1,4 @@
-import {EventEmitter} from '@angular/core';
+import {effect, EventEmitter} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {FormArray, FormControl, FormGroup} from '@angular/forms';
 import {describe, expect, it, vi} from 'vitest';
@@ -271,5 +271,51 @@ describe('to-submit-value utilities', () => {
         report.mockRestore();
       }
     });
+  });
+
+  it('computes the initial snapshot once inside the pipeline and defers transform errors to signal reads', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+
+      const transform = vi.fn((value: unknown) => value);
+      const counted = formSubmitValue(form, {transform});
+      expect(transform).toHaveBeenCalledTimes(1);
+      expect(counted()).toEqual({name: 'Ada'});
+      events.emit('tick');
+      expect(transform).toHaveBeenCalledTimes(2);
+
+      const failure = new Error('initial transform failed');
+      const failing = formSubmitValue(form, {
+        transform: () => {
+          throw failure;
+        },
+      });
+      expect(() => failing()).toThrow(failure);
+    });
+  });
+
+  it('deduplicates the first event against the initial snapshot', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl('Ada')});
+      const events = new EventEmitter<unknown>();
+      Object.defineProperty(form, 'events', {value: events});
+      const submitValue = formSubmitValue(form);
+      const observed: unknown[] = [];
+      effect(() => {
+        observed.push(submitValue());
+      });
+      TestBed.flushEffects();
+      expect(observed).toHaveLength(1);
+      events.emit('unchanged');
+      TestBed.flushEffects();
+      expect(observed).toHaveLength(1);
+    });
+  });
+
+  it('keeps a raw record whose fields collide with control property names', () => {
+    const raw = {status: 'approved', value: 7, valueChanges: 2};
+    expect(toSubmitValue(raw)).toEqual(raw);
   });
 });
