@@ -32,10 +32,13 @@ compatibility exception is approved by these notes; follow the [version policy](
   controls or `rawValue()` for payloads that must include disabled controls; otherwise handle optional fields.
 - Zero-argument validator callbacks remain installed as dispatchers even when initially returning `null`. Getter results
   still select the effective validators, but a null result does not require `control.validator === null`. Pass
-  `[validator]` when `hasValidator` or validator removal needs the original callback identity. Existing one-argument
-  `resolveValidators()` calls retain their snapshot behavior. On binding disposal, an ambiguous callback observed only
-  returning `null` retires as an empty policy; pass `[validator]` if it must keep validating independently of the
-  binding's lifetime.
+  `[validator]` when `hasValidator` or validator removal needs the original callback identity. Validators returned by a
+  bare getter also remain inside its retired dispatcher, so `removeValidators(selectedValidator)` does not remove them
+  individually. For reactive policies that need individual identities, pass a Signal, such as
+  `computed(() => enabled() ? [selectedValidator] : [])`; its selected validators are installed directly and can be
+  removed individually after binding disposal. Existing one-argument `resolveValidators()` calls retain their snapshot
+  behavior. On binding disposal, an ambiguous callback observed only returning `null` retires as an empty policy; pass
+  `[validator]` if it must keep validating independently of the binding's lifetime.
 - `UploadComponent.disabledState` changes from a writable signal to a read-only derived signal. Consumers writing
   `disabledState.set()` must use the component's `disabled` input or the Angular form control's enable/disable API.
   Existing component input/output names and the chosen-file value contract remain supported.

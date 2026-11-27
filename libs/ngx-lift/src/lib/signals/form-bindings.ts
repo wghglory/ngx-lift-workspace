@@ -113,6 +113,8 @@ export function resolveValidators(
  * A null-returning getter clears effective validation while retaining a dispatcher in `control.validator`.
  * Destroying the binding retires its dispatcher and keeps the last selected policy without rereading the getter.
  * Pass an array when an ambiguous, always-null validator must remain active after binding disposal.
+ * Getter-returned validators are also wrapped, including after disposal. Use an array for static validator identity
+ * or a Signal/computed policy for reactive selection with individual `hasValidator` / `removeValidators` support.
  *
  * @example
  * ```typescript

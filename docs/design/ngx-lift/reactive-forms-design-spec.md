@@ -125,9 +125,27 @@ while a returned validator or validator array is applied to the current control.
 discard the callback. Getter signal reads still trigger binding effects, and ordinary Angular revalidation evaluates the
 current callback result even before an effect flush. A null-returning getter removes the previous validation policy
 effectively; `control.validator` can remain a dispatcher instead of being literally `null`. Use a validator array when
-Angular validator identity checks such as `hasValidator` need the original zero-argument function. Policy reads during
-ordinary validation are untracked; they must not add dependencies to application effects that call control
-mutation/validation methods. The binding's initial policy read remains tracked for reactive updates.
+Angular validator identity checks such as `hasValidator` need the original zero-argument function. Getter-returned
+validators are also wrapped, including after disposal: `removeValidators(selectedValidator)` does not remove a policy
+inside a dispatcher. Disposal preserves the registered dispatcher's identity and composition order. For static policies
+pass a direct validator array. For reactive policies pass a `Signal<ValidatorFn[]>` or `computed` selection to preserve
+each selected validator's identity and individual removal through Angular's public APIs:
+
+```typescript
+const selectedValidator = Validators.required;
+const policy = computed(() => (strict() ? [selectedValidator] : []));
+const binding = bindControlValidators(control, policy);
+
+// An application action, after the binding has applied, can stop policy updates and remove one selected validator.
+function stopPolicyAndRemoveRequired(): void {
+  binding.destroy();
+  control.removeValidators(selectedValidator);
+  control.updateValueAndValidity();
+}
+```
+
+Policy reads during ordinary validation are untracked; they must not add dependencies to application effects that call
+control mutation/validation methods. The binding's initial policy read remains tracked for reactive updates.
 
 Destroying the binding, or its owning injector, retires its live dispatcher in place and leaves the last selected
 validation policy installed. Its original composition slot, shared-key error precedence, and any saved

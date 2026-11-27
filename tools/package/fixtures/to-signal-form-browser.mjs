@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 import {JSDOM} from 'jsdom';
 import {
   Component,
+  computed,
   EventEmitter,
   provideZoneChangeDetection,
   provideZonelessChangeDetection,
@@ -55,6 +56,10 @@ class FormConsumer {
   namePolicyReads = 0;
   confirmationPolicyReads = 0;
   orderControl = new FormControl('a');
+  identityControl = new FormControl('a');
+  identityMinimum = Validators.minLength(4);
+  identityStrict = signal(true);
+  identityPolicy = computed(() => (this.identityStrict() ? [this.identityMinimum] : []));
 
   constructor() {
     this.facade.bindIf('note', this.includeNote, () => new FormControl('draft', {nonNullable: true}), {
@@ -69,6 +74,7 @@ class FormConsumer {
       return this.strictConfirmation() ? Validators.minLength(10) : null;
     });
     this.orderBinding = bindControlValidators(this.orderControl, () => Validators.minLength(4));
+    this.identityBinding = bindControlValidators(this.identityControl, this.identityPolicy);
   }
 }
 Component({selector: 'form-consumer', template: ''})(FormConsumer);
@@ -149,6 +155,27 @@ try {
   );
   assert.equal(instance.orderControl.validator, compiledOrderValidator, 'Disposal must preserve validator composition');
   assert.equal(compiledOrderValidator(instance.orderControl).minlength.requiredLength, 8);
+
+  await until(() => instance.identityControl.hasValidator(instance.identityMinimum));
+  const addedIdentityMinimum = Validators.minLength(8);
+  instance.identityControl.addValidators(addedIdentityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  const compiledIdentityValidator = instance.identityControl.validator;
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 8);
+  instance.identityBinding.destroy();
+  instance.identityStrict.set(false);
+  await app.whenStable();
+  assert.equal(instance.identityControl.validator, compiledIdentityValidator);
+  assert.equal(compiledIdentityValidator(instance.identityControl).minlength.requiredLength, 8);
+  assert.equal(instance.identityControl.hasValidator(instance.identityMinimum), true);
+  instance.identityControl.removeValidators(instance.identityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  assert.equal(instance.identityControl.hasValidator(instance.identityMinimum), false);
+  assert.equal(instance.identityControl.hasValidator(addedIdentityMinimum), true);
+  assert.equal(instance.identityControl.getError('minlength').requiredLength, 8);
+  instance.identityControl.removeValidators(addedIdentityMinimum);
+  instance.identityControl.updateValueAndValidity();
+  assert.equal(instance.identityControl.valid, true);
 
   const failure = new Error('installed value stream failed');
   const reported = [];

@@ -1,4 +1,4 @@
-import {createEnvironmentInjector, effect, EnvironmentInjector, signal} from '@angular/core';
+import {computed, createEnvironmentInjector, effect, EnvironmentInjector, signal} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {AbstractControl, FormControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Subject} from 'rxjs';
@@ -154,6 +154,43 @@ describe('form-bindings utilities', () => {
         control.updateValueAndValidity();
         expect(control.getError('minlength').requiredLength).toBe(4);
         expect(getter).toHaveBeenCalledTimes(reads);
+      });
+    },
+  );
+
+  it.each(['standalone', 'facade'] as const)(
+    'preserves individual validator removal for a computed policy after %s disposal',
+    (surface) => {
+      TestBed.runInInjectionContext(() => {
+        const control = new FormControl('a');
+        const selectedMinimum = Validators.minLength(4);
+        const addedMinimum = Validators.minLength(8);
+        const strict = signal(true);
+        const policy = computed(() => (strict() ? [selectedMinimum] : []));
+        const binding =
+          surface === 'standalone'
+            ? bindControlValidators(control, policy)
+            : toSignalForm(new FormGroup({name: control})).bindValidators('name', policy);
+        TestBed.flushEffects();
+        expect(control.hasValidator(selectedMinimum)).toBe(true);
+        control.addValidators(addedMinimum);
+        control.updateValueAndValidity();
+        const compiled = control.validator;
+        expect(control.getError('minlength').requiredLength).toBe(8);
+        binding.destroy();
+        strict.set(false);
+        TestBed.flushEffects();
+        expect(control.validator).toBe(compiled);
+        expect(compiled?.(control)?.['minlength'].requiredLength).toBe(8);
+        expect(control.hasValidator(selectedMinimum)).toBe(true);
+        control.removeValidators(selectedMinimum);
+        control.updateValueAndValidity();
+        expect(control.hasValidator(selectedMinimum)).toBe(false);
+        expect(control.hasValidator(addedMinimum)).toBe(true);
+        expect(control.getError('minlength').requiredLength).toBe(8);
+        control.removeValidators(addedMinimum);
+        control.updateValueAndValidity();
+        expect(control.valid).toBe(true);
       });
     },
   );
