@@ -38,14 +38,11 @@ export function createValidatorBinding(control: AbstractControl, source: Validat
     validators: dispatcher,
     destroy: () => {
       if (!reader) return;
-      reader = undefined;
+      // Keep the dispatcher in its original composition slot so shared-key error precedence does not change.
       // Known validators continue normal Angular validation; getter policies stop reading their source.
-      const frozen = isValidator ? (source as ValidatorFn) : asPolicy(lastResult);
+      const frozen = isValidator ? (reader as ValidatorFn) : asPolicy(lastResult);
+      reader = undefined;
       lastResult = frozen;
-      if (control.hasValidator(dispatcher)) {
-        control.removeValidators(dispatcher);
-        if (frozen) control.addValidators(frozen);
-      }
     },
   };
 }

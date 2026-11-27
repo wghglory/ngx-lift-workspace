@@ -125,6 +125,39 @@ describe('form-bindings utilities', () => {
     });
   });
 
+  it.each(['standalone', 'facade'] as const)(
+    'preserves shared-key error precedence when a %s binding is destroyed',
+    (surface) => {
+      TestBed.runInInjectionContext(() => {
+        const control = new FormControl('a');
+        const ownMinimum = Validators.minLength(4);
+        const addedMinimum = Validators.minLength(8);
+        const policy = signal<ValidatorFn | null>(ownMinimum);
+        const getter = vi.fn(() => policy());
+        const binding =
+          surface === 'standalone'
+            ? bindControlValidators(control, getter)
+            : toSignalForm(new FormGroup({name: control})).bindValidators('name', getter);
+        TestBed.flushEffects();
+        control.addValidators(addedMinimum);
+        control.updateValueAndValidity();
+        expect(control.getError('minlength').requiredLength).toBe(8);
+        const compiled = control.validator;
+        binding.destroy();
+        const reads = getter.mock.calls.length;
+        policy.set(Validators.minLength(12));
+        control.updateValueAndValidity();
+        expect(control.getError('minlength').requiredLength).toBe(8);
+        expect(control.validator).toBe(compiled);
+        expect(compiled?.(control)?.['minlength'].requiredLength).toBe(8);
+        control.removeValidators(addedMinimum);
+        control.updateValueAndValidity();
+        expect(control.getError('minlength').requiredLength).toBe(4);
+        expect(getter).toHaveBeenCalledTimes(reads);
+      });
+    },
+  );
+
   it('does not add policy getter dependencies to an effect that validates a control', () => {
     TestBed.runInInjectionContext(() => {
       const control = new FormControl('');

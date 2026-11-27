@@ -54,6 +54,7 @@ class FormConsumer {
   strictConfirmation = signal(false);
   namePolicyReads = 0;
   confirmationPolicyReads = 0;
+  orderControl = new FormControl('a');
 
   constructor() {
     this.facade.bindIf('note', this.includeNote, () => new FormControl('draft', {nonNullable: true}), {
@@ -67,6 +68,7 @@ class FormConsumer {
       this.confirmationPolicyReads++;
       return this.strictConfirmation() ? Validators.minLength(10) : null;
     });
+    this.orderBinding = bindControlValidators(this.orderControl, () => Validators.minLength(4));
   }
 }
 Component({selector: 'form-consumer', template: ''})(FormConsumer);
@@ -132,6 +134,21 @@ try {
   instance.form.controls.name.setValue('');
   assert.equal(instance.form.controls.name.valid, true, 'Manual disposal must freeze the relaxed name policy');
   assert.equal(instance.namePolicyReads, namePolicyReads, 'Manual disposal must stop reading the getter');
+
+  await until(() => instance.orderControl.hasError('minlength'));
+  instance.orderControl.addValidators(Validators.minLength(8));
+  instance.orderControl.updateValueAndValidity();
+  assert.equal(instance.orderControl.getError('minlength').requiredLength, 8);
+  const compiledOrderValidator = instance.orderControl.validator;
+  instance.orderBinding.destroy();
+  instance.orderControl.updateValueAndValidity();
+  assert.equal(
+    instance.orderControl.getError('minlength').requiredLength,
+    8,
+    'Disposal must preserve error precedence',
+  );
+  assert.equal(instance.orderControl.validator, compiledOrderValidator, 'Disposal must preserve validator composition');
+  assert.equal(compiledOrderValidator(instance.orderControl).minlength.requiredLength, 8);
 
   const failure = new Error('installed value stream failed');
   const reported = [];

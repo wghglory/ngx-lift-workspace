@@ -14,8 +14,8 @@ recorded for the affected releases.
   callbacks finish, so a teardown's local write cannot strand the accepted replacement. Disposal during teardown rejects
   execution or refuses reload instead of queuing work after destruction.
 - Validator binding dispatchers stop reading getter policies when their effect or injector is destroyed, while leaving
-  the last selected policy installed. The public `resolveValidators()` helper preserves snapshot return values and
-  selected validator identities.
+  the last selected policy installed in its original composition slot, preserving shared-key error precedence. The
+  public `resolveValidators()` helper preserves snapshot return values and selected validator identities.
 - Historical section and finding links to the combined upload/reactive review continue to reach links to their split
   reports.
 

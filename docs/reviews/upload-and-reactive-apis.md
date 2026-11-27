@@ -29,8 +29,9 @@ package publication remain separate gates. Keep this index at its original path 
   null-returning getter clears effective validation, but `control.validator` may still be a function. Use `[validator]`
   when `hasValidator` or validator removal depends on the original function identity. The public one-argument
   `resolveValidators` call retains its snapshot return behavior. Disposing a binding stops policy getter reads and
-  leaves its last selected validators installed. An ambiguous callback observed only returning null retires empty; pass
-  `[validator]` when it must remain active independently of the binding.
+  leaves its last selected validators in their original composition slot, preserving error precedence. An ambiguous
+  callback observed only returning null retires empty; pass `[validator]` when it must remain active independently of
+  the binding.
 - **Upload component state:** the exposed `disabledState` member is now a read-only `Signal<boolean>`, combining the
   disabled input and CVA state. Consumers writing `disabledState.set()` must use the disabled input or form control API.
   Component input/output names and the chosen-file value contract remain unchanged.
@@ -47,7 +48,7 @@ library builds, and packed-library export/type/import checks passed. The full fr
 registry fetch error 23 locally; its subsequent browser checks were not run. This does not establish human browser
 acceptance or package publication.
 
-The subsequent GitHub review follow-up passed 1,171 headless, 598 Clarity, and 352 demo tests. It also checked packed
+The subsequent GitHub review follow-up passed 1,173 headless, 598 Clarity, and 352 demo tests. It also checked packed
 form and query consumers in zoneless and ZoneJS modes using existing peers and a cached compatible ZoneJS package. These
 checks cover public resolver snapshots, binding disposal, and replacement execution after teardown writes. PR CI skips
 `verify:packages`; neither its green result nor the linked-peer checks establish a fresh-peer installation.
