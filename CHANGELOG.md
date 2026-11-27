@@ -8,6 +8,28 @@ recorded for the affected releases.
 
 ## [Unreleased]
 
+### Breaking compatibility notes
+
+The upload/reactive API review fixes include the following incompatible corrections. No release version or new 21.x
+compatibility exception is approved by these notes; follow the [version policy](docs/deployment.md#version-policy).
+
+- `poll` callbacks receiving the `forceRefresh` input must accept `Input | undefined`, because the first timer tick can
+  precede any source emission. Handle absence in `paramsBuilder` or the direct `pollingFn`. Zero-argument callbacks do
+  not need to change.
+- `SignalForm.value` now uses Angular's enabled-value type, `FormGroup<TControls>['value']`, with optional fields for
+  disabled children. `rawValue` uses `ReturnType<FormGroup<TControls>['getRawValue']>`. Use field signals for individual
+  controls or `rawValue()` for payloads that must include disabled controls; otherwise handle optional fields.
+- Zero-argument validator callbacks remain installed as dispatchers even when initially returning `null`. Getter results
+  still select the effective validators, but a null result does not require `control.validator === null`. Pass
+  `[validator]` when `hasValidator` or validator removal needs the original callback identity. Existing one-argument
+  `resolveValidators()` calls remain supported.
+- `UploadComponent.disabledState` changes from a writable signal to a read-only derived signal. Consumers writing
+  `disabledState.set()` must use the component's `disabled` input or the Angular form control's enable/disable API.
+  Existing component input/output names and the chosen-file value contract remain supported.
+
+See the [review index](docs/reviews/upload-and-reactive-apis.md) for the historical findings, fix disposition, and
+validation boundaries.
+
 ## [21.7.0] (ngx-lift) / [21.6.0] (clr-lift) - 2026-11-25
 
 **Release decision — November 25, 2026 (approved):** the maintainer approved the localization API changes below as a
