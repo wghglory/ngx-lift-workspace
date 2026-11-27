@@ -11,7 +11,7 @@ import {
   Signal,
   untracked,
 } from '@angular/core';
-import {AbstractControl, FormGroup, ValidatorFn} from '@angular/forms';
+import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 
 import {
   BindControlDisabledOptions,
@@ -86,8 +86,11 @@ export function bindControlDisabled<T = unknown>(
 /**
  * Resolves a validator argument into `ValidatorFn | ValidatorFn[] | null`.
  * Supports a raw `ValidatorFn`, array of validators, `null`, `Signal`, or a 0-argument getter function.
- * Wrap zero-argument validators in an array when they can return null: a bare function returning null is
- * indistinguishable from a getter that clears validators.
+ * Zero-argument functions remain installed as dispatchers, so an initially null validation result does not discard
+ * the callback. Arrays retain their original validator identities for Angular's `hasValidator` checks.
+ * @param validators Validators or a reactive getter returning the active validation policy.
+ * @param control Optional target used when initially evaluating zero-argument or default-parameter callbacks.
+ * @returns The validators to install, retaining nullable callbacks for subsequent validation.
  */
 export function resolveValidators(
   validators:
@@ -96,19 +99,22 @@ export function resolveValidators(
     | null
     | Signal<ValidatorFn | ValidatorFn[] | null>
     | (() => ValidatorFn | ValidatorFn[] | null),
+  control?: AbstractControl,
 ): ValidatorFn | ValidatorFn[] | null {
   if (isSignal(validators)) {
     return validators();
   }
   if (typeof validators === 'function') {
     if (validators.length !== 0) return validators as ValidatorFn;
-    const resolved = (validators as () => unknown)();
-    if (typeof resolved === 'function' || Array.isArray(resolved)) {
-      return resolved as ValidatorFn | ValidatorFn[];
-    }
-    // A zero-argument ValidatorFn returns an errors object; a getter returning null clears validators.
-    if (resolved !== null && typeof resolved === 'object') return validators as ValidatorFn;
-    return null;
+    const read = validators as (control?: AbstractControl) => ValidatorFn | ValidatorFn[] | ValidationErrors | null;
+    // Capture reactive getter dependencies without treating an initial null as a permanent classification.
+    read(control);
+    return (target) => {
+      const resolved = read(target);
+      if (typeof resolved === 'function') return resolved(target);
+      if (Array.isArray(resolved)) return Validators.compose(resolved)?.(target) ?? null;
+      return resolved;
+    };
   }
   return validators;
 }
@@ -117,7 +123,8 @@ export function resolveValidators(
  * Declaratively synchronizes an `AbstractControl`'s validators with a reactive signal or getter.
  *
  * Replaces the control's synchronous validators and re-evaluates validity whenever the signal emits.
- * Pass `[validator]` for a zero-argument validator that can return null, so it remains installed for later edits.
+ * Zero-argument callbacks are evaluated on each validation, including callbacks that initially return null.
+ * A null-returning getter clears effective validation while retaining a dispatcher in `control.validator`.
  *
  * @example
  * ```typescript
@@ -152,7 +159,7 @@ export function bindControlValidators(
 
   return effect(
     () => {
-      const valFns = resolveValidators(validators);
+      const valFns = resolveValidators(validators, control);
       untracked(() => {
         control.setValidators(valFns);
         if (updateValueAndValidity) {

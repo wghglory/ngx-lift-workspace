@@ -9,10 +9,22 @@ import {
   bindControlIf,
   bindControlValidators,
   revalidateOnChange,
+  resolveValidators,
   watchControl,
 } from './form-bindings';
+import {toSignalForm} from './to-signal-form';
 
 describe('form-bindings utilities', () => {
+  it('preserves the public one-argument validator resolver', () => {
+    const control = new FormControl('');
+    const validators = [Validators.required];
+    expect(resolveValidators(null)).toBeNull();
+    expect(resolveValidators(validators)).toBe(validators);
+    const resolved = resolveValidators(() => null);
+    expect(typeof resolved).toBe('function');
+    expect((resolved as ValidatorFn)(control)).toBeNull();
+  });
+
   it('should dynamically disable and enable control with bindControlDisabled', () => {
     TestBed.runInInjectionContext(() => {
       const ctrl = new FormControl('test');
@@ -438,11 +450,99 @@ describe('form-bindings utilities', () => {
       const strict = signal(false);
       bindControlValidators(control, () => (strict() ? Validators.required : null));
       TestBed.flushEffects();
-      expect(control.validator).toBeNull();
+      expect(control.valid).toBe(true);
       control.setValue('');
       strict.set(true);
       TestBed.flushEffects();
       expect(control.hasError('required')).toBe(true);
+    });
+  });
+
+  it('retains an initially-null bare validator across ordinary revalidation', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('value');
+      let blocked = false;
+      const validator: ValidatorFn = () => (blocked ? {blocked: true} : null);
+      bindControlValidators(control, validator);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+      blocked = true;
+      control.updateValueAndValidity();
+      expect(control.hasError('blocked')).toBe(true);
+      blocked = false;
+      control.updateValueAndValidity();
+      expect(control.valid).toBe(true);
+    });
+  });
+
+  it('evaluates the current nullable getter result during validation before its effect flushes', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('', Validators.pattern(/^x/));
+      const strict = signal(false);
+      bindControlValidators(control, () => (strict() ? [Validators.required, Validators.minLength(3)] : null));
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+      strict.set(true);
+      control.updateValueAndValidity();
+      expect(control.hasError('required')).toBe(true);
+      control.setValue('ab');
+      expect(control.hasError('minlength')).toBe(true);
+      strict.set(false);
+      control.updateValueAndValidity();
+      expect(control.valid).toBe(true);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+    });
+  });
+
+  it('retains initially-null validators through named and enhanced facade bindings', () => {
+    TestBed.runInInjectionContext(() => {
+      const form = new FormGroup({name: new FormControl(''), code: new FormControl('')});
+      const facade = toSignalForm(form);
+      let blocked = false;
+      const validator: ValidatorFn = () => (blocked ? {blocked: true} : null);
+      facade.bindValidators('name', validator);
+      facade.controls.code.bindValidators(validator);
+      TestBed.flushEffects();
+      expect(form.valid).toBe(true);
+      blocked = true;
+      form.controls.name.updateValueAndValidity();
+      form.controls.code.updateValueAndValidity();
+      expect(form.controls.name.hasError('blocked')).toBe(true);
+      expect(form.controls.code.hasError('blocked')).toBe(true);
+      blocked = false;
+      form.controls.name.updateValueAndValidity();
+      form.controls.code.updateValueAndValidity();
+      expect(form.valid).toBe(true);
+    });
+  });
+
+  it('supplies the real control to a validator with a default parameter', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('allowed');
+      const validator: ValidatorFn = (target = control) => (target.value === 'blocked' ? {blocked: true} : null);
+      bindControlValidators(control, validator);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+      control.setValue('blocked');
+      expect(control.hasError('blocked')).toBe(true);
+    });
+  });
+
+  it('retains reactive dependencies of an initially-null bare validator', () => {
+    TestBed.runInInjectionContext(() => {
+      const control = new FormControl('');
+      const blocked = signal(false);
+      const validator: ValidatorFn = () => (blocked() ? {blocked: true} : null);
+      bindControlValidators(control, validator);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
+      blocked.set(true);
+      TestBed.flushEffects();
+      expect(control.hasError('blocked')).toBe(true);
+      blocked.set(false);
+      TestBed.flushEffects();
+      expect(control.valid).toBe(true);
     });
   });
 });

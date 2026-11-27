@@ -48,7 +48,7 @@ try {
   writeFileSync(
     join(consumer, 'consumer.ts'),
     `
-import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
+import {addCalendarDays, computedAsync, isURL, QueryClient, IdleDetectionService, IdleDetectionState, provideQueryClient, QueryTimeoutError, QueryResourceDisabledError, QueryResourceDisposedError, queryResource, queryResources, QueryResourceItem, fetchQueryObservable, observeQueryObservable, mutateResource, MutateResourceCallOptions, ByteConverterPipe, controlValue, resolveValidators, toSignalForm, isEmpty, isNotEmpty, provideK8sRetryBackoffConfig} from 'ngx-lift';
 import type {UploadError} from 'ngx-lift';
 const reportedFailure: UploadError = {code: 'upload.error.status', phase: 'status', serverStatus: 'error'};
 const lookupFailure: UploadError = {code: 'unavailable', phase: 'status'};
@@ -62,7 +62,9 @@ const i18nOptions: ClrLiftI18nOptions = {locale: 'fr'};
 void provideClrLiftI18n(i18nOptions);
 const devtools: typeof QueryDevtoolsComponent = QueryDevtoolsComponent;
 void devtools;
-import {FormControl, FormGroup} from '@angular/forms';
+import {FormControl, FormGroup, Validators, type ValidatorFn} from '@angular/forms';
+const resolvedValidators: ValidatorFn | ValidatorFn[] | null = resolveValidators([Validators.required]);
+void [resolvedValidators, resolveValidators(null)];
 const calendarDate: Date = addCalendarDays(new Date(), 1);
 // @ts-expect-error Calendar helpers require Dates rather than ambiguous date strings.
 addCalendarDays('2026-01-15', 1);

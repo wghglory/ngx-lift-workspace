@@ -120,6 +120,12 @@ helper calls capture the current control; dynamic facade bindings resolve mounte
 
 Validator binding has three public surfaces: the facade method, the enhanced control method and the standalone helper.
 Each accepts one `ValidatorFn`, an array, `null`, a `Signal`, or a zero-argument getter and returns an `EffectRef`.
+Zero-argument functions are retained as validation dispatchers: an errors object or `null` is the validation result,
+while a returned validator or validator array is applied to the current control. An initially `null` result does not
+discard the callback. Getter signal reads still trigger binding effects, and ordinary Angular revalidation evaluates the
+current callback result even before an effect flush. A null-returning getter removes the previous validation policy
+effectively; `control.validator` can remain a dispatcher instead of being literally `null`. Use a validator array when
+Angular validator identity checks such as `hasValidator` need the original zero-argument function.
 
 ```typescript
 import {FormControl, FormGroup, Validators} from '@angular/forms';

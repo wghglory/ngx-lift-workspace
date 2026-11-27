@@ -487,9 +487,9 @@ export function toSignalForm<
       return effect(
         () => {
           controlsVersion();
-          const valFns = resolveValidators(validators);
           const targetCtrl = form.get(ctrlName);
           if (targetCtrl) {
+            const valFns = resolveValidators(validators, targetCtrl);
             untracked(() => {
               targetCtrl.setValidators(valFns);
               if (updateValueAndValidity) {

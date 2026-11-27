@@ -15,6 +15,7 @@ import {from, isObservable, noop, Observable, Subscriber, Subscription} from 'rx
 
 import {isPromise} from '../utils/is-promise.util';
 import {ResourceStatus} from '../models';
+import {ResourceSourceDependencies} from './resource-source-dependencies';
 
 /** Cancellation context supplied to an accepted resource operation. */
 export interface ResourceAsyncContext {
@@ -528,6 +529,7 @@ export function resourceAsync<T, P, E = Error>(
   const reloadTrigger = signal(0);
   const definition = typeof source === 'function' ? undefined : source;
   const factory = typeof source === 'function' ? source : undefined;
+  const directDependencies = factory && options.reactive !== false ? new ResourceSourceDependencies() : undefined;
   const paramsCapture = definition ? computed(definition.params) : undefined;
 
   interface Evaluation {
@@ -627,6 +629,7 @@ export function resourceAsync<T, P, E = Error>(
   const effectOptions = {injector, manualCleanup: true};
   const runSource = () => {
     if (disposed) return;
+    if (directDependencies?.isSuppressed()) return;
     const read = <V>(capture: Signal<V>): V => (options.reactive === false ? untracked(capture) : capture());
     let selection: P | undefined;
     let parameterError: {reason: unknown} | undefined;
@@ -658,10 +661,9 @@ export function resourceAsync<T, P, E = Error>(
     if (factory) {
       try {
         // Preserve the legacy effect contract: factories may synchronously write signals.
-        evaluation.source =
-          options.reactive === false
-            ? untracked(() => factory({abortSignal: evaluation.controller.signal}))
-            : factory({abortSignal: evaluation.controller.signal});
+        evaluation.source = directDependencies
+          ? directDependencies.capture(() => factory({abortSignal: evaluation.controller.signal}))
+          : untracked(() => factory({abortSignal: evaluation.controller.signal}));
         if (!isObservable(evaluation.source) && isPromise(evaluation.source)) {
           // Reuse the same execution for rejection handling and the subscription, including for cold thenables.
           const promise = Promise.resolve(evaluation.source);
@@ -809,6 +811,7 @@ export function resourceAsync<T, P, E = Error>(
   const destroy = () => {
     if (disposed) return;
     disposed = true;
+    directDependencies?.destroy();
     cancelAll(new ResourceAsyncDisposedError());
     schedulingEffect.destroy();
     dependencyEffect?.destroy();
@@ -837,6 +840,7 @@ export function resourceAsync<T, P, E = Error>(
     if (disposed || (options.behavior === 'exhaust' && (currentOperation || queuedExecution !== undefined)))
       return false;
     localParamsSnapshot = undefined;
+    directDependencies?.resume();
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by reload'));
     if (options.behavior === 'exhaust') queuedExecution = ++sequence;
     if (untracked(statusSignal) === 'idle') statusSignal.set('loading');
@@ -845,6 +849,7 @@ export function resourceAsync<T, P, E = Error>(
   };
   const suppressQueued = () => {
     suppressedTrigger = untracked(reloadTrigger);
+    directDependencies?.suppress();
     if (!paramsCapture) return;
     try {
       localParamsSnapshot = {value: untracked(paramsCapture), valid: true};
@@ -881,6 +886,7 @@ export function resourceAsync<T, P, E = Error>(
       return executionPromise(currentOperation?.id ?? (queuedExecution as number));
     }
     localParamsSnapshot = undefined;
+    directDependencies?.resume();
     cancelAll(new ResourceAsyncCancelledError('Operation cancelled by newer execution'));
     queuedExecution = ++sequence;
     const promise = executionPromise(queuedExecution);

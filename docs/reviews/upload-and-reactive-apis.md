@@ -1,20 +1,22 @@
 # Upload and reactive API code review
 
-> Follow-up audit at PR #269 head `45b6ffa6` (2026-11-27): the report below describes the historical `e0facfd7`
-> baseline. PRs #264–#268 address 19 findings, including all four P1s. PR #269 addresses ten more fully and two
-> partially. Its claim to close every remaining finding should be read with the limitations below.
+> Follow-up implementation (2026-11-27): the report below describes the historical `e0facfd7` baseline. PRs #264–#268
+> address 19 findings, including all four P1s. PR #269 addresses the remaining 12, including the two gaps identified
+> during its follow-up review:
 >
-> - **P2, local resource overrides:** `{params, loader}` preserves a later local write against a pending parameter
->   notification. Direct factories still allow that notification to overwrite the local value. Use the explicit
->   parameter form when this ordering matters. The original direct-factory finding remains open.
-> - **P2, zero-argument validators:** constant-error validators work, but a bare validator initially returning `null` is
->   interpreted as a null-clearing getter. Pass `[validator]` to retain it across later revalidation. Unqualified
->   support for bare, initially-null validators remains open; changing that requires disambiguating the getter and
->   validator contracts.
+> - **P2, local resource overrides:** direct factories now snapshot the versions of their observed signal dependencies
+>   when `set()`, `update()`, or `reset()` supersedes queued work. The discarded factory is not invoked; a later
+>   dependency change still executes normally. Explicit `{params, loader}` behavior is retained.
+> - **P2, zero-argument validators:** initially-null callbacks remain installed as validation dispatchers, so ordinary
+>   revalidation can produce errors later. Reactive getters can still return validators, arrays, or null. A null result
+>   clears effective validation; `control.validator` may retain a dispatcher. Use `[validator]` when original validator
+>   identity is needed by Angular APIs such as `hasValidator`.
 >
-> Local follow-up validation: 480 headless tests, 89 Clarity upload tests, and 26 demo form tests passed at `45b6ffa6`.
-> A temporary public-API probe reproduced the initially-null validator gap; its array-wrapped counterpart passed. These
-> checks do not establish browser acceptance or package publication.
+> Both gaps were reproduced before their fixes. Regression coverage includes same-turn orderings, computed equality,
+> multiple and dynamic dependencies, reentrant local writes, eager factories, nullable validators, facade bindings, and
+> getter transitions. The internal dependency bridge uses Angular's exported signal primitives, available at the Angular
+> 21 baseline; check it during framework upgrades. Automated validation is separate from human acceptance, merging, and
+> package publication.
 
 Reviewed the workspace at `e0facfd7` on 2026-11-26. The review started with the headless upload queue, Clarity picker,
 panel, and demo transports, then followed `queryResource`, `queryResources`, `mutateResource`, `resourceAsync`,

@@ -90,6 +90,13 @@ userRef = resourceAsync(({abortSignal}) => fetch('/api/user', {signal: abortSign
 
 - Existing zero-argument and single-argument factories run inside an Angular effect. Synchronous Signal writes (e.g.,
   `loading.set(true)`) remain supported.
+- `set()`, `update()`, and `reset()` supersede dependency changes already pending at the time of the call, without
+  invoking the factory. A subsequent change to an observed dependency can execute the factory normally, including within
+  the same JavaScript turn. Computed dependencies use their equality semantics.
+- The internal `ResourceSourceDependencies` bridge captures direct reads through Angular's exported signal primitives
+  (`@angular/core/primitives/signals`). It snapshots producer versions untracked and retains observed dependencies when
+  discarding a scheduled run. It does not inspect private effect fields or graph link layouts. This integration is
+  available at the Angular 21 baseline and must be checked when upgrading Angular.
 - _Boundary note_: An arbitrary function cannot be inspected for dependencies without executing its side effects. For
   reliable reactive `exhaust` behavior without eager execution, use Form 1 (`params` / `loader`).
 
